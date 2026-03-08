@@ -409,7 +409,7 @@ $paz_salvo = ($resumen['saldo_total'] <= 0 && $resumen['total_cobros'] > 0);
                     </div>
                     <div style="background:white;padding:1rem;border-radius:10px;">
                         <strong style="color:#022C22;">📱 Transferencia</strong><br>
-                        <span style="font-size:0.82rem;">Nequi <br>Cel: 316-630-7633<br>A nombre de John Eduardo</span>
+                        <span style="font-size:0.82rem;">Nequi <br>Cel: 316-630-7633<br>A nombre de John Eduardo</span> <br>    
                         <span style="font-size:0.82rem;">Davivienda <br>Cel: 316-630-7633<br>A nombre de John Eduardo</span>
                     </div>
                 </div>
