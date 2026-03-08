@@ -401,19 +401,20 @@ $paz_salvo = ($resumen['saldo_total'] <= 0 && $resumen['total_cobros'] > 0);
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
                     <div style="background:white;padding:1rem;border-radius:10px;">
                         <strong style="color:#022C22;">🏦 Consignación Bancaria</strong><br>
-                        <span style="font-size:0.82rem;">Banco: Davivienda<br>Cuenta: 0123-4567-8901<br>Tipo: Ahorros</span>
+                        <span style="font-size:0.82rem;">Banco: CREDI FLORES<br>Cuenta: 0123-4567-8901<br>Tipo: Ahorros</span>
                     </div>
                     <div style="background:white;padding:1rem;border-radius:10px;">
                         <strong style="color:#022C22;">🏢 Presencial</strong><br>
-                        <span style="font-size:0.82rem;">Secretaría INTEP<br>Lunes a Viernes<br>7:00 AM - 5:00 PM</span>
+                        <span style="font-size:0.82rem;">Secretaría INTEP<br>Lunes a Viernes<br>4:00 PM - 9:30 PM</span>
                     </div>
                     <div style="background:white;padding:1rem;border-radius:10px;">
                         <strong style="color:#022C22;">📱 Transferencia</strong><br>
-                        <span style="font-size:0.82rem;">Nequi / Daviplata<br>Cel: 310-123-5678<br>A nombre de INTEP</span>
+                        <span style="font-size:0.82rem;">Nequi <br>Cel: 316-630-7633<br>A nombre de John Eduardo</span>
+                        <span style="font-size:0.82rem;">Davivienda <br>Cel: 316-630-7633<br>A nombre de John Eduardo</span>
                     </div>
                 </div>
                 <p style="margin:1rem 0 0;font-size:0.8rem;color:#9CA3AF;">
-                    💡 Después de pagar, presenta tu comprobante en secretaría para que sea registrado en el sistema.
+                    💡 Después de pagar, presenta tu comprobante en secretaría para que sea registrado en el sistema gracias.
                 </p>
             </div>
         </div>
