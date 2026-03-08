@@ -409,7 +409,7 @@ $paz_salvo = ($resumen['saldo_total'] <= 0 && $resumen['total_cobros'] > 0);
                     </div>
                     <div style="background:white;padding:1rem;border-radius:10px;">
                         <strong style="color:#022C22;">📱 Transferencia</strong><br>
-                        <span style="font-size:0.82rem;">Nequi / Daviplata<br>Cel: 310-000-0000<br>A nombre de INTEP</span>
+                        <span style="font-size:0.82rem;">Nequi / Daviplata<br>Cel: 310-123-5678<br>A nombre de INTEP</span>
                     </div>
                 </div>
                 <p style="margin:1rem 0 0;font-size:0.8rem;color:#9CA3AF;">
