@@ -7,6 +7,7 @@
 *.sql
 *.sqlite
 *.db
+!schema_export.sql
 
 # Archivos temporales y de caché
 *.log
