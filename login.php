@@ -607,6 +607,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             display:flex; align-items:center; gap:0.3rem;
             font-size:0.75rem; color:rgba(255,255,255,0.35);
         }
+        .footer-contacto a span {
+            transition: color 0.2s ease;
+        }
+        .footer-contacto a:hover span {
+            color:#10B981;
+        }
         .login-copyright {
             text-align:center; padding:1rem 0; font-size:0.7rem;
             color:rgba(255,255,255,0.2); margin-top:1.5rem; position:relative; z-index:1;
@@ -932,9 +938,9 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                 <div class="login-footer-info">
                     <span>¿Problemas para ingresar? Contacta a secretaría.</span>
                     <div class="footer-contacto">
-                        <span>📍 Madrid, Cundinamarca</span>
-                        <span>📞 (601) 825-0000</span>
-                        <span>✉️ info@institutointep.edu.co</span>
+                        <a href="https://www.google.com/maps/place/Instituto+T%C3%A9cnico+Pedag%C3%B3gico+INTEP/@4.7308,-74.2636,15z" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;"><span>📍 Madrid, Cundinamarca</span></a>
+                        <span>📞 322 276 9962</span>
+                        <span>✉️ institutointepmadrid@gmail.com</span>
                     </div>
                 </div>
             </div>
