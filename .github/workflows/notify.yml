@@ -1,0 +1,49 @@
+name: Notify Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  notify:
+    name: Notificar webhook
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Checkout (para leer metadata)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Enviar ping al webhook (verificación de disponibilidad)
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "::warning::WEBHOOK_URL no configurado en los secrets del repositorio — saltando ping"
+            exit 0
+          fi
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 10 \
+            "$WEBHOOK_URL/webhook.php")
+
+          echo "Ping al webhook → HTTP $HTTP_CODE"
+
+          if [[ "$HTTP_CODE" == "200" || "$HTTP_CODE" == "405" ]]; then
+            echo "Webhook accesible (el 405 es normal para GET, solo el POST dispara el deploy)"
+          else
+            echo "::warning::Webhook respondió con HTTP $HTTP_CODE — revisa que Cloudflare Tunnel esté activo"
+          fi
+
+      - name: Resumen del push
+        run: |
+          echo "## Push a master" >> $GITHUB_STEP_SUMMARY
+          echo "| Campo       | Valor |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Autor**   | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Commit**  | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Mensaje** | ${{ github.event.head_commit.message }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Hora**    | $(date -u '+%Y-%m-%d %H:%M UTC') |" >> $GITHUB_STEP_SUMMARY
