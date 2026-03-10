@@ -92,12 +92,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enviar_solicitud'])) 
                     $cuerpo .= "============================================================\n";
                     $cuerpo .= "Este correo fue enviado automaticamente desde el Portal INTEP.\n";
 
-                    $headers = "From: portal@intep.edu.co\r\n";
-                    $headers .= "Reply-To: " . ($info_est['email'] ?? 'portal@intep.edu.co') . "\r\n";
-                    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-                    $headers .= "X-Mailer: INTEP-Portal/1.0\r\n";
+                    // Enviar con PHPMailer si está disponible, si no con mail()
+                    $vendorPath = __DIR__ . '/vendor/autoload.php';
+                    if (file_exists($vendorPath)) {
+                        require_once $vendorPath;
+                        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+                        try {
+                            $mail->isSMTP();
+                            $mail->Host       = Config::get('MAIL_HOST', 'smtp.gmail.com');
+                            $mail->SMTPAuth   = true;
+                            $mail->Username   = Config::get('MAIL_USER', 'institutointepmadrid@gmail.com');
+                            $mail->Password   = Config::get('MAIL_PASS', '');
+                            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                            $mail->Port       = (int) Config::get('MAIL_PORT', 587);
+                            $mail->CharSet    = 'UTF-8';
 
-                    @mail('intep.matriculas@gmail.com', $asunto, $cuerpo, $headers);
+                            $mail->setFrom(Config::get('MAIL_USER', 'institutointepmadrid@gmail.com'), 'Portal INTEP');
+                            $mail->addAddress('institutointepmadrid@gmail.com', 'Secretaría INTEP');
+                            if (!empty($info_est['email'])) {
+                                $mail->addReplyTo($info_est['email'], $info_est['nombre'] ?? '');
+                            }
+                            $mail->Subject = "[INTEP] Nueva solicitud: $tipo_solicitud";
+                            $mail->Body    = $cuerpo;
+                            $mail->send();
+                        } catch (Exception $e) {
+                            error_log("Error enviando correo INTEP: " . $mail->ErrorInfo);
+                        }
+                    } else {
+                        $headers = "From: portal@intep.edu.co\r\n";
+                        $headers .= "Reply-To: " . ($info_est['email'] ?? 'portal@intep.edu.co') . "\r\n";
+                        $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+                        @mail('institutointepmadrid@gmail.com', "[INTEP] Nueva solicitud: $tipo_solicitud", $cuerpo, $headers);
+                    }
 
                     $mensaje = 'Solicitud enviada correctamente. Recibirás respuesta en los próximos días hábiles.';
                     $tipo_msg = 'exito';

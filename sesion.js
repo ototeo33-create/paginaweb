@@ -151,7 +151,7 @@ function inicializarControlSesion(config) {
     function iniciarTimer() {
         timerAviso = setTimeout(mostrarAviso, TIEMPO_LIMITE - TIEMPO_AVISO);
         timerInactividad = setTimeout(() => {
-            window.location.href = '/intep/login.php?sesion=expirada';
+            window.location.href = '/intep/logout.php?motivo=inactividad';
         }, TIEMPO_LIMITE);
     }
 

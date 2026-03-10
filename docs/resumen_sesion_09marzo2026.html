@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resumen de Sesión – INTEP – 9 Marzo 2026</title>
+  <style>
+    @media print { body { margin: 1.5cm; } .no-print { display: none; } }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; background: #f4f6fb; }
+    .portada {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      color: white; text-align: center; padding: 60px 40px 50px;
+    }
+    .portada img { width: 80px; margin-bottom: 16px; }
+    .portada h1 { font-size: 2rem; letter-spacing: 2px; margin-bottom: 8px; }
+    .portada h2 { font-size: 1.1rem; font-weight: 300; opacity: 0.85; margin-bottom: 24px; }
+    .portada .fecha {
+      display: inline-block; background: rgba(255,255,255,0.15);
+      padding: 8px 24px; border-radius: 20px; font-size: 0.95rem;
+    }
+    .contenido { max-width: 860px; margin: 40px auto; padding: 0 20px; }
+    .seccion {
+      background: white; border-radius: 10px; margin-bottom: 28px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden;
+    }
+    .seccion-header {
+      background: #0f3460; color: white; padding: 14px 24px;
+      font-size: 1rem; font-weight: 600; letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .seccion-header .num {
+      background: rgba(255,255,255,0.2); width: 28px; height: 28px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700;
+    }
+    .seccion-body { padding: 22px 24px; }
+    .item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+    }
+    .item:last-child { border-bottom: none; }
+    .badge {
+      background: #e8f0fe; color: #0f3460; border-radius: 6px;
+      padding: 4px 10px; font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+    }
+    .badge.verde { background: #e6f4ea; color: #1e7e34; }
+    .badge.naranja { background: #fff3e0; color: #e65100; }
+    .item-texto { flex: 1; }
+    .item-texto strong { display: block; margin-bottom: 3px; font-size: 0.95rem; }
+    .item-texto span { font-size: 0.87rem; color: #555; line-height: 1.5; }
+    .codigo {
+      background: #1a1a2e; color: #a8d8a8; font-family: 'Courier New', monospace;
+      padding: 10px 16px; border-radius: 6px; font-size: 0.88rem; margin: 8px 0;
+    }
+    .resumen-final {
+      background: linear-gradient(135deg, #0f3460, #16213e);
+      color: white; border-radius: 10px; padding: 28px 28px;
+      margin-bottom: 40px; text-align: center;
+    }
+    .resumen-final h3 { font-size: 1.1rem; margin-bottom: 16px; opacity: 0.85; }
+    .stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat .num { font-size: 2rem; font-weight: 700; }
+    .stat .label { font-size: 0.8rem; opacity: 0.7; margin-top: 4px; }
+    .btn-print {
+      display: block; width: fit-content; margin: 0 auto 30px;
+      background: #0f3460; color: white; padding: 12px 32px;
+      border-radius: 8px; text-decoration: none; font-size: 0.95rem;
+      cursor: pointer; border: none;
+    }
+    footer { text-align: center; color: #999; font-size: 0.82rem; padding-bottom: 40px; }
+  </style>
+</head>
+<body>
+
+<div class="portada">
+  <h1>INSTITUTO INTEP</h1>
+  <h2>Resumen de Actividades – Sesión de Desarrollo</h2>
+  <div class="fecha">Lunes, 9 de Marzo de 2026</div>
+</div>
+
+<div class="contenido">
+
+  <button class="btn-print no-print" onclick="window.print()">Imprimir / Guardar como PDF</button>
+
+  <!-- CAMBIOS EN LA PÁGINA -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="num">1</div>
+      Cambios realizados en la página web
+    </div>
+    <div class="seccion-body">
+
+      <div class="item">
+        <span class="badge verde">login.php</span>
+        <div class="item-texto">
+          <strong>Enlace de Ubicación → Google Maps</strong>
+          <span>El apartado de ubicación en el footer del login ahora redirige al mapa de Google Maps con la ubicación exacta del Instituto INTEP. Se agregó efecto hover al enlace.</span>
+        </div>
+      </div>
+
+      <div class="item">
+        <span class="badge verde">login.php</span>
+        <div class="item-texto">
+          <strong>Número de contacto actualizado</strong>
+          <span>El número de teléfono fue actualizado a: <strong>322 276 9962</strong></span>
+        </div>
+      </div>
+
+      <div class="item">
+        <span class="badge verde">login.php</span>
+        <div class="item-texto">
+          <strong>Correo electrónico actualizado</strong>
+          <span>El correo institucional fue actualizado a: <strong>institutointepmadrid@gmail.com</strong></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GIT Y DEPLOY -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="num">2</div>
+      Flujo de Git y Despliegue configurado
+    </div>
+    <div class="seccion-body">
+
+      <div class="item">
+        <span class="badge">GitHub Actions</span>
+        <div class="item-texto">
+          <strong>Pipeline de despliegue automático</strong>
+          <span>Se configuró un workflow en <code>.github/workflows/</code> que se activa automáticamente con cada push a la rama <strong>master</strong>, notificando al servidor vía webhook.</span>
+        </div>
+      </div>
+
+      <div class="item">
+        <span class="badge naranja">Webhook</span>
+        <div class="item-texto">
+          <strong>Receptor de webhook en el servidor</strong>
+          <span>Archivo <code>webhook.php</code> configurado en el servidor para recibir la señal de GitHub y ejecutar <code>git pull</code> automáticamente.</span>
+        </div>
+      </div>
+
+      <div class="item">
+        <span class="badge">Flujo Git</span>
+        <div class="item-texto">
+          <strong>Flujo de trabajo establecido</strong>
+          <span>Desarrollo en rama <strong>Dev</strong> → merge a <strong>master</strong> → push → deploy automático al servidor de producción.</span>
+          <div class="codigo">git checkout master → git merge Dev → git push origin master</div>
+          <span>En el servidor: <code>git pull origin master</code></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- COMANDOS ÚTILES -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="num">3</div>
+      Comandos Git de referencia
+    </div>
+    <div class="seccion-body">
+
+      <div class="item">
+        <span class="badge">Revisar cambios</span>
+        <div class="item-texto">
+          <strong>Ver diferencias antes de subir a master</strong>
+          <div class="codigo">git diff master..Dev --name-only</div>
+          <div class="codigo">git log master..Dev --oneline</div>
+        </div>
+      </div>
+
+      <div class="item">
+        <span class="badge">Subir cambios</span>
+        <div class="item-texto">
+          <strong>Flujo completo de commit y deploy</strong>
+          <div class="codigo">git add archivo.php
+git commit -m "descripción del cambio"
+git push origin Dev</div>
+          <div class="codigo">git checkout master
+git merge Dev
+git push origin master
+git checkout Dev</div>
+        </div>
+      </div>
+
+      <div class="item">
+        <span class="badge">Servidor</span>
+        <div class="item-texto">
+          <strong>Actualizar el servidor manualmente</strong>
+          <div class="codigo">git pull origin master</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESUMEN ESTADÍSTICAS -->
+  <div class="resumen-final">
+    <h3>Resumen de la sesión</h3>
+    <div class="stats">
+      <div class="stat"><div class="num">3</div><div class="label">Cambios en código</div></div>
+      <div class="stat"><div class="num">2</div><div class="label">Commits realizados</div></div>
+      <div class="stat"><div class="num">1</div><div class="label">Deploy exitoso</div></div>
+      <div class="stat"><div class="num">1</div><div class="label">Pipeline configurado</div></div>
+    </div>
+  </div>
+
+  <footer>
+    Instituto INTEP – Madrid, Cundinamarca &nbsp;|&nbsp; institutointepmadrid@gmail.com &nbsp;|&nbsp; 322 276 9962<br>
+    Documento generado el 9 de Marzo de 2026
+  </footer>
+
+</div>
+</body>
+</html>
