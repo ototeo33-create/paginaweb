@@ -30,8 +30,8 @@ if ($rol !== 'estudiante') {
 // Obtener estudiantes para selector (admin/docente)
 $estudiantes = [];
 if ($rol !== 'estudiante') {
-    $res_est = mysqli_query($conexion, "SELECT e.id, e.nombre, e.documento, p.nombre as programa 
-                                        FROM estudiantes e 
+    $res_est = mysqli_query($conexion, "SELECT e.id, e.nombre, e.documento, p.nombre as programa
+                                        FROM estudiantes e
                                         LEFT JOIN programas p ON e.programa_id = p.id
                                         WHERE e.estado = 'activo'
                                         ORDER BY e.nombre ASC");
@@ -136,14 +136,51 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             font-weight: 700;
             white-space: nowrap;
         }
+
+        /* NAVEGACIÓN SEMANA */
+        .semana-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 1.2rem;
+            background: #022C22;
+            border-radius: 16px 16px 0 0;
+            color: white;
+        }
+        .semana-nav h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        .semana-nav .subtitulo {
+            font-size: 0.78rem;
+            opacity: 0.7;
+            text-align: center;
+            margin-top: 2px;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            padding: 0.45rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .nav-btn:hover { background: var(--verde); border-color: var(--verde); }
+
         .calendario-semanal {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border-radius: 16px;
+            border-radius: 0 0 16px 16px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(5, 150, 105, 0.08);
             border: 1px solid rgba(16, 185, 129, 0.1);
+            border-top: none;
         }
         .cal-grid {
             display: grid;
@@ -151,12 +188,30 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             min-width: 700px;
         }
         .cal-header {
-            background: #022C22;
+            background: #034a34;
             color: white;
-            padding: 0.8rem 0.5rem;
+            padding: 0.7rem 0.4rem;
             text-align: center;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 700;
+            line-height: 1.3;
+        }
+        .cal-header .dia-nombre { font-size: 0.78rem; opacity: 0.85; }
+        .cal-header .dia-num {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: block;
+            margin-top: 2px;
+        }
+        .cal-header .dia-num.hoy-col {
+            background: var(--verde);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
         }
         .cal-hora {
             background: rgba(16, 185, 129, 0.1);
@@ -177,6 +232,7 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             position: relative;
             transition: background 0.15s;
         }
+        .cal-celda.col-hoy { background: rgba(16, 185, 129, 0.04); }
         .cal-celda:hover { background: var(--verde-muted); }
         .cal-evento {
             position: absolute;
@@ -196,6 +252,8 @@ if ($rol !== 'estudiante' && $estudiante_id) {
         }
         .cal-evento:hover { transform: scale(1.02); }
         .cal-scroll { overflow-x: auto; }
+
+        /* VISTA MENSUAL */
         .calendario-mensual { display: none; }
         .mes-nav {
             display: flex;
@@ -227,6 +285,7 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(5, 150, 105, 0.08);
             border: 1px solid rgba(16, 185, 129, 0.1);
+            border-top: none;
         }
         .mes-dia-header {
             background: rgba(16, 185, 129, 0.15);
@@ -244,7 +303,7 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             position: relative;
             background: rgba(255, 255, 255, 0.5);
         }
-        .mes-dia.otro-mes { background: rgba(16, 185, 129, 0.05); }
+        .mes-dia.otro-mes { background: rgba(16, 185, 129, 0.03); }
         .mes-dia.hoy { background: rgba(16, 185, 129, 0.1); }
         .mes-num {
             font-size: 0.8rem;
@@ -274,6 +333,8 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             white-space: nowrap;
             cursor: pointer;
         }
+
+        /* MODAL */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -290,7 +351,7 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             border-radius: 16px;
             padding: 1.8rem;
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             animation: fadeIn 0.2s ease;
         }
@@ -304,7 +365,49 @@ if ($rol !== 'estudiante' && $estudiante_id) {
         }
         .modal-info { margin-bottom: 0.8rem; font-size: 0.9rem; }
         .modal-info strong { color: var(--verde); }
+
+        /* Botones de agenda */
+        .agenda-titulo {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 1.2rem 0 0.6rem;
+        }
+        .agenda-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin-bottom: 0.8rem;
+        }
+        .btn-agenda {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.65rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-google {
+            background: #4285F4;
+            color: white;
+        }
+        .btn-google:hover { background: #3367d6; }
+        .btn-ics {
+            background: #1d1d1f;
+            color: white;
+        }
+        .btn-ics:hover { background: #333; }
+        .modal-acciones { display: flex; gap: 0.8rem; margin-top: 0.5rem; }
         .modal-close {
+            flex: 1;
             background: var(--dark);
             color: white;
             border: none;
@@ -312,8 +415,6 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
-            width: 100%;
-            margin-top: 1rem;
         }
         .modal-close:hover { background: var(--verde); }
         @keyframes fadeIn {
@@ -322,6 +423,32 @@ if ($rol !== 'estudiante' && $estudiante_id) {
         }
         @media (max-width: 600px) {
             .horario-controles { flex-direction: column; align-items: flex-start; }
+            .agenda-btns { grid-template-columns: 1fr; }
+        }
+
+        /* ── Fondo verde desvanecido ── */
+        body {
+            background: linear-gradient(160deg,
+                #e8f8f1 0%,
+                #d1fae5 30%,
+                #ecfdf5 60%,
+                #f0fdf4 100%);
+            min-height: 100vh;
+        }
+.dashboard-container {
+            background: transparent;
+        }
+        .btn-volver {
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(16,185,129,0.25);
+            backdrop-filter: blur(8px);
+        }
+        .vista-toggle {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(8px);
+        }
+        .seccion-titulo {
+            color: #065f46;
         }
     </style>
 </head>
@@ -359,7 +486,7 @@ if ($rol !== 'estudiante' && $estudiante_id) {
 
         <?php if (in_array($rol, ['admin','docente'])): ?>
         <a href="admin/gestionar_horarios.php?estudiante_id=<?php echo $estudiante_id; ?>"
-           style="background:var(--verde);color:white;padding:0.6rem 1.2rem;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.88rem;">
+           style="background:#059669;color:#ffffff;padding:0.6rem 1.2rem;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.88rem;display:inline-block;border:2px solid #047857;">
             ➕ Agregar clase
         </a>
         <?php endif; ?>
@@ -367,7 +494,7 @@ if ($rol !== 'estudiante' && $estudiante_id) {
 
     <!-- VISTA SEMANAL -->
     <div id="vista-semanal">
-        <div class="seccion-titulo">
+        <div class="seccion-titulo" id="semana-seccion-titulo">
             Horario Semanal
             <?php if ($rol !== 'estudiante' && $estudiante_actual): ?>
                 — <?php echo htmlspecialchars($estudiante_actual['nombre']); ?>
@@ -382,36 +509,19 @@ if ($rol !== 'estudiante' && $estudiante_id) {
                 </p>
             </div>
         <?php else: ?>
+        <!-- Navegación semana -->
+        <div class="semana-nav">
+            <button class="nav-btn" onclick="cambiarSemana(-1)">← Semana anterior</button>
+            <div>
+                <h3 id="semana-titulo"></h3>
+                <div class="subtitulo" id="semana-rango"></div>
+            </div>
+            <button class="nav-btn" onclick="cambiarSemana(1)">Semana siguiente →</button>
+        </div>
         <div class="cal-scroll">
             <div class="calendario-semanal">
-                <div class="cal-grid">
-                    <div class="cal-header">Hora</div>
-                    <?php foreach ($dias as $dia): ?>
-                        <div class="cal-header"><?php echo $dia; ?></div>
-                    <?php endforeach; ?>
-
-                    <?php foreach ($horas as $hora): ?>
-                        <div class="cal-hora"><?php echo $hora; ?></div>
-                        <?php foreach ($dias as $dia): ?>
-                            <div class="cal-celda">
-                                <?php
-                                if (isset($horarios[$dia])) {
-                                    foreach ($horarios[$dia] as $h) {
-                                        $h_inicio = substr($h['hora_inicio'], 0, 5);
-                                        $h_fin = substr($h['hora_fin'], 0, 5);
-                                        if (substr($h_inicio, 0, 2) === substr($hora, 0, 2)) {
-                                            $color = $color_map[$h['materia_id']] ?? '#25a865';
-                                            echo "<div class='cal-evento' style='background:{$color}'
-                                                onclick='verDetalle({$h['id']}, \"{$h['materia']}\", \"{$dia}\", \"{$h_inicio}\", \"{$h_fin}\", \"{$h['salon']}\")'>";
-                                            echo htmlspecialchars($h['materia']);
-                                            echo "</div>";
-                                        }
-                                    }
-                                }
-                                ?>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
+                <div class="cal-grid" id="cal-grid-semanal">
+                    <!-- Generado por JS -->
                 </div>
             </div>
         </div>
@@ -425,13 +535,15 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             <h3 id="mes-titulo"></h3>
             <button class="mes-btn" onclick="cambiarMes(1)">Siguiente →</button>
         </div>
-        <div class="mes-grid" id="mes-grid">
-            <?php
-            $dias_semana = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-            foreach ($dias_semana as $d) {
-                echo "<div class='mes-dia-header'>{$d}</div>";
-            }
-            ?>
+        <div style="overflow-x:auto;">
+            <div class="mes-grid" id="mes-grid" style="min-width:560px;">
+                <?php
+                $dias_semana = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+                foreach ($dias_semana as $d) {
+                    echo "<div class='mes-dia-header'>{$d}</div>";
+                }
+                ?>
+            </div>
         </div>
     </div>
 
@@ -445,10 +557,23 @@ if ($rol !== 'estudiante' && $estudiante_id) {
         <div class="modal-info"><strong>Día:</strong> <span id="modal-dia"></span></div>
         <div class="modal-info"><strong>Horario:</strong> <span id="modal-horario"></span></div>
         <div class="modal-info"><strong>Salón:</strong> <span id="modal-salon"></span></div>
+
+        <div class="agenda-titulo">📆 Agregar a mi agenda</div>
+        <div class="agenda-btns">
+            <a id="btn-google-cal" href="#" target="_blank" class="btn-agenda btn-google">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.418 0-8-3.582-8-8s3.582-8 8-8 8 3.582 8 8-3.582 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                Google Calendar
+            </a>
+            <button id="btn-ics" onclick="descargarICS()" class="btn-agenda btn-ics">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+                iPhone / Android
+            </button>
+        </div>
+
         <?php if (in_array($rol, ['admin','docente'])): ?>
-        <div style="display:flex;gap:0.8rem;margin-top:1rem;">
+        <div class="modal-acciones">
             <a id="modal-editar" href="#" style="flex:1;background:var(--verde);color:white;padding:0.7rem;border-radius:8px;text-align:center;text-decoration:none;font-weight:700;font-size:0.88rem;">✏️ Editar</a>
-            <button onclick="cerrarModal()" style="flex:1;background:var(--dark);color:white;border:none;padding:0.7rem;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.88rem;">Cerrar</button>
+            <button onclick="cerrarModal()" class="modal-close" style="flex:1;">Cerrar</button>
         </div>
         <?php else: ?>
         <button class="modal-close" onclick="cerrarModal()">Cerrar</button>
@@ -464,9 +589,128 @@ const diasNum = {
     'Lunes': 1, 'Martes': 2, 'Miércoles': 3,
     'Jueves': 4, 'Viernes': 5, 'Sábado': 6
 };
+const byday = {
+    'Lunes':'MO','Martes':'TU','Miércoles':'WE',
+    'Jueves':'TH','Viernes':'FR','Sábado':'SA'
+};
+const mesesNombres = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                      'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const horasGrilla = ['07:00','08:00','09:00','10:00','11:00','12:00',
+                     '13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
+const diasOrden = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
 let mesActual = new Date().getMonth();
 let anioActual = new Date().getFullYear();
+
+// Semana: lunes de la semana actual
+function getLunesDeHoy() {
+    const hoy = new Date();
+    const dia = hoy.getDay(); // 0=Dom
+    const diff = dia === 0 ? -6 : 1 - dia;
+    const lunes = new Date(hoy);
+    lunes.setDate(hoy.getDate() + diff);
+    lunes.setHours(0,0,0,0);
+    return lunes;
+}
+
+let semanaBase = getLunesDeHoy();
+
+function cambiarSemana(dir) {
+    semanaBase = new Date(semanaBase);
+    semanaBase.setDate(semanaBase.getDate() + dir * 7);
+    renderSemanal();
+}
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function formatICSDate(date, hora) {
+    const [h, m] = hora.split(':');
+    return `${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}T${pad(h)}${pad(m)}00`;
+}
+
+function renderSemanal() {
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0);
+
+    // Calcular fechas de la semana (Lun-Sáb)
+    const fechasSemana = {};
+    diasOrden.forEach((dia, i) => {
+        const f = new Date(semanaBase);
+        f.setDate(semanaBase.getDate() + i);
+        fechasSemana[dia] = f;
+    });
+
+    // Título
+    const primerDia = fechasSemana['Lunes'];
+    const ultimoDia = fechasSemana['Sábado'];
+    const mismoMes = primerDia.getMonth() === ultimoDia.getMonth();
+    const titulo = mismoMes
+        ? `${mesesNombres[primerDia.getMonth()]} ${primerDia.getFullYear()}`
+        : `${mesesNombres[primerDia.getMonth()]} – ${mesesNombres[ultimoDia.getMonth()]} ${ultimoDia.getFullYear()}`;
+    const rango = `${primerDia.getDate()} al ${ultimoDia.getDate()} de ${mismoMes ? mesesNombres[primerDia.getMonth()] : (mesesNombres[primerDia.getMonth()]+' – '+mesesNombres[ultimoDia.getMonth()])}`;
+
+    document.getElementById('semana-titulo').textContent = titulo;
+    document.getElementById('semana-rango').textContent = rango;
+
+    const grid = document.getElementById('cal-grid-semanal');
+    grid.innerHTML = '';
+
+    // Cabecera: columna hora
+    const cHora = document.createElement('div');
+    cHora.className = 'cal-header';
+    cHora.textContent = 'Hora';
+    grid.appendChild(cHora);
+
+    // Cabeceras días
+    diasOrden.forEach(dia => {
+        const fecha = fechasSemana[dia];
+        const esHoy = fecha.getTime() === hoy.getTime();
+        const cell = document.createElement('div');
+        cell.className = 'cal-header';
+        const numSpan = document.createElement('span');
+        numSpan.className = 'dia-num' + (esHoy ? ' hoy-col' : '');
+        numSpan.textContent = fecha.getDate();
+        const nombreSpan = document.createElement('div');
+        nombreSpan.className = 'dia-nombre';
+        nombreSpan.textContent = dia.substring(0,3).toUpperCase();
+        cell.appendChild(nombreSpan);
+        cell.appendChild(numSpan);
+        grid.appendChild(cell);
+    });
+
+    // Filas de horas
+    horasGrilla.forEach(hora => {
+        const horaCell = document.createElement('div');
+        horaCell.className = 'cal-hora';
+        horaCell.textContent = hora;
+        grid.appendChild(horaCell);
+
+        diasOrden.forEach(dia => {
+            const fecha = fechasSemana[dia];
+            const esHoy = fecha.getTime() === hoy.getTime();
+            const celda = document.createElement('div');
+            celda.className = 'cal-celda' + (esHoy ? ' col-hoy' : '');
+
+            horariosData.forEach(h => {
+                if (h.dia === dia) {
+                    const hInicio = h.hora_inicio.substring(0,5);
+                    const hFin = h.hora_fin.substring(0,5);
+                    if (hInicio.substring(0,2) === hora.substring(0,2)) {
+                        const color = colorMap[h.materia_id] || '#25a865';
+                        const ev = document.createElement('div');
+                        ev.className = 'cal-evento';
+                        ev.style.background = color;
+                        ev.textContent = h.materia;
+                        ev.onclick = () => verDetalle(h.id, h.materia, h.dia, hInicio, hFin, h.salon, fecha);
+                        celda.appendChild(ev);
+                    }
+                }
+            });
+
+            grid.appendChild(celda);
+        });
+    });
+}
 
 function cambiarVista(vista, btn) {
     document.querySelectorAll('.vista-btn').forEach(b => b.classList.remove('activo'));
@@ -484,12 +728,9 @@ function cambiarMes(dir) {
 }
 
 function renderMes(mes, anio) {
-    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                   'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    document.getElementById('mes-titulo').textContent = meses[mes] + ' ' + anio;
-
+    document.getElementById('mes-titulo').textContent = mesesNombres[mes] + ' ' + anio;
     const grid = document.getElementById('mes-grid');
-    const headers = grid.querySelectorAll('.mes-dia-header');
+    const headers = Array.from(grid.querySelectorAll('.mes-dia-header'));
     grid.innerHTML = '';
     headers.forEach(h => grid.appendChild(h.cloneNode(true)));
 
@@ -526,7 +767,7 @@ function renderMes(mes, anio) {
                 evento.style.background = color;
                 evento.textContent = h.materia;
                 evento.onclick = () => verDetalle(h.id, h.materia, h.dia,
-                    h.hora_inicio.substring(0,5), h.hora_fin.substring(0,5), h.salon);
+                    h.hora_inicio.substring(0,5), h.hora_fin.substring(0,5), h.salon, fecha);
                 div.appendChild(evento);
             }
         });
@@ -546,14 +787,96 @@ function renderMes(mes, anio) {
     }
 }
 
-function verDetalle(id, materia, dia, inicio, fin, salon) {
+// Estado del modal
+let modalData = {};
+
+function verDetalle(id, materia, dia, inicio, fin, salon, fechaEvento) {
     document.getElementById('modal-materia').textContent = materia;
     document.getElementById('modal-dia').textContent = dia;
     document.getElementById('modal-horario').textContent = inicio + ' – ' + fin;
     document.getElementById('modal-salon').textContent = salon || 'No asignado';
+
     const editarBtn = document.getElementById('modal-editar');
     if (editarBtn) editarBtn.href = 'admin/gestionar_horarios.php?estudiante_id=<?php echo $estudiante_id; ?>&editar=' + id;
+
+    // Guardar datos para agenda
+    modalData = { materia, dia, inicio, fin, salon, fechaEvento: fechaEvento || null };
+
+    // Generar link Google Calendar
+    generarLinkGoogle();
+
     document.getElementById('modal-overlay').classList.add('abierto');
+}
+
+function generarLinkGoogle() {
+    const { materia, dia, inicio, fin, salon, fechaEvento } = modalData;
+
+    // Usar la fecha del evento si está disponible, si no usar próximo día de la semana
+    let fechaBase = fechaEvento ? new Date(fechaEvento) : proximaFechaDia(dia);
+
+    const dtStart = formatICSDate(fechaBase, inicio);
+    const dtEnd   = formatICSDate(fechaBase, fin);
+    const byDay   = byday[dia] || 'MO';
+
+    const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: `${materia} – INTEP`,
+        dates: `${dtStart}/${dtEnd}`,
+        details: `Salón: ${salon || 'No asignado'}\nInstituto INTEP`,
+        location: 'Instituto INTEP, Madrid, Cundinamarca',
+        recur: `RRULE:FREQ=WEEKLY;BYDAY=${byDay}`
+    });
+    document.getElementById('btn-google-cal').href =
+        'https://calendar.google.com/calendar/render?' + params.toString();
+}
+
+function proximaFechaDia(nombreDia) {
+    const objetivo = diasNum[nombreDia] || 1;
+    const hoy = new Date();
+    const diaActual = hoy.getDay();
+    let diff = objetivo - diaActual;
+    if (diff <= 0) diff += 7;
+    const result = new Date(hoy);
+    result.setDate(hoy.getDate() + diff);
+    return result;
+}
+
+function descargarICS() {
+    const { materia, dia, inicio, fin, salon, fechaEvento } = modalData;
+    let fechaBase = fechaEvento ? new Date(fechaEvento) : proximaFechaDia(dia);
+    const byDay = byday[dia] || 'MO';
+
+    const dtStart = formatICSDate(fechaBase, inicio);
+    const dtEnd   = formatICSDate(fechaBase, fin);
+    const uid     = `intep-${Date.now()}@intep.edu.co`;
+
+    const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//INTEP//Portal Estudiantil//ES',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTART:${dtStart}`,
+        `DTEND:${dtEnd}`,
+        `RRULE:FREQ=WEEKLY;BYDAY=${byDay}`,
+        `SUMMARY:${materia} – INTEP`,
+        `LOCATION:${salon || 'Instituto INTEP'}, Madrid, Cundinamarca`,
+        `DESCRIPTION:Clase semanal de ${materia}\\nSalón: ${salon || 'No asignado'}\\nInstituto INTEP`,
+        'END:VEVENT',
+        'END:VCALENDAR'
+    ].join('\r\n');
+
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `${materia.replace(/\s+/g,'-')}-INTEP.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 function cerrarModal(e) {
@@ -561,6 +884,9 @@ function cerrarModal(e) {
         document.getElementById('modal-overlay').classList.remove('abierto');
     }
 }
+
+// Inicializar
+renderSemanal();
 </script>
 
 <script src="/intep/sesion.js"></script>
