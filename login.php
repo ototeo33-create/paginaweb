@@ -938,8 +938,8 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                 <div class="login-footer-info">
                     <span>¿Problemas para ingresar? Contacta a secretaría.</span>
                     <div class="footer-contacto">
-                        <a href="https://www.google.com/maps/place/Instituto+T%C3%A9cnico+Pedag%C3%B3gico+INTEP/@4.7308,-74.2636,15z" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;"><span>📍 Madrid, Cundinamarca</span></a>
-                        <span>📞 322 276 9962</span>
+                        <a href="https://maps.google.com/?q=Cl.+7+%23396,+Madrid,+Cundinamarca" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;"><span>📍 Cl. 7 #396, Madrid, Cundinamarca</span></a>
+                        <a href="https://wa.me/573222769962" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;"><span>📞 322 276 9962</span></a>
                         <span>✉️ institutointepmadrid@gmail.com</span>
                     </div>
                 </div>

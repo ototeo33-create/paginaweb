@@ -22,7 +22,8 @@ if (ini_get("session.use_cookies")) {
 <body>
 <script>
     sessionStorage.removeItem('loader_visto');
-    window.location.href = 'login.php';
+    const motivo = new URLSearchParams(window.location.search).get('motivo');
+    window.location.href = motivo === 'inactividad' ? 'login.php?sesion=expirada' : 'login.php';
 </script>
 </body>
 </html>

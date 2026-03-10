@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual de Usuario – Portal INTEP</title>
+  <style>
+    @media print {
+      body { margin: 1.2cm; }
+      .no-print { display: none; }
+      .page-break { page-break-before: always; }
+      .portada { page-break-after: always; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; background: #f4f6fb; }
+
+    /* PORTADA */
+    .portada {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 55%, #0f3460 100%);
+      color: white; text-align: center; padding: 80px 40px 70px; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .portada .logo-circle {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); display: flex; align-items: center;
+      justify-content: center; font-size: 2.5rem; margin-bottom: 28px;
+    }
+    .portada h1 { font-size: 2.4rem; letter-spacing: 3px; margin-bottom: 10px; }
+    .portada h2 { font-size: 1.3rem; font-weight: 300; opacity: 0.8; margin-bottom: 8px; }
+    .portada .subtitulo { font-size: 1rem; opacity: 0.6; margin-bottom: 40px; }
+    .portada .version {
+      background: rgba(255,255,255,0.12); padding: 10px 30px;
+      border-radius: 25px; font-size: 0.9rem; letter-spacing: 1px;
+    }
+    .portada .roles {
+      display: flex; gap: 16px; margin-top: 36px; flex-wrap: wrap; justify-content: center;
+    }
+    .portada .rol-badge {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25);
+      padding: 8px 20px; border-radius: 20px; font-size: 0.9rem;
+    }
+
+    /* ÍNDICE */
+    .indice { max-width: 860px; margin: 40px auto; padding: 0 20px; }
+    .indice-card {
+      background: white; border-radius: 10px; padding: 28px 32px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px;
+    }
+    .indice-card h3 { color: #0f3460; font-size: 1.1rem; margin-bottom: 16px; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; }
+    .indice-lista { list-style: none; }
+    .indice-lista li { padding: 6px 0; font-size: 0.93rem; color: #333; }
+    .indice-lista li::before { content: "›"; color: #0f3460; font-weight: bold; margin-right: 8px; }
+
+    /* SECCIONES */
+    .contenido { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+    .capitulo {
+      background: white; border-radius: 10px; margin-bottom: 32px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08); overflow: hidden;
+    }
+    .capitulo-header {
+      padding: 20px 28px; display: flex; align-items: center; gap: 14px;
+    }
+    .capitulo-header.admin { background: linear-gradient(90deg, #0f3460, #1a1a6e); color: white; }
+    .capitulo-header.docente { background: linear-gradient(90deg, #1e5631, #2d7a44); color: white; }
+    .capitulo-header.estudiante { background: linear-gradient(90deg, #7b2d8b, #9c3fae); color: white; }
+    .capitulo-header.general { background: linear-gradient(90deg, #b5451b, #d4601c); color: white; }
+    .capitulo-icono {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(255,255,255,0.2); display: flex; align-items: center;
+      justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+    }
+    .capitulo-titulo h2 { font-size: 1.15rem; margin-bottom: 2px; }
+    .capitulo-titulo p { font-size: 0.82rem; opacity: 0.8; }
+
+    .cap-body { padding: 24px 28px; }
+    .paso {
+      display: flex; gap: 14px; padding: 14px 0;
+      border-bottom: 1px solid #f0f0f0; align-items: flex-start;
+    }
+    .paso:last-child { border-bottom: none; }
+    .paso-num {
+      min-width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700; color: white; flex-shrink: 0;
+    }
+    .paso-num.admin { background: #0f3460; }
+    .paso-num.docente { background: #1e5631; }
+    .paso-num.estudiante { background: #7b2d8b; }
+    .paso-num.general { background: #b5451b; }
+    .paso-info strong { display: block; font-size: 0.95rem; margin-bottom: 4px; color: #1a1a2e; }
+    .paso-info span { font-size: 0.87rem; color: #555; line-height: 1.55; }
+    .paso-info .ruta {
+      display: inline-block; background: #f0f4ff; color: #0f3460;
+      padding: 3px 8px; border-radius: 4px; font-family: monospace;
+      font-size: 0.82rem; margin-top: 5px;
+    }
+    .alerta {
+      background: #fff8e1; border-left: 4px solid #f9a825;
+      padding: 12px 16px; border-radius: 4px; margin: 10px 0;
+      font-size: 0.87rem; color: #555;
+    }
+    .alerta strong { color: #e65100; }
+    .tip {
+      background: #e8f5e9; border-left: 4px solid #43a047;
+      padding: 12px 16px; border-radius: 4px; margin: 10px 0;
+      font-size: 0.87rem; color: #2e7d32;
+    }
+
+    /* TABLA PERMISOS */
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88rem; }
+    th { background: #0f3460; color: white; padding: 10px 14px; text-align: left; }
+    td { padding: 9px 14px; border-bottom: 1px solid #eee; }
+    tr:nth-child(even) td { background: #f8f9ff; }
+    .si { color: #1e7e34; font-weight: 600; }
+    .no { color: #c0392b; }
+
+    /* CONTACTO */
+    .contacto-box {
+      background: linear-gradient(135deg, #1a1a2e, #0f3460);
+      color: white; border-radius: 10px; padding: 28px 32px;
+      margin-bottom: 28px; display: flex; gap: 32px; flex-wrap: wrap;
+    }
+    .contacto-item { flex: 1; min-width: 200px; }
+    .contacto-item .label { font-size: 0.78rem; opacity: 0.65; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+    .contacto-item .valor { font-size: 1rem; font-weight: 600; }
+
+    .btn-print {
+      display: block; width: fit-content; margin: 0 auto 30px;
+      background: #0f3460; color: white; padding: 12px 32px;
+      border-radius: 8px; font-size: 0.95rem; cursor: pointer; border: none;
+    }
+    footer { text-align: center; color: #999; font-size: 0.82rem; padding: 20px 0 40px; }
+  </style>
+</head>
+<body>
+
+<!-- PORTADA -->
+<div class="portada">
+  <div class="logo-circle">🎓</div>
+  <h1>INTEP</h1>
+  <h2>Manual de Usuario – Portal Estudiantil</h2>
+  <div class="subtitulo">Instituto Técnico de Educación Profesional</div>
+  <div class="version">Versión 1.0 &nbsp;·&nbsp; Marzo 2026</div>
+  <div class="roles">
+    <div class="rol-badge">👤 Administrador</div>
+    <div class="rol-badge">📚 Docente</div>
+    <div class="rol-badge">🎒 Estudiante</div>
+  </div>
+</div>
+
+<!-- CONTENIDO -->
+<div class="contenido">
+
+  <br>
+  <button class="btn-print no-print" onclick="window.print()">Imprimir / Guardar como PDF</button>
+
+  <!-- ÍNDICE -->
+  <div class="capitulo">
+    <div class="capitulo-header general">
+      <div class="capitulo-icono">📋</div>
+      <div class="capitulo-titulo">
+        <h2>Tabla de Contenido</h2>
+        <p>Guía completa del portal</p>
+      </div>
+    </div>
+    <div class="cap-body">
+      <table>
+        <tr><th>#</th><th>Sección</th><th>Rol</th></tr>
+        <tr><td>1</td><td>Acceso al sistema – Login</td><td>Todos</td></tr>
+        <tr><td>2</td><td>Panel principal (Dashboard)</td><td>Todos</td></tr>
+        <tr><td>3</td><td>Módulo Administrador</td><td>Admin</td></tr>
+        <tr><td>4</td><td>Módulo Docente</td><td>Docente</td></tr>
+        <tr><td>5</td><td>Módulo Estudiante</td><td>Estudiante</td></tr>
+        <tr><td>6</td><td>Tabla de permisos por rol</td><td>Referencia</td></tr>
+        <tr><td>7</td><td>Información de contacto</td><td>Todos</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 1. LOGIN -->
+  <div class="capitulo page-break">
+    <div class="capitulo-header general">
+      <div class="capitulo-icono">🔐</div>
+      <div class="capitulo-titulo">
+        <h2>1. Acceso al Sistema</h2>
+        <p>Inicio de sesión – Todos los roles</p>
+      </div>
+    </div>
+    <div class="cap-body">
+
+      <div class="paso">
+        <div class="paso-num general">1</div>
+        <div class="paso-info">
+          <strong>Abrir el portal</strong>
+          <span>Ingresa a la URL del portal desde cualquier navegador web (Chrome, Firefox, Edge). La página principal mostrará el formulario de acceso con el logo del INTEP.</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num general">2</div>
+        <div class="paso-info">
+          <strong>Ingresar credenciales</strong>
+          <span>Escribe tu <strong>usuario</strong> y <strong>contraseña</strong> en los campos correspondientes. Las credenciales son asignadas por el administrador del sistema.</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num general">3</div>
+        <div class="paso-info">
+          <strong>Hacer clic en "Ingresar"</strong>
+          <span>El sistema verificará tus datos y te redirigirá automáticamente al panel según tu rol (Administrador, Docente o Estudiante).</span>
+        </div>
+      </div>
+
+      <div class="alerta">
+        <strong>Importante:</strong> Después de 5 intentos fallidos, el acceso queda bloqueado por 15 minutos como medida de seguridad. Contacta a secretaría si olvidaste tu contraseña.
+      </div>
+
+      <div class="paso">
+        <div class="paso-num general">4</div>
+        <div class="paso-info">
+          <strong>Cerrar sesión</strong>
+          <span>Siempre cierra sesión al terminar, especialmente en equipos compartidos. El botón de salida está disponible en el menú de navegación.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. DASHBOARD -->
+  <div class="capitulo">
+    <div class="capitulo-header general">
+      <div class="capitulo-icono">🏠</div>
+      <div class="capitulo-titulo">
+        <h2>2. Panel Principal (Dashboard)</h2>
+        <p>Vista general al ingresar al sistema</p>
+      </div>
+    </div>
+    <div class="cap-body">
+
+      <div class="paso">
+        <div class="paso-num general">1</div>
+        <div class="paso-info">
+          <strong>Información de bienvenida</strong>
+          <span>Al ingresar verás tu nombre, rol y un resumen de la información más relevante según tu perfil.</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num general">2</div>
+        <div class="paso-info">
+          <strong>Tarjetas de resumen</strong>
+          <span>El dashboard muestra estadísticas rápidas: para estudiantes (notas, materias aprobadas, promedio), para docentes (módulos asignados, número de estudiantes) y para admins (totales del sistema).</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num general">3</div>
+        <div class="paso-info">
+          <strong>Menú de navegación</strong>
+          <span>El menú lateral o superior permite acceder a todas las secciones disponibles para tu rol.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. ADMINISTRADOR -->
+  <div class="capitulo page-break">
+    <div class="capitulo-header admin">
+      <div class="capitulo-icono">⚙️</div>
+      <div class="capitulo-titulo">
+        <h2>3. Módulo Administrador</h2>
+        <p>Gestión completa del sistema</p>
+      </div>
+    </div>
+    <div class="cap-body">
+
+      <div class="paso">
+        <div class="paso-num admin">1</div>
+        <div class="paso-info">
+          <strong>Gestionar Estudiantes</strong>
+          <span>Crear, editar y desactivar cuentas de estudiantes. Se requiere: nombre completo, número de documento, email, programa y contraseña inicial.</span>
+          <span class="ruta">admin/index.php → Estudiantes</span>
+          <div class="alerta"><strong>Nota:</strong> No se permite registrar dos estudiantes con el mismo número de documento.</div>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num admin">2</div>
+        <div class="paso-info">
+          <strong>Gestionar Docentes</strong>
+          <span>Registrar docentes con sus datos básicos y asignarles credenciales de acceso al sistema.</span>
+          <span class="ruta">admin/index.php → Docentes</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num admin">3</div>
+        <div class="paso-info">
+          <strong>Gestionar Módulos</strong>
+          <span>Crear y administrar los módulos académicos (materias), asignando el docente responsable, bimestre y orden dentro del programa.</span>
+          <span class="ruta">admin/gestionar_modulos.php</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num admin">4</div>
+        <div class="paso-info">
+          <strong>Gestionar Horarios</strong>
+          <span>Asignar y modificar los horarios de clase para cada estudiante según su programa. Se puede seleccionar estudiante y asignar materias con días y horas.</span>
+          <span class="ruta">admin/gestionar_horarios.php</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num admin">5</div>
+        <div class="paso-info">
+          <strong>Ingresar Notas</strong>
+          <span>El administrador puede ingresar o corregir notas de forma manual cuando sea necesario, seleccionando estudiante, módulo y los valores de cada corte.</span>
+          <span class="ruta">admin/ingresar_notas.php</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num admin">6</div>
+        <div class="paso-info">
+          <strong>Módulo de Cartera</strong>
+          <span>Gestionar los cobros y pagos de los estudiantes. Permite crear conceptos de cobro (matrícula, mensualidades, etc.), registrar pagos y ver el estado de cartera de cada estudiante.</span>
+          <span class="ruta">admin/cartera.php</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num admin">7</div>
+        <div class="paso-info">
+          <strong>Limpiar Datos</strong>
+          <span>Opción para eliminar datos de prueba o resetear información del sistema. Usar con precaución.</span>
+          <span class="ruta">admin/limpiar_datos.php</span>
+          <div class="alerta"><strong>Advertencia:</strong> Esta acción puede ser irreversible. Solo usar cuando sea estrictamente necesario.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 4. DOCENTE -->
+  <div class="capitulo page-break">
+    <div class="capitulo-header docente">
+      <div class="capitulo-icono">📚</div>
+      <div class="capitulo-titulo">
+        <h2>4. Módulo Docente</h2>
+        <p>Gestión académica del docente</p>
+      </div>
+    </div>
+    <div class="cap-body">
+
+      <div class="paso">
+        <div class="paso-num docente">1</div>
+        <div class="paso-info">
+          <strong>Ver mis módulos asignados</strong>
+          <span>Al ingresar, el docente puede ver en el dashboard todos los módulos (materias) que tiene a su cargo, con el número de estudiantes en cada uno.</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num docente">2</div>
+        <div class="paso-info">
+          <strong>Gestionar Horarios</strong>
+          <span>El docente tiene acceso para visualizar y gestionar los horarios asignados a sus estudiantes.</span>
+          <span class="ruta">admin/gestionar_horarios.php</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num docente">3</div>
+        <div class="paso-info">
+          <strong>Ver estudiantes por módulo</strong>
+          <span>Puede consultar el listado de estudiantes inscritos en cada módulo que dicta.</span>
+        </div>
+      </div>
+
+      <div class="tip">
+        <strong>Consejo:</strong> El docente puede ver las notas de sus estudiantes pero el ingreso final de notas está gestionado desde el panel de administración.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 5. ESTUDIANTE -->
+  <div class="capitulo page-break">
+    <div class="capitulo-header estudiante">
+      <div class="capitulo-icono">🎒</div>
+      <div class="capitulo-titulo">
+        <h2>5. Módulo Estudiante</h2>
+        <p>Consulta de información académica personal</p>
+      </div>
+    </div>
+    <div class="cap-body">
+
+      <div class="paso">
+        <div class="paso-num estudiante">1</div>
+        <div class="paso-info">
+          <strong>Ver mis Notas</strong>
+          <span>Consulta todas tus calificaciones organizadas por materia y bimestre. Puedes ver tu nota por cortes, nota final y si aprobaste o no el módulo.</span>
+          <span class="ruta">notas.php</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num estudiante">2</div>
+        <div class="paso-info">
+          <strong>Ver mis Horarios</strong>
+          <span>Consulta tu horario de clases semanal con las materias, docentes asignados, días y horas de cada clase.</span>
+          <span class="ruta">horarios.php</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num estudiante">3</div>
+        <div class="paso-info">
+          <strong>Mi Cartera</strong>
+          <span>Consulta el estado de tus pagos: conceptos pendientes, pagos realizados y saldo actual. Puedes ver el detalle de cada cobro.</span>
+          <span class="ruta">mi_cartera.php</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num estudiante">4</div>
+        <div class="paso-info">
+          <strong>Mi Foto</strong>
+          <span>Sección para visualizar o actualizar la foto de perfil del estudiante en el sistema.</span>
+          <span class="ruta">mi_foto.php</span>
+        </div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-num estudiante">5</div>
+        <div class="paso-info">
+          <strong>Solicitudes</strong>
+          <span>Módulo para enviar solicitudes formales a secretaría (certificados, constancias, paz y salvo, etc.).</span>
+          <span class="ruta">solicitudes.php</span>
+        </div>
+      </div>
+
+      <div class="tip">
+        <strong>Consejo:</strong> El promedio general y el estado de aprobación de tus módulos se actualiza automáticamente cada vez que el docente o administrador ingresa una nota.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 6. TABLA DE PERMISOS -->
+  <div class="capitulo page-break">
+    <div class="capitulo-header general">
+      <div class="capitulo-icono">🔑</div>
+      <div class="capitulo-titulo">
+        <h2>6. Tabla de Permisos por Rol</h2>
+        <p>Resumen de acceso a funcionalidades</p>
+      </div>
+    </div>
+    <div class="cap-body">
+      <table>
+        <tr>
+          <th>Funcionalidad</th>
+          <th>Administrador</th>
+          <th>Docente</th>
+          <th>Estudiante</th>
+        </tr>
+        <tr><td>Ver dashboard</td><td class="si">✔ Sí</td><td class="si">✔ Sí</td><td class="si">✔ Sí</td></tr>
+        <tr><td>Gestionar estudiantes</td><td class="si">✔ Sí</td><td class="no">✘ No</td><td class="no">✘ No</td></tr>
+        <tr><td>Gestionar docentes</td><td class="si">✔ Sí</td><td class="no">✘ No</td><td class="no">✘ No</td></tr>
+        <tr><td>Gestionar módulos</td><td class="si">✔ Sí</td><td class="no">✘ No</td><td class="no">✘ No</td></tr>
+        <tr><td>Gestionar horarios</td><td class="si">✔ Sí</td><td class="si">✔ Sí</td><td class="no">✘ No</td></tr>
+        <tr><td>Ingresar notas</td><td class="si">✔ Sí</td><td class="no">✘ No</td><td class="no">✘ No</td></tr>
+        <tr><td>Ver notas propias</td><td class="no">✘ No</td><td class="no">✘ No</td><td class="si">✔ Sí</td></tr>
+        <tr><td>Ver horario propio</td><td class="no">✘ No</td><td class="no">✘ No</td><td class="si">✔ Sí</td></tr>
+        <tr><td>Módulo de cartera (admin)</td><td class="si">✔ Sí</td><td class="no">✘ No</td><td class="no">✘ No</td></tr>
+        <tr><td>Ver mi cartera (estudiante)</td><td class="no">✘ No</td><td class="no">✘ No</td><td class="si">✔ Sí</td></tr>
+        <tr><td>Enviar solicitudes</td><td class="no">✘ No</td><td class="no">✘ No</td><td class="si">✔ Sí</td></tr>
+        <tr><td>Limpiar datos del sistema</td><td class="si">✔ Sí</td><td class="no">✘ No</td><td class="no">✘ No</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 7. CONTACTO -->
+  <div class="contacto-box">
+    <div class="contacto-item">
+      <div class="label">Instituto</div>
+      <div class="valor">INTEP – Madrid, Cundinamarca</div>
+    </div>
+    <div class="contacto-item">
+      <div class="label">Teléfono</div>
+      <div class="valor">322 276 9962</div>
+    </div>
+    <div class="contacto-item">
+      <div class="label">Correo</div>
+      <div class="valor">institutointepmadrid@gmail.com</div>
+    </div>
+    <div class="contacto-item">
+      <div class="label">Ubicación</div>
+      <div class="valor">Ver en Google Maps</div>
+    </div>
+  </div>
+
+  <footer>
+    Manual de Usuario – Portal Estudiantil INTEP &nbsp;·&nbsp; Versión 1.0 &nbsp;·&nbsp; Marzo 2026<br>
+    Documento generado para uso interno del Instituto
+  </footer>
+
+</div>
+</body>
+</html>
