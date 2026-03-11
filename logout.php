@@ -18,7 +18,7 @@ if (ini_get("session.use_cookies")) {
 ?>
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"></head>
+<head><meta charset="UTF-8"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head>
 <body>
 <script>
     sessionStorage.removeItem('loader_visto');
