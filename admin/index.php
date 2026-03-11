@@ -1053,7 +1053,7 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
 <body>
 
 <div class="dashboard-header">
-    <h1>INTEP</h1>
+    <h1><img src="/intep/img/Logo.png" alt="INTEP" height="36"></h1>
     <span class="usuario-info">⚙️ Panel Administrador</span>
     <div style="display:flex; gap:0.5rem; align-items:center;">
         <button onclick="document.getElementById('modal-password-admin').classList.add('activo')" class="btn-salir" style="cursor:pointer; background:rgba(16,185,129,0.1); border-color:#10B981; color:#10B981;">🔐 Mi Contraseña</button>

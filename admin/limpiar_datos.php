@@ -297,7 +297,7 @@ if ($autenticado && $resultado === null) {
 <body>
 
     <div class="dashboard-header">
-        <h1>INTEP</h1>
+        <h1><img src="/intep/img/Logo.png" alt="INTEP" height="36"></h1>
         <span class="usuario-info"><?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?> · Admin</span>
         <a href="../logout.php" class="btn-salir">Cerrar sesión</a>
     </div>

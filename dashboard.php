@@ -499,9 +499,8 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                 gap: 0.5rem;
             }
             
-            .dashboard-header h1 {
-                width: 80px;
-                height: 32px;
+            .dashboard-header h1 img {
+                height: 30px;
             }
             .dashboard-header .usuario-info {
                 font-size: 0.75rem;
@@ -587,9 +586,8 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             .dashboard-header {
                 padding: 0.5rem 0.8rem;
             }
-            .dashboard-header h1 {
-                width: 70px;
-                height: 28px;
+            .dashboard-header h1 img {
+                height: 26px;
             }
             .dashboard-header .usuario-info {
                 font-size: 0.68rem;
@@ -623,7 +621,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
 <body data-rol="<?php echo $_SESSION['usuario_rol'] ?? ''; ?>">
 
     <div class="dashboard-header">
-        <h1>INTEP</h1>
+        <h1><img src="/intep/img/Logo.png" alt="INTEP" height="36"></h1>
         <span class="usuario-info"><?php echo htmlspecialchars($nombre); ?> · <?php echo ucfirst($rol); ?></span>
         <a href="logout.php" class="btn-salir">Cerrar sesión</a>
     </div>

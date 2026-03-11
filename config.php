@@ -43,6 +43,12 @@ if (!$conexion) {
 
 mysqli_set_charset($conexion, 'utf8mb4');
 
+// Forzar charset UTF-8 en toda la conexión MySQL
+mysqli_query($conexion, "SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'");
+mysqli_query($conexion, "SET CHARACTER_SET_RESULTS = 'utf8mb4'");
+mysqli_query($conexion, "SET CHARACTER_SET_CLIENT = 'utf8mb4'");
+mysqli_query($conexion, "SET CHARACTER_SET_CONNECTION = 'utf8mb4'");
+
 // ============================================
 // SESIÓN SEGURA
 // ============================================
