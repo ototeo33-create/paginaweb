@@ -85,9 +85,16 @@ if ($rol !== 'estudiante' && $estudiante_id) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="icon" type="image/svg+xml" href="/intep/favicon/favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horarios – INTEP</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/intep/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/intep/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/intep/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/intep/favicon/site.webmanifest">
+    <link rel="icon" type="image/svg+xml" href="/intep/favicon/favicon.svg">
+    <link rel="shortcut icon" href="/intep/favicon/favicon.ico">
     <link rel="stylesheet" href="/intep/css/estilos.css">
     <style>
         .horario-controles {
