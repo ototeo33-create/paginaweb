@@ -93,12 +93,14 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
 <head>
     <link rel="icon" type="image/svg+xml" href="/intep/favicon/favicon.svg">
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard – INTEP</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/intep/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/intep/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/intep/favicon/favicon-16x16.png">
     <link rel="manifest" href="/intep/favicon/site.webmanifest">
+    <meta name="theme-color" content="#009B48">
     <link rel="icon" type="image/svg+xml" href="/intep/favicon/favicon.svg">
     <link rel="shortcut icon" href="/intep/favicon/favicon.ico">
     <link rel="stylesheet" href="/intep/css/estilos.css">
@@ -498,10 +500,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             }
             
             .dashboard-header h1 {
-                font-size: 1.1rem;
+                width: 80px;
+                height: 32px;
             }
             .dashboard-header .usuario-info {
                 font-size: 0.75rem;
+                max-width: 120px;
             }
         }
 
@@ -581,21 +585,22 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             }
             
             .dashboard-header {
-                padding: 0.8rem 1rem;
+                padding: 0.5rem 0.8rem;
             }
             .dashboard-header h1 {
-                font-size: 1rem;
+                width: 70px;
+                height: 28px;
             }
             .dashboard-header .usuario-info {
-                font-size: 0.7rem;
-                max-width: 120px;
+                font-size: 0.68rem;
+                max-width: 100px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
             .dashboard-header .btn-salir {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.7rem;
+                padding: 0.3rem 0.7rem;
+                font-size: 0.68rem;
             }
         }
 

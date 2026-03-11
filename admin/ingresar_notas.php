@@ -183,12 +183,14 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingresar Notas – INTEP</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/intep/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/intep/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/intep/favicon/favicon-16x16.png">
     <link rel="manifest" href="/intep/favicon/site.webmanifest">
+    <meta name="theme-color" content="#009B48">
     <link rel="icon" type="image/svg+xml" href="/intep/favicon/favicon.svg">
     <link rel="shortcut icon" href="/intep/favicon/favicon.ico">
     <link rel="stylesheet" href="/intep/css/estilos.css">
@@ -253,11 +255,12 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
         /* Lista de estudiantes */
         .tabla-estudiantes {
             background: white; border-radius: 14px;
-            overflow: hidden;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             box-shadow: 0 2px 8px rgba(5,150,105,0.06);
             margin-bottom: 1.5rem;
         }
-        .tabla-estudiantes table { width: 100%; border-collapse: collapse; }
+        .tabla-estudiantes table { width: 100%; border-collapse: collapse; min-width: 600px; }
         .tabla-estudiantes thead { background: #022C22; color: white; }
         .tabla-estudiantes th {
             padding: 0.9rem 1.2rem; text-align: left;
@@ -396,6 +399,17 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
         }
         .sin-datos .icono { font-size: 3rem; margin-bottom: 1rem; }
 
+        /* Scroll hint for mobile tables */
+        .scroll-hint {
+            display: none;
+            text-align: center;
+            font-size: 0.78rem;
+            color: #9CA3AF;
+            padding: 0.4rem 0;
+            margin-top: -0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .evidencias-form { grid-template-columns: 1fr; }
@@ -403,6 +417,10 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
             .resultado-final-form { flex-direction: column; text-align: center; }
             .form-actions { flex-direction: column; }
             .btn-guardar, .btn-cancelar { width: 100%; text-align: center; }
+            .page-container { padding: 0 0.8rem; }
+            .tabla-estudiantes th { padding: 0.7rem 0.8rem; font-size: 0.75rem; white-space: nowrap; }
+            .tabla-estudiantes td { padding: 0.6rem 0.8rem; font-size: 0.85rem; white-space: nowrap; }
+            .scroll-hint { display: block; }
         }
     </style>
 </head>
@@ -578,6 +596,7 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
                         <p>No hay estudiantes activos en este programa.</p>
                     </div>
                 <?php else: ?>
+                    <div class="scroll-hint">👆 Desliza para ver más columnas</div>
                     <div class="tabla-estudiantes">
                         <table>
                             <thead>

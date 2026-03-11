@@ -5,6 +5,13 @@
 
 require_once __DIR__ . '/config_env.php';
 
+// --- Codificación UTF-8 forzada ---
+ini_set('default_charset', 'UTF-8');
+if (function_exists('mb_internal_encoding')) {
+    mb_internal_encoding('UTF-8');
+    mb_http_output('UTF-8');
+}
+
 // --- Base de datos ---
 define('DB_HOST', Config::get('DB_HOST', 'localhost'));
 define('DB_USER', Config::get('DB_USER', 'root'));
@@ -24,6 +31,9 @@ define('SESSION_LIFETIME', (int)Config::get('SESSION_LIFETIME', 7200));
 // ============================================
 // CONEXIÓN A BASE DE DATOS (MySQLi con prepared statements)
 // ============================================
+// Forzar UTF-8 en la salida HTTP
+header('Content-Type: text/html; charset=utf-8');
+
 $conexion = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
 if (!$conexion) {
