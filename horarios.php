@@ -464,7 +464,7 @@ if ($rol !== 'estudiante' && $estudiante_id) {
 <body data-rol="<?php echo $_SESSION['usuario_rol'] ?? ''; ?>">
 
 <div class="dashboard-header">
-    <h1>INTEP</h1>
+    <h1><img src="/intep/img/Logo.png" alt="INTEP" height="36"></h1>
     <span class="usuario-info">📅 Horarios</span>
     <a href="logout.php" class="btn-salir">Cerrar sesión</a>
 </div>

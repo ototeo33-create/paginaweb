@@ -331,16 +331,16 @@ body {
 }
 
 .dashboard-header h1 {
-    font-size: 0;
+    margin: 0;
+    padding: 0;
     line-height: 0;
-    background-image: url('/intep/img/Logo.png');
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: left center;
-    width: 100px;
-    height: 38px;
-    display: inline-block;
     flex-shrink: 0;
+}
+
+.dashboard-header h1 img {
+    height: 36px;
+    width: auto;
+    display: block;
 }
 
 .dashboard-header .usuario-info {
@@ -378,9 +378,8 @@ body {
         gap: 0.5rem;
     }
 
-    .dashboard-header h1 {
-        width: 80px;
-        height: 32px;
+    .dashboard-header h1 img {
+        height: 30px;
     }
 
     .dashboard-header .usuario-info {
@@ -392,7 +391,6 @@ body {
         padding: 0.3rem 0.7rem;
         font-size: 0.72rem;
     }
-}
 }
 
 /* ============================================
@@ -740,9 +738,8 @@ tbody td {
 
 /* Móviles pequeños */
 @media (max-width: 400px) {
-    .dashboard-header h1 {
-        width: 70px;
-        height: 28px;
+    .dashboard-header h1 img {
+        height: 26px;
     }
 
     .dashboard-header .usuario-info {

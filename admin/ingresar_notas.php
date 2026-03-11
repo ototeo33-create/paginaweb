@@ -427,7 +427,7 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
 <body data-rol="<?php echo $_SESSION['usuario_rol'] ?? ''; ?>">
 
     <div class="dashboard-header">
-        <h1>INTEP</h1>
+        <h1><img src="/intep/img/Logo.png" alt="INTEP" height="36"></h1>
         <span class="usuario-info">📝 Ingresar Notas</span>
         <a href="../logout.php" class="btn-salir">Cerrar sesión</a>
     </div>
