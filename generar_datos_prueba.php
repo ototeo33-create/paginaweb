@@ -19,10 +19,10 @@ $usuarios_creados = [];
 echo "1. Verificando/creando programas...\n";
 
 $programas = [
-    ['nombre' => 'Técnico en Sistemas', 'codigo' => 'TS'],
-    ['nombre' => 'Técnico en Contabilidad', 'codigo' => 'TC'],
-    ['nombre' => 'Técnico en Secretariado', 'codigo' => 'TSEC'],
-    ['nombre' => 'Técnico en Alimentación y Hostelería', 'codigo' => 'TAH']
+    ['nombre' => 'Técnico en Sistemas', 'modalidad' => 'presencial', 'duracion_meses' => 10],
+    ['nombre' => 'Técnico en Contabilidad', 'modalidad' => 'presencial', 'duracion_meses' => 10],
+    ['nombre' => 'Técnico en Secretariado', 'modalidad' => 'presencial', 'duracion_meses' => 10],
+    ['nombre' => 'Técnico en Alimentación y Hostelería', 'modalidad' => 'presencial', 'duracion_meses' => 10]
 ];
 
 foreach ($programas as &$prog) {
@@ -32,9 +32,9 @@ foreach ($programas as &$prog) {
     $res = mysqli_stmt_get_result($check);
     
     if (mysqli_num_rows($res) == 0) {
-        $sql = "INSERT INTO programas (nombre, codigo, estado) VALUES (?, ?, 'activo')";
+        $sql = "INSERT INTO programas (nombre, modalidad, duracion_meses) VALUES (?, ?, ?)";
         $stmt = mysqli_prepare($conexion, $sql);
-        mysqli_stmt_bind_param($stmt, 'ss', $prog['nombre'], $prog['codigo']);
+        mysqli_stmt_bind_param($stmt, 'ssi', $prog['nombre'], $prog['modalidad'], $prog['duracion_meses']);
         mysqli_stmt_execute($stmt);
         $prog['id'] = mysqli_insert_id($conexion);
         echo "   ✓ Programa: {$prog['nombre']}\n";
@@ -181,7 +181,8 @@ $estudiantes_creados = [];
 foreach ($programas as $prog) {
     for ($i = 1; $i <= 5; $i++) {
         $nombre = $nombres_est[array_rand($nombres_est)] . ' ' . $apellidos[array_rand($apellidos)];
-        $documento = $prog['codigo'] . str_pad($i, 4, '0', STR_PAD_LEFT) . '25';
+        $codigo_prog = substr(str_replace(' ', '', $prog['nombre']), 0, 4);
+        $documento = strtoupper($codigo_prog) . str_pad($i, 4, '0', STR_PAD_LEFT) . '25';
         $email = strtolower(str_replace(' ', '.', $nombre)) . '@estudiante.intep.edu.co';
         $password = 'estudiante123';
         $passwordHash = hashPassword($password);
@@ -223,22 +224,43 @@ foreach ($programas as $prog) {
 echo "\n6. Creando conceptos de cobro...\n";
 
 $conceptos = [
-    ['nombre' => 'Matrícula Semestral', 'tipo' => 'matricula', 'monto' => 350000],
-    ['nombre' => 'Mensualidad', 'tipo' => 'mensualidad', 'monto' => 180000],
-    ['nombre' => 'Certificado', 'tipo' => 'otro', 'monto' => 25000],
-    ['nombre' => 'Materiales', 'tipo' => 'otro', 'monto' => 85000]
+    ['nombre' => 'Mensualidad', 'tipo' => 'mensualidad', 'monto' => 212000, 'cuotas' => 10, 'desc' => 'Cuota mensual del programa técnico (10 meses)'],
+    ['nombre' => 'Seminario Excel Intermedio', 'tipo' => 'seminario', 'monto' => 320000, 'cuotas' => 1, 'desc' => 'Seminario obligatorio adicional al programa'],
+    ['nombre' => 'Derechos de Grado', 'tipo' => 'otro', 'monto' => 450000, 'cuotas' => 1, 'desc' => 'Ceremonia de grado y celebración (PROM)'],
+    ['nombre' => 'Mensualidad Inglés', 'tipo' => 'mensualidad', 'monto' => 145000, 'cuotas' => 4, 'desc' => 'Cuota mensual del programa de inglés (4 meses por nivel)']
 ];
+
+// Agregar columna num_cuotas si no existe
+mysqli_query($conexion, "ALTER TABLE conceptos_cobro ADD COLUMN num_cuotas INT NOT NULL DEFAULT 1 AFTER tipo");
+
+// Agregar programas de inglés
+$progs_ingles = [
+    ['nombre' => 'Inglés A1', 'modalidad' => 'presencial', 'duracion_meses' => 4],
+    ['nombre' => 'Inglés A2', 'modalidad' => 'presencial', 'duracion_meses' => 4],
+    ['nombre' => 'Inglés B1', 'modalidad' => 'presencial', 'duracion_meses' => 4]
+];
+foreach ($progs_ingles as $pi) {
+    $check = mysqli_prepare($conexion, "SELECT id FROM programas WHERE nombre = ?");
+    mysqli_stmt_bind_param($check, 's', $pi['nombre']);
+    mysqli_stmt_execute($check);
+    $res = mysqli_stmt_get_result($check);
+    if (mysqli_num_rows($res) == 0) {
+        $stmt = mysqli_prepare($conexion, "INSERT INTO programas (nombre, modalidad, duracion_meses) VALUES (?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, 'ssi', $pi['nombre'], $pi['modalidad'], $pi['duracion_meses']);
+        mysqli_stmt_execute($stmt);
+    }
+}
 
 foreach ($conceptos as &$conc) {
     $check = mysqli_prepare($conexion, "SELECT id FROM conceptos_cobro WHERE nombre = ?");
     mysqli_stmt_bind_param($check, 's', $conc['nombre']);
     mysqli_stmt_execute($check);
     $res = mysqli_stmt_get_result($check);
-    
+
     if (mysqli_num_rows($res) == 0) {
-        $sql = "INSERT INTO conceptos_cobro (nombre, descripcion, monto_base, tipo, estado) VALUES (?, ?, ?, ?, 'activo')";
+        $sql = "INSERT INTO conceptos_cobro (nombre, descripcion, monto_base, tipo, num_cuotas, estado) VALUES (?, ?, ?, ?, ?, 'activo')";
         $stmt = mysqli_prepare($conexion, $sql);
-        mysqli_stmt_bind_param($stmt, 'ssds', $conc['nombre'], $conc['nombre'], $conc['monto'], $conc['tipo']);
+        mysqli_stmt_bind_param($stmt, 'ssdsi', $conc['nombre'], $conc['desc'], $conc['monto'], $conc['tipo'], $conc['cuotas']);
         mysqli_stmt_execute($stmt);
         $conc['id'] = mysqli_insert_id($conexion);
     } else {
@@ -254,26 +276,24 @@ echo "   ✓ " . count($conceptos) . " conceptos de cobro\n";
 echo "\n7. Generando cobros para estudiantes...\n";
 
 $cobros_creados = 0;
+$monto_mensualidad = $conceptos[0]['monto']; // $212,000
+$concepto_mensualidad_id = $conceptos[0]['id'];
+
 foreach ($estudiantes_creados as $est) {
-    // Matrícula
-    $sql = "INSERT INTO cobros (estudiante_id, concepto_id, periodo, monto, descuento, total, pagado, saldo, fecha_vencimiento, estado) 
-            VALUES (?, ?, '2026-1', ?, 0, ?, 0, ?, '2026-02-28', 'pendiente')";
-    $stmt = mysqli_prepare($conexion, $sql);
-    mysqli_stmt_bind_param($stmt, 'iiddd', $est['id'], $conceptos[0]['id'], $conceptos[0]['monto'], $conceptos[0]['monto'], $conceptos[0]['monto']);
-    mysqli_stmt_execute($stmt);
-    $cobros_creados++;
-    
-    // Mensualidad
-    for ($mes = 1; $mes <= 3; $mes++) {
-        $sql = "INSERT INTO cobros (estudiante_id, concepto_id, periodo, monto, descuento, total, pagado, saldo, fecha_vencimiento, estado) 
-                VALUES (?, ?, '2026-{$mes}', ?, 0, ?, 0, ?, '2026-03-15', 'pendiente')";
+    // Generar 4 mensualidades de prueba ($212,000 cada una)
+    for ($mes = 1; $mes <= 4; $mes++) {
+        $periodo = sprintf('2026-%02d', $mes);
+        $fecha_venc = date('Y-m-d', strtotime("2026-01-15 +{$mes} months"));
+        $sql = "INSERT INTO cobros (estudiante_id, concepto_id, periodo, monto, descuento, total, pagado, saldo, fecha_vencimiento, estado)
+                VALUES (?, ?, ?, ?, 0, ?, 0, ?, ?, 'pendiente')";
         $stmt = mysqli_prepare($conexion, $sql);
-        mysqli_stmt_bind_param($stmt, 'iiddd', $est['id'], $conceptos[1]['id'], $conceptos[1]['monto'], $conceptos[1]['monto'], $conceptos[1]['monto']);
+        mysqli_stmt_bind_param($stmt, 'iisddds', $est['id'], $concepto_mensualidad_id, $periodo,
+            $monto_mensualidad, $monto_mensualidad, $monto_mensualidad, $fecha_venc);
         mysqli_stmt_execute($stmt);
         $cobros_creados++;
     }
 }
-echo "   ✓ {$cobros_creados} cobros generados\n";
+echo "   ✓ {$cobros_creados} cobros generados (mensualidades $" . number_format($monto_mensualidad, 0, ',', '.') . ")\n";
 
 // ============================================
 // 8. REGISTRAR PAGOS ALEATORIOS
