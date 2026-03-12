@@ -158,7 +158,16 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
         .sin-modulos { text-align: center; padding: 2rem; color: var(--gray); }
         .btn-subir-notas { background: var(--verde); color: white; padding: 0.3rem 0.8rem; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 700; transition: background 0.2s; }
         .btn-subir-notas:hover { background: var(--verde-claro); }
-        @media(max-width:700px) { .grid-2 { grid-template-columns: 1fr; } }
+        @media(max-width:700px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .card { padding: 0.8rem; }
+            .selector-top { padding: 0.8rem; flex-wrap: wrap; gap: 0.5rem; }
+            .dashboard-container { padding: 0.5rem; max-width: 100%; overflow-x: hidden; }
+            table { font-size: 0.78rem; }
+            table td, table th { padding: 0.5rem 0.4rem; }
+            .btn-eliminar { padding: 0.2rem 0.5rem; font-size: 0.7rem; }
+            .btn-subir-notas { padding: 0.2rem 0.5rem; font-size: 0.7rem; }
+        }
     </style>
 </head>
 <body data-rol="<?php echo $_SESSION['usuario_rol'] ?? ''; ?>">
