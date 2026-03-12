@@ -11,132 +11,67 @@ if (!in_array($_SESSION['usuario_rol'], ['admin', 'docente'])) {
     exit;
 }
 
-$mensaje = '';
-$tipo_mensaje = '';
-
-// ===== GUARDAR NOTAS =====
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_notas'])) {
-    $estudiante_id = (int)$_POST['estudiante_id'];
-    $modulo_id = (int)$_POST['modulo_id'];
-    
-    $parcial1 = $_POST['parcial1'] !== '' ? (float)$_POST['parcial1'] : null;
-    $parcial2 = $_POST['parcial2'] !== '' ? (float)$_POST['parcial2'] : null;
-    $producto1 = $_POST['producto1'] !== '' ? (float)$_POST['producto1'] : null;
-    $producto2 = $_POST['producto2'] !== '' ? (float)$_POST['producto2'] : null;
-    $producto3 = $_POST['producto3'] !== '' ? (float)$_POST['producto3'] : null;
-    $desempeno1 = $_POST['desempeno1'] !== '' ? (float)$_POST['desempeno1'] : null;
-    $desempeno2 = $_POST['desempeno2'] !== '' ? (float)$_POST['desempeno2'] : null;
-    $desempeno3 = $_POST['desempeno3'] !== '' ? (float)$_POST['desempeno3'] : null;
-
-    // Calcular promedios
-    $nota_conocimiento = null;
-    if ($parcial1 !== null && $parcial2 !== null) {
-        $nota_conocimiento = round(($parcial1 + $parcial2) / 2, 1);
-    }
-
-    $nota_producto = null;
-    $prods = array_filter([$producto1, $producto2, $producto3], function($v) { return $v !== null; });
-    if (count($prods) > 0) {
-        $nota_producto = round(array_sum($prods) / count($prods), 1);
-    }
-
-    $nota_desempeno = null;
-    $desps = array_filter([$desempeno1, $desempeno2, $desempeno3], function($v) { return $v !== null; });
-    if (count($desps) > 0) {
-        $nota_desempeno = round(array_sum($desps) / count($desps), 1);
-    }
-
-    // Nota final: Conocimiento 30% + Producto 30% + Desempeño 40%
-    $nota_final = null;
-    if ($nota_conocimiento !== null && $nota_producto !== null && $nota_desempeno !== null) {
-        $nota_final = round(($nota_conocimiento * 0.30) + ($nota_producto * 0.30) + ($nota_desempeno * 0.40), 1);
-    }
-
-    $aprobado = ($nota_final !== null && $nota_final >= 3.5) ? 1 : 0;
-
-    // Verificar si ya existe registro
-    $check = mysqli_prepare($conexion, "SELECT id FROM notas WHERE estudiante_id = ? AND modulo_id = ?");
-    mysqli_stmt_bind_param($check, 'ii', $estudiante_id, $modulo_id);
-    mysqli_stmt_execute($check);
-    $existe = mysqli_stmt_get_result($check);
-
-    if (mysqli_num_rows($existe) > 0) {
-        // UPDATE
-        $row = mysqli_fetch_assoc($existe);
-        $sql = "UPDATE notas SET 
-                    parcial1 = ?, parcial2 = ?, nota_conocimiento = ?,
-                    producto1 = ?, producto2 = ?, producto3 = ?, nota_producto = ?,
-                    desempeno1 = ?, desempeno2 = ?, desempeno3 = ?, nota_desempeno = ?,
-                    nota_final = ?, aprobado = ?
-                WHERE id = ?";
-        $stmt = mysqli_prepare($conexion, $sql);
-        $id_nota = $row['id'];
-        mysqli_stmt_bind_param($stmt, 'ddddddddddddii',
-            $parcial1, $parcial2, $nota_conocimiento,
-            $producto1, $producto2, $producto3, $nota_producto,
-            $desempeno1, $desempeno2, $desempeno3, $nota_desempeno,
-            $nota_final, $aprobado, $id_nota
-        );
-    } else {
-        // INSERT
-        $sql = "INSERT INTO notas (estudiante_id, modulo_id, parcial1, parcial2, nota_conocimiento,
-                    producto1, producto2, producto3, nota_producto,
-                    desempeno1, desempeno2, desempeno3, nota_desempeno,
-                    nota_final, aprobado)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = mysqli_prepare($conexion, $sql);
-        mysqli_stmt_bind_param($stmt, 'iiddddddddddddi',
-            $estudiante_id, $modulo_id,
-            $parcial1, $parcial2, $nota_conocimiento,
-            $producto1, $producto2, $producto3, $nota_producto,
-            $desempeno1, $desempeno2, $desempeno3, $nota_desempeno,
-            $nota_final, $aprobado
-        );
-    }
-
-    if ($stmt && mysqli_stmt_execute($stmt)) {
-        $mensaje = '✅ Notas guardadas correctamente.';
-        $tipo_mensaje = 'exito';
-    } else {
-        $mensaje = '❌ Error al guardar: ' . mysqli_error($conexion);
-        $tipo_mensaje = 'error';
-    }
-}
+$es_admin = $_SESSION['usuario_rol'] === 'admin';
+$usuario_id = (int)$_SESSION['usuario_id'];
 
 // ===== OBTENER MÓDULOS =====
 $modulos = [];
-$sql_mod = "SELECT m.id, m.nombre, m.bimestre, m.orden, mat.nombre as materia_nombre, p.nombre as programa_nombre, p.id as programa_id
-            FROM modulos m
-            JOIN materias mat ON m.materia_id = mat.id
-            JOIN programas p ON mat.programa_id = p.id
-            ORDER BY p.nombre, m.bimestre, m.orden";
-$res_mod = mysqli_query($conexion, $sql_mod);
+if ($es_admin) {
+    $sql_mod = "SELECT m.id, m.nombre, m.bimestre, m.orden, mat.nombre as materia_nombre,
+                       p.nombre as programa_nombre, p.id as programa_id, u.username as docente_nombre
+                FROM modulos m
+                JOIN materias mat ON m.materia_id = mat.id
+                JOIN programas p ON mat.programa_id = p.id
+                LEFT JOIN usuarios u ON m.docente_id = u.id
+                ORDER BY p.nombre, m.bimestre, m.orden";
+    $res_mod = mysqli_query($conexion, $sql_mod);
+} else {
+    $sql_mod = "SELECT m.id, m.nombre, m.bimestre, m.orden, mat.nombre as materia_nombre,
+                       p.nombre as programa_nombre, p.id as programa_id, u.username as docente_nombre
+                FROM modulos m
+                JOIN materias mat ON m.materia_id = mat.id
+                JOIN programas p ON mat.programa_id = p.id
+                LEFT JOIN usuarios u ON m.docente_id = u.id
+                WHERE m.docente_id = ?
+                ORDER BY p.nombre, m.bimestre, m.orden";
+    $stmt_mod = mysqli_prepare($conexion, $sql_mod);
+    mysqli_stmt_bind_param($stmt_mod, 'i', $usuario_id);
+    mysqli_stmt_execute($stmt_mod);
+    $res_mod = mysqli_stmt_get_result($stmt_mod);
+}
 while ($row = mysqli_fetch_assoc($res_mod)) {
     $modulos[] = $row;
 }
 
-// ===== OBTENER ESTUDIANTES (si ya seleccionó módulo) =====
+// ===== OBTENER ESTUDIANTES Y DATOS (si ya seleccionó módulo) =====
 $estudiantes = [];
 $modulo_seleccionado = null;
 $notas_existentes = [];
+$asistencia_existente = [];
+$observaciones_existentes = [];
 
 if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
     $modulo_id_sel = (int)$_GET['modulo_id'];
 
-    // Info del módulo
-    $sql_info = "SELECT m.*, mat.nombre as materia_nombre, mat.programa_id, p.nombre as programa_nombre
+    $sql_info = "SELECT m.*, mat.nombre as materia_nombre, mat.programa_id, p.nombre as programa_nombre, u.username as docente_nombre
                  FROM modulos m
                  JOIN materias mat ON m.materia_id = mat.id
                  JOIN programas p ON mat.programa_id = p.id
+                 LEFT JOIN usuarios u ON m.docente_id = u.id
                  WHERE m.id = ?";
     $stmt_info = mysqli_prepare($conexion, $sql_info);
     mysqli_stmt_bind_param($stmt_info, 'i', $modulo_id_sel);
     mysqli_stmt_execute($stmt_info);
     $modulo_seleccionado = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_info));
 
+    // Verificar permiso docente
+    if (!$es_admin && $modulo_seleccionado && $modulo_seleccionado['docente_id'] != $usuario_id) {
+        $modulo_seleccionado = null;
+    }
+
     if ($modulo_seleccionado) {
         // Estudiantes del programa
-        $sql_est = "SELECT id, nombre, documento FROM estudiantes 
+        $sql_est = "SELECT id, nombre, documento FROM estudiantes
                     WHERE programa_id = ? AND estado = 'activo'
                     ORDER BY nombre";
         $stmt_est = mysqli_prepare($conexion, $sql_est);
@@ -147,7 +82,7 @@ if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
             $estudiantes[] = $row;
         }
 
-        // Notas existentes para este módulo
+        // Notas existentes
         $sql_notas = "SELECT * FROM notas WHERE modulo_id = ?";
         $stmt_notas = mysqli_prepare($conexion, $sql_notas);
         mysqli_stmt_bind_param($stmt_notas, 'i', $modulo_id_sel);
@@ -156,26 +91,38 @@ if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
         while ($row = mysqli_fetch_assoc($res_notas)) {
             $notas_existentes[$row['estudiante_id']] = $row;
         }
+
+        // Asistencia existente
+        $sql_asist = "SELECT * FROM asistencia WHERE modulo_id = ?";
+        $stmt_asist = mysqli_prepare($conexion, $sql_asist);
+        mysqli_stmt_bind_param($stmt_asist, 'i', $modulo_id_sel);
+        mysqli_stmt_execute($stmt_asist);
+        $res_asist = mysqli_stmt_get_result($stmt_asist);
+        while ($row = mysqli_fetch_assoc($res_asist)) {
+            $asistencia_existente[$row['estudiante_id']] = $row;
+        }
+
+        // Observaciones existentes
+        $sql_obs = "SELECT o.*, u.username as autor_nombre
+                    FROM observaciones o
+                    JOIN usuarios u ON o.autor_id = u.id
+                    WHERE o.modulo_id = ?
+                    ORDER BY o.fecha DESC";
+        $stmt_obs = mysqli_prepare($conexion, $sql_obs);
+        mysqli_stmt_bind_param($stmt_obs, 'i', $modulo_id_sel);
+        mysqli_stmt_execute($stmt_obs);
+        $res_obs = mysqli_stmt_get_result($stmt_obs);
+        while ($row = mysqli_fetch_assoc($res_obs)) {
+            $observaciones_existentes[$row['estudiante_id']][] = $row;
+        }
     }
 }
 
-// Estudiante seleccionado para editar
-$est_seleccionado = null;
-$nota_actual = null;
-if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
-    $est_id_sel = (int)$_GET['estudiante_id'];
-    $mod_id_sel = (int)$_GET['modulo_id'];
-    
-    // Info estudiante
-    $sql_e = "SELECT id, nombre, documento FROM estudiantes WHERE id = ?";
-    $stmt_e = mysqli_prepare($conexion, $sql_e);
-    mysqli_stmt_bind_param($stmt_e, 'i', $est_id_sel);
-    mysqli_stmt_execute($stmt_e);
-    $est_seleccionado = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_e));
-
-    // Nota existente
-    if (isset($notas_existentes[$est_id_sel])) {
-        $nota_actual = $notas_existentes[$est_id_sel];
+$total_est = count($estudiantes);
+$calificados = 0;
+foreach ($estudiantes as $e) {
+    if (isset($notas_existentes[$e['id']]) && $notas_existentes[$e['id']]['nota_final'] !== null) {
+        $calificados++;
     }
 }
 ?>
@@ -185,7 +132,7 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingresar Notas – INTEP</title>
+    <title>Planilla de Notas - INTEP</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/intep/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/intep/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/intep/favicon/favicon-16x16.png">
@@ -196,9 +143,7 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
     <link rel="stylesheet" href="/intep/css/estilos.css">
     <style>
         body { background: #F0FDF4; }
-
-        .page-container { max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; }
-
+        .page-container { max-width: 1400px; margin: 2rem auto; padding: 0 1.5rem; }
         .page-title {
             font-size: 1.3rem; font-weight: 800; color: #022C22;
             margin-bottom: 1.5rem; padding-bottom: 0.8rem;
@@ -206,221 +151,215 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
             display: flex; align-items: center; gap: 0.5rem;
         }
 
-        /* Alerta */
-        .alerta {
-            padding: 0.9rem 1.2rem; border-radius: 10px;
-            margin-bottom: 1.5rem; font-size: 0.9rem;
-            display: flex; align-items: center; gap: 0.5rem;
-        }
-        .alerta.exito { background: #ECFDF5; color: #065F46; border-left: 4px solid #10B981; }
-        .alerta.error { background: #FEF2F2; color: #991B1B; border-left: 4px solid #EF4444; }
-
-        /* Selector de módulo */
+        /* Selector de modulo */
         .selector-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(12px);
             border-radius: 16px; padding: 1.5rem;
             box-shadow: 0 4px 20px rgba(5,150,105,0.08);
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(16, 185, 129, 0.1);
+            margin-bottom: 1.5rem; border: 1px solid rgba(16,185,129,0.1);
         }
-        .selector-card h3 {
-            font-size: 1rem; color: #059669; margin-bottom: 1rem;
-        }
+        .selector-card h3 { font-size: 1rem; color: #059669; margin-bottom: 1rem; }
         .selector-card select {
             width: 100%; padding: 0.8rem 1rem;
-            border: 2px solid rgba(16, 185, 129, 0.2); border-radius: 10px;
-            font-size: 0.95rem; outline: none;
-            transition: border-color 0.2s;
+            border: 2px solid rgba(16,185,129,0.2); border-radius: 10px;
+            font-size: 0.95rem; outline: none; transition: border-color 0.2s;
             background: rgba(255,255,255,0.8);
         }
         .selector-card select:focus { border-color: #10B981; }
 
-        /* Info del módulo seleccionado */
-        .modulo-info {
+        /* Info del modulo + acciones */
+        .modulo-header {
             background: linear-gradient(135deg, #064E3B, #059669);
             color: white; border-radius: 14px; padding: 1.5rem;
             margin-bottom: 1.5rem;
-            display: flex; justify-content: space-between;
-            align-items: center; flex-wrap: wrap; gap: 1rem;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 1rem;
         }
-        .modulo-info h2 { font-size: 1.2rem; margin: 0; }
-        .modulo-info .mod-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 0.4rem 1rem; border-radius: 20px;
-            font-size: 0.85rem;
+        .modulo-header h2 { font-size: 1.15rem; margin: 0; }
+        .modulo-header .meta { margin: 0.3rem 0 0; opacity: 0.85; font-size: 0.88rem; }
+        .modulo-header .acciones { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+        .mod-badge {
+            background: rgba(255,255,255,0.2); padding: 0.35rem 0.9rem;
+            border-radius: 20px; font-size: 0.82rem;
         }
-
-        /* Lista de estudiantes */
-        .tabla-estudiantes {
-            background: white; border-radius: 14px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            box-shadow: 0 2px 8px rgba(5,150,105,0.06);
-            margin-bottom: 1.5rem;
+        .btn-exportar {
+            background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; text-decoration: none;
         }
-        .tabla-estudiantes table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        .tabla-estudiantes thead { background: #022C22; color: white; }
-        .tabla-estudiantes th {
-            padding: 0.9rem 1.2rem; text-align: left;
-            font-size: 0.8rem; text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .tabla-estudiantes td {
-            padding: 0.8rem 1.2rem; font-size: 0.9rem;
-            border-bottom: 1px solid #D1FAE5;
-        }
-        .tabla-estudiantes tr:last-child td { border-bottom: none; }
-        .tabla-estudiantes tr:hover { background: #F0FDF4; }
-
-        .nota-badge {
-            display: inline-block; padding: 0.2rem 0.7rem;
-            border-radius: 20px; font-size: 0.8rem; font-weight: 600;
-        }
-        .nota-badge.alta { background: #ECFDF5; color: #065F46; }
-        .nota-badge.media { background: #FFFBEB; color: #92400E; }
-        .nota-badge.baja { background: #FEF2F2; color: #991B1B; }
-        .nota-badge.pendiente { background: #ECFDF5; color: #059669; }
-
-        .btn-calificar {
-            padding: 0.4rem 1rem; border-radius: 8px;
-            font-size: 0.82rem; font-weight: 600;
-            text-decoration: none; transition: all 0.2s;
-            display: inline-block;
-            background: #ECFDF5; color: #059669;
-        }
-        .btn-calificar:hover {
-            background: #059669; color: white;
+        .btn-exportar:hover { background: rgba(255,255,255,0.35); }
+        .progreso-badge {
+            background: rgba(255,255,255,0.15); padding: 0.4rem 0.8rem;
+            border-radius: 8px; font-size: 0.82rem;
         }
 
-        /* Formulario de notas */
-        .form-notas {
-            background: white; border-radius: 14px; padding: 2rem;
-            box-shadow: 0 2px 8px rgba(5,150,105,0.06);
-            margin-bottom: 1.5rem;
+        /* Tabs */
+        .tabs-container {
+            background: white; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(5,150,105,0.08);
+            border: 1px solid rgba(16,185,129,0.1);
         }
-        .form-notas h3 {
-            font-size: 1.1rem; color: #022C22; margin-bottom: 0.3rem;
+        .tabs-nav {
+            display: flex; background: #022C22; overflow-x: auto;
         }
-        .form-notas .est-doc {
-            font-size: 0.85rem; color: #9CA3AF; margin-bottom: 1.5rem;
+        .tab-btn {
+            padding: 0.9rem 1.5rem; color: rgba(255,255,255,0.6);
+            font-size: 0.88rem; font-weight: 600; cursor: pointer;
+            border: none; background: none; white-space: nowrap;
+            transition: all 0.2s; border-bottom: 3px solid transparent;
         }
+        .tab-btn:hover { color: rgba(255,255,255,0.85); }
+        .tab-btn.active { color: white; border-bottom-color: #10B981; background: rgba(16,185,129,0.15); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .evidencias-form {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem; margin-bottom: 1.5rem;
+        /* Planilla table */
+        .planilla-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .planilla {
+            width: 100%; border-collapse: collapse; font-size: 0.82rem;
         }
+        .planilla thead { background: #064E3B; color: white; position: sticky; top: 0; z-index: 2; }
+        .planilla th {
+            padding: 0.6rem 0.4rem; text-align: center; font-size: 0.72rem;
+            text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;
+        }
+        .planilla th.col-nombre { text-align: left; min-width: 180px; position: sticky; left: 0; background: #064E3B; z-index: 3; }
+        .planilla th.col-num { width: 30px; }
+        .planilla th.grupo-conocimiento { background: #1E40AF; }
+        .planilla th.grupo-producto { background: #7C3AED; }
+        .planilla th.grupo-desempeno { background: #047857; }
+        .planilla th.col-final { background: #92400E; }
 
-        .ev-bloque {
-            background: #F0FDF4; border-radius: 12px; padding: 1.2rem;
-            border: 2px solid #ECFDF5;
+        .planilla td {
+            padding: 0.3rem; text-align: center; border-bottom: 1px solid #E5E7EB;
+            vertical-align: middle;
         }
-        .ev-bloque h4 {
-            font-size: 0.85rem; text-transform: uppercase;
-            letter-spacing: 0.5px; margin-bottom: 1rem;
-            padding-bottom: 0.5rem; border-bottom: 2px solid #D1FAE5;
+        .planilla td.col-nombre {
+            text-align: left; padding-left: 0.6rem; font-weight: 500;
+            position: sticky; left: 0; background: white; z-index: 1;
+            white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis;
         }
-        .ev-bloque.conocimiento h4 { color: #3B82F6; border-color: #BFDBFE; }
-        .ev-bloque.producto h4 { color: #D946A8; border-color: #F9A8D4; }
-        .ev-bloque.desempeno h4 { color: #10B981; border-color: #6EE7B7; }
+        .planilla tr:hover td { background: #F0FDF4; }
+        .planilla tr:hover td.col-nombre { background: #F0FDF4; }
 
-        .campo-nota {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 0.8rem;
-        }
-        .campo-nota label {
-            font-size: 0.88rem; color: #4B5563;
-        }
-        .campo-nota input {
-            width: 80px; padding: 0.5rem 0.7rem;
-            border: 2px solid #D1FAE5; border-radius: 8px;
-            font-size: 0.95rem; text-align: center;
+        .planilla input[type="number"] {
+            width: 48px; padding: 0.35rem 0.2rem; text-align: center;
+            border: 1.5px solid #E5E7EB; border-radius: 6px; font-size: 0.82rem;
             outline: none; transition: border-color 0.2s;
         }
-        .campo-nota input:focus { border-color: #10B981; }
+        .planilla input[type="number"]:focus { border-color: #10B981; box-shadow: 0 0 0 2px rgba(16,185,129,0.15); }
+        .planilla input[type="number"].modified { border-color: #F59E0B; background: #FFFBEB; }
 
-        .ev-resultado {
-            display: flex; justify-content: space-between;
-            align-items: center; padding-top: 0.8rem;
-            margin-top: 0.5rem; border-top: 2px solid #D1FAE5;
-            font-weight: 700;
-        }
-        .ev-resultado .auto-calc {
-            font-size: 1.1rem; color: #059669;
-        }
+        .calc-cell { font-weight: 700; font-size: 0.85rem; color: #374151; }
+        .calc-cell.conocimiento { color: #1E40AF; }
+        .calc-cell.producto { color: #7C3AED; }
+        .calc-cell.desempeno { color: #047857; }
+        .nota-final-cell { font-weight: 800; font-size: 0.9rem; }
+        .nota-final-cell.aprobado { color: #059669; }
+        .nota-final-cell.reprobado { color: #EF4444; }
+        .nota-final-cell.pendiente { color: #9CA3AF; }
 
-        /* Resultado final form */
-        .resultado-final-form {
-            background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
-            border-radius: 12px; padding: 1.2rem 1.5rem;
-            display: flex; justify-content: space-between;
-            align-items: center; flex-wrap: wrap; gap: 1rem;
-            margin-bottom: 1.5rem;
-            border: 2px solid #A7F3D0;
+        .estado-cell .badge {
+            display: inline-block; padding: 0.15rem 0.5rem; border-radius: 10px;
+            font-size: 0.72rem; font-weight: 600;
         }
-        .resultado-final-form .nota-grande {
-            font-size: 2rem; font-weight: 800; color: #059669;
-        }
-        .resultado-final-form .formula {
-            font-size: 0.82rem; color: #7C6B99;
+        .badge.aprobado { background: #ECFDF5; color: #065F46; }
+        .badge.reprobado { background: #FEF2F2; color: #991B1B; }
+        .badge.pendiente { background: #F3F4F6; color: #6B7280; }
+
+        /* Grupo headers row */
+        .planilla .grupo-header th {
+            padding: 0.4rem; font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Botones */
+        /* Boton guardar flotante */
+        .save-bar {
+            padding: 1rem 1.5rem; background: #F0FDF4; border-top: 2px solid #D1FAE5;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .save-bar .info { font-size: 0.85rem; color: #6B7280; }
+        .save-bar .info .unsaved { color: #F59E0B; font-weight: 600; }
         .btn-guardar {
-            padding: 0.9rem 2rem;
+            padding: 0.7rem 1.8rem;
             background: linear-gradient(135deg, #059669, #10B981);
             color: white; border: none; border-radius: 10px;
-            font-size: 1rem; font-weight: 700;
+            font-size: 0.95rem; font-weight: 700;
             cursor: pointer; transition: all 0.3s;
         }
-        .btn-guardar:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(5,150,105,0.3);
-        }
+        .btn-guardar:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(5,150,105,0.3); }
+        .btn-guardar:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .btn-cancelar {
-            padding: 0.9rem 2rem;
-            background: white; color: #6B7280;
-            border: 2px solid #D1FAE5; border-radius: 10px;
-            font-size: 1rem; font-weight: 600;
-            cursor: pointer; transition: all 0.2s;
-            text-decoration: none; display: inline-block;
-        }
-        .btn-cancelar:hover { border-color: #A7F3D0; color: #059669; }
+        /* Asistencia table */
+        .planilla-asist input[type="number"] { width: 60px; }
+        .porcentaje-cell { font-weight: 700; }
+        .porcentaje-cell.alta { color: #059669; }
+        .porcentaje-cell.media { color: #F59E0B; }
+        .porcentaje-cell.baja { color: #EF4444; }
 
-        .form-actions {
-            display: flex; gap: 1rem; align-items: center;
+        /* Observaciones */
+        .obs-list { padding: 1.5rem; }
+        .obs-estudiante {
+            border: 1px solid #E5E7EB; border-radius: 12px;
+            margin-bottom: 1rem; overflow: hidden;
         }
+        .obs-header {
+            background: #F9FAFB; padding: 0.8rem 1.2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .obs-header:hover { background: #F0FDF4; }
+        .obs-header .nombre { font-weight: 600; font-size: 0.9rem; color: #1F2937; }
+        .obs-header .count { font-size: 0.8rem; color: #9CA3AF; }
+        .obs-body { display: none; padding: 1rem 1.2rem; border-top: 1px solid #E5E7EB; }
+        .obs-body.open { display: block; }
+        .obs-form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .obs-form textarea {
+            flex: 1; padding: 0.6rem 0.8rem; border: 2px solid #E5E7EB;
+            border-radius: 8px; font-size: 0.85rem; resize: vertical;
+            min-height: 60px; outline: none; font-family: inherit;
+        }
+        .obs-form textarea:focus { border-color: #10B981; }
+        .obs-form .btn-obs {
+            padding: 0.6rem 1rem; background: #059669; color: white;
+            border: none; border-radius: 8px; font-size: 0.82rem;
+            font-weight: 600; cursor: pointer; align-self: flex-end;
+            white-space: nowrap;
+        }
+        .obs-form .btn-obs:hover { background: #047857; }
+        .obs-historial { max-height: 300px; overflow-y: auto; }
+        .obs-item {
+            padding: 0.6rem 0; border-bottom: 1px solid #F3F4F6;
+            font-size: 0.85rem;
+        }
+        .obs-item:last-child { border-bottom: none; }
+        .obs-item .obs-meta { font-size: 0.75rem; color: #9CA3AF; margin-top: 0.2rem; }
+        .obs-item .obs-texto { color: #374151; }
 
-        /* Sin estudiantes */
-        .sin-datos {
-            text-align: center; padding: 3rem; color: #9CA3AF;
+        /* Alerta toast */
+        .toast {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;
+            padding: 0.9rem 1.5rem; border-radius: 12px; font-size: 0.9rem;
+            font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transform: translateY(100px); opacity: 0; transition: all 0.3s;
         }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.exito { background: #059669; color: white; }
+        .toast.error { background: #EF4444; color: white; }
+
+        /* Sin datos */
+        .sin-datos { text-align: center; padding: 3rem; color: #9CA3AF; }
         .sin-datos .icono { font-size: 3rem; margin-bottom: 1rem; }
-
-        /* Scroll hint for mobile tables */
-        .scroll-hint {
-            display: none;
-            text-align: center;
-            font-size: 0.78rem;
-            color: #9CA3AF;
-            padding: 0.4rem 0;
-            margin-top: -0.5rem;
-            margin-bottom: 0.5rem;
-        }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .evidencias-form { grid-template-columns: 1fr; }
-            .modulo-info { flex-direction: column; text-align: center; }
-            .resultado-final-form { flex-direction: column; text-align: center; }
-            .form-actions { flex-direction: column; }
-            .btn-guardar, .btn-cancelar { width: 100%; text-align: center; }
-            .page-container { padding: 0 0.8rem; }
-            .tabla-estudiantes th { padding: 0.7rem 0.8rem; font-size: 0.75rem; white-space: nowrap; }
-            .tabla-estudiantes td { padding: 0.6rem 0.8rem; font-size: 0.85rem; white-space: nowrap; }
-            .scroll-hint { display: block; }
+            .page-container { padding: 0 0.5rem; }
+            .modulo-header { flex-direction: column; text-align: center; }
+            .modulo-header .acciones { justify-content: center; }
+            .tab-btn { padding: 0.7rem 1rem; font-size: 0.8rem; }
+            .planilla input[type="number"] { width: 40px; padding: 0.3rem 0.1rem; font-size: 0.78rem; }
+            .planilla th, .planilla td { padding: 0.25rem 0.2rem; }
+            .obs-form { flex-direction: column; }
         }
     </style>
 </head>
@@ -428,30 +367,22 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
 
     <div class="dashboard-header">
         <h1><img src="/intep/img/Logo.png" alt="INTEP" height="36"></h1>
-        <span class="usuario-info">📝 Ingresar Notas</span>
-        <a href="../logout.php" class="btn-salir">Cerrar sesión</a>
+        <span class="usuario-info">Planilla de Notas</span>
+        <a href="../logout.php" class="btn-salir">Cerrar sesion</a>
     </div>
 
     <div class="page-container">
+        <a href="../dashboard.php" class="btn-volver">&larr; Volver al inicio</a>
+        <div class="page-title">Planilla de Notas y Asistencia</div>
 
-        <a href="../dashboard.php" class="btn-volver">← Volver al inicio</a>
-
-        <div class="page-title">📝 Ingresar Notas</div>
-
-        <?php if ($mensaje): ?>
-            <div class="alerta <?php echo $tipo_mensaje; ?>">
-                <?php echo $mensaje; ?>
-            </div>
-        <?php endif; ?>
-
-        <!-- ===== PASO 1: Seleccionar Módulo ===== -->
+        <!-- Selector de modulo -->
         <div class="selector-card">
-            <h3>📚 Seleccionar Módulo</h3>
+            <h3>Seleccionar Modulo</h3>
             <select onchange="if(this.value) window.location='?modulo_id='+this.value">
-                <option value="">— Selecciona un módulo —</option>
-                <?php 
+                <option value="">-- Selecciona un modulo --</option>
+                <?php
                 $prog_actual = '';
-                foreach ($modulos as $mod): 
+                foreach ($modulos as $mod):
                     if ($mod['programa_nombre'] !== $prog_actual):
                         if ($prog_actual !== '') echo '</optgroup>';
                         $prog_actual = $mod['programa_nombre'];
@@ -460,7 +391,7 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
                 ?>
                     <option value="<?php echo $mod['id']; ?>"
                         <?php echo (isset($_GET['modulo_id']) && $_GET['modulo_id'] == $mod['id']) ? 'selected' : ''; ?>>
-                        Bim. <?php echo $mod['bimestre']; ?> — <?php echo htmlspecialchars($mod['nombre']); ?> (<?php echo htmlspecialchars($mod['materia_nombre']); ?>)
+                        Bim. <?php echo $mod['bimestre']; ?> -- <?php echo htmlspecialchars($mod['nombre']); ?> (<?php echo htmlspecialchars($mod['materia_nombre']); ?>)
                     </option>
                 <?php endforeach; ?>
                 <?php if ($prog_actual !== '') echo '</optgroup>'; ?>
@@ -469,265 +400,451 @@ if (isset($_GET['estudiante_id']) && isset($_GET['modulo_id'])) {
 
         <?php if ($modulo_seleccionado): ?>
 
-            <!-- Info del módulo -->
-            <div class="modulo-info">
+            <!-- Header del modulo -->
+            <div class="modulo-header">
                 <div>
-                    <h2>📘 <?php echo htmlspecialchars($modulo_seleccionado['nombre']); ?></h2>
-                    <p style="margin:0.3rem 0 0;opacity:0.8;font-size:0.9rem;">
-                        <?php echo htmlspecialchars($modulo_seleccionado['materia_nombre']); ?> · 
+                    <h2><?php echo htmlspecialchars($modulo_seleccionado['nombre']); ?></h2>
+                    <p class="meta">
+                        <?php echo htmlspecialchars($modulo_seleccionado['materia_nombre']); ?> &middot;
                         <?php echo htmlspecialchars($modulo_seleccionado['programa_nombre']); ?>
+                        <?php if ($modulo_seleccionado['docente_nombre']): ?>
+                            &middot; Docente: <?php echo htmlspecialchars($modulo_seleccionado['docente_nombre']); ?>
+                        <?php endif; ?>
                     </p>
                 </div>
-                <span class="mod-badge">Bimestre <?php echo $modulo_seleccionado['bimestre']; ?></span>
+                <div class="acciones">
+                    <span class="progreso-badge"><?php echo $calificados; ?>/<?php echo $total_est; ?> calificados</span>
+                    <span class="mod-badge">Bimestre <?php echo $modulo_seleccionado['bimestre']; ?></span>
+                    <a href="exportar_notas.php?modulo_id=<?php echo $modulo_id_sel; ?>" class="btn-exportar">Exportar Excel</a>
+                </div>
             </div>
 
-            <?php if ($est_seleccionado): ?>
-
-                <!-- ===== FORMULARIO DE NOTAS ===== -->
-                <form method="POST" action="?modulo_id=<?php echo $modulo_id_sel; ?>" class="form-notas" id="form-notas">
-                    <input type="hidden" name="guardar_notas" value="1">
-                    <input type="hidden" name="estudiante_id" value="<?php echo $est_seleccionado['id']; ?>">
-                    <input type="hidden" name="modulo_id" value="<?php echo $modulo_id_sel; ?>">
-
-                    <h3>👤 <?php echo htmlspecialchars($est_seleccionado['nombre']); ?></h3>
-                    <p class="est-doc">Doc: <?php echo htmlspecialchars($est_seleccionado['documento']); ?></p>
-
-                    <div class="evidencias-form">
-                        <!-- Conocimiento 30% -->
-                        <div class="ev-bloque conocimiento">
-                            <h4>📝 Conocimiento (30%)</h4>
-                            <div class="campo-nota">
-                                <label>Parcial 1 (sem.4)</label>
-                                <input type="number" step="0.1" min="0" max="5" name="parcial1" class="nota-input"
-                                    data-grupo="conocimiento"
-                                    value="<?php echo $nota_actual['parcial1'] ?? ''; ?>">
-                            </div>
-                            <div class="campo-nota">
-                                <label>Parcial 2 (sem.8)</label>
-                                <input type="number" step="0.1" min="0" max="5" name="parcial2" class="nota-input"
-                                    data-grupo="conocimiento"
-                                    value="<?php echo $nota_actual['parcial2'] ?? ''; ?>">
-                            </div>
-                            <div class="ev-resultado">
-                                <span>Promedio</span>
-                                <span class="auto-calc" id="prom-conocimiento">—</span>
-                            </div>
-                        </div>
-
-                        <!-- Producto 30% -->
-                        <div class="ev-bloque producto">
-                            <h4>📂 Producto (30%)</h4>
-                            <div class="campo-nota">
-                                <label>Trabajo 1</label>
-                                <input type="number" step="0.1" min="0" max="5" name="producto1" class="nota-input"
-                                    data-grupo="producto"
-                                    value="<?php echo $nota_actual['producto1'] ?? ''; ?>">
-                            </div>
-                            <div class="campo-nota">
-                                <label>Trabajo 2</label>
-                                <input type="number" step="0.1" min="0" max="5" name="producto2" class="nota-input"
-                                    data-grupo="producto"
-                                    value="<?php echo $nota_actual['producto2'] ?? ''; ?>">
-                            </div>
-                            <div class="campo-nota">
-                                <label>Trabajo 3</label>
-                                <input type="number" step="0.1" min="0" max="5" name="producto3" class="nota-input"
-                                    data-grupo="producto"
-                                    value="<?php echo $nota_actual['producto3'] ?? ''; ?>">
-                            </div>
-                            <div class="ev-resultado">
-                                <span>Promedio</span>
-                                <span class="auto-calc" id="prom-producto">—</span>
-                            </div>
-                        </div>
-
-                        <!-- Desempeño 40% -->
-                        <div class="ev-bloque desempeno">
-                            <h4>🔧 Desempeño (40%)</h4>
-                            <div class="campo-nota">
-                                <label>Taller 1</label>
-                                <input type="number" step="0.1" min="0" max="5" name="desempeno1" class="nota-input"
-                                    data-grupo="desempeno"
-                                    value="<?php echo $nota_actual['desempeno1'] ?? ''; ?>">
-                            </div>
-                            <div class="campo-nota">
-                                <label>Taller 2</label>
-                                <input type="number" step="0.1" min="0" max="5" name="desempeno2" class="nota-input"
-                                    data-grupo="desempeno"
-                                    value="<?php echo $nota_actual['desempeno2'] ?? ''; ?>">
-                            </div>
-                            <div class="campo-nota">
-                                <label>Taller 3</label>
-                                <input type="number" step="0.1" min="0" max="5" name="desempeno3" class="nota-input"
-                                    data-grupo="desempeno"
-                                    value="<?php echo $nota_actual['desempeno3'] ?? ''; ?>">
-                            </div>
-                            <div class="ev-resultado">
-                                <span>Promedio</span>
-                                <span class="auto-calc" id="prom-desempeno">—</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Resultado final -->
-                    <div class="resultado-final-form">
-                        <div>
-                            <span class="formula">Conocimiento (30%) + Producto (30%) + Desempeño (40%)</span>
-                            <div style="margin-top:0.3rem;">
-                                <span style="font-size:0.9rem;color:#7C6B99;">Nota Final:</span>
-                                <span class="nota-grande" id="nota-final-calc">—</span>
-                            </div>
-                        </div>
-                        <div id="estado-badge" style="font-size:1rem;">⏳ Pendiente</div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn-guardar">💾 Guardar Notas</button>
-                        <a href="?modulo_id=<?php echo $modulo_id_sel; ?>" class="btn-cancelar">Cancelar</a>
-                    </div>
-                </form>
-
+            <?php if (empty($estudiantes)): ?>
+                <div class="sin-datos">
+                    <div class="icono">&#128101;</div>
+                    <p>No hay estudiantes activos en este programa.</p>
+                </div>
             <?php else: ?>
 
-                <!-- ===== PASO 2: Lista de Estudiantes ===== -->
-                <?php if (empty($estudiantes)): ?>
-                    <div class="sin-datos">
-                        <div class="icono">👥</div>
-                        <p>No hay estudiantes activos en este programa.</p>
+                <!-- Tabs -->
+                <div class="tabs-container">
+                    <div class="tabs-nav">
+                        <button class="tab-btn active" data-tab="calificaciones">Calificaciones</button>
+                        <button class="tab-btn" data-tab="asistencia">Asistencia</button>
+                        <button class="tab-btn" data-tab="observaciones">Observaciones</button>
                     </div>
-                <?php else: ?>
-                    <div class="scroll-hint">👆 Desliza para ver más columnas</div>
-                    <div class="tabla-estudiantes">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Estudiante</th>
-                                    <th>Documento</th>
-                                    <th>Nota Final</th>
-                                    <th>Estado</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($estudiantes as $est): 
-                                    $nota_est = $notas_existentes[$est['id']] ?? null;
-                                    $nf = $nota_est['nota_final'] ?? null;
-                                ?>
-                                <tr>
-                                    <td><strong><?php echo htmlspecialchars($est['nombre']); ?></strong></td>
-                                    <td><?php echo htmlspecialchars($est['documento']); ?></td>
-                                    <td>
-                                        <?php if ($nf !== null && $nf > 0): ?>
-                                            <span class="nota-badge <?php echo $nf >= 3.5 ? 'alta' : ($nf >= 3.0 ? 'media' : 'baja'); ?>">
-                                                <?php echo number_format($nf, 1); ?>
-                                            </span>
-                                        <?php else: ?>
-                                            <span class="nota-badge pendiente">Sin nota</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if ($nf !== null && $nf > 0): ?>
-                                            <?php echo $nf >= 3.5 ? '✅ Aprobado' : '❌ Reprobado'; ?>
-                                        <?php else: ?>
-                                            ⏳ Pendiente
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <a href="?modulo_id=<?php echo $modulo_id_sel; ?>&estudiante_id=<?php echo $est['id']; ?>"
-                                           class="btn-calificar">
-                                            <?php echo $nota_est ? '✏️ Editar' : '📝 Calificar'; ?>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+
+                    <!-- ===== TAB CALIFICACIONES ===== -->
+                    <div class="tab-content active" id="tab-calificaciones">
+                        <div class="planilla-wrapper">
+                            <table class="planilla" id="planilla-notas">
+                                <thead>
+                                    <tr class="grupo-header">
+                                        <th colspan="2"></th>
+                                        <th colspan="3" class="grupo-conocimiento">Conocimiento (30%)</th>
+                                        <th colspan="4" class="grupo-producto">Producto (30%)</th>
+                                        <th colspan="4" class="grupo-desempeno">Desempe&ntilde;o (40%)</th>
+                                        <th colspan="2" class="col-final">Resultado</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-num">N&deg;</th>
+                                        <th class="col-nombre">Estudiante</th>
+                                        <th class="grupo-conocimiento">P1</th>
+                                        <th class="grupo-conocimiento">P2</th>
+                                        <th class="grupo-conocimiento">EC</th>
+                                        <th class="grupo-producto">T1</th>
+                                        <th class="grupo-producto">T2</th>
+                                        <th class="grupo-producto">T3</th>
+                                        <th class="grupo-producto">EP</th>
+                                        <th class="grupo-desempeno">D1</th>
+                                        <th class="grupo-desempeno">D2</th>
+                                        <th class="grupo-desempeno">D3</th>
+                                        <th class="grupo-desempeno">ED</th>
+                                        <th class="col-final">Final</th>
+                                        <th class="col-final">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($estudiantes as $i => $est):
+                                        $n = $notas_existentes[$est['id']] ?? [];
+                                        $nf = $n['nota_final'] ?? null;
+                                    ?>
+                                    <tr data-estudiante-id="<?php echo $est['id']; ?>">
+                                        <td><?php echo $i + 1; ?></td>
+                                        <td class="col-nombre" title="<?php echo htmlspecialchars($est['nombre']); ?>">
+                                            <?php echo htmlspecialchars($est['nombre']); ?>
+                                        </td>
+                                        <td><input type="number" step="0.1" min="0" max="5" class="nota-input" data-field="parcial1" value="<?php echo $n['parcial1'] ?? ''; ?>"></td>
+                                        <td><input type="number" step="0.1" min="0" max="5" class="nota-input" data-field="parcial2" value="<?php echo $n['parcial2'] ?? ''; ?>"></td>
+                                        <td class="calc-cell conocimiento" data-calc="ec">--</td>
+                                        <td><input type="number" step="0.1" min="0" max="5" class="nota-input" data-field="producto1" value="<?php echo $n['producto1'] ?? ''; ?>"></td>
+                                        <td><input type="number" step="0.1" min="0" max="5" class="nota-input" data-field="producto2" value="<?php echo $n['producto2'] ?? ''; ?>"></td>
+                                        <td><input type="number" step="0.1" min="0" max="5" class="nota-input" data-field="producto3" value="<?php echo $n['producto3'] ?? ''; ?>"></td>
+                                        <td class="calc-cell producto" data-calc="ep">--</td>
+                                        <td><input type="number" step="0.1" min="0" max="5" class="nota-input" data-field="desempeno1" value="<?php echo $n['desempeno1'] ?? ''; ?>"></td>
+                                        <td><input type="number" step="0.1" min="0" max="5" class="nota-input" data-field="desempeno2" value="<?php echo $n['desempeno2'] ?? ''; ?>"></td>
+                                        <td><input type="number" step="0.1" min="0" max="5" class="nota-input" data-field="desempeno3" value="<?php echo $n['desempeno3'] ?? ''; ?>"></td>
+                                        <td class="calc-cell desempeno" data-calc="ed">--</td>
+                                        <td class="nota-final-cell <?php echo $nf !== null ? ($nf >= 3.5 ? 'aprobado' : 'reprobado') : 'pendiente'; ?>" data-calc="final">
+                                            <?php echo $nf !== null ? number_format($nf, 1) : '--'; ?>
+                                        </td>
+                                        <td class="estado-cell">
+                                            <?php if ($nf !== null): ?>
+                                                <span class="badge <?php echo $nf >= 3.5 ? 'aprobado' : 'reprobado'; ?>">
+                                                    <?php echo $nf >= 3.5 ? 'Aprobado' : 'Reprobado'; ?>
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="badge pendiente">Pendiente</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="save-bar">
+                            <div class="info">
+                                <span id="unsaved-count"></span>
+                            </div>
+                            <button class="btn-guardar" id="btn-guardar-notas" onclick="guardarNotas()">Guardar Notas</button>
+                        </div>
                     </div>
-                <?php endif; ?>
+
+                    <!-- ===== TAB ASISTENCIA ===== -->
+                    <div class="tab-content" id="tab-asistencia">
+                        <div class="planilla-wrapper">
+                            <table class="planilla planilla-asist" id="planilla-asistencia">
+                                <thead>
+                                    <tr>
+                                        <th class="col-num">N&deg;</th>
+                                        <th class="col-nombre">Estudiante</th>
+                                        <th>Total Clases</th>
+                                        <th>Asistencias</th>
+                                        <th>Inasistencias</th>
+                                        <th>% Asistencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($estudiantes as $i => $est):
+                                        $a = $asistencia_existente[$est['id']] ?? [];
+                                    ?>
+                                    <tr data-estudiante-id="<?php echo $est['id']; ?>">
+                                        <td><?php echo $i + 1; ?></td>
+                                        <td class="col-nombre"><?php echo htmlspecialchars($est['nombre']); ?></td>
+                                        <td><input type="number" min="0" max="200" class="asist-input" data-field="total_clases" value="<?php echo $a['total_clases'] ?? ''; ?>"></td>
+                                        <td><input type="number" min="0" max="200" class="asist-input" data-field="total_asistencias" value="<?php echo $a['total_asistencias'] ?? ''; ?>"></td>
+                                        <td class="calc-cell" data-calc="inasistencias">
+                                            <?php
+                                            if (isset($a['total_inasistencias'])) echo $a['total_inasistencias'];
+                                            else echo '--';
+                                            ?>
+                                        </td>
+                                        <td class="porcentaje-cell <?php
+                                            $p = $a['porcentaje_asistencia'] ?? null;
+                                            echo $p !== null ? ($p >= 80 ? 'alta' : ($p >= 60 ? 'media' : 'baja')) : '';
+                                        ?>" data-calc="porcentaje">
+                                            <?php echo $p !== null ? number_format($p, 1) . '%' : '--'; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="save-bar">
+                            <div class="info"></div>
+                            <button class="btn-guardar" id="btn-guardar-asist" onclick="guardarAsistencia()">Guardar Asistencia</button>
+                        </div>
+                    </div>
+
+                    <!-- ===== TAB OBSERVACIONES ===== -->
+                    <div class="tab-content" id="tab-observaciones">
+                        <div class="obs-list">
+                            <?php foreach ($estudiantes as $i => $est):
+                                $obs = $observaciones_existentes[$est['id']] ?? [];
+                            ?>
+                            <div class="obs-estudiante" data-estudiante-id="<?php echo $est['id']; ?>">
+                                <div class="obs-header" onclick="toggleObs(this)">
+                                    <span class="nombre"><?php echo ($i+1) . '. ' . htmlspecialchars($est['nombre']); ?></span>
+                                    <span class="count" data-obs-count="<?php echo $est['id']; ?>"><?php echo count($obs); ?> observacion(es)</span>
+                                </div>
+                                <div class="obs-body">
+                                    <div class="obs-form">
+                                        <textarea placeholder="Escribir observacion..." id="obs-text-<?php echo $est['id']; ?>"></textarea>
+                                        <button class="btn-obs" onclick="guardarObservacion(<?php echo $est['id']; ?>)">Agregar</button>
+                                    </div>
+                                    <div class="obs-historial" id="obs-hist-<?php echo $est['id']; ?>">
+                                        <?php foreach ($obs as $o): ?>
+                                        <div class="obs-item">
+                                            <div class="obs-texto"><?php echo htmlspecialchars($o['observacion']); ?></div>
+                                            <div class="obs-meta"><?php echo htmlspecialchars($o['autor_nombre']); ?> &middot; <?php echo date('d/m/Y H:i', strtotime($o['fecha'])); ?></div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php if (empty($obs)): ?>
+                                            <p style="color:#9CA3AF;font-size:0.85rem;text-align:center;">Sin observaciones</p>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                </div><!-- tabs-container -->
 
             <?php endif; ?>
 
         <?php else: ?>
             <div class="sin-datos">
-                <div class="icono">📋</div>
-                <p>Selecciona un módulo para ver los estudiantes y calificar.</p>
+                <div class="icono">&#128203;</div>
+                <p>Selecciona un modulo para ver la planilla de notas.</p>
             </div>
         <?php endif; ?>
-
     </div>
 
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
     <script>
-    // ===== CÁLCULO AUTOMÁTICO DE NOTAS =====
-    function calcularPromedios() {
-        var inputs = document.querySelectorAll('.nota-input');
-        var grupos = { conocimiento: [], producto: [], desempeno: [] };
+    var MODULO_ID = <?php echo $modulo_id_sel ?? 0; ?>;
+    var unsavedNotas = 0;
 
-        inputs.forEach(function(input) {
-            var grupo = input.getAttribute('data-grupo');
-            var val = parseFloat(input.value);
-            if (!isNaN(val) && val >= 0 && val <= 5) {
-                grupos[grupo].push(val);
-            }
+    // ===== TABS =====
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            btn.classList.add('active');
+            document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
         });
+    });
 
-        // Promedios por grupo
-        var promConoc = grupos.conocimiento.length > 0
-            ? (grupos.conocimiento.reduce(function(a,b){return a+b}, 0) / grupos.conocimiento.length).toFixed(1)
-            : null;
-        var promProd = grupos.producto.length > 0
-            ? (grupos.producto.reduce(function(a,b){return a+b}, 0) / grupos.producto.length).toFixed(1)
-            : null;
-        var promDesemp = grupos.desempeno.length > 0
-            ? (grupos.desempeno.reduce(function(a,b){return a+b}, 0) / grupos.desempeno.length).toFixed(1)
-            : null;
+    // ===== TOAST =====
+    function showToast(msg, tipo) {
+        var t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast ' + tipo + ' show';
+        setTimeout(function() { t.classList.remove('show'); }, 3000);
+    }
 
-        document.getElementById('prom-conocimiento').textContent = promConoc !== null ? promConoc : '—';
-        document.getElementById('prom-producto').textContent = promProd !== null ? promProd : '—';
-        document.getElementById('prom-desempeno').textContent = promDesemp !== null ? promDesemp : '—';
+    // ===== CALCULO AUTOMATICO NOTAS =====
+    function calcularFila(row) {
+        var get = function(field) {
+            var inp = row.querySelector('input[data-field="' + field + '"]');
+            var v = inp ? parseFloat(inp.value) : NaN;
+            return (!isNaN(v) && v >= 0 && v <= 5) ? v : null;
+        };
 
-        // Nota final
-        var notaFinalEl = document.getElementById('nota-final-calc');
-        var estadoBadge = document.getElementById('estado-badge');
+        var p1 = get('parcial1'), p2 = get('parcial2');
+        var t1 = get('producto1'), t2 = get('producto2'), t3 = get('producto3');
+        var d1 = get('desempeno1'), d2 = get('desempeno2'), d3 = get('desempeno3');
 
-        if (promConoc !== null && promProd !== null && promDesemp !== null) {
-            var nf = (parseFloat(promConoc) * 0.30 + parseFloat(promProd) * 0.30 + parseFloat(promDesemp) * 0.40).toFixed(1);
-            notaFinalEl.textContent = nf;
+        var ec = (p1 !== null && p2 !== null) ? ((p1 + p2) / 2) : null;
+        var prods = [t1, t2, t3].filter(function(v) { return v !== null; });
+        var ep = prods.length > 0 ? prods.reduce(function(a,b){return a+b;},0) / prods.length : null;
+        var desps = [d1, d2, d3].filter(function(v) { return v !== null; });
+        var ed = desps.length > 0 ? desps.reduce(function(a,b){return a+b;},0) / desps.length : null;
 
-            if (parseFloat(nf) >= 3.5) {
-                notaFinalEl.style.color = '#10B981';
-                estadoBadge.textContent = '✅ Aprobado';
-                estadoBadge.style.color = '#10B981';
-            } else {
-                notaFinalEl.style.color = '#EF4444';
-                estadoBadge.textContent = '❌ Reprobado';
-                estadoBadge.style.color = '#EF4444';
-            }
+        row.querySelector('[data-calc="ec"]').textContent = ec !== null ? ec.toFixed(1) : '--';
+        row.querySelector('[data-calc="ep"]').textContent = ep !== null ? ep.toFixed(1) : '--';
+        row.querySelector('[data-calc="ed"]').textContent = ed !== null ? ed.toFixed(1) : '--';
+
+        var finalCell = row.querySelector('[data-calc="final"]');
+        var estadoCell = row.querySelector('.estado-cell');
+
+        if (ec !== null && ep !== null && ed !== null) {
+            var nf = (ec * 0.30) + (ep * 0.30) + (ed * 0.40);
+            finalCell.textContent = nf.toFixed(1);
+            finalCell.className = 'nota-final-cell ' + (nf >= 3.5 ? 'aprobado' : 'reprobado');
+            estadoCell.innerHTML = '<span class="badge ' + (nf >= 3.5 ? 'aprobado' : 'reprobado') + '">' + (nf >= 3.5 ? 'Aprobado' : 'Reprobado') + '</span>';
         } else {
-            notaFinalEl.textContent = '—';
-            notaFinalEl.style.color = '#059669';
-            estadoBadge.textContent = '⏳ Pendiente';
-            estadoBadge.style.color = '#9CA3AF';
+            finalCell.textContent = '--';
+            finalCell.className = 'nota-final-cell pendiente';
+            estadoCell.innerHTML = '<span class="badge pendiente">Pendiente</span>';
         }
     }
 
-    // Escuchar cambios en todos los inputs
-    var notaInputs = document.querySelectorAll('.nota-input');
-    notaInputs.forEach(function(input) {
-        input.addEventListener('input', calcularPromedios);
+    // Escuchar cambios en inputs de notas
+    document.querySelectorAll('#planilla-notas .nota-input').forEach(function(inp) {
+        inp.addEventListener('input', function() {
+            inp.classList.add('modified');
+            calcularFila(inp.closest('tr'));
+            updateUnsaved();
+        });
     });
 
-    // Calcular al cargar si hay valores
-    if (notaInputs.length > 0) calcularPromedios();
-
-    // Auto-ocultar alerta
-    var alerta = document.querySelector('.alerta');
-    if (alerta) {
-        setTimeout(function() {
-            alerta.style.transition = 'opacity 0.5s';
-            alerta.style.opacity = '0';
-            setTimeout(function() { alerta.remove(); }, 500);
-        }, 4000);
+    function updateUnsaved() {
+        var count = document.querySelectorAll('#planilla-notas .nota-input.modified').length;
+        var el = document.getElementById('unsaved-count');
+        if (el) {
+            el.innerHTML = count > 0 ? '<span class="unsaved">' + count + ' cambio(s) sin guardar</span>' : 'Todo guardado';
+        }
     }
+
+    // Calcular al cargar
+    document.querySelectorAll('#planilla-notas tbody tr').forEach(calcularFila);
+    updateUnsaved();
+
+    // ===== CALCULO AUTOMATICO ASISTENCIA =====
+    function calcularAsistFila(row) {
+        var tc = parseInt(row.querySelector('input[data-field="total_clases"]').value) || 0;
+        var ta = parseInt(row.querySelector('input[data-field="total_asistencias"]').value) || 0;
+        var ina = Math.max(0, tc - ta);
+        var pct = tc > 0 ? ((ta / tc) * 100) : 0;
+
+        row.querySelector('[data-calc="inasistencias"]').textContent = tc > 0 ? ina : '--';
+        var pctCell = row.querySelector('[data-calc="porcentaje"]');
+        if (tc > 0) {
+            pctCell.textContent = pct.toFixed(1) + '%';
+            pctCell.className = 'porcentaje-cell ' + (pct >= 80 ? 'alta' : (pct >= 60 ? 'media' : 'baja'));
+        } else {
+            pctCell.textContent = '--';
+            pctCell.className = 'porcentaje-cell';
+        }
+    }
+
+    document.querySelectorAll('#planilla-asistencia .asist-input').forEach(function(inp) {
+        inp.addEventListener('input', function() { calcularAsistFila(inp.closest('tr')); });
+    });
+    document.querySelectorAll('#planilla-asistencia tbody tr').forEach(calcularAsistFila);
+
+    // ===== GUARDAR NOTAS (AJAX) =====
+    function guardarNotas() {
+        var btn = document.getElementById('btn-guardar-notas');
+        btn.disabled = true;
+        btn.textContent = 'Guardando...';
+
+        var notas = [];
+        document.querySelectorAll('#planilla-notas tbody tr').forEach(function(row) {
+            var estId = row.dataset.estudianteId;
+            var data = { estudiante_id: parseInt(estId) };
+            row.querySelectorAll('.nota-input').forEach(function(inp) {
+                data[inp.dataset.field] = inp.value !== '' ? parseFloat(inp.value) : null;
+            });
+            notas.push(data);
+        });
+
+        fetch('guardar_notas_masivo.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ modulo_id: MODULO_ID, notas: notas })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                showToast('Notas guardadas (' + data.guardados + ' estudiantes)', 'exito');
+                document.querySelectorAll('#planilla-notas .nota-input.modified').forEach(function(inp) {
+                    inp.classList.remove('modified');
+                });
+                updateUnsaved();
+            } else {
+                showToast('Error: ' + (data.error || 'Desconocido'), 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = 'Guardar Notas';
+        })
+        .catch(function(err) {
+            showToast('Error de conexion', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Guardar Notas';
+        });
+    }
+
+    // ===== GUARDAR ASISTENCIA (AJAX) =====
+    function guardarAsistencia() {
+        var btn = document.getElementById('btn-guardar-asist');
+        btn.disabled = true;
+        btn.textContent = 'Guardando...';
+
+        var asistencias = [];
+        document.querySelectorAll('#planilla-asistencia tbody tr').forEach(function(row) {
+            asistencias.push({
+                estudiante_id: parseInt(row.dataset.estudianteId),
+                total_clases: parseInt(row.querySelector('input[data-field="total_clases"]').value) || 0,
+                total_asistencias: parseInt(row.querySelector('input[data-field="total_asistencias"]').value) || 0
+            });
+        });
+
+        fetch('guardar_asistencia.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ modulo_id: MODULO_ID, asistencias: asistencias })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                showToast('Asistencia guardada (' + data.guardados + ' estudiantes)', 'exito');
+            } else {
+                showToast('Error: ' + (data.error || 'Desconocido'), 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = 'Guardar Asistencia';
+        })
+        .catch(function() {
+            showToast('Error de conexion', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Guardar Asistencia';
+        });
+    }
+
+    // ===== OBSERVACIONES =====
+    function toggleObs(header) {
+        header.nextElementSibling.classList.toggle('open');
+    }
+
+    function guardarObservacion(estId) {
+        var textarea = document.getElementById('obs-text-' + estId);
+        var texto = textarea.value.trim();
+        if (!texto) return;
+
+        fetch('guardar_observacion.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ estudiante_id: estId, modulo_id: MODULO_ID, observacion: texto })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                textarea.value = '';
+                var hist = document.getElementById('obs-hist-' + estId);
+                // Remove "sin observaciones" message
+                var empty = hist.querySelector('p');
+                if (empty) empty.remove();
+                // Add new obs at top
+                var div = document.createElement('div');
+                div.className = 'obs-item';
+                div.innerHTML = '<div class="obs-texto">' + escapeHtml(data.observacion.observacion) + '</div>' +
+                    '<div class="obs-meta">' + escapeHtml(data.observacion.autor) + ' &middot; ' + formatDate(data.observacion.fecha) + '</div>';
+                hist.insertBefore(div, hist.firstChild);
+                // Update count
+                var countEl = document.querySelector('[data-obs-count="' + estId + '"]');
+                var current = parseInt(countEl.textContent) || 0;
+                countEl.textContent = (current + 1) + ' observacion(es)';
+                showToast('Observacion agregada', 'exito');
+            } else {
+                showToast('Error: ' + (data.error || 'Desconocido'), 'error');
+            }
+        })
+        .catch(function() { showToast('Error de conexion', 'error'); });
+    }
+
+    function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
+    function formatDate(dateStr) {
+        var d = new Date(dateStr);
+        return d.toLocaleDateString('es-CO') + ' ' + d.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'});
+    }
+
+    // Warn before leaving with unsaved changes
+    window.addEventListener('beforeunload', function(e) {
+        if (document.querySelectorAll('#planilla-notas .nota-input.modified').length > 0) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
     </script>
     <script src="/intep/sesion.js"></script>
 </body>
