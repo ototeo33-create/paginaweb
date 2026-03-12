@@ -1,9 +1,59 @@
 <?php
 require_once '../config.php';
 
-if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_rol'] !== 'admin') {
-    header('Location: ../login.php');
-    exit;
+// Protección por contraseña (sin requerir sesión)
+$clave_migrar = 'Ngs123456789.';
+$autenticado = false;
+$msg_auth = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clave_acceso'])) {
+    if ($_POST['clave_acceso'] === $clave_migrar) {
+        $autenticado = true;
+    } else {
+        $msg_auth = 'Contraseña incorrecta.';
+    }
+}
+
+if (!$autenticado && !isset($_POST['ejecutar_migracion'])):
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migración Cartera – INTEP</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: #F0FDF4; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-box { background: white; border-radius: 16px; padding: 2rem; width: 360px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
+        h2 { color: #022C22; margin-bottom: 0.5rem; }
+        p { color: #6B7280; font-size: 0.88rem; margin-bottom: 1.5rem; }
+        input { width: 100%; padding: 0.8rem; border: 2px solid #E5E7EB; border-radius: 10px; font-size: 1rem; margin-bottom: 1rem; }
+        input:focus { border-color: #059669; outline: none; }
+        button { width: 100%; padding: 0.8rem; background: #059669; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+        .error { color: #EF4444; font-size: 0.85rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Migración de Cartera</h2>
+        <p>Ingresa la contraseña para continuar</p>
+        <?php if ($msg_auth): ?><div class="error"><?php echo $msg_auth; ?></div><?php endif; ?>
+        <form method="POST">
+            <input type="password" name="clave_acceso" placeholder="Contraseña" autofocus required>
+            <button type="submit">Acceder</button>
+        </form>
+    </div>
+</body>
+</html>
+<?php exit; endif;
+
+// Si llegó aquí con POST de migración, verificar clave incluida
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ejecutar_migracion'])) {
+    if ($_POST['clave_hidden'] !== $clave_migrar) {
+        header('Location: migrar_cartera.php');
+        exit;
+    }
 }
 
 $resultados = [];
@@ -204,6 +254,7 @@ if ($r) while ($row = mysqli_fetch_assoc($r)) $programas_actuales[] = $row;
 
         <form method="POST" onsubmit="return confirm('¿Estás seguro? Se eliminarán todos los cobros, pagos y conceptos actuales.');">
             <input type="hidden" name="ejecutar_migracion" value="1">
+            <input type="hidden" name="clave_hidden" value="<?php echo htmlspecialchars($clave_migrar); ?>">
             <button type="submit" class="btn btn-danger" style="margin-top:0.5rem;">🔄 Ejecutar Migración</button>
         </form>
     </div>
