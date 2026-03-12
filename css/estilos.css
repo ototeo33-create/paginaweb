@@ -338,7 +338,7 @@ body {
 }
 
 .dashboard-header h1 img {
-    height: 36px;
+    height: 44px;
     width: auto;
     display: block;
 }
@@ -379,7 +379,7 @@ body {
     }
 
     .dashboard-header h1 img {
-        height: 30px;
+        height: 36px;
     }
 
     .dashboard-header .usuario-info {
@@ -739,7 +739,7 @@ tbody td {
 /* Móviles pequeños */
 @media (max-width: 400px) {
     .dashboard-header h1 img {
-        height: 26px;
+        height: 32px;
     }
 
     .dashboard-header .usuario-info {
