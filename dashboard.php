@@ -16,9 +16,15 @@ $rol    = $_SESSION['usuario_rol'];
 if ($rol === 'estudiante') {
     $est_id = $_SESSION['estudiante_id'];
 
-    $q = "SELECT e.nombre, e.documento, p.nombre as programa 
-          FROM estudiantes e 
-          JOIN programas p ON e.programa_id = p.id 
+    // Auto-crear columna foto si no existe
+    $col_check = mysqli_query($conexion, "SHOW COLUMNS FROM estudiantes LIKE 'foto'");
+    if (mysqli_num_rows($col_check) === 0) {
+        mysqli_query($conexion, "ALTER TABLE estudiantes ADD COLUMN foto VARCHAR(255) DEFAULT NULL AFTER email");
+    }
+
+    $q = "SELECT e.nombre, e.documento, e.foto, p.nombre as programa
+          FROM estudiantes e
+          JOIN programas p ON e.programa_id = p.id
           WHERE e.id = ?";
     $stmt = mysqli_prepare($conexion, $q);
     mysqli_stmt_bind_param($stmt, 'i', $est_id);
@@ -235,6 +241,53 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             font-size: 0.8rem;
             font-weight: 600;
             margin-top: 0.8rem;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .hero-foto {
+            flex-shrink: 0;
+            margin-left: 2rem;
+            margin-right: 1rem;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-foto:hover {
+            transform: scale(1.05);
+        }
+
+        .hero-foto img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255,255,255,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            display: block;
+        }
+
+        .hero-foto-placeholder {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            border: 3px dashed rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
         }
 
         /* ═══════════════════════════════════════════
@@ -455,6 +508,14 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                 font-size: 0.7rem;
                 padding: 0.25rem 0.8rem;
             }
+            .hero-foto img,
+            .hero-foto-placeholder {
+                width: 80px;
+                height: 80px;
+            }
+            .hero-foto {
+                margin-left: 1rem;
+            }
             
             .quick-stats { 
                 grid-template-columns: repeat(2, 1fr); 
@@ -528,7 +589,19 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             .bienvenida-hero .fecha {
                 font-size: 0.7rem;
             }
-            
+            .hero-foto img,
+            .hero-foto-placeholder {
+                width: 65px;
+                height: 65px;
+                font-size: 1.5rem;
+            }
+            .hero-foto {
+                margin-left: 0.8rem;
+            }
+            .hero-foto-placeholder {
+                border-width: 2px;
+            }
+
             .quick-stats {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 0.6rem;
@@ -630,18 +703,33 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
 
         <!-- BIENVENIDA -->
         <div class="bienvenida-hero">
-            <div class="saludo"><?php echo $saludo_icon . ' ' . $saludo; ?></div>
-            <h2><?php echo htmlspecialchars($nombre); ?></h2>
-            <div class="fecha">📆 <?php echo $fecha_hoy; ?></div>
-            <span class="rol-badge">
-                <?php
-                switch ($rol) {
-                    case 'admin':      echo '⚙️ Administrador'; break;
-                    case 'docente':    echo '👨‍🏫 Docente';       break;
-                    case 'estudiante': echo '🎓 Estudiante';     break;
-                }
-                ?>
-            </span>
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="saludo"><?php echo $saludo_icon . ' ' . $saludo; ?></div>
+                    <h2><?php echo htmlspecialchars($nombre); ?></h2>
+                    <div class="fecha">📆 <?php echo $fecha_hoy; ?></div>
+                    <span class="rol-badge">
+                        <?php
+                        switch ($rol) {
+                            case 'admin':      echo '⚙️ Administrador'; break;
+                            case 'docente':    echo '👨‍🏫 Docente';       break;
+                            case 'estudiante': echo '🎓 Estudiante';     break;
+                        }
+                        ?>
+                    </span>
+                </div>
+                <?php if ($rol === 'estudiante'): ?>
+                <a href="mi_foto.php" class="hero-foto" title="Cambiar foto de perfil">
+                    <?php if (!empty($info_est['foto'])): ?>
+                        <img src="<?php echo htmlspecialchars($info_est['foto']); ?>" alt="Foto de perfil">
+                    <?php else: ?>
+                        <div class="hero-foto-placeholder">
+                            <span>📷</span>
+                        </div>
+                    <?php endif; ?>
+                </a>
+                <?php endif; ?>
+            </div>
         </div>
 
         <!-- ===== ESTUDIANTE ===== -->
@@ -682,12 +770,6 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
 
             <div class="seccion-label">Acceso rápido</div>
             <div class="menu-grid">
-                <a href="mi_foto.php" class="menu-card-v2">
-                    <div class="card-icon morado">📸</div>
-                    <h3>Mi Foto</h3>
-                    <p>Tomate una selfie para tu perfil institucional</p>
-                    <span class="card-arrow">→</span>
-                </a>
                 <a href="notas.php" class="menu-card-v2">
                     <div class="card-icon verde">📊</div>
                     <h3>Mis Notas</h3>
