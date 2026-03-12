@@ -1,0 +1,48 @@
+<?php
+require_once '../config.php';
+header('Content-Type: application/json; charset=utf-8');
+
+if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['usuario_rol'], ['admin', 'docente'])) {
+    echo json_encode(['ok' => false, 'error' => 'No autorizado']);
+    exit;
+}
+
+$input = json_decode(file_get_contents('php://input'), true);
+if (!$input || !isset($input['estudiante_id']) || !isset($input['modulo_id']) || !isset($input['observacion'])) {
+    echo json_encode(['ok' => false, 'error' => 'Datos inválidos']);
+    exit;
+}
+
+$estudiante_id = (int)$input['estudiante_id'];
+$modulo_id = (int)$input['modulo_id'];
+$observacion = trim($input['observacion']);
+$autor_id = (int)$_SESSION['usuario_id'];
+
+if ($observacion === '') {
+    echo json_encode(['ok' => false, 'error' => 'La observación no puede estar vacía']);
+    exit;
+}
+
+$stmt = mysqli_prepare($conexion, "INSERT INTO observaciones (estudiante_id, modulo_id, observacion, autor_id) VALUES (?, ?, ?, ?)");
+mysqli_stmt_bind_param($stmt, 'iisi', $estudiante_id, $modulo_id, $observacion, $autor_id);
+
+if (mysqli_stmt_execute($stmt)) {
+    $id = mysqli_insert_id($conexion);
+    // Obtener nombre del autor
+    $autor_stmt = mysqli_prepare($conexion, "SELECT username FROM usuarios WHERE id = ?");
+    mysqli_stmt_bind_param($autor_stmt, 'i', $autor_id);
+    mysqli_stmt_execute($autor_stmt);
+    $autor = mysqli_fetch_assoc(mysqli_stmt_get_result($autor_stmt));
+
+    echo json_encode([
+        'ok' => true,
+        'observacion' => [
+            'id' => $id,
+            'observacion' => $observacion,
+            'fecha' => date('Y-m-d H:i:s'),
+            'autor' => $autor['username'] ?? 'Desconocido'
+        ]
+    ]);
+} else {
+    echo json_encode(['ok' => false, 'error' => 'Error al guardar']);
+}
