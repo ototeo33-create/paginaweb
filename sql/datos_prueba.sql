@@ -7,11 +7,11 @@
 USE intep_portal;
 
 -- 2. Insertar programas (si no existen)
-INSERT IGNORE INTO programas (id, nombre, codigo, estado) VALUES 
-(1, 'Técnico en Sistemas', 'TS', 'activo'),
-(2, 'Técnico en Contabilidad', 'TC', 'activo'),
-(3, 'Técnico en Secretariado', 'TSEC', 'activo'),
-(4, 'Técnico en Alimentación y Hostelería', 'TAH', 'activo');
+INSERT IGNORE INTO programas (id, nombre, modalidad, duracion_meses) VALUES
+(1, 'Técnico en Sistemas', 'presencial', 10),
+(2, 'Técnico en Contabilidad', 'presencial', 10),
+(3, 'Técnico en Secretariado', 'presencial', 10),
+(4, 'Técnico en Alimentación y Hostelería', 'presencial', 10);
 
 -- 3. Insertar materias por programa
 INSERT IGNORE INTO materias (id, nombre, programa_id, estado) VALUES 
@@ -80,10 +80,10 @@ INSERT IGNORE INTO conceptos_cobro (id, nombre, descripcion, monto_base, tipo, n
 (4, 'Mensualidad Inglés', 'Cuota mensual del programa de inglés (4 meses por nivel)', 145000, 'mensualidad', 4, 'activo');
 
 -- 6b. Agregar programas de inglés
-INSERT IGNORE INTO programas (nombre, codigo, estado) VALUES
-('Inglés A1', 'ING-A1', 'activo'),
-('Inglés A2', 'ING-A2', 'activo'),
-('Inglés B1', 'ING-B1', 'activo');
+INSERT IGNORE INTO programas (nombre, modalidad, duracion_meses) VALUES
+('Inglés A1', 'presencial', 4),
+('Inglés A2', 'presencial', 4),
+('Inglés B1', 'presencial', 4);
 
 -- 7. Crear estudiantes (20 estudiantes = 5 por programa)
 INSERT IGNORE INTO estudiantes (id, nombre, documento, email, programa_id, fecha_ingreso, estado) VALUES 

@@ -23,9 +23,9 @@ INSERT INTO conceptos_cobro (id, nombre, descripcion, monto_base, tipo, num_cuot
 (4, 'Mensualidad Inglés', 'Cuota mensual del programa de inglés (4 meses por nivel)', 145000, 'mensualidad', 4, 'activo');
 
 -- 5. Agregar programas de inglés si no existen
-INSERT IGNORE INTO programas (nombre, codigo, estado) VALUES
-('Inglés A1', 'ING-A1', 'activo'),
-('Inglés A2', 'ING-A2', 'activo'),
-('Inglés B1', 'ING-B1', 'activo');
+INSERT IGNORE INTO programas (nombre, modalidad, duracion_meses) VALUES
+('Inglés A1', 'presencial', 4),
+('Inglés A2', 'presencial', 4),
+('Inglés B1', 'presencial', 4);
 
 SELECT 'Migración completada!' as resultado;

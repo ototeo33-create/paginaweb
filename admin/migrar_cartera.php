@@ -97,18 +97,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ejecutar_migracion'])
 
     // 4. Agregar programas de inglés
     $progs = [
-        ['Inglés A1', 'ING-A1'],
-        ['Inglés A2', 'ING-A2'],
-        ['Inglés B1', 'ING-B1'],
+        ['Inglés A1', 'presencial', 4],
+        ['Inglés A2', 'presencial', 4],
+        ['Inglés B1', 'presencial', 4],
     ];
     foreach ($progs as $p) {
-        $check = mysqli_prepare($conexion, "SELECT id FROM programas WHERE codigo = ?");
-        mysqli_stmt_bind_param($check, 's', $p[1]);
+        $check = mysqli_prepare($conexion, "SELECT id FROM programas WHERE nombre = ?");
+        mysqli_stmt_bind_param($check, 's', $p[0]);
         mysqli_stmt_execute($check);
         $res = mysqli_stmt_get_result($check);
         if (mysqli_num_rows($res) == 0) {
-            $ins = mysqli_prepare($conexion, "INSERT INTO programas (nombre, codigo, estado) VALUES (?, ?, 'activo')");
-            mysqli_stmt_bind_param($ins, 'ss', $p[0], $p[1]);
+            $ins = mysqli_prepare($conexion, "INSERT INTO programas (nombre, modalidad, duracion_meses) VALUES (?, ?, ?)");
+            mysqli_stmt_bind_param($ins, 'ssi', $p[0], $p[1], $p[2]);
             $r = mysqli_stmt_execute($ins);
             $resultados[] = $r ? "✅ Programa: {$p[0]}" : "❌ Error: " . mysqli_error($conexion);
         } else {
@@ -223,13 +223,13 @@ if ($r) while ($row = mysqli_fetch_assoc($r)) $programas_actuales[] = $row;
         <?php if (!empty($programas_actuales)): ?>
         <h3 style="font-size:0.95rem;margin:1rem 0 0.5rem;">Programas</h3>
         <table>
-            <tr><th>ID</th><th>Nombre</th><th>Código</th><th>Estado</th></tr>
+            <tr><th>ID</th><th>Nombre</th><th>Modalidad</th><th>Duración (meses)</th></tr>
             <?php foreach ($programas_actuales as $p): ?>
             <tr>
                 <td><?php echo $p['id']; ?></td>
                 <td><?php echo htmlspecialchars($p['nombre']); ?></td>
-                <td><?php echo htmlspecialchars($p['codigo']); ?></td>
-                <td><?php echo $p['estado']; ?></td>
+                <td><?php echo htmlspecialchars($p['modalidad'] ?? ''); ?></td>
+                <td><?php echo $p['duracion_meses'] ?? ''; ?></td>
             </tr>
             <?php endforeach; ?>
         </table>

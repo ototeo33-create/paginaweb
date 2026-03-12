@@ -19,10 +19,10 @@ $usuarios_creados = [];
 echo "1. Verificando/creando programas...\n";
 
 $programas = [
-    ['nombre' => 'Técnico en Sistemas', 'codigo' => 'TS'],
-    ['nombre' => 'Técnico en Contabilidad', 'codigo' => 'TC'],
-    ['nombre' => 'Técnico en Secretariado', 'codigo' => 'TSEC'],
-    ['nombre' => 'Técnico en Alimentación y Hostelería', 'codigo' => 'TAH']
+    ['nombre' => 'Técnico en Sistemas', 'modalidad' => 'presencial', 'duracion_meses' => 10],
+    ['nombre' => 'Técnico en Contabilidad', 'modalidad' => 'presencial', 'duracion_meses' => 10],
+    ['nombre' => 'Técnico en Secretariado', 'modalidad' => 'presencial', 'duracion_meses' => 10],
+    ['nombre' => 'Técnico en Alimentación y Hostelería', 'modalidad' => 'presencial', 'duracion_meses' => 10]
 ];
 
 foreach ($programas as &$prog) {
@@ -32,9 +32,9 @@ foreach ($programas as &$prog) {
     $res = mysqli_stmt_get_result($check);
     
     if (mysqli_num_rows($res) == 0) {
-        $sql = "INSERT INTO programas (nombre, codigo, estado) VALUES (?, ?, 'activo')";
+        $sql = "INSERT INTO programas (nombre, modalidad, duracion_meses) VALUES (?, ?, ?)";
         $stmt = mysqli_prepare($conexion, $sql);
-        mysqli_stmt_bind_param($stmt, 'ss', $prog['nombre'], $prog['codigo']);
+        mysqli_stmt_bind_param($stmt, 'ssi', $prog['nombre'], $prog['modalidad'], $prog['duracion_meses']);
         mysqli_stmt_execute($stmt);
         $prog['id'] = mysqli_insert_id($conexion);
         echo "   ✓ Programa: {$prog['nombre']}\n";
@@ -181,7 +181,8 @@ $estudiantes_creados = [];
 foreach ($programas as $prog) {
     for ($i = 1; $i <= 5; $i++) {
         $nombre = $nombres_est[array_rand($nombres_est)] . ' ' . $apellidos[array_rand($apellidos)];
-        $documento = $prog['codigo'] . str_pad($i, 4, '0', STR_PAD_LEFT) . '25';
+        $codigo_prog = substr(str_replace(' ', '', $prog['nombre']), 0, 4);
+        $documento = strtoupper($codigo_prog) . str_pad($i, 4, '0', STR_PAD_LEFT) . '25';
         $email = strtolower(str_replace(' ', '.', $nombre)) . '@estudiante.intep.edu.co';
         $password = 'estudiante123';
         $passwordHash = hashPassword($password);
@@ -234,18 +235,18 @@ mysqli_query($conexion, "ALTER TABLE conceptos_cobro ADD COLUMN num_cuotas INT N
 
 // Agregar programas de inglés
 $progs_ingles = [
-    ['nombre' => 'Inglés A1', 'codigo' => 'ING-A1'],
-    ['nombre' => 'Inglés A2', 'codigo' => 'ING-A2'],
-    ['nombre' => 'Inglés B1', 'codigo' => 'ING-B1']
+    ['nombre' => 'Inglés A1', 'modalidad' => 'presencial', 'duracion_meses' => 4],
+    ['nombre' => 'Inglés A2', 'modalidad' => 'presencial', 'duracion_meses' => 4],
+    ['nombre' => 'Inglés B1', 'modalidad' => 'presencial', 'duracion_meses' => 4]
 ];
 foreach ($progs_ingles as $pi) {
-    $check = mysqli_prepare($conexion, "SELECT id FROM programas WHERE codigo = ?");
-    mysqli_stmt_bind_param($check, 's', $pi['codigo']);
+    $check = mysqli_prepare($conexion, "SELECT id FROM programas WHERE nombre = ?");
+    mysqli_stmt_bind_param($check, 's', $pi['nombre']);
     mysqli_stmt_execute($check);
     $res = mysqli_stmt_get_result($check);
     if (mysqli_num_rows($res) == 0) {
-        $stmt = mysqli_prepare($conexion, "INSERT INTO programas (nombre, codigo, estado) VALUES (?, ?, 'activo')");
-        mysqli_stmt_bind_param($stmt, 'ss', $pi['nombre'], $pi['codigo']);
+        $stmt = mysqli_prepare($conexion, "INSERT INTO programas (nombre, modalidad, duracion_meses) VALUES (?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, 'ssi', $pi['nombre'], $pi['modalidad'], $pi['duracion_meses']);
         mysqli_stmt_execute($stmt);
     }
 }
