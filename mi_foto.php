@@ -11,51 +11,54 @@ $estudiante_id = $_SESSION['estudiante_id'] ?? null;
 $mensaje = '';
 $tipo_msg = '';
 
+// Auto-crear columna foto si no existe
+$col_check = mysqli_query($conexion, "SHOW COLUMNS FROM estudiantes LIKE 'foto'");
+if (mysqli_num_rows($col_check) === 0) {
+    mysqli_query($conexion, "ALTER TABLE estudiantes ADD COLUMN foto VARCHAR(255) DEFAULT NULL AFTER email");
+}
+
 // Procesar foto enviada
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_foto'])) {
-    if (isset($_POST['imagen_data']) && !empty($_POST['imagen_data'])) {
+    if (!$estudiante_id) {
+        $mensaje = 'No se encontró tu ID de estudiante.';
+        $tipo_msg = 'error';
+    } elseif (isset($_POST['imagen_data']) && !empty($_POST['imagen_data'])) {
         $imagen_data = $_POST['imagen_data'];
-        
+
         // Convertir base64 a imagen
         if (preg_match('/^data:image\/(\w+);base64,/', $imagen_data, $tipo)) {
-            $tipo_img = $tipo[1]; // jpeg, png, etc.
+            $tipo_img = $tipo[1];
             $imagen_base64 = substr($imagen_data, strpos($imagen_data, ',') + 1);
             $imagen_bin = base64_decode($imagen_base64);
-            
-            // Validar tamaño máximo (2MB)
+
             if (strlen($imagen_bin) > 2 * 1024 * 1024) {
                 $mensaje = 'La imagen es muy grande. Máximo 2MB.';
                 $tipo_msg = 'error';
             } else {
-                // Crear nombre de archivo único
                 $nombre_archivo = 'estudiante_' . $estudiante_id . '_' . time() . '.jpg';
                 $ruta_carpeta = __DIR__ . '/uploads/fotos/';
-                
-                // Crear carpeta si no existe
+
                 if (!is_dir($ruta_carpeta)) {
                     mkdir($ruta_carpeta, 0755, true);
                 }
-                
+
                 $ruta_completa = $ruta_carpeta . $nombre_archivo;
-                
-                // Guardar imagen
+
                 if (file_put_contents($ruta_completa, $imagen_bin)) {
-                    // Actualizar en base de datos
                     $ruta_db = '/intep/uploads/fotos/' . $nombre_archivo;
-                    
-                    // Verificar si ya tiene foto
-                    $check = mysqli_prepare($conexion, "SELECT id FROM estudiantes WHERE id = ?");
-                    mysqli_stmt_bind_param($check, 'i', $estudiante_id);
-                    mysqli_stmt_execute($check);
-                    
+
                     $upd = mysqli_prepare($conexion, "UPDATE estudiantes SET foto = ? WHERE id = ?");
-                    mysqli_stmt_bind_param($upd, 'si', $ruta_db, $estudiante_id);
-                    
-                    if (mysqli_stmt_execute($upd)) {
-                        $mensaje = '✅ Foto guardada correctamente.';
-                        $tipo_msg = 'exito';
+                    if ($upd) {
+                        mysqli_stmt_bind_param($upd, 'si', $ruta_db, $estudiante_id);
+                        if (mysqli_stmt_execute($upd)) {
+                            $mensaje = '✅ Foto guardada correctamente.';
+                            $tipo_msg = 'exito';
+                        } else {
+                            $mensaje = 'Error al guardar en la base de datos.';
+                            $tipo_msg = 'error';
+                        }
                     } else {
-                        $mensaje = 'Error al guardar en la base de datos.';
+                        $mensaje = 'Error de base de datos: ' . mysqli_error($conexion);
                         $tipo_msg = 'error';
                     }
                 } else {
@@ -75,14 +78,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_foto'])) {
 
 // Obtener foto actual del estudiante
 $foto_actual = '';
+$nombre_estudiante = '';
 if ($estudiante_id) {
     $r = mysqli_prepare($conexion, "SELECT foto, nombre FROM estudiantes WHERE id = ?");
-    mysqli_stmt_bind_param($r, 'i', $estudiante_id);
-    mysqli_stmt_execute($r);
-    $resultado = mysqli_stmt_get_result($r);
-    $estudiante = mysqli_fetch_assoc($resultado);
-    $foto_actual = $estudiante['foto'] ?? '';
-    $nombre_estudiante = $estudiante['nombre'] ?? '';
+    if ($r) {
+        mysqli_stmt_bind_param($r, 'i', $estudiante_id);
+        mysqli_stmt_execute($r);
+        $resultado = mysqli_stmt_get_result($r);
+        $estudiante = mysqli_fetch_assoc($resultado);
+        $foto_actual = $estudiante['foto'] ?? '';
+        $nombre_estudiante = $estudiante['nombre'] ?? '';
+    }
 }
 ?>
 <!DOCTYPE html>
