@@ -712,6 +712,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Certificados, paz y salvo, reparación de equipos y más trámites</p>
                     <span class="card-arrow">→</span>
                 </a>
+                <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)" style="display:none;">
+                    <div class="card-icon verde">📲</div>
+                    <h3>Descargar App</h3>
+                    <p>Instala la aplicación en tu celular para acceso rápido</p>
+                    <span class="card-arrow">→</span>
+                </a>
             </div>
 
         <!-- ===== DOCENTE ===== -->
@@ -748,6 +754,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <div class="card-icon azul">📅</div>
                     <h3>Horarios</h3>
                     <p>Consulta los horarios de los estudiantes del programa</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)" style="display:none;">
+                    <div class="card-icon verde">📲</div>
+                    <h3>Descargar App</h3>
+                    <p>Instala la aplicación en tu celular para acceso rápido</p>
                     <span class="card-arrow">→</span>
                 </a>
             </div>
@@ -823,5 +835,52 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
     </div>
 
 <script src="/intep/sesion.js"></script>
+
+<!-- PWA Install -->
+<script>
+let deferredPrompt = null;
+
+// Si ya está instalada (modo standalone), no mostrar botón
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+    // App ya instalada, no hacer nada
+} else {
+    // Capturar evento de instalación PWA
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        // Mostrar todas las tarjetas de instalar
+        document.querySelectorAll('.btn-instalar-app').forEach(function(btn) {
+            btn.style.display = '';
+        });
+    });
+}
+
+function instalarApp(e) {
+    e.preventDefault();
+    if (!deferredPrompt) {
+        // Fallback: instrucciones manuales
+        alert('Para instalar la app:\n\n📱 Android (Chrome): Toca el menú ⋮ → "Añadir a pantalla de inicio"\n\n🍎 iPhone (Safari): Toca el botón compartir ↑ → "Añadir a pantalla de inicio"');
+        return;
+    }
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(choiceResult) {
+        if (choiceResult.outcome === 'accepted') {
+            // Ocultar botones después de instalar
+            document.querySelectorAll('.btn-instalar-app').forEach(function(btn) {
+                btn.style.display = 'none';
+            });
+        }
+        deferredPrompt = null;
+    });
+}
+
+// Ocultar si se instala mientras está en la página
+window.addEventListener('appinstalled', function() {
+    document.querySelectorAll('.btn-instalar-app').forEach(function(btn) {
+        btn.style.display = 'none';
+    });
+    deferredPrompt = null;
+});
+</script>
 </body>
 </html>

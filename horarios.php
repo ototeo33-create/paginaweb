@@ -106,24 +106,6 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             margin-bottom: 1.5rem;
             flex-wrap: wrap;
         }
-        .vista-toggle {
-            display: flex;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid var(--verde-muted);
-        }
-        .vista-btn {
-            padding: 0.6rem 1.2rem;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.88rem;
-            color: var(--gray);
-            transition: all 0.2s;
-        }
-        .vista-btn.activo { background: var(--verde); color: white; }
         .selector-estudiante {
             padding: 0.6rem 1rem;
             border: 2px solid var(--verde-muted);
@@ -146,124 +128,7 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             white-space: nowrap;
         }
 
-        /* NAVEGACIÓN SEMANA */
-        .semana-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.9rem 1.2rem;
-            background: #022C22;
-            border-radius: 16px 16px 0 0;
-            color: white;
-        }
-        .semana-nav h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            text-align: center;
-        }
-        .semana-nav .subtitulo {
-            font-size: 0.78rem;
-            opacity: 0.7;
-            text-align: center;
-            margin-top: 2px;
-        }
-        .nav-btn {
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.25);
-            color: white;
-            padding: 0.45rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.88rem;
-            font-weight: 600;
-            transition: background 0.2s;
-            white-space: nowrap;
-        }
-        .nav-btn:hover { background: var(--verde); border-color: var(--verde); }
-
-        .calendario-semanal {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 0 0 16px 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(5, 150, 105, 0.08);
-            border: 1px solid rgba(16, 185, 129, 0.1);
-            border-top: none;
-        }
-        .cal-grid {
-            display: grid;
-            grid-template-columns: 60px repeat(6, 1fr);
-            min-width: 700px;
-        }
-        .cal-header {
-            background: #034a34;
-            color: white;
-            padding: 0.7rem 0.4rem;
-            text-align: center;
-            font-size: 0.8rem;
-            font-weight: 700;
-            line-height: 1.3;
-        }
-        .cal-header .dia-nombre { font-size: 0.78rem; opacity: 0.85; }
-        .cal-header .dia-num {
-            font-size: 1.2rem;
-            font-weight: 800;
-            display: block;
-            margin-top: 2px;
-        }
-        .cal-header .dia-num.hoy-col {
-            background: var(--verde);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.95rem;
-        }
-        .cal-hora {
-            background: rgba(16, 185, 129, 0.1);
-            color: #059669;
-            padding: 0.5rem;
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            border-bottom: 1px solid #e8f5ee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .cal-celda {
-            border-left: 1px solid #f0f4f1;
-            border-bottom: 1px solid #f0f4f1;
-            min-height: 52px;
-            position: relative;
-            transition: background 0.15s;
-        }
-        .cal-celda.col-hoy { background: rgba(16, 185, 129, 0.04); }
-        .cal-celda:hover { background: var(--verde-muted); }
-        .cal-evento {
-            position: absolute;
-            top: 3px; left: 3px; right: 3px;
-            border-radius: 6px;
-            padding: 0.3rem 0.5rem;
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            z-index: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            transition: transform 0.15s;
-        }
-        .cal-evento:hover { transform: scale(1.02); }
-        .cal-scroll { overflow-x: auto; }
-
         /* VISTA MENSUAL */
-        .calendario-mensual { display: none; }
         .mes-nav {
             display: flex;
             align-items: center;
@@ -452,10 +317,6 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             border: 1px solid rgba(16,185,129,0.25);
             backdrop-filter: blur(8px);
         }
-        .vista-toggle {
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(8px);
-        }
         .seccion-titulo {
             color: #065f46;
         }
@@ -474,11 +335,6 @@ if ($rol !== 'estudiante' && $estudiante_id) {
     <a href="dashboard.php" class="btn-volver">← Volver al inicio</a>
 
     <div class="horario-controles">
-        <div class="vista-toggle">
-            <button class="vista-btn activo" onclick="cambiarVista('semanal', this)">📋 Semanal</button>
-            <button class="vista-btn" onclick="cambiarVista('mensual', this)">📅 Mensual</button>
-        </div>
-
         <?php if ($rol !== 'estudiante'): ?>
         <select class="selector-estudiante" onchange="window.location.href='horarios.php?estudiante_id='+this.value">
             <option value="">Selecciona un estudiante</option>
@@ -501,44 +357,8 @@ if ($rol !== 'estudiante' && $estudiante_id) {
         <?php endif; ?>
     </div>
 
-    <!-- VISTA SEMANAL -->
-    <div id="vista-semanal">
-        <div class="seccion-titulo" id="semana-seccion-titulo">
-            Horario Semanal
-            <?php if ($rol !== 'estudiante' && $estudiante_actual): ?>
-                — <?php echo htmlspecialchars($estudiante_actual['nombre']); ?>
-            <?php endif; ?>
-        </div>
-        <?php if (empty($horarios)): ?>
-            <div class="bienvenida">
-                <p>No hay horarios registrados.
-                <?php if (in_array($rol, ['admin','docente'])): ?>
-                    <a href="admin/gestionar_horarios.php?estudiante_id=<?php echo $estudiante_id; ?>">Agregar horarios →</a>
-                <?php endif; ?>
-                </p>
-            </div>
-        <?php else: ?>
-        <!-- Navegación semana -->
-        <div class="semana-nav">
-            <button class="nav-btn" onclick="cambiarSemana(-1)">← Semana anterior</button>
-            <div>
-                <h3 id="semana-titulo"></h3>
-                <div class="subtitulo" id="semana-rango"></div>
-            </div>
-            <button class="nav-btn" onclick="cambiarSemana(1)">Semana siguiente →</button>
-        </div>
-        <div class="cal-scroll">
-            <div class="calendario-semanal">
-                <div class="cal-grid" id="cal-grid-semanal">
-                    <!-- Generado por JS -->
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-    </div>
-
     <!-- VISTA MENSUAL -->
-    <div id="vista-mensual" class="calendario-mensual">
+    <div id="vista-mensual">
         <div class="mes-nav">
             <button class="mes-btn" onclick="cambiarMes(-1)">← Anterior</button>
             <h3 id="mes-titulo"></h3>
@@ -611,122 +431,11 @@ const diasOrden = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 let mesActual = new Date().getMonth();
 let anioActual = new Date().getFullYear();
 
-// Semana: lunes de la semana actual
-function getLunesDeHoy() {
-    const hoy = new Date();
-    const dia = hoy.getDay(); // 0=Dom
-    const diff = dia === 0 ? -6 : 1 - dia;
-    const lunes = new Date(hoy);
-    lunes.setDate(hoy.getDate() + diff);
-    lunes.setHours(0,0,0,0);
-    return lunes;
-}
-
-let semanaBase = getLunesDeHoy();
-
-function cambiarSemana(dir) {
-    semanaBase = new Date(semanaBase);
-    semanaBase.setDate(semanaBase.getDate() + dir * 7);
-    renderSemanal();
-}
-
 function pad(n) { return String(n).padStart(2,'0'); }
 
 function formatICSDate(date, hora) {
     const [h, m] = hora.split(':');
     return `${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}T${pad(h)}${pad(m)}00`;
-}
-
-function renderSemanal() {
-    const hoy = new Date();
-    hoy.setHours(0,0,0,0);
-
-    // Calcular fechas de la semana (Lun-Sáb)
-    const fechasSemana = {};
-    diasOrden.forEach((dia, i) => {
-        const f = new Date(semanaBase);
-        f.setDate(semanaBase.getDate() + i);
-        fechasSemana[dia] = f;
-    });
-
-    // Título
-    const primerDia = fechasSemana['Lunes'];
-    const ultimoDia = fechasSemana['Sábado'];
-    const mismoMes = primerDia.getMonth() === ultimoDia.getMonth();
-    const titulo = mismoMes
-        ? `${mesesNombres[primerDia.getMonth()]} ${primerDia.getFullYear()}`
-        : `${mesesNombres[primerDia.getMonth()]} – ${mesesNombres[ultimoDia.getMonth()]} ${ultimoDia.getFullYear()}`;
-    const rango = `${primerDia.getDate()} al ${ultimoDia.getDate()} de ${mismoMes ? mesesNombres[primerDia.getMonth()] : (mesesNombres[primerDia.getMonth()]+' – '+mesesNombres[ultimoDia.getMonth()])}`;
-
-    document.getElementById('semana-titulo').textContent = titulo;
-    document.getElementById('semana-rango').textContent = rango;
-
-    const grid = document.getElementById('cal-grid-semanal');
-    grid.innerHTML = '';
-
-    // Cabecera: columna hora
-    const cHora = document.createElement('div');
-    cHora.className = 'cal-header';
-    cHora.textContent = 'Hora';
-    grid.appendChild(cHora);
-
-    // Cabeceras días
-    diasOrden.forEach(dia => {
-        const fecha = fechasSemana[dia];
-        const esHoy = fecha.getTime() === hoy.getTime();
-        const cell = document.createElement('div');
-        cell.className = 'cal-header';
-        const numSpan = document.createElement('span');
-        numSpan.className = 'dia-num' + (esHoy ? ' hoy-col' : '');
-        numSpan.textContent = fecha.getDate();
-        const nombreSpan = document.createElement('div');
-        nombreSpan.className = 'dia-nombre';
-        nombreSpan.textContent = dia.substring(0,3).toUpperCase();
-        cell.appendChild(nombreSpan);
-        cell.appendChild(numSpan);
-        grid.appendChild(cell);
-    });
-
-    // Filas de horas
-    horasGrilla.forEach(hora => {
-        const horaCell = document.createElement('div');
-        horaCell.className = 'cal-hora';
-        horaCell.textContent = hora;
-        grid.appendChild(horaCell);
-
-        diasOrden.forEach(dia => {
-            const fecha = fechasSemana[dia];
-            const esHoy = fecha.getTime() === hoy.getTime();
-            const celda = document.createElement('div');
-            celda.className = 'cal-celda' + (esHoy ? ' col-hoy' : '');
-
-            horariosData.forEach(h => {
-                if (h.dia === dia) {
-                    const hInicio = h.hora_inicio.substring(0,5);
-                    const hFin = h.hora_fin.substring(0,5);
-                    if (hInicio.substring(0,2) === hora.substring(0,2)) {
-                        const color = colorMap[h.materia_id] || '#25a865';
-                        const ev = document.createElement('div');
-                        ev.className = 'cal-evento';
-                        ev.style.background = color;
-                        ev.textContent = h.materia;
-                        ev.onclick = () => verDetalle(h.id, h.materia, h.dia, hInicio, hFin, h.salon, fecha);
-                        celda.appendChild(ev);
-                    }
-                }
-            });
-
-            grid.appendChild(celda);
-        });
-    });
-}
-
-function cambiarVista(vista, btn) {
-    document.querySelectorAll('.vista-btn').forEach(b => b.classList.remove('activo'));
-    btn.classList.add('activo');
-    document.getElementById('vista-semanal').style.display = vista === 'semanal' ? 'block' : 'none';
-    document.getElementById('vista-mensual').style.display = vista === 'mensual' ? 'block' : 'none';
-    if (vista === 'mensual') renderMes(mesActual, anioActual);
 }
 
 function cambiarMes(dir) {
@@ -894,8 +603,8 @@ function cerrarModal(e) {
     }
 }
 
-// Inicializar
-renderSemanal();
+// Inicializar vista mensual
+renderMes(mesActual, anioActual);
 </script>
 
 <script src="/intep/sesion.js"></script>

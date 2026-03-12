@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_concepto'])) 
     $descripcion = trim($_POST['concepto_descripcion']);
     $monto = (float)$_POST['concepto_monto'];
     $tipo = $_POST['concepto_tipo'];
+    $num_cuotas = max(1, (int)($_POST['concepto_cuotas'] ?? 1));
 
     if (empty($nombre) || $monto <= 0) {
         $mensaje = '⚠️ Nombre y monto son obligatorios.';
@@ -31,13 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_concepto'])) 
     } else {
         if (isset($_POST['concepto_id']) && $_POST['concepto_id'] > 0) {
             $id = (int)$_POST['concepto_id'];
-            $sql = "UPDATE conceptos_cobro SET nombre=?, descripcion=?, monto_base=?, tipo=? WHERE id=?";
+            $sql = "UPDATE conceptos_cobro SET nombre=?, descripcion=?, monto_base=?, tipo=?, num_cuotas=? WHERE id=?";
             $stmt = mysqli_prepare($conexion, $sql);
-            mysqli_stmt_bind_param($stmt, 'ssdsi', $nombre, $descripcion, $monto, $tipo, $id);
+            mysqli_stmt_bind_param($stmt, 'ssdsii', $nombre, $descripcion, $monto, $tipo, $num_cuotas, $id);
         } else {
-            $sql = "INSERT INTO conceptos_cobro (nombre, descripcion, monto_base, tipo) VALUES (?,?,?,?)";
+            $sql = "INSERT INTO conceptos_cobro (nombre, descripcion, monto_base, tipo, num_cuotas) VALUES (?,?,?,?,?)";
             $stmt = mysqli_prepare($conexion, $sql);
-            mysqli_stmt_bind_param($stmt, 'ssds', $nombre, $descripcion, $monto, $tipo);
+            mysqli_stmt_bind_param($stmt, 'ssdsi', $nombre, $descripcion, $monto, $tipo, $num_cuotas);
         }
         if ($stmt && mysqli_stmt_execute($stmt)) {
             $mensaje = '✅ Concepto guardado correctamente.';
@@ -54,16 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_concepto'])) 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generar_cobros'])) {
     $concepto_id = (int)$_POST['cobro_concepto'];
     $programa_id = (int)$_POST['cobro_programa'];
-    $periodo = trim($_POST['cobro_periodo']);
     $fecha_venc = $_POST['cobro_vencimiento'];
     $monto_custom = !empty($_POST['cobro_monto']) ? (float)$_POST['cobro_monto'] : null;
+    $generar_todas = isset($_POST['cobro_todas_cuotas']) ? true : false;
 
-    // Obtener monto del concepto si no se especificó
+    // Obtener info del concepto
+    $r = mysqli_query($conexion, "SELECT monto_base, num_cuotas FROM conceptos_cobro WHERE id=$concepto_id");
+    $concepto_info = mysqli_fetch_assoc($r);
     if ($monto_custom === null) {
-        $r = mysqli_query($conexion, "SELECT monto_base FROM conceptos_cobro WHERE id=$concepto_id");
-        $c = mysqli_fetch_assoc($r);
-        $monto_custom = $c['monto_base'];
+        $monto_custom = $concepto_info['monto_base'];
     }
+    $num_cuotas = $generar_todas ? (int)$concepto_info['num_cuotas'] : 1;
 
     // Obtener estudiantes del programa
     $sql_est = "SELECT id FROM estudiantes WHERE estado='activo'";
@@ -74,28 +76,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generar_cobros'])) {
 
     $generados = 0;
     $duplicados = 0;
-    while ($est = mysqli_fetch_assoc($res_est)) {
-        // Verificar que no exista cobro igual
-        $check = mysqli_prepare($conexion, "SELECT id FROM cobros WHERE estudiante_id=? AND concepto_id=? AND periodo=?");
-        mysqli_stmt_bind_param($check, 'iis', $est['id'], $concepto_id, $periodo);
-        mysqli_stmt_execute($check);
-        $existe = mysqli_stmt_get_result($check);
+    $fecha_base = new DateTime($fecha_venc);
 
-        if (mysqli_num_rows($existe) === 0) {
-            $sql_ins = "INSERT INTO cobros (estudiante_id, concepto_id, periodo, monto, descuento, total, pagado, saldo, fecha_vencimiento, estado)
-                        VALUES (?, ?, ?, ?, 0, ?, 0, ?, ?, 'pendiente')";
-            $stmt_ins = mysqli_prepare($conexion, $sql_ins);
-            mysqli_stmt_bind_param($stmt_ins, 'iisddds',
-                $est['id'], $concepto_id, $periodo,
-                $monto_custom, $monto_custom, $monto_custom, $fecha_venc
-            );
-            mysqli_stmt_execute($stmt_ins);
-            $generados++;
-        } else {
-            $duplicados++;
+    while ($est = mysqli_fetch_assoc($res_est)) {
+        for ($cuota = 0; $cuota < $num_cuotas; $cuota++) {
+            // Calcular periodo y fecha de vencimiento para cada cuota
+            $fecha_cuota = clone $fecha_base;
+            $fecha_cuota->modify("+$cuota months");
+            $periodo = $fecha_cuota->format('Y-m');
+            $fecha_venc_cuota = $fecha_cuota->format('Y-m-d');
+
+            // Verificar que no exista cobro igual
+            $check = mysqli_prepare($conexion, "SELECT id FROM cobros WHERE estudiante_id=? AND concepto_id=? AND periodo=?");
+            mysqli_stmt_bind_param($check, 'iis', $est['id'], $concepto_id, $periodo);
+            mysqli_stmt_execute($check);
+            $existe = mysqli_stmt_get_result($check);
+
+            if (mysqli_num_rows($existe) === 0) {
+                $sql_ins = "INSERT INTO cobros (estudiante_id, concepto_id, periodo, monto, descuento, total, pagado, saldo, fecha_vencimiento, estado)
+                            VALUES (?, ?, ?, ?, 0, ?, 0, ?, ?, 'pendiente')";
+                $stmt_ins = mysqli_prepare($conexion, $sql_ins);
+                mysqli_stmt_bind_param($stmt_ins, 'iisddds',
+                    $est['id'], $concepto_id, $periodo,
+                    $monto_custom, $monto_custom, $monto_custom, $fecha_venc_cuota
+                );
+                mysqli_stmt_execute($stmt_ins);
+                $generados++;
+            } else {
+                $duplicados++;
+            }
         }
     }
-    $mensaje = "✅ Se generaron $generados cobros." . ($duplicados > 0 ? " ($duplicados ya existían)" : '');
+    $msg_cuotas = $num_cuotas > 1 ? " ($num_cuotas cuotas por estudiante)" : '';
+    $mensaje = "✅ Se generaron $generados cobros$msg_cuotas." . ($duplicados > 0 ? " ($duplicados ya existían)" : '');
     $tipo_msg = 'exito';
     $vista = 'cobros';
 }
@@ -365,6 +378,7 @@ $pct_recaudo = $stats['total_facturado'] > 0
         }
         .tipo-matricula { background: #ECFDF5; color: #059669; }
         .tipo-mensualidad { background: #DBEAFE; color: #1D4ED8; }
+        .tipo-seminario { background: #F3E8FF; color: #7C3AED; }
         .tipo-otro { background: #F3F4F6; color: #6B7280; }
 
         /* Modal overlay */
@@ -758,18 +772,19 @@ $pct_recaudo = $stats['total_facturado'] > 0
                         </select>
                     </div>
                     <div class="form-grupo">
-                        <label>Período</label>
-                        <input type="text" name="cobro_periodo" placeholder="Ej: 2026-03, 2026-MAT" required>
-                    </div>
-                    <div class="form-grupo">
-                        <label>Fecha de Vencimiento</label>
+                        <label>Fecha de vencimiento (1ra cuota)</label>
                         <input type="date" name="cobro_vencimiento" required>
                     </div>
                     <div class="form-grupo">
                         <label>Monto personalizado (opcional)</label>
                         <input type="number" name="cobro_monto" step="100" min="0" placeholder="Dejar vacío para usar monto base">
                     </div>
+                    <div class="form-grupo" style="display:flex;align-items:center;gap:0.6rem;padding-top:1.4rem;">
+                        <input type="checkbox" name="cobro_todas_cuotas" id="cobro_todas_cuotas" value="1" checked style="width:18px;height:18px;accent-color:#059669;">
+                        <label for="cobro_todas_cuotas" style="margin:0;cursor:pointer;">Generar todas las cuotas automáticamente</label>
+                    </div>
                 </div>
+                <p id="info-cuotas" style="font-size:0.82rem;color:#059669;margin:0.5rem 0;font-weight:600;display:none;"></p>
                 <button type="submit" class="btn-primary" style="margin-top:0.5rem;">📄 Generar Cobros</button>
             </form>
         </div>
@@ -881,14 +896,18 @@ $pct_recaudo = $stats['total_facturado'] > 0
                         <div class="form-grupo">
                             <label>Tipo</label>
                             <select name="concepto_tipo">
-                                <option value="matricula">Matrícula</option>
                                 <option value="mensualidad">Mensualidad</option>
+                                <option value="seminario">Seminario</option>
                                 <option value="otro">Otro</option>
                             </select>
                         </div>
                         <div class="form-grupo">
-                            <label>Monto Base ($)</label>
+                            <label>Monto por cuota ($)</label>
                             <input type="number" name="concepto_monto" step="100" min="0" required>
+                        </div>
+                        <div class="form-grupo">
+                            <label>Número de cuotas</label>
+                            <input type="number" name="concepto_cuotas" value="1" min="1" max="12">
                         </div>
                     </div>
                     <div class="form-grupo">
@@ -919,6 +938,19 @@ $pct_recaudo = $stats['total_facturado'] > 0
                     <div style="font-size:1.3rem;font-weight:800;color:#059669;">
                         $<?php echo number_format($c['monto_base'], 0, ',', '.'); ?>
                     </div>
+                    <?php
+                    $cuotas = isset($c['num_cuotas']) ? (int)$c['num_cuotas'] : 1;
+                    if ($cuotas > 1):
+                        $total_concepto = $c['monto_base'] * $cuotas;
+                    ?>
+                    <div style="font-size:0.78rem;color:#6B7280;margin-top:0.4rem;padding-top:0.4rem;border-top:1px solid #f0f0f0;">
+                        <?php echo $cuotas; ?> cuotas x $<?php echo number_format($c['monto_base'], 0, ',', '.'); ?> = <strong style="color:#022C22;">$<?php echo number_format($total_concepto, 0, ',', '.'); ?></strong>
+                    </div>
+                    <?php else: ?>
+                    <div style="font-size:0.78rem;color:#6B7280;margin-top:0.4rem;padding-top:0.4rem;border-top:1px solid #f0f0f0;">
+                        Pago único
+                    </div>
+                    <?php endif; ?>
                 </div>
                 <?php endwhile; ?>
             </div>
@@ -959,6 +991,29 @@ function filtrarEstudiantes() {
 // Auto-ocultar alerta
 var al = document.querySelector('.alerta');
 if (al) setTimeout(function() { al.style.transition='opacity 0.5s'; al.style.opacity='0'; setTimeout(function(){ al.remove(); }, 500); }, 4000);
+
+// Info de cuotas al seleccionar concepto en Generar Cobros
+var conceptosData = <?php echo json_encode(array_map(function($c) {
+    return ['id' => $c['id'], 'nombre' => $c['nombre'], 'monto' => $c['monto_base'], 'cuotas' => isset($c['num_cuotas']) ? (int)$c['num_cuotas'] : 1];
+}, $conceptos)); ?>;
+
+var selConcepto = document.querySelector('select[name="cobro_concepto"]');
+if (selConcepto) {
+    selConcepto.addEventListener('change', function() {
+        var info = document.getElementById('info-cuotas');
+        var checkCuotas = document.getElementById('cobro_todas_cuotas');
+        var sel = conceptosData.find(function(c) { return c.id == selConcepto.value; });
+        if (sel && sel.cuotas > 1) {
+            var total = sel.monto * sel.cuotas;
+            info.textContent = sel.cuotas + ' cuotas de $' + sel.monto.toLocaleString('es-CO') + ' = Total $' + total.toLocaleString('es-CO') + ' por estudiante';
+            info.style.display = 'block';
+            if (checkCuotas) checkCuotas.parentElement.style.display = '';
+        } else {
+            info.style.display = 'none';
+            if (checkCuotas) checkCuotas.parentElement.style.display = 'none';
+        }
+    });
+}
 </script>
 <script src="/intep/sesion.js"></script>
 </body>
