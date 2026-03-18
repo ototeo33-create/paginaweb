@@ -120,7 +120,13 @@ body::before{
   min-height:100vh;display:grid;
   grid-template-columns:.9fr 1.1fr;
   position:relative;overflow:hidden;
-  background:var(--cream);
+  background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);
+}
+.hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 20% 60%,rgba(16,185,129,.15),transparent 50%),
+    radial-gradient(circle at 80% 30%,rgba(4,120,87,.2),transparent 50%);
 }
 .hero-left{
   display:flex;flex-direction:column;justify-content:center;
@@ -129,19 +135,19 @@ body::before{
 .hero-tag{
   display:inline-flex;align-items:center;gap:.6rem;
   font-size:.72rem;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;
-  color:var(--green);margin-bottom:2rem;
+  color:rgba(255,255,255,.7);margin-bottom:2rem;
 }
-.hero-tag::before{content:'';width:40px;height:2px;background:var(--green)}
+.hero-tag::before{content:'';width:40px;height:2px;background:rgba(255,255,255,.5)}
 .hero h1{
   font-size:clamp(2.8rem,5.5vw,5.2rem);line-height:1.02;
-  color:var(--purple);margin-bottom:1.8rem;
+  color:#fff;margin-bottom:1.8rem;
 }
 .hero h1 em{
   font-style:normal;font-weight:900;
-  color:var(--green-dark);
+  color:var(--green-light);
 }
 .hero-desc{
-  font-size:1.1rem;line-height:1.8;color:var(--text-mid);
+  font-size:1.1rem;line-height:1.8;color:rgba(255,255,255,.75);
   max-width:480px;margin-bottom:2.5rem;font-weight:300;
 }
 .hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
@@ -157,23 +163,15 @@ body::before{
 }
 .btn-fill:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(60,171,90,.3)}
 .btn-ghost{
-  background:transparent;color:var(--purple);
-  border:2px solid rgba(74,25,66,.15);
+  background:transparent;color:#fff;
+  border:2px solid rgba(255,255,255,.3);
 }
-.btn-ghost:hover{border-color:var(--purple);background:var(--purple-pale)}
+.btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.1)}
 .hero-right{
   position:relative;overflow:hidden;
 }
 .hero-visual{
   position:absolute;inset:0;
-  background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);
-  clip-path:polygon(8% 0,100% 0,100% 100%,0% 100%);
-}
-.hero-visual::after{
-  content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(circle at 30% 70%,rgba(16,185,129,.2),transparent 50%),
-    radial-gradient(circle at 70% 30%,rgba(4,120,87,.25),transparent 50%);
 }
 /* Hero Slideshow */
 .hero-slideshow{
@@ -955,6 +953,17 @@ body::before{
   </div>
   <div class="hero-right">
     <div class="hero-visual"></div>
+    <div class="hero-slideshow" id="heroSlideshow">
+      <img src="presentacion/1.jpg" alt="INTEP" class="active">
+      <img src="presentacion/2.jpg" alt="INTEP">
+      <img src="presentacion/3.jpg" alt="INTEP">
+      <img src="presentacion/4.jpg" alt="INTEP">
+      <img src="presentacion/5.jpg" alt="INTEP">
+      <img src="presentacion/6.jpg" alt="INTEP">
+      <img src="presentacion/7.jpg" alt="INTEP">
+      <img src="presentacion/8.jpg" alt="INTEP">
+      <div class="hero-dots" id="heroDots"></div>
+    </div>
     <div class="hero-float f1">
       <div class="fl-number">14+</div>
       <div class="fl-label">Programas técnicos</div>
