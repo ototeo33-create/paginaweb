@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiénes Somos — INTEP | Instituto Técnico Pedagógico</title>
+<meta name="description" content="Conoce la misión, visión, valores corporativos y política de calidad del Instituto Técnico Pedagógico INTEP de Madrid, Cundinamarca.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#059669;--green-light:#10B981;--green-dark:#047857;--green-pale:#ECFDF5;
+  --purple:#4A1942;--purple-mid:#6B3FA0;--purple-light:#9B6FCF;--purple-pale:#f3ecf8;
+  --cream:#F5F2EC;--warm-white:#F0EDE6;--sand:#EBE7DF;
+  --text:#2D2235;--text-mid:#5A4D66;--text-light:#8A7D96;
+  --radius:16px;
+}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{font-family:'Exo 2',sans-serif;color:var(--text);background:var(--cream);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:'Exo 2',sans-serif;font-weight:800}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+/* ═══ TEXTURE OVERLAY ═══ */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:10000;
+  opacity:.025;mix-blend-mode:multiply;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ═══ NAVBAR ═══ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:9000;
+  background:rgba(253,251,247,.92);backdrop-filter:blur(24px) saturate(1.8);
+  box-shadow:0 1px 0 rgba(74,25,66,.06);padding:.7rem 0;
+}
+.nav-inner{
+  max-width:1340px;margin:0 auto;padding:0 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo img{height:60px;transition:height .4s}
+.nav-menu{display:flex;align-items:center;gap:.3rem;list-style:none}
+.nav-menu a{
+  padding:.55rem 1.1rem;font-size:.88rem;font-weight:500;
+  color:var(--purple);border-radius:99px;
+  transition:all .3s;letter-spacing:.2px;
+}
+.nav-menu a:hover{background:var(--purple-pale);color:var(--purple-mid)}
+.nav-menu a.active{background:var(--green-pale);color:var(--green)}
+.nav-cta{
+  background:var(--green);color:#fff!important;
+  padding:.65rem 1.5rem!important;border-radius:99px!important;
+  font-weight:600!important;font-size:.82rem!important;
+  letter-spacing:.4px;box-shadow:0 4px 16px rgba(60,171,90,.25);
+  transition:all .3s!important;
+}
+.nav-cta:hover{background:var(--green-dark)!important;transform:translateY(-2px);box-shadow:0 8px 24px rgba(60,171,90,.35)}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
+.burger span{width:22px;height:2px;background:var(--purple);border-radius:2px;transition:all .3s}
+
+/* ═══ MOBILE OVERLAY ═══ */
+.mob-menu{
+  display:none;position:fixed;inset:0;z-index:8999;
+  background:var(--cream);
+  flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;
+}
+.mob-menu.open{display:flex}
+.mob-menu a{font-family:'Exo 2',sans-serif;font-size:1.6rem;color:var(--purple);transition:color .3s}
+.mob-menu a:hover{color:var(--green)}
+
+/* ═══ PAGE HERO ═══ */
+.page-hero{
+  padding:10rem 2.5rem 5rem;
+  background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);
+  position:relative;overflow:hidden;text-align:center;
+}
+.page-hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 20% 60%,rgba(16,185,129,.15),transparent 50%),
+    radial-gradient(circle at 80% 30%,rgba(4,120,87,.2),transparent 50%);
+}
+.page-hero-inner{position:relative;z-index:1;max-width:800px;margin:0 auto}
+.page-hero h1{
+  font-size:clamp(2.4rem,5vw,4rem);color:#fff;line-height:1.1;margin-bottom:1rem;
+}
+.page-hero h1 em{font-style:normal;color:var(--green-light)}
+.page-hero p{
+  font-size:1.1rem;color:rgba(255,255,255,.7);line-height:1.7;font-weight:300;max-width:600px;margin:0 auto;
+}
+.page-hero-stripe{
+  position:absolute;bottom:0;left:0;right:0;height:80px;z-index:2;
+  background:var(--cream);
+  clip-path:polygon(0 60%,100% 0,100% 100%,0% 100%);
+}
+
+/* ═══ OBJETIVO / INTRO ═══ */
+.intro{padding:5rem 2.5rem;background:var(--cream)}
+.intro-inner{max-width:1100px;margin:0 auto;text-align:center}
+.intro h2{font-size:clamp(1.8rem,3vw,2.6rem);color:var(--purple);margin-bottom:1.5rem;line-height:1.15}
+.intro h2 em{font-style:normal;color:var(--green)}
+.intro p{font-size:1.05rem;color:var(--text-mid);line-height:1.9;font-weight:300;max-width:900px;margin:0 auto 2rem}
+
+/* Objetivo cards */
+.obj-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:1.2rem;margin-top:3rem;text-align:left;
+}
+.obj-card{
+  background:var(--warm-white);border:1px solid rgba(74,25,66,.05);
+  border-radius:var(--radius);padding:1.5rem;
+  display:flex;align-items:flex-start;gap:1rem;
+  transition:all .4s cubic-bezier(.22,1,.36,1);
+}
+.obj-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(74,25,66,.06);border-color:rgba(60,171,90,.15)}
+.obj-card i{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--green-pale);color:var(--green);font-size:1rem;
+  transition:all .3s;
+}
+.obj-card:hover i{background:var(--green);color:#fff}
+.obj-card p{font-size:.88rem;color:var(--text-mid);line-height:1.6;font-weight:300}
+
+/* ═══ MISIÓN & VISIÓN ═══ */
+.mv-section{
+  padding:5rem 2.5rem;background:var(--warm-white);
+}
+.mv-inner{max-width:1100px;margin:0 auto}
+.mv-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:2rem;
+}
+.mv-card{
+  padding:3rem;border-radius:20px;position:relative;overflow:hidden;
+  transition:transform .4s cubic-bezier(.22,1,.36,1);
+}
+.mv-card:hover{transform:translateY(-6px)}
+.mv-card::before{
+  content:'';position:absolute;top:-50px;right:-50px;
+  width:160px;height:160px;border-radius:50%;
+}
+.mv-mision{
+  background:linear-gradient(135deg,#033d2e 0%,var(--green-dark) 100%);color:#fff;
+}
+.mv-mision::before{background:rgba(16,185,129,.15)}
+.mv-vision{
+  background:linear-gradient(135deg,var(--purple) 0%,var(--purple-mid) 100%);color:#fff;
+}
+.mv-vision::before{background:rgba(155,111,207,.15)}
+.mv-icon{font-size:2.4rem;margin-bottom:1.2rem;display:block}
+.mv-card h3{font-size:1.4rem;margin-bottom:.8rem;font-weight:800;position:relative;z-index:1}
+.mv-card p{font-size:.95rem;line-height:1.8;opacity:.88;position:relative;z-index:1;font-weight:300}
+
+/* ═══ ENFOQUE ═══ */
+.enfoque{
+  padding:5rem 2.5rem;
+  background:linear-gradient(135deg,#033d2e 0%,var(--green-dark) 50%,#0a5c3f 100%);
+  position:relative;overflow:hidden;
+}
+.enfoque::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 15% 50%,rgba(16,185,129,.2),transparent 50%),
+    radial-gradient(circle at 85% 50%,rgba(5,150,105,.15),transparent 50%);
+}
+.enfoque-inner{max-width:900px;margin:0 auto;text-align:center;position:relative;z-index:1}
+.enfoque h2{font-size:clamp(1.6rem,3vw,2.2rem);color:#fff;margin-bottom:1.2rem}
+.enfoque h2 em{font-style:normal;color:var(--green-light)}
+.enfoque p{font-size:1.05rem;color:rgba(255,255,255,.8);line-height:1.9;font-weight:300}
+
+/* ═══ VALORES ═══ */
+.valores{padding:5rem 2.5rem;background:var(--cream)}
+.valores-inner{max-width:1340px;margin:0 auto}
+.valores-head{text-align:center;margin-bottom:3.5rem}
+.valores-head h2{font-size:clamp(2rem,3.5vw,3rem);color:var(--purple);margin-bottom:.5rem}
+.valores-head h2 em{font-style:normal;color:var(--green)}
+.valores-head p{font-size:1rem;color:var(--text-mid);font-weight:300}
+.valores-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1.2rem;
+}
+.val-card{
+  background:var(--warm-white);border:1px solid rgba(74,25,66,.05);
+  border-radius:var(--radius);padding:1.8rem;
+  position:relative;overflow:hidden;
+  transition:all .45s cubic-bezier(.22,1,.36,1);
+}
+.val-card::before{
+  content:'';position:absolute;bottom:0;left:0;width:100%;height:4px;
+  background:linear-gradient(90deg,var(--green),var(--green-light));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .45s cubic-bezier(.22,1,.36,1);
+}
+.val-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 16px 40px rgba(74,25,66,.08);
+  border-color:rgba(60,171,90,.15);
+}
+.val-card:hover::before{transform:scaleX(1)}
+.val-icon{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;margin-bottom:1rem;
+  background:var(--green-pale);color:var(--green);
+  transition:all .3s;
+}
+.val-card:hover .val-icon{background:var(--green);color:#fff}
+.val-card h4{
+  font-family:'Exo 2',sans-serif;font-size:1rem;font-weight:700;
+  color:var(--purple);margin-bottom:.4rem;
+}
+.val-card p{font-size:.82rem;color:var(--text-mid);line-height:1.6;font-weight:300}
+
+/* ═══ POLÍTICA DE CALIDAD ═══ */
+.calidad{padding:5rem 2.5rem;background:var(--warm-white)}
+.calidad-inner{max-width:1100px;margin:0 auto}
+.calidad-box{
+  background:var(--cream);border-radius:24px;
+  padding:3rem;border:1px solid rgba(74,25,66,.05);
+  position:relative;overflow:hidden;
+}
+.calidad-box::after{
+  content:'';position:absolute;top:0;right:0;width:200px;height:200px;
+  background:radial-gradient(circle,rgba(5,150,105,.06),transparent 70%);
+  border-radius:50%;
+}
+.calidad-box h2{
+  font-family:'Exo 2',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);
+  color:var(--purple);margin-bottom:1rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+.calidad-box h2 i{color:var(--green)}
+.calidad-box>p{
+  font-size:.98rem;color:var(--text-mid);line-height:1.8;font-weight:300;
+  position:relative;z-index:1;margin-bottom:1.5rem;
+}
+.calidad-list{
+  list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.6rem;
+  position:relative;z-index:1;
+}
+.calidad-list li{
+  font-size:.88rem;color:var(--text-mid);line-height:1.6;
+  padding:.8rem 1rem;background:var(--warm-white);border-radius:12px;
+  display:flex;align-items:flex-start;gap:.6rem;
+  border:1px solid rgba(74,25,66,.04);
+  transition:all .3s;
+}
+.calidad-list li:hover{border-color:rgba(60,171,90,.15);transform:translateX(4px)}
+.calidad-list li i{color:var(--green);margin-top:3px;flex-shrink:0}
+
+/* Objetivos de calidad */
+.obj-calidad{margin-top:2.5rem;position:relative;z-index:1}
+.obj-calidad h3{
+  font-family:'Exo 2',sans-serif;font-size:1.1rem;
+  color:var(--purple);margin-bottom:1rem;font-weight:700;
+  display:flex;align-items:center;gap:.5rem;
+}
+.obj-calidad h3 i{color:var(--green)}
+
+/* ═══ FOOTER ═══ */
+.footer{background:var(--purple);padding:3rem 2.5rem 1.5rem;position:relative;overflow:hidden}
+.footer::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--green),var(--green-light),var(--purple-mid),var(--green));
+}
+.footer-inner{
+  max-width:1340px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1.5rem;
+}
+.footer-logo img{height:80px;filter:brightness(0) invert(1);opacity:1}
+.footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
+.footer-links a{font-size:.85rem;color:rgba(255,255,255,.5);transition:color .3s}
+.footer-links a:hover{color:var(--green-light)}
+.footer-social{display:flex;gap:.6rem}
+.footer-social a{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);
+  font-size:.9rem;transition:all .3s;
+}
+.footer-social a:hover{background:var(--green);color:#fff}
+.footer-bottom{
+  max-width:1340px;margin:2rem auto 0;padding-top:1.5rem;
+  border-top:1px solid rgba(255,255,255,.06);
+  text-align:center;font-size:.76rem;color:rgba(255,255,255,.35);
+}
+
+/* ═══ SCROLL REVEAL ═══ */
+.sr{opacity:0;transform:translateY(50px);transition:all .9s cubic-bezier(.22,1,.36,1)}
+.sr.vis{opacity:1;transform:translateY(0)}
+.sr-d1{transition-delay:.1s}.sr-d2{transition-delay:.2s}.sr-d3{transition-delay:.3s}.sr-d4{transition-delay:.4s}
+.sr-left{transform:translateX(-50px)}.sr-left.vis{transform:translateX(0)}
+.sr-right{transform:translateX(50px)}.sr-right.vis{transform:translateX(0)}
+.sr-scale{transform:scale(.9);opacity:0}.sr-scale.vis{transform:scale(1);opacity:1}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .nav-menu{display:none}
+  .burger{display:flex}
+  .mv-grid{grid-template-columns:1fr}
+  .calidad-list{grid-template-columns:1fr}
+  .obj-grid{grid-template-columns:1fr}
+  .page-hero{padding:8rem 1.5rem 4rem}
+  .intro,.mv-section,.valores,.calidad,.enfoque{padding:3.5rem 1.5rem}
+}
+@media(max-width:520px){
+  .footer-inner{flex-direction:column;text-align:center}
+  .footer-links{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+<div class="nav-inner">
+  <a href="index.html" class="nav-logo"><img src="logointep.png" alt="INTEP"></a>
+  <ul class="nav-menu">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="nosotros.html" class="active">Quiénes Somos</a></li>
+    <li><a href="index.html#programas">Programas</a></li>
+    <li><a href="index.html#novedades">Novedades</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="https://portal.institutointep.edu.co/intep/login.php" class="nav-cta" target="_blank"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a></li>
+  </ul>
+  <div class="burger" onclick="toggleMob()"><span></span><span></span><span></span></div>
+</div>
+</nav>
+<div class="mob-menu" id="mob">
+  <a href="index.html" onclick="toggleMob()">Inicio</a>
+  <a href="nosotros.html" onclick="toggleMob()">Quiénes Somos</a>
+  <a href="index.html#programas" onclick="toggleMob()">Programas</a>
+  <a href="index.html#novedades" onclick="toggleMob()">Novedades</a>
+  <a href="index.html#contacto" onclick="toggleMob()">Contacto</a>
+  <a href="https://portal.institutointep.edu.co/intep/login.php" class="btn btn-fill" target="_blank" style="display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;border-radius:99px;font-weight:600;font-size:.88rem;background:var(--green);color:#fff;font-family:'Exo 2',sans-serif"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <h1 class="sr">Quiénes <em>Somos</em></h1>
+    <p class="sr sr-d1">Conoce nuestra esencia, valores y compromiso con la formación integral para el trabajo y el desarrollo humano.</p>
+  </div>
+  <div class="page-hero-stripe"></div>
+</section>
+
+<!-- OBJETIVO GENERAL -->
+<section class="intro">
+<div class="intro-inner">
+  <h2 class="sr">Objetivo <em>General</em></h2>
+  <p class="sr sr-d1">Formar integralmente personas con competencias laborales, técnicas y humanas, que les permitan desempeñarse eficientemente en el contexto productivo y social, contribuyendo al mejoramiento de su calidad de vida, su entorno familiar y al desarrollo de una sociedad equitativa, solidaria y sostenible.</p>
+
+  <h2 class="sr" style="margin-top:3rem">Objetivos <em>Específicos</em></h2>
+  <div class="obj-grid">
+    <div class="obj-card sr">
+      <i class="fas fa-cogs"></i>
+      <p>Desarrollar competencias laborales y técnicas que permitan un desempeño pertinente y competitivo.</p>
+    </div>
+    <div class="obj-card sr sr-d1">
+      <i class="fas fa-brain"></i>
+      <p>Promover el pensamiento crítico, la toma de decisiones autónomas y responsables.</p>
+    </div>
+    <div class="obj-card sr sr-d2">
+      <i class="fas fa-route"></i>
+      <p>Fortalecer la autonomía personal y la construcción del proyecto de vida.</p>
+    </div>
+    <div class="obj-card sr">
+      <i class="fas fa-heart"></i>
+      <p>Fomentar valores humanos como la solidaridad, el respeto, la ética y la responsabilidad social.</p>
+    </div>
+    <div class="obj-card sr sr-d1">
+      <i class="fas fa-puzzle-piece"></i>
+      <p>Impulsar la formación integral en dimensiones cognitivas, sociales, emocionales y técnicas.</p>
+    </div>
+    <div class="obj-card sr sr-d2">
+      <i class="fas fa-briefcase"></i>
+      <p>Articular la formación con el sector productivo, facilitando la empleabilidad y el emprendimiento.</p>
+    </div>
+    <div class="obj-card sr">
+      <i class="fas fa-lightbulb"></i>
+      <p>Promover la innovación, la adaptabilidad y el aprendizaje permanente.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- MISIÓN Y VISIÓN -->
+<section class="mv-section">
+<div class="mv-inner">
+  <div class="mv-grid">
+    <div class="mv-card mv-mision sr">
+      <span class="mv-icon"><i class="fas fa-flag"></i></span>
+      <h3>Misión</h3>
+      <p>Formar integralmente personas competentes, éticas y autónomas, mediante programas técnicos de calidad, que faciliten su inserción laboral, el emprendimiento y el desarrollo social.</p>
+    </div>
+    <div class="mv-card mv-vision sr sr-d1">
+      <span class="mv-icon"><i class="fas fa-eye"></i></span>
+      <h3>Visión 2030</h3>
+      <p>Ser reconocidos como una institución líder en formación para el trabajo y el desarrollo humano, destacada por la calidad de sus programas técnicos, la pertinencia de su oferta educativa y el impacto positivo de sus egresados en el sector productivo y social. Se consolidará como una organización innovadora, con procesos formativos orientados al desarrollo de competencias, el emprendimiento, la transformación digital y la responsabilidad social.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ENFOQUE DE FORMACIÓN -->
+<section class="enfoque">
+<div class="enfoque-inner">
+  <h2 class="sr">Enfoque de <em>Formación</em></h2>
+  <p class="sr sr-d1">La formación en el Instituto INTEP se orienta al desarrollo integral del estudiante, articulando competencias técnicas, pensamiento crítico, valores éticos y preparación para la vida y el trabajo.</p>
+</div>
+</section>
+
+<!-- VALORES CORPORATIVOS -->
+<section class="valores">
+<div class="valores-inner">
+  <div class="valores-head">
+    <h2 class="sr">Valores <em>Corporativos</em></h2>
+    <p class="sr sr-d1">Los principios que guían nuestra labor formativa</p>
+  </div>
+  <div class="valores-grid">
+    <div class="val-card sr">
+      <div class="val-icon"><i class="fas fa-handshake"></i></div>
+      <h4>Responsabilidad</h4>
+      <p>Cumplimiento oportuno y eficiente de los compromisos institucionales, académicos y sociales.</p>
+    </div>
+    <div class="val-card sr sr-d1">
+      <div class="val-icon"><i class="fas fa-heart"></i></div>
+      <h4>Respeto</h4>
+      <p>Reconocimiento de la dignidad humana, la diversidad y la convivencia armónica.</p>
+    </div>
+    <div class="val-card sr sr-d2">
+      <div class="val-icon"><i class="fas fa-balance-scale"></i></div>
+      <h4>Ética</h4>
+      <p>Actuación transparente, íntegra y coherente en todos los procesos institucionales.</p>
+    </div>
+    <div class="val-card sr">
+      <div class="val-icon"><i class="fas fa-award"></i></div>
+      <h4>Calidad</h4>
+      <p>Búsqueda permanente de la excelencia en los procesos formativos y administrativos.</p>
+    </div>
+    <div class="val-card sr sr-d1">
+      <div class="val-icon"><i class="fas fa-bullseye"></i></div>
+      <h4>Compromiso</h4>
+      <p>Disposición institucional y personal hacia el logro de objetivos y el mejoramiento continuo.</p>
+    </div>
+    <div class="val-card sr sr-d2">
+      <div class="val-icon"><i class="fas fa-hands-helping"></i></div>
+      <h4>Solidaridad</h4>
+      <p>Promoción de relaciones basadas en el apoyo mutuo, la cooperación y la equidad social.</p>
+    </div>
+    <div class="val-card sr">
+      <div class="val-icon"><i class="fas fa-lightbulb"></i></div>
+      <h4>Innovación</h4>
+      <p>Capacidad de adaptación y generación de nuevas soluciones en los procesos educativos.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- POLÍTICA DE CALIDAD -->
+<section class="calidad">
+<div class="calidad-inner">
+  <div class="calidad-box sr">
+    <h2><i class="fas fa-shield-alt"></i> Política de Calidad</h2>
+    <p>El Instituto INTEP de Madrid, Cundinamarca, se compromete a ofrecer servicios de formación para el trabajo y el desarrollo humano con altos estándares de calidad, orientados al desarrollo de competencias laborales, humanas y sociales, que respondan a las necesidades del entorno productivo y a las expectativas de la comunidad educativa.</p>
+    <ul class="calidad-list">
+      <li><i class="fas fa-check-circle"></i> Pertinencia y actualización permanente de los programas de formación</li>
+      <li><i class="fas fa-check-circle"></i> Cumplimiento de requisitos legales y normativos (NTC 5555:2011)</li>
+      <li><i class="fas fa-check-circle"></i> Cualificación continua del talento humano</li>
+      <li><i class="fas fa-check-circle"></i> Procesos de evaluación, seguimiento y mejora continua</li>
+      <li><i class="fas fa-check-circle"></i> Satisfacción de estudiantes, egresados y partes interesadas</li>
+      <li><i class="fas fa-check-circle"></i> Fortalecimiento de la cultura de calidad e innovación</li>
+    </ul>
+
+    <div class="obj-calidad">
+      <h3><i class="fas fa-bullseye"></i> Objetivos de Calidad</h3>
+      <ul class="calidad-list">
+        <li><i class="fas fa-check-circle"></i> Asegurar la calidad y pertinencia de los programas de formación ofrecidos</li>
+        <li><i class="fas fa-check-circle"></i> Incrementar los niveles de satisfacción de los estudiantes y partes interesadas</li>
+        <li><i class="fas fa-check-circle"></i> Fortalecer las competencias del talento humano institucional</li>
+        <li><i class="fas fa-check-circle"></i> Mejorar continuamente los procesos académicos y administrativos</li>
+        <li><i class="fas fa-check-circle"></i> Promover la inserción laboral y el emprendimiento de los egresados</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+<div class="footer-inner">
+  <div class="footer-logo"><img src="logointep.png" alt="INTEP"></div>
+  <div class="footer-links">
+    <a href="index.html">Inicio</a>
+    <a href="nosotros.html">Quiénes Somos</a>
+    <a href="index.html#programas">Programas</a>
+    <a href="index.html#novedades">Novedades</a>
+    <a href="index.html#contacto">Contacto</a>
+    <a href="https://portal.institutointep.edu.co/intep/login.php" target="_blank">Portal Estudiantil</a>
+  </div>
+  <div class="footer-social">
+    <a href="https://www.facebook.com/p/INTEP-Instituto-T%C3%A9cnico-Pedag%C3%B3gico-100064131155331/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://wa.me/573166307633" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  </div>
+</div>
+<div class="footer-bottom">© 2026 Instituto Técnico Pedagógico INTEP — Madrid, Cundinamarca, Colombia</div>
+</footer>
+
+<script>
+// Mobile menu
+function toggleMob(){document.getElementById('mob').classList.toggle('open')}
+
+// Scroll reveal
+const obs=new IntersectionObserver(e=>{
+  e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('vis')})
+},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
