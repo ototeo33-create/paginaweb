@@ -164,6 +164,19 @@ body::before{
   animation:heroTitleIn .8s ease-out .15s both, shimmerText 4s linear infinite;
   filter:drop-shadow(0 0 40px rgba(110,231,183,.25));
 }
+.hero-dot{
+  display:inline-block;width:clamp(14px,1.8vw,22px);height:clamp(14px,1.8vw,22px);
+  background:linear-gradient(135deg,var(--green-light) 0%,#6ee7b7 50%,#34d399 100%);
+  border-radius:50%;
+  vertical-align:baseline;margin-left:.1em;margin-bottom:.08em;
+  -webkit-text-fill-color:transparent;font-size:0;
+  animation:heroTitleIn .8s ease-out .15s both, dotPulse 2s ease-in-out infinite;
+  box-shadow:0 0 20px rgba(110,231,183,.4);
+}
+@keyframes dotPulse{
+  0%,100%{box-shadow:0 0 20px rgba(110,231,183,.4)}
+  50%{box-shadow:0 0 35px rgba(110,231,183,.7)}
+}
 @keyframes shimmerText{
   0%{background-position:0% center}
   100%{background-position:200% center}
@@ -1221,17 +1234,21 @@ body::before{
         <iframe src="https://maps.google.com/maps?q=4.731966,-74.2613007&z=17&output=embed" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </div>
-    <form class="contact-form sr sr-right" onsubmit="sendForm(event)">
+    <form class="contact-form sr sr-right" action="https://formsubmit.co/intep.matriculas@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Nueva solicitud de inscripción — INTEP">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" value="http://institutointep.edu.co/?enviado=1">
       <h3>Inscríbete ahora</h3>
       <p class="cf-sub">Déjanos tus datos y te contactamos</p>
       <div class="fg-row">
-        <div class="fg"><label>Nombre completo</label><input type="text" name="nombre" placeholder="Tu nombre" required></div>
-        <div class="fg"><label>Teléfono</label><input type="tel" name="telefono" placeholder="300 123 4567" required></div>
+        <div class="fg"><label>Nombre completo</label><input type="text" name="Nombre" placeholder="Tu nombre" required></div>
+        <div class="fg"><label>Teléfono</label><input type="tel" name="Teléfono" placeholder="300 123 4567" required></div>
       </div>
-      <div class="fg"><label>Correo electrónico</label><input type="email" name="email" placeholder="tucorreo@ejemplo.com"></div>
+      <div class="fg"><label>Correo electrónico</label><input type="email" name="Correo" placeholder="tucorreo@ejemplo.com"></div>
       <div class="fg">
         <label>Programa de interés</label>
-        <select name="programa" required>
+        <select name="Programa de interés" required>
           <option value="" disabled selected>Selecciona un programa</option>
           <option value="Auxiliar Administrativo">Auxiliar Administrativo</option>
           <option value="Auxiliar Contable y Financiero">Auxiliar Contable y Financiero</option>
@@ -1248,13 +1265,13 @@ body::before{
       </div>
       <div class="fg">
         <label>¿Cómo prefieres que te contactemos?</label>
-        <select name="contacto">
+        <select name="Preferencia de contacto">
           <option value="WhatsApp">WhatsApp</option>
           <option value="Llamada">Llamada telefónica</option>
           <option value="Correo">Correo electrónico</option>
         </select>
       </div>
-      <div class="fg"><label>Mensaje (opcional)</label><textarea name="mensaje" placeholder="¿Tienes alguna consulta adicional?"></textarea></div>
+      <div class="fg"><label>Mensaje (opcional)</label><textarea name="Mensaje" placeholder="¿Tienes alguna consulta adicional?"></textarea></div>
       <button type="submit" class="btn btn-send"><i class="fas fa-paper-plane"></i> Enviar</button>
     </form>
   </div>
@@ -1461,28 +1478,16 @@ const noticiasData=[
   grid.querySelectorAll('.sr').forEach(el=>obs.observe(el));
 })();
 
-// Form → WhatsApp redirect
-function sendForm(e){
-  e.preventDefault();
-  const f=e.target;
-  const nombre=f.nombre.value;
-  const tel=f.telefono.value;
-  const email=f.email.value;
-  const programa=f.programa.value;
-  const contacto=f.contacto.value;
-  const mensaje=f.mensaje.value;
-
-  if(contacto==='WhatsApp'||contacto==='Llamada'){
-    const msg=`Hola, soy *${nombre}*.\n📱 Tel: ${tel}${email?'\n✉️ Correo: '+email:''}\n📚 Me interesa: *${programa}*\n💬 Prefiero contacto por: ${contacto}${mensaje?'\n\n'+mensaje:''}`;
-    window.open(`https://wa.me/573222769962?text=${encodeURIComponent(msg)}`,'_blank');
-    alert('¡Gracias! Te redirigimos a WhatsApp.');
-  } else {
-    const asunto=encodeURIComponent('Solicitud de inscripción — '+programa);
-    const cuerpo=encodeURIComponent(`Nombre: ${nombre}\nTeléfono: ${tel}\nCorreo: ${email||'No proporcionado'}\nPrograma de interés: ${programa}\nPreferencia de contacto: ${contacto}\n\n${mensaje||'Sin mensaje adicional.'}`);
-    window.open(`mailto:intep.matriculas@gmail.com?subject=${asunto}&body=${cuerpo}`);
-    alert('¡Gracias! Se abrirá tu cliente de correo.');
+// Mostrar confirmación si viene de FormSubmit
+if(new URLSearchParams(window.location.search).get('enviado')==='1'){
+  const cf=document.querySelector('.contact-form');
+  if(cf){
+    const msg=document.createElement('div');
+    msg.style.cssText='background:rgba(52,211,153,.15);border:1px solid var(--green);border-radius:12px;padding:1.5rem;text-align:center;margin-bottom:1.5rem;position:relative;z-index:1';
+    msg.innerHTML='<i class="fas fa-check-circle" style="color:var(--green);font-size:1.5rem;margin-bottom:.5rem;display:block"></i><strong style="color:#fff;font-size:1.1rem">¡Formulario enviado!</strong><p style="color:rgba(255,255,255,.7);font-size:.9rem;margin-top:.3rem">Nos comunicaremos contigo pronto.</p>';
+    cf.insertBefore(msg,cf.querySelector('h3'));
+    history.replaceState(null,'',window.location.pathname);
   }
-  f.reset();
 }
 </script>
 </body>
