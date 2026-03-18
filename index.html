@@ -825,19 +825,18 @@ body::before{
 }
 .pm-overlay.open .pm-modal{transform:translateY(0) scale(1)}
 .pm-close{
-  position:sticky;top:0;z-index:2;
-  display:flex;justify-content:flex-end;padding:1rem 1.2rem 0;
+  position:absolute;top:.8rem;right:.8rem;z-index:3;
 }
 .pm-close button{
   width:40px;height:40px;border-radius:50%;border:none;
-  background:rgba(74,25,66,.08);color:var(--purple);
+  background:rgba(255,255,255,.2);backdrop-filter:blur(8px);color:#fff;
   font-size:1.1rem;cursor:pointer;transition:all .3s;
   display:flex;align-items:center;justify-content:center;
 }
-.pm-close button:hover{background:var(--purple);color:#fff}
+.pm-close button:hover{background:rgba(255,255,255,.4)}
 .pm-banner{
   width:100%;height:220px;object-fit:cover;
-  border-radius:0;display:block;
+  border-radius:20px 20px 0 0;display:block;
   background:linear-gradient(135deg,#033d2e 0%,var(--green-dark) 40%,var(--green) 100%);
 }
 .pm-banner.no-img{
@@ -1194,8 +1193,8 @@ body::before{
 <!-- PROGRAM MODAL -->
 <div class="pm-overlay" id="pmOverlay" onclick="if(event.target===this)closePM()">
   <div class="pm-modal">
-    <div class="pm-close"><button onclick="closePM()"><i class="fas fa-times"></i></button></div>
     <div id="pmBannerWrap"></div>
+    <div class="pm-close"><button onclick="closePM()"><i class="fas fa-times"></i></button></div>
     <div class="pm-body">
       <h2 class="pm-title" id="pmTitle"></h2>
       <p class="pm-desc" id="pmDesc"></p>
@@ -1280,20 +1279,20 @@ document.querySelectorAll('.counter').forEach(el=>counterObs.observe(el));
 
 // Program modal — datos incrustados para compatibilidad file:// y producción
 const programasData=[
-  {"slug":"admin","nombre":"Auxiliar Administrativo","icono":"fas fa-clipboard-list","descripcion":"Gestión de procesos y actividades administrativas organizacionales.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"contable","nombre":"Auxiliar Contable y Financiero","icono":"fas fa-calculator","descripcion":"Medición y reconocimiento de transacciones contables y financieras.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"recursos-humanos","nombre":"Auxiliar de Recursos Humanos","icono":"fas fa-users","descripcion":"Selección, vinculación y gestión del talento humano empresarial.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"nomina","nombre":"Nómina y Prestaciones Sociales","icono":"fas fa-money-check-alt","descripcion":"Liquidación de nómina, prestaciones sociales y seguridad social.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"seguridad-ocupacional","nombre":"Seguridad Ocupacional","icono":"fas fa-hard-hat","descripcion":"Sistemas de gestión en seguridad y salud en el trabajo.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"primera-infancia","nombre":"Educación Primera Infancia","icono":"fas fa-baby","descripcion":"Desarrollo integral de niños y niñas en sus primeros años.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"recreacion-deportes","nombre":"Recreación y Deportes","icono":"fas fa-futbol","descripcion":"Programas de recreación, actividad física y deportes comunitarios.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"comercio-exterior","nombre":"Comercio Exterior","icono":"fas fa-globe-americas","descripcion":"Operaciones de importación, exportación y logística internacional.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"sistemas","nombre":"Sistemas Informáticos y Digitales","icono":"fas fa-laptop-code","descripcion":"Soporte técnico y gestión de sistemas informáticos empresariales.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"ventas-mercadeo","nombre":"Ventas y Mercadeo","icono":"fas fa-chart-line","descripcion":"Estrategias comerciales y marketing para impulsar negocios.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"compras-inventarios","nombre":"Compras e Inventarios","icono":"fas fa-boxes","descripcion":"Adquisiciones, control de inventarios y gestión de proveedores.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"logistica","nombre":"Logística y Almacenamiento","icono":"fas fa-truck-loading","descripcion":"Operaciones logísticas y cadena de aprovisionamiento.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"veterinaria","nombre":"Auxiliar de Veterinaria","icono":"fas fa-paw","descripcion":"Procedimientos clínicos y quirúrgicos para la salud animal.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
-  {"slug":"ingles","nombre":"Inglés — A1, A2, B1","icono":"fas fa-language","descripcion":"Domina el inglés con nuestro programa progresivo internacional.","duracion":"12 meses","modalidad":"Presencial","horarios":"Diurno y Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"}
+  {"slug":"admin","nombre":"Auxiliar Administrativo","icono":"fas fa-clipboard-list","descripcion":"Gestión de procesos y actividades administrativas organizacionales.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"contable","nombre":"Auxiliar Contable y Financiero","icono":"fas fa-calculator","descripcion":"Medición y reconocimiento de transacciones contables y financieras.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"recursos-humanos","nombre":"Auxiliar de Recursos Humanos","icono":"fas fa-users","descripcion":"Selección, vinculación y gestión del talento humano empresarial.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"nomina","nombre":"Nómina y Prestaciones Sociales","icono":"fas fa-money-check-alt","descripcion":"Liquidación de nómina, prestaciones sociales y seguridad social.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"seguridad-ocupacional","nombre":"Seguridad Ocupacional","icono":"fas fa-hard-hat","descripcion":"Sistemas de gestión en seguridad y salud en el trabajo.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"primera-infancia","nombre":"Educación Primera Infancia","icono":"fas fa-baby","descripcion":"Desarrollo integral de niños y niñas en sus primeros años.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"recreacion-deportes","nombre":"Recreación y Deportes","icono":"fas fa-futbol","descripcion":"Programas de recreación, actividad física y deportes comunitarios.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"comercio-exterior","nombre":"Comercio Exterior","icono":"fas fa-globe-americas","descripcion":"Operaciones de importación, exportación y logística internacional.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"sistemas","nombre":"Sistemas Informáticos y Digitales","icono":"fas fa-laptop-code","descripcion":"Soporte técnico y gestión de sistemas informáticos empresariales.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"ventas-mercadeo","nombre":"Ventas y Mercadeo","icono":"fas fa-chart-line","descripcion":"Estrategias comerciales y marketing para impulsar negocios.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"compras-inventarios","nombre":"Compras e Inventarios","icono":"fas fa-boxes","descripcion":"Adquisiciones, control de inventarios y gestión de proveedores.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"logistica","nombre":"Logística y Almacenamiento","icono":"fas fa-truck-loading","descripcion":"Operaciones logísticas y cadena de aprovisionamiento.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"veterinaria","nombre":"Auxiliar de Veterinaria","icono":"fas fa-paw","descripcion":"Procedimientos clínicos y quirúrgicos para la salud animal.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"},
+  {"slug":"ingles","nombre":"Inglés — A1, A2, B1","icono":"fas fa-language","descripcion":"Domina el inglés con nuestro programa progresivo internacional.","duracion":"10 meses","modalidad":"Presencial y Virtual","horarios":"Nocturno","pensum_img":"pensum.jpg","pensum_pdf":"pensum.pdf"}
 ];
 document.querySelectorAll('.p-card[data-slug]').forEach(card=>{
   card.addEventListener('click',()=>{
