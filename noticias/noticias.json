@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "titulo": "Nuevas inscripciones abiertas 2026",
+    "descripcion": "Matricúlate en cualquiera de nuestros 14 programas técnicos. Horarios diurnos y nocturnos disponibles.",
+    "fecha": "15 Mar 2026",
+    "categoria": "Inscripciones",
+    "imagen": "imagen.jpg"
+  },
+  {
+    "id": "2",
+    "titulo": "Ceremonia de graduación promoción 2025",
+    "descripcion": "Celebramos a nuestros nuevos egresados que hoy dan el siguiente paso en su vida profesional.",
+    "fecha": "10 Mar 2026",
+    "categoria": "Graduaciones",
+    "imagen": "imagen.jpg"
+  },
+  {
+    "id": "3",
+    "titulo": "Convenio con empresas de la región",
+    "descripcion": "Nuevas alianzas estratégicas para las prácticas laborales de nuestros estudiantes en Madrid y alrededores.",
+    "fecha": "28 Feb 2026",
+    "categoria": "Convenios",
+    "imagen": "imagen.jpg"
+  },
+  {
+    "id": "4",
+    "titulo": "Semana de la salud ocupacional",
+    "descripcion": "Actividades, charlas y talleres sobre seguridad y salud en el trabajo para toda la comunidad INTEP.",
+    "fecha": "20 Feb 2026",
+    "categoria": "Eventos",
+    "imagen": "imagen.jpg"
+  },
+  {
+    "id": "5",
+    "titulo": "Taller de emprendimiento estudiantil",
+    "descripcion": "Nuestros estudiantes desarrollaron sus ideas de negocio con asesoría de expertos del sector.",
+    "fecha": "12 Feb 2026",
+    "categoria": "Eventos",
+    "imagen": "imagen.jpg"
+  },
+  {
+    "id": "6",
+    "titulo": "INTEP celebra 10 años formando profesionales",
+    "descripcion": "Una década de compromiso con la educación técnica de calidad en Madrid, Cundinamarca.",
+    "fecha": "01 Feb 2026",
+    "categoria": "Institucional",
+    "imagen": "imagen.jpg"
+  }
+]
