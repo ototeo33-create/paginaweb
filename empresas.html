@@ -218,6 +218,39 @@ body::before{
 }
 .btn-whatsapp-cta i{font-size:1.3rem}
 
+/* FORM EMPRESARIAL */
+.cta-form{
+  background:#fff;border-radius:20px;padding:2.5rem 2rem;
+  max-width:700px;margin:2.5rem auto 0;text-align:left;
+  box-shadow:0 8px 40px rgba(0,0,0,.12);
+}
+.cta-form h3{color:var(--green-dark);font-size:1.3rem;margin-bottom:.3rem;text-align:center}
+.cta-form .cf-sub{color:var(--text-mid);font-size:.9rem;margin-bottom:1.8rem;text-align:center}
+.cta-form .fg{margin-bottom:1rem}
+.cta-form .fg label{display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:.3rem}
+.cta-form .fg input,.cta-form .fg select,.cta-form .fg textarea{
+  width:100%;padding:.75rem 1rem;border:1.5px solid #e0ddd8;border-radius:10px;
+  font-family:'Exo 2',sans-serif;font-size:.92rem;color:var(--text);
+  background:var(--cream);transition:border-color .3s;
+}
+.cta-form .fg input:focus,.cta-form .fg select:focus,.cta-form .fg textarea:focus{
+  outline:none;border-color:var(--green);
+}
+.cta-form .fg textarea{resize:vertical;min-height:80px}
+.cta-form .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.btn-send-emp{
+  display:inline-flex;align-items:center;gap:.7rem;
+  padding:1rem 2.5rem;border-radius:99px;width:100%;justify-content:center;
+  background:var(--green);color:#fff;
+  font-weight:700;font-size:1rem;font-family:'Exo 2',sans-serif;
+  transition:all .3s;border:none;cursor:pointer;margin-top:.5rem;
+  box-shadow:0 4px 16px rgba(5,150,105,.25);
+}
+.btn-send-emp:hover{
+  background:var(--green-dark);transform:translateY(-2px);
+  box-shadow:0 8px 28px rgba(5,150,105,.35);
+}
+
 /* DOWNLOAD BUTTON */
 .btn-download{
   display:inline-flex;align-items:center;gap:.7rem;
@@ -300,6 +333,8 @@ body::before{
   .btn-download{padding:.85rem 1.8rem;font-size:.9rem}
   .cta-cards{grid-template-columns:1fr}
   .btn-whatsapp-cta{padding:1rem 2rem;font-size:1rem}
+  .cta-form .fg-row{grid-template-columns:1fr}
+  .cta-form{padding:2rem 1.5rem}
 }
 </style>
 </head>
@@ -444,7 +479,37 @@ body::before{
         <p>Establezca un convenio con INTEP y ofrezca a sus colaboradores acceso preferencial a nuestros programas técnicos laborales con tarifas especiales y condiciones exclusivas para su organización.</p>
       </div>
     </div>
-    <a href="https://wa.me/573166307633?text=Hola%2C%20somos%20una%20empresa%20interesada%20en%20conocer%20los%20servicios%20de%20capacitaci%C3%B3n%20y%20convenios%20corporativos%20de%20INTEP." class="btn-whatsapp-cta sr sr-d2" target="_blank"><i class="fab fa-whatsapp"></i> Solicitar cotización</a>
+    <form class="cta-form sr sr-d2" action="https://formsubmit.co/intep.matriculas@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Solicitud empresarial — INTEP">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="http://institutointep.edu.co/empresas.html">
+      <input type="hidden" name="_template" value="table">
+      <h3>Solicite su cotización</h3>
+      <p class="cf-sub">Complete el formulario y un asesor se pondrá en contacto con usted</p>
+      <div class="fg-row">
+        <div class="fg"><label>Nombre de la empresa</label><input type="text" name="Empresa" placeholder="Razón social" required></div>
+        <div class="fg"><label>NIT</label><input type="text" name="NIT" placeholder="000.000.000-0"></div>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label>Persona de contacto</label><input type="text" name="Contacto" placeholder="Nombre completo" required></div>
+        <div class="fg"><label>Cargo</label><input type="text" name="Cargo" placeholder="Ej: Gerente de Talento Humano"></div>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label>Teléfono</label><input type="tel" name="Telefono" placeholder="300 123 4567" required></div>
+        <div class="fg"><label>Correo electrónico</label><input type="email" name="Email" placeholder="correo@empresa.com" required></div>
+      </div>
+      <div class="fg">
+        <label>Servicio de interés</label>
+        <select name="Servicio" required>
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option value="Capacitación empresarial (cursos, diplomados, talleres)">Capacitación empresarial (cursos, diplomados, talleres)</option>
+          <option value="Convenio institucional para programas técnicos">Convenio institucional para programas técnicos</option>
+          <option value="Ambos (capacitación + convenio)">Ambos (capacitación + convenio)</option>
+        </select>
+      </div>
+      <div class="fg"><label>Mensaje o requerimiento adicional</label><textarea name="Mensaje" placeholder="Describa brevemente las necesidades de formación de su empresa..."></textarea></div>
+      <button type="submit" class="btn-send-emp"><i class="fas fa-paper-plane"></i> Enviar solicitud</button>
+    </form>
   </div>
 </section>
 
