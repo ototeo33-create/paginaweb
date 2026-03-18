@@ -127,6 +127,72 @@ body::before{
 .carousel-item:hover img{transform:scale(1.05)}
 .carousel-reverse{animation-direction:reverse}
 
+/* CTA EMPRESARIAL */
+.cta-empresarial{
+  padding:5rem 2rem;
+  background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);
+  position:relative;overflow:hidden;
+}
+.cta-empresarial::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 70% 30%,rgba(107,63,160,.15) 0%,transparent 60%);
+}
+.cta-empresarial::after{
+  content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;
+  border-radius:50%;border:1px solid rgba(255,255,255,.04);
+}
+.cta-inner{
+  max-width:900px;margin:0 auto;text-align:center;position:relative;z-index:1;
+}
+.cta-badge{
+  display:inline-block;padding:.5rem 1.5rem;border-radius:99px;
+  background:rgba(255,255,255,.08);backdrop-filter:blur(8px);
+  color:rgba(255,255,255,.7);font-size:.78rem;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:1.5rem;
+}
+.cta-inner h2{
+  font-size:clamp(1.8rem,4vw,2.8rem);color:#fff;line-height:1.3;margin-bottom:1.5rem;
+}
+.cta-inner h2 em{
+  color:var(--green-light);font-style:normal;
+  background:linear-gradient(transparent 60%,rgba(16,185,129,.2) 60%);
+}
+.cta-cards{
+  display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin:2.5rem 0;
+}
+.cta-card{
+  background:rgba(255,255,255,.06);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);
+  padding:1.8rem 1.5rem;text-align:left;
+  transition:all .3s;
+}
+.cta-card:hover{background:rgba(255,255,255,.1);transform:translateY(-3px)}
+.cta-card-icon{
+  width:48px;height:48px;border-radius:12px;
+  background:rgba(16,185,129,.15);color:var(--green-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;margin-bottom:1rem;
+}
+.cta-card h3{color:#fff;font-size:1.05rem;margin-bottom:.5rem;font-weight:700}
+.cta-card p{color:rgba(255,255,255,.6);font-size:.88rem;line-height:1.6}
+.cta-desc{
+  color:rgba(255,255,255,.65);font-size:1.05rem;line-height:1.8;
+  max-width:700px;margin:0 auto 2.5rem;
+}
+.btn-whatsapp-cta{
+  display:inline-flex;align-items:center;gap:.8rem;
+  padding:1.1rem 2.8rem;border-radius:99px;
+  background:#25D366;color:#fff;
+  font-weight:700;font-size:1.1rem;font-family:'Exo 2',sans-serif;
+  transition:all .3s;border:none;cursor:pointer;text-decoration:none;
+  box-shadow:0 4px 20px rgba(37,211,102,.3);
+}
+.btn-whatsapp-cta:hover{
+  background:#20bd5a;transform:translateY(-3px);
+  box-shadow:0 8px 32px rgba(37,211,102,.45);
+}
+.btn-whatsapp-cta i{font-size:1.3rem}
+
 /* DOWNLOAD BUTTON */
 .btn-download{
   display:inline-flex;align-items:center;gap:.7rem;
@@ -207,6 +273,8 @@ body::before{
   .footer-links{justify-content:center}
   .carousel-item{width:280px;height:175px}
   .btn-download{padding:.85rem 1.8rem;font-size:.9rem}
+  .cta-cards{grid-template-columns:1fr}
+  .btn-whatsapp-cta{padding:1rem 2rem;font-size:1rem}
 }
 </style>
 </head>
@@ -324,6 +392,28 @@ body::before{
     <div class="download-wrap sr sr-d2">
       <a href="empresas/formacion-continua/portafolio.pdf" class="btn-download" download><i class="fas fa-file-pdf"></i> Descargar Portafolio de Formación Continua</a>
     </div>
+  </div>
+</section>
+
+<!-- CTA EMPRESARIAL -->
+<section class="cta-empresarial">
+  <div class="cta-inner">
+    <span class="cta-badge sr">Alianzas Corporativas</span>
+    <h2 class="sr">Impulse el crecimiento de su empresa con <em>formación a la medida</em></h2>
+    <p class="cta-desc sr sr-d1">En INTEP diseñamos soluciones de capacitación adaptadas a las necesidades reales de su organización. Fortalezca las competencias de su equipo y acceda a beneficios exclusivos a través de nuestros convenios empresariales.</p>
+    <div class="cta-cards">
+      <div class="cta-card sr">
+        <div class="cta-card-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+        <h3>Capacitación Empresarial</h3>
+        <p>Cursos, diplomados y talleres diseñados para potenciar las habilidades técnicas y blandas de sus colaboradores. Programas flexibles que se adaptan a los horarios y objetivos de su empresa.</p>
+      </div>
+      <div class="cta-card sr sr-d1">
+        <div class="cta-card-icon"><i class="fas fa-handshake"></i></div>
+        <h3>Convenios Institucionales</h3>
+        <p>Establezca un convenio con INTEP y ofrezca a sus colaboradores acceso preferencial a nuestros programas técnicos laborales con tarifas especiales y condiciones exclusivas para su organización.</p>
+      </div>
+    </div>
+    <a href="https://wa.me/573166307633?text=Hola%2C%20somos%20una%20empresa%20interesada%20en%20conocer%20los%20servicios%20de%20capacitaci%C3%B3n%20y%20convenios%20corporativos%20de%20INTEP." class="btn-whatsapp-cta sr sr-d2" target="_blank"><i class="fab fa-whatsapp"></i> Solicitar cotización</a>
   </div>
 </section>
 
