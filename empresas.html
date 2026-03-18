@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Empresas — INTEP | Instituto Técnico Pedagógico</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<meta name="description" content="Alianzas empresariales y convenios del Instituto Técnico Pedagógico INTEP.">
+<meta name="description" content="Portafolios empresariales del Instituto Técnico Pedagógico INTEP. Programas técnicos y formación continua.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
@@ -75,32 +75,108 @@ body::before{
 .page-hero p{font-size:1.1rem;color:rgba(255,255,255,.7);line-height:1.7;max-width:600px;margin:0 auto}
 .page-hero-stripe{position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--green),var(--purple-mid),var(--green-light))}
 
-/* COMING SOON */
-.coming-soon{
-  padding:6rem 2rem;text-align:center;
+/* PORTAFOLIO SECTION */
+.portafolio-section{
+  padding:5rem 2rem;
 }
-.coming-soon-inner{
-  max-width:700px;margin:0 auto;
-  background:#fff;border-radius:24px;padding:4rem 3rem;
-  box-shadow:0 4px 30px rgba(74,25,66,.06);
-  position:relative;overflow:hidden;
+.portafolio-section:nth-child(even){
+  background:var(--warm-white);
 }
-.coming-soon-inner::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:4px;
-  background:linear-gradient(90deg,var(--green),var(--green-light),var(--purple-mid));
+.portafolio-inner{
+  max-width:1200px;margin:0 auto;
 }
-.coming-soon-icon{
-  width:90px;height:90px;border-radius:50%;
-  background:var(--purple-pale);color:var(--purple-mid);
-  display:flex;align-items:center;justify-content:center;
-  font-size:2.2rem;margin:0 auto 2rem;
+.portafolio-header{
+  text-align:center;margin-bottom:3rem;
 }
-.coming-soon h2{font-size:1.8rem;color:var(--purple);margin-bottom:1rem}
-.coming-soon p{color:var(--text-mid);line-height:1.8;font-size:1.05rem;margin-bottom:1.5rem}
-.coming-soon .highlight{
-  display:inline-block;padding:.6rem 1.5rem;border-radius:99px;
-  background:var(--purple-pale);color:var(--purple-mid);
-  font-weight:600;font-size:.9rem;
+.portafolio-header h2{
+  font-size:clamp(1.6rem,3vw,2.2rem);color:var(--purple);margin-bottom:.8rem;
+}
+.portafolio-header h2 em{color:var(--green);font-style:normal}
+.portafolio-header p{
+  color:var(--text-mid);font-size:1.05rem;max-width:600px;margin:0 auto;line-height:1.7;
+}
+
+/* CAROUSEL MARQUEE */
+.carousel-wrap{
+  overflow:hidden;margin-bottom:2rem;
+  mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+}
+.carousel-track{
+  display:flex;gap:1.2rem;
+  animation:marqueeScroll 30s linear infinite;
+  width:max-content;
+}
+.carousel-track:hover{animation-play-state:paused}
+@keyframes marqueeScroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+.carousel-item{
+  flex-shrink:0;width:420px;height:260px;
+  border-radius:var(--radius);overflow:hidden;cursor:pointer;
+  box-shadow:0 2px 12px rgba(74,25,66,.06);
+  transition:transform .3s,box-shadow .3s;
+}
+.carousel-item:hover{
+  transform:translateY(-4px);box-shadow:0 8px 30px rgba(74,25,66,.1);
+}
+.carousel-item img{
+  width:100%;height:100%;object-fit:cover;transition:transform .4s;
+}
+.carousel-item:hover img{transform:scale(1.05)}
+.carousel-reverse{animation-direction:reverse}
+
+/* DOWNLOAD BUTTON */
+.btn-download{
+  display:inline-flex;align-items:center;gap:.7rem;
+  padding:1rem 2.2rem;border-radius:99px;
+  background:var(--green);color:#fff;
+  font-weight:700;font-size:1rem;font-family:'Exo 2',sans-serif;
+  transition:all .3s;border:none;cursor:pointer;
+  text-decoration:none;
+  box-shadow:0 4px 16px rgba(5,150,105,.25);
+}
+.btn-download:hover{
+  background:var(--green-dark);transform:translateY(-3px);
+  box-shadow:0 8px 28px rgba(5,150,105,.35);
+}
+.btn-download i{font-size:1.1rem}
+.download-wrap{text-align:center;margin-top:1rem}
+
+/* LIGHTBOX */
+.lightbox{
+  display:none;position:fixed;inset:0;z-index:20000;
+  background:rgba(0,0,0,.9);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;
+  padding:2rem;
+}
+.lightbox.open{display:flex}
+.lightbox img{
+  max-width:90vw;max-height:85vh;border-radius:12px;
+  object-fit:contain;
+}
+.lightbox-close{
+  position:absolute;top:1.5rem;right:1.5rem;
+  width:44px;height:44px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.15);color:#fff;font-size:1.3rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .3s;
+}
+.lightbox-close:hover{background:rgba(255,255,255,.3)}
+.lightbox-nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:50px;height:50px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.12);color:#fff;font-size:1.2rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .3s;
+}
+.lightbox-nav:hover{background:rgba(255,255,255,.25)}
+.lightbox-prev{left:1.5rem}
+.lightbox-next{right:1.5rem}
+.lightbox-counter{
+  position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,.6);font-size:.9rem;font-weight:500;
 }
 
 /* FOOTER */
@@ -118,17 +194,19 @@ body::before{
 /* SCROLL REVEAL */
 .sr{opacity:0;transform:translateY(50px);transition:all .9s cubic-bezier(.22,1,.36,1)}
 .sr.vis{opacity:1;transform:translateY(0)}
-.sr-d1{transition-delay:.15s}
+.sr-d1{transition-delay:.15s}.sr-d2{transition-delay:.3s}
 
 /* RESPONSIVE */
 @media(max-width:900px){
   .nav-menu{display:none}
   .burger{display:flex}
+  .carousel-item{width:320px;height:200px}
 }
 @media(max-width:520px){
   .footer-inner{flex-direction:column;text-align:center}
   .footer-links{justify-content:center}
-  .coming-soon-inner{padding:3rem 1.5rem}
+  .carousel-item{width:280px;height:175px}
+  .btn-download{padding:.85rem 1.8rem;font-size:.9rem}
 }
 </style>
 </head>
@@ -166,20 +244,97 @@ body::before{
 <section class="page-hero">
   <div class="page-hero-inner">
     <h1 class="sr"><em>Empresas</em></h1>
-    <p class="sr sr-d1">Alianzas estratégicas para la formación del talento humano que necesita el sector productivo.</p>
+    <p class="sr sr-d1">Conoce nuestros portafolios de servicios diseñados para fortalecer el talento humano del sector productivo.</p>
   </div>
   <div class="page-hero-stripe"></div>
 </section>
 
-<!-- COMING SOON -->
-<section class="coming-soon">
-  <div class="coming-soon-inner sr">
-    <div class="coming-soon-icon"><i class="fas fa-building"></i></div>
-    <h2>Estamos trabajando en esta sección</h2>
-    <p>Próximamente encontrarás información sobre nuestros convenios empresariales, prácticas laborales, programas de formación a la medida y oportunidades de vinculación con el sector productivo de Madrid y Cundinamarca.</p>
-    <span class="highlight"><i class="fas fa-hard-hat"></i> En construcción</span>
+<!-- PORTAFOLIO PROGRAMAS -->
+<section class="portafolio-section">
+  <div class="portafolio-inner">
+    <div class="portafolio-header sr">
+      <h2>Portafolio de <em>Programas Técnicos</em></h2>
+      <p>Programas técnicos laborales aprobados por la Secretaría de Educación de Cundinamarca.</p>
+    </div>
+    <div class="carousel-wrap sr sr-d1">
+      <div class="carousel-track">
+        <div class="carousel-item" onclick="openLightbox('programas',0)"><img src="empresas/programas/1.jpg" alt="Portafolio Programas 1" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',1)"><img src="empresas/programas/2.jpg" alt="Portafolio Programas 2" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',2)"><img src="empresas/programas/3.jpg" alt="Portafolio Programas 3" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',3)"><img src="empresas/programas/4.jpg" alt="Portafolio Programas 4" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',4)"><img src="empresas/programas/5.jpg" alt="Portafolio Programas 5" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',5)"><img src="empresas/programas/6.jpg" alt="Portafolio Programas 6" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',6)"><img src="empresas/programas/7.jpg" alt="Portafolio Programas 7" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',7)"><img src="empresas/programas/8.jpg" alt="Portafolio Programas 8" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',8)"><img src="empresas/programas/9.jpg" alt="Portafolio Programas 9" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',9)"><img src="empresas/programas/10.jpg" alt="Portafolio Programas 10" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',10)"><img src="empresas/programas/11.jpg" alt="Portafolio Programas 11" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',11)"><img src="empresas/programas/12.jpg" alt="Portafolio Programas 12" loading="lazy"></div>
+        <!-- Duplicados para loop infinito -->
+        <div class="carousel-item" onclick="openLightbox('programas',0)"><img src="empresas/programas/1.jpg" alt="Portafolio Programas 1" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',1)"><img src="empresas/programas/2.jpg" alt="Portafolio Programas 2" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',2)"><img src="empresas/programas/3.jpg" alt="Portafolio Programas 3" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',3)"><img src="empresas/programas/4.jpg" alt="Portafolio Programas 4" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',4)"><img src="empresas/programas/5.jpg" alt="Portafolio Programas 5" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',5)"><img src="empresas/programas/6.jpg" alt="Portafolio Programas 6" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',6)"><img src="empresas/programas/7.jpg" alt="Portafolio Programas 7" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',7)"><img src="empresas/programas/8.jpg" alt="Portafolio Programas 8" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',8)"><img src="empresas/programas/9.jpg" alt="Portafolio Programas 9" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',9)"><img src="empresas/programas/10.jpg" alt="Portafolio Programas 10" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',10)"><img src="empresas/programas/11.jpg" alt="Portafolio Programas 11" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('programas',11)"><img src="empresas/programas/12.jpg" alt="Portafolio Programas 12" loading="lazy"></div>
+      </div>
+    </div>
+    <div class="download-wrap sr sr-d2">
+      <a href="empresas/programas/portafolio.pdf" class="btn-download" download><i class="fas fa-file-pdf"></i> Descargar Portafolio de Programas</a>
+    </div>
   </div>
 </section>
+
+<!-- PORTAFOLIO FORMACIÓN CONTINUA -->
+<section class="portafolio-section">
+  <div class="portafolio-inner">
+    <div class="portafolio-header sr">
+      <h2>Portafolio de <em>Formación Continua</em></h2>
+      <p>Cursos, diplomados y talleres para la actualización profesional y el desarrollo de competencias.</p>
+    </div>
+    <div class="carousel-wrap sr sr-d1">
+      <div class="carousel-track carousel-reverse">
+        <div class="carousel-item" onclick="openLightbox('formacion',0)"><img src="empresas/formacion-continua/1.jpg" alt="Formación Continua 1" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',1)"><img src="empresas/formacion-continua/2.jpg" alt="Formación Continua 2" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',2)"><img src="empresas/formacion-continua/3.jpg" alt="Formación Continua 3" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',3)"><img src="empresas/formacion-continua/4.jpg" alt="Formación Continua 4" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',4)"><img src="empresas/formacion-continua/5.jpg" alt="Formación Continua 5" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',5)"><img src="empresas/formacion-continua/6.jpg" alt="Formación Continua 6" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',6)"><img src="empresas/formacion-continua/7.jpg" alt="Formación Continua 7" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',7)"><img src="empresas/formacion-continua/8.jpg" alt="Formación Continua 8" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',8)"><img src="empresas/formacion-continua/9.jpg" alt="Formación Continua 9" loading="lazy"></div>
+        <!-- Duplicados para loop infinito -->
+        <div class="carousel-item" onclick="openLightbox('formacion',0)"><img src="empresas/formacion-continua/1.jpg" alt="Formación Continua 1" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',1)"><img src="empresas/formacion-continua/2.jpg" alt="Formación Continua 2" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',2)"><img src="empresas/formacion-continua/3.jpg" alt="Formación Continua 3" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',3)"><img src="empresas/formacion-continua/4.jpg" alt="Formación Continua 4" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',4)"><img src="empresas/formacion-continua/5.jpg" alt="Formación Continua 5" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',5)"><img src="empresas/formacion-continua/6.jpg" alt="Formación Continua 6" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',6)"><img src="empresas/formacion-continua/7.jpg" alt="Formación Continua 7" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',7)"><img src="empresas/formacion-continua/8.jpg" alt="Formación Continua 8" loading="lazy"></div>
+        <div class="carousel-item" onclick="openLightbox('formacion',8)"><img src="empresas/formacion-continua/9.jpg" alt="Formación Continua 9" loading="lazy"></div>
+      </div>
+    </div>
+    <div class="download-wrap sr sr-d2">
+      <a href="empresas/formacion-continua/portafolio.pdf" class="btn-download" download><i class="fas fa-file-pdf"></i> Descargar Portafolio de Formación Continua</a>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+  <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)"><i class="fas fa-chevron-left"></i></button>
+  <img id="lightbox-img" src="" alt="">
+  <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)"><i class="fas fa-chevron-right"></i></button>
+  <div class="lightbox-counter" id="lightbox-counter"></div>
+</div>
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -204,9 +359,53 @@ body::before{
 </footer>
 
 <script>
+// Mobile menu
 function toggleMob(){document.getElementById('mob').classList.toggle('open')}
+
+// Scroll reveal
 const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.15});
 document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
+
+// Lightbox
+const galleries={
+  programas:Array.from({length:12},(_,i)=>'empresas/programas/'+(i+1)+'.jpg'),
+  formacion:Array.from({length:9},(_,i)=>'empresas/formacion-continua/'+(i+1)+'.jpg')
+};
+let currentGallery='';
+let currentIndex=0;
+
+function openLightbox(gallery,index){
+  currentGallery=gallery;
+  currentIndex=index;
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+function navLightbox(dir){
+  const imgs=galleries[currentGallery];
+  currentIndex=(currentIndex+dir+imgs.length)%imgs.length;
+  updateLightbox();
+}
+function updateLightbox(){
+  const imgs=galleries[currentGallery];
+  document.getElementById('lightbox-img').src=imgs[currentIndex];
+  document.getElementById('lightbox-counter').textContent=(currentIndex+1)+' / '+imgs.length;
+}
+// Close on background click
+document.getElementById('lightbox').addEventListener('click',function(e){
+  if(e.target===this)closeLightbox();
+});
+// Keyboard navigation
+document.addEventListener('keydown',function(e){
+  if(!document.getElementById('lightbox').classList.contains('open'))return;
+  if(e.key==='Escape')closeLightbox();
+  if(e.key==='ArrowLeft')navLightbox(-1);
+  if(e.key==='ArrowRight')navLightbox(1);
+});
 </script>
 </body>
 </html>
