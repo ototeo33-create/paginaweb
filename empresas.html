@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empresas — INTEP | Instituto Técnico Pedagógico</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="description" content="Alianzas empresariales y convenios del Instituto Técnico Pedagógico INTEP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#059669;--green-light:#10B981;--green-dark:#047857;--green-pale:#ECFDF5;
+  --purple:#4A1942;--purple-mid:#6B3FA0;--purple-light:#9B6FCF;--purple-pale:#f3ecf8;
+  --cream:#F5F2EC;--warm-white:#F0EDE6;--sand:#EBE7DF;
+  --text:#2D2235;--text-mid:#5A4D66;--text-light:#8A7D96;
+  --radius:16px;
+}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{font-family:'Exo 2',sans-serif;color:var(--text);background:var(--cream);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:'Exo 2',sans-serif;font-weight:800}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:10000;
+  opacity:.025;mix-blend-mode:multiply;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* NAV */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:9000;
+  background:rgba(253,251,247,.92);backdrop-filter:blur(24px) saturate(1.8);
+  box-shadow:0 1px 0 rgba(74,25,66,.06);padding:.7rem 0;
+}
+.nav-inner{
+  max-width:1340px;margin:0 auto;padding:0 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo img{height:55px;transition:height .4s;object-fit:contain}
+.nav-menu{display:flex;align-items:center;gap:.3rem;list-style:none}
+.nav-menu a{
+  padding:.55rem 1.1rem;font-size:.88rem;font-weight:500;
+  color:var(--purple);border-radius:99px;
+  transition:all .3s;letter-spacing:.2px;
+}
+.nav-menu a:hover,.nav-menu a.active{background:var(--green-pale);color:var(--green-dark)}
+.nav-cta{background:var(--green)!important;color:#fff!important;font-weight:600!important;padding:.6rem 1.5rem!important;display:inline-flex;align-items:center;gap:.5rem}
+.nav-cta:hover{background:var(--green-dark)!important}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
+.burger span{width:24px;height:2.5px;background:var(--purple);border-radius:4px;transition:all .3s}
+.mob-menu{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:8999;
+  background:rgba(253,251,247,.98);backdrop-filter:blur(20px);
+  flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;
+}
+.mob-menu.open{display:flex}
+.mob-menu a{font-size:1.2rem;font-weight:600;color:var(--purple);padding:.5rem 1rem;border-radius:12px;transition:all .3s}
+.mob-menu a:hover{background:var(--green-pale);color:var(--green-dark)}
+
+/* PAGE HERO */
+.page-hero{
+  padding:10rem 2rem 4rem;text-align:center;
+  background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);
+  position:relative;overflow:hidden;
+}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(16,185,129,.15) 0%,transparent 60%)}
+.page-hero-inner{max-width:800px;margin:0 auto;position:relative;z-index:1}
+.page-hero h1{font-size:clamp(2.2rem,5vw,3.5rem);color:#fff;margin-bottom:1rem}
+.page-hero h1 em{color:var(--green-light);font-style:normal}
+.page-hero p{font-size:1.1rem;color:rgba(255,255,255,.7);line-height:1.7;max-width:600px;margin:0 auto}
+.page-hero-stripe{position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--green),var(--purple-mid),var(--green-light))}
+
+/* COMING SOON */
+.coming-soon{
+  padding:6rem 2rem;text-align:center;
+}
+.coming-soon-inner{
+  max-width:700px;margin:0 auto;
+  background:#fff;border-radius:24px;padding:4rem 3rem;
+  box-shadow:0 4px 30px rgba(74,25,66,.06);
+  position:relative;overflow:hidden;
+}
+.coming-soon-inner::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--green),var(--green-light),var(--purple-mid));
+}
+.coming-soon-icon{
+  width:90px;height:90px;border-radius:50%;
+  background:var(--purple-pale);color:var(--purple-mid);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;margin:0 auto 2rem;
+}
+.coming-soon h2{font-size:1.8rem;color:var(--purple);margin-bottom:1rem}
+.coming-soon p{color:var(--text-mid);line-height:1.8;font-size:1.05rem;margin-bottom:1.5rem}
+.coming-soon .highlight{
+  display:inline-block;padding:.6rem 1.5rem;border-radius:99px;
+  background:var(--purple-pale);color:var(--purple-mid);
+  font-weight:600;font-size:.9rem;
+}
+
+/* FOOTER */
+.footer{background:var(--purple);padding:3rem 2rem 1rem;color:rgba(255,255,255,.5);font-size:.85rem}
+.footer-inner{max-width:1340px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
+.footer-logo img{height:50px;opacity:.9;object-fit:contain}
+.footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
+.footer-links a{font-size:.85rem;color:rgba(255,255,255,.5);transition:color .3s}
+.footer-links a:hover{color:#fff}
+.footer-social{display:flex;gap:1rem}
+.footer-social a{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);transition:all .3s;font-size:.9rem}
+.footer-social a:hover{background:var(--green);color:#fff}
+.footer-bottom{text-align:center;padding:2rem 0 0;margin-top:2rem;border-top:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.3);font-size:.78rem}
+
+/* SCROLL REVEAL */
+.sr{opacity:0;transform:translateY(50px);transition:all .9s cubic-bezier(.22,1,.36,1)}
+.sr.vis{opacity:1;transform:translateY(0)}
+.sr-d1{transition-delay:.15s}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .nav-menu{display:none}
+  .burger{display:flex}
+}
+@media(max-width:520px){
+  .footer-inner{flex-direction:column;text-align:center}
+  .footer-links{justify-content:center}
+  .coming-soon-inner{padding:3rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+<div class="nav-inner">
+  <a href="index.html" class="nav-logo"><img src="logointep.png" alt="INTEP"></a>
+  <ul class="nav-menu">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="nosotros.html">Quiénes Somos</a></li>
+    <li><a href="index.html#programas">Programas</a></li>
+    <li><a href="index.html#novedades">Novedades</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="aprendices.html">Aprendices</a></li>
+    <li><a href="empresas.html" class="active">Empresas</a></li>
+    <li><a href="https://portal.institutointep.edu.co/intep/login.php" class="nav-cta" target="_blank"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a></li>
+  </ul>
+  <div class="burger" onclick="toggleMob()"><span></span><span></span><span></span></div>
+</div>
+</nav>
+<div class="mob-menu" id="mob">
+  <a href="index.html" onclick="toggleMob()">Inicio</a>
+  <a href="nosotros.html" onclick="toggleMob()">Quiénes Somos</a>
+  <a href="index.html#programas" onclick="toggleMob()">Programas</a>
+  <a href="index.html#novedades" onclick="toggleMob()">Novedades</a>
+  <a href="index.html#contacto" onclick="toggleMob()">Contacto</a>
+  <a href="aprendices.html" onclick="toggleMob()">Aprendices</a>
+  <a href="empresas.html" onclick="toggleMob()">Empresas</a>
+  <a href="https://portal.institutointep.edu.co/intep/login.php" class="btn btn-fill" target="_blank" style="display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;border-radius:99px;font-weight:600;font-size:.88rem;background:var(--green);color:#fff;font-family:'Exo 2',sans-serif"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <h1 class="sr"><em>Empresas</em></h1>
+    <p class="sr sr-d1">Alianzas estratégicas para la formación del talento humano que necesita el sector productivo.</p>
+  </div>
+  <div class="page-hero-stripe"></div>
+</section>
+
+<!-- COMING SOON -->
+<section class="coming-soon">
+  <div class="coming-soon-inner sr">
+    <div class="coming-soon-icon"><i class="fas fa-building"></i></div>
+    <h2>Estamos trabajando en esta sección</h2>
+    <p>Próximamente encontrarás información sobre nuestros convenios empresariales, prácticas laborales, programas de formación a la medida y oportunidades de vinculación con el sector productivo de Madrid y Cundinamarca.</p>
+    <span class="highlight"><i class="fas fa-hard-hat"></i> En construcción</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+<div class="footer-inner">
+  <div class="footer-logo"><img src="logointep.png" alt="INTEP"></div>
+  <div class="footer-links">
+    <a href="index.html">Inicio</a>
+    <a href="nosotros.html">Quiénes Somos</a>
+    <a href="index.html#programas">Programas</a>
+    <a href="index.html#contacto">Contacto</a>
+    <a href="aprendices.html">Aprendices</a>
+    <a href="empresas.html">Empresas</a>
+    <a href="https://portal.institutointep.edu.co/intep/login.php" target="_blank">Portal Estudiantil</a>
+  </div>
+  <div class="footer-social">
+    <a href="https://www.facebook.com/p/INTEP-Instituto-T%C3%A9cnico-Pedag%C3%B3gico-100064131155331/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://wa.me/573166307633" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  </div>
+</div>
+<div class="footer-bottom">© 2026 Instituto Técnico Pedagógico INTEP — Madrid, Cundinamarca, Colombia</div>
+</footer>
+
+<script>
+function toggleMob(){document.getElementById('mob').classList.toggle('open')}
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.15});
+document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
