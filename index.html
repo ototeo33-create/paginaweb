@@ -309,9 +309,11 @@ body::before{
 .hero-slideshow img{
   position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;opacity:0;
-  transition:opacity 1s ease-in-out;
+  transform:translateY(100%);
+  transition:opacity .8s ease-in-out,transform .8s ease-in-out;
 }
-.hero-slideshow img.active{opacity:1}
+.hero-slideshow img.active{opacity:1;transform:translateY(0)}
+.hero-slideshow img.prev{opacity:0;transform:translateY(-100%)}
 .hero-dots{
   position:absolute;z-index:3;bottom:14px;left:50%;transform:translateX(-50%);
   display:flex;gap:7px;
@@ -330,12 +332,12 @@ body::before{
   animation:heroFloat 6s ease-in-out infinite;
   font-size:.9rem;
 }
-.hero-float.f2{top:15%;left:5%;animation-delay:-4s}
+.hero-float.f2{top:12%;left:50%;transform:translateX(-50%);animation-delay:-4s}
 .hero-float .fl-number{font-family:'Exo 2',sans-serif;font-size:clamp(1.8rem,2.2vw,2.6rem);font-weight:800}
 .hero-float .fl-label{font-size:clamp(.65rem,.8vw,.85rem);text-transform:uppercase;letter-spacing:1.2px;opacity:.8;margin-top:.1rem}
 @keyframes heroFloat{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-12px)}
 }
 /* Diagonal stripe decoration */
 .hero-stripe{
@@ -1188,10 +1190,6 @@ body::before{
       <img src="presentacion/8.jpg" alt="INTEP">
       <div class="hero-dots" id="heroDots"></div>
     </div>
-    <div class="hero-float f2">
-      <div class="fl-number">10+</div>
-      <div class="fl-label">Años formando</div>
-    </div>
   </div>
   <div class="hero-stripe"></div>
 </section>
@@ -1507,10 +1505,13 @@ document.querySelectorAll('.counter').forEach(el=>counterObs.observe(el));
   const dots=dotsC.querySelectorAll('span');
   function goTo(n){
     imgs[cur].classList.remove('active');
+    imgs[cur].classList.add('prev');
     dots[cur].classList.remove('active');
+    const old=cur;
     cur=n;
     imgs[cur].classList.add('active');
     dots[cur].classList.add('active');
+    setTimeout(()=>imgs[old].classList.remove('prev'),800);
   }
   setInterval(()=>goTo((cur+1)%imgs.length),5000);
 })();
