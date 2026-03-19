@@ -38,10 +38,12 @@ if ($rol !== 'estudiante') {
     while ($e = mysqli_fetch_assoc($res_est)) $estudiantes[] = $e;
 }
 
-// Obtener horarios del estudiante
-$query = "SELECT h.*, m.nombre as materia
+// Obtener horarios del estudiante con datos de bimestre
+$query = "SELECT h.*, m.nombre as materia, b.numero as bimestre_num, b.anio as bimestre_anio,
+                 b.fecha_inicio as bim_inicio, b.fecha_fin as bim_fin
           FROM horarios h
           JOIN materias m ON h.materia_id = m.id
+          LEFT JOIN bimestres b ON h.bimestre_id = b.id
           WHERE h.estudiante_id = ?
           ORDER BY FIELD(h.dia,'Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'), h.hora_inicio";
 $stmt2 = mysqli_prepare($conexion, $query);
@@ -55,6 +57,16 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
     $horarios[$fila['dia']][] = $fila;
     $horarios_json[] = $fila;
 }
+
+// Obtener fechas importantes
+$fechas_importantes = [];
+$res_fechas = mysqli_query($conexion, "SELECT * FROM fechas_importantes ORDER BY fecha ASC");
+while ($f = mysqli_fetch_assoc($res_fechas)) $fechas_importantes[] = $f;
+
+// Obtener bimestres para el filtro
+$bimestres = [];
+$res_bim = mysqli_query($conexion, "SELECT * FROM bimestres WHERE estado = 'activo' ORDER BY anio DESC, numero ASC");
+while ($b = mysqli_fetch_assoc($res_bim)) $bimestres[] = $b;
 
 $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 $horas = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
@@ -207,6 +219,60 @@ if ($rol !== 'estudiante' && $estudiante_id) {
             white-space: nowrap;
             cursor: pointer;
         }
+        .mes-evento.fecha-importante {
+            cursor: default;
+            font-weight: 700;
+            font-size: 0.65rem;
+            opacity: 0.92;
+        }
+        .mes-dia.dia-festivo {
+            background: rgba(232, 69, 69, 0.06);
+        }
+
+        /* Filtro bimestre */
+        .filtro-bimestre {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .bim-chip {
+            padding: 0.45rem 0.9rem;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid rgba(16,185,129,0.2);
+            background: rgba(255,255,255,0.7);
+            color: var(--gray);
+            transition: all 0.2s;
+        }
+        .bim-chip:hover { border-color: var(--verde); color: var(--verde); }
+        .bim-chip.activo {
+            background: var(--verde);
+            color: white;
+            border-color: var(--verde);
+        }
+        .leyenda-fechas {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+            padding: 0.6rem 1rem;
+            background: rgba(255,255,255,0.6);
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .leyenda-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
 
         /* MODAL */
         .modal-overlay {
@@ -357,8 +423,28 @@ if ($rol !== 'estudiante' && $estudiante_id) {
         <?php endif; ?>
     </div>
 
+    <!-- Filtro de bimestres -->
+    <div class="filtro-bimestre" style="margin-bottom: 1rem;">
+        <span style="font-size:0.82rem;font-weight:700;color:#666;">Bimestre:</span>
+        <button class="bim-chip activo" onclick="filtrarBimestre(0, this)">Todos</button>
+        <?php foreach ($bimestres as $b): ?>
+            <button class="bim-chip" onclick="filtrarBimestre(<?php echo $b['id']; ?>, this)"
+                    title="<?php echo date('d M', strtotime($b['fecha_inicio'])); ?> – <?php echo date('d M', strtotime($b['fecha_fin'])); ?>">
+                B<?php echo $b['numero']; ?>
+            </button>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- Leyenda -->
+    <div class="leyenda-fechas">
+        <div class="leyenda-item"><div class="leyenda-dot" style="background:#e84545;"></div> Festivo</div>
+        <div class="leyenda-item"><div class="leyenda-dot" style="background:#e91e63;"></div> Cultural</div>
+        <div class="leyenda-item"><div class="leyenda-dot" style="background:#059669;"></div> Institucional</div>
+        <div class="leyenda-item"><div class="leyenda-dot" style="background:#25a865;"></div> Clase</div>
+    </div>
+
     <!-- VISTA MENSUAL -->
-    <div id="vista-mensual">
+    <div id="vista-mensual" style="margin-top:1rem;">
         <div class="mes-nav">
             <button class="mes-btn" onclick="cambiarMes(-1)">← Anterior</button>
             <h3 id="mes-titulo"></h3>
@@ -382,10 +468,11 @@ if ($rol !== 'estudiante' && $estudiante_id) {
 <div class="modal-overlay" id="modal-overlay" onclick="cerrarModal(event)">
     <div class="modal">
         <h3>📚 Detalle de Clase</h3>
-        <div class="modal-info"><strong>Materia:</strong> <span id="modal-materia"></span></div>
+        <div class="modal-info"><strong>Módulo:</strong> <span id="modal-materia"></span></div>
         <div class="modal-info"><strong>Día:</strong> <span id="modal-dia"></span></div>
         <div class="modal-info"><strong>Horario:</strong> <span id="modal-horario"></span></div>
         <div class="modal-info"><strong>Salón:</strong> <span id="modal-salon"></span></div>
+        <div class="modal-info"><strong>Bimestre:</strong> <span id="modal-bimestre"></span></div>
 
         <div class="agenda-titulo">📆 Agregar a mi agenda</div>
         <div class="agenda-btns">
@@ -411,8 +498,10 @@ if ($rol !== 'estudiante' && $estudiante_id) {
 </div>
 
 <script>
-const horariosData = <?php echo json_encode($horarios_json); ?>;
-const colorMap = <?php echo json_encode($color_map); ?>;
+const horariosData = <?php echo json_encode($horarios_json, JSON_UNESCAPED_UNICODE); ?>;
+const colorMap = <?php echo json_encode($color_map, JSON_UNESCAPED_UNICODE); ?>;
+const fechasImportantes = <?php echo json_encode($fechas_importantes, JSON_UNESCAPED_UNICODE); ?>;
+const bimestresData = <?php echo json_encode($bimestres, JSON_UNESCAPED_UNICODE); ?>;
 
 const diasNum = {
     'Lunes': 1, 'Martes': 2, 'Miércoles': 3,
@@ -430,12 +519,40 @@ const diasOrden = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
 let mesActual = new Date().getMonth();
 let anioActual = new Date().getFullYear();
+let bimestreFiltro = 0; // 0 = todos
 
 function pad(n) { return String(n).padStart(2,'0'); }
 
 function formatICSDate(date, hora) {
     const [h, m] = hora.split(':');
     return `${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}T${pad(h)}${pad(m)}00`;
+}
+
+// Verificar si una fecha está dentro del rango de un bimestre
+function fechaEnBimestre(fecha, bimInicio, bimFin) {
+    if (!bimInicio || !bimFin) return true; // Sin bimestre asignado, mostrar siempre
+    const f = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+    const inicio = new Date(bimInicio + 'T00:00:00');
+    const fin = new Date(bimFin + 'T23:59:59');
+    return f >= inicio && f <= fin;
+}
+
+function filtrarBimestre(bimId, btn) {
+    bimestreFiltro = bimId;
+    document.querySelectorAll('.bim-chip').forEach(c => c.classList.remove('activo'));
+    btn.classList.add('activo');
+
+    // Navegar al mes de inicio del bimestre seleccionado
+    if (bimId > 0) {
+        const bim = bimestresData.find(b => b.id == bimId);
+        if (bim) {
+            const fechaInicio = new Date(bim.fecha_inicio + 'T00:00:00');
+            mesActual = fechaInicio.getMonth();
+            anioActual = fechaInicio.getFullYear();
+        }
+    }
+
+    renderMes(mesActual, anioActual);
 }
 
 function cambiarMes(dir) {
@@ -457,6 +574,13 @@ function renderMes(mes, anio) {
     const hoy = new Date();
     const diasMesAnterior = new Date(anio, mes, 0).getDate();
 
+    // Indexar fechas importantes por fecha string (YYYY-MM-DD)
+    const fechasIdx = {};
+    fechasImportantes.forEach(f => {
+        if (!fechasIdx[f.fecha]) fechasIdx[f.fecha] = [];
+        fechasIdx[f.fecha].push(f);
+    });
+
     for (let i = primerDia - 1; i >= 0; i--) {
         const div = document.createElement('div');
         div.className = 'mes-dia otro-mes';
@@ -468,27 +592,56 @@ function renderMes(mes, anio) {
         const fecha = new Date(anio, mes, d);
         const diaSemana = fecha.getDay();
         const esHoy = d === hoy.getDate() && mes === hoy.getMonth() && anio === hoy.getFullYear();
+        const fechaStr = `${anio}-${pad(mes+1)}-${pad(d)}`;
+
+        // Verificar si es día festivo
+        const esFestivo = fechasIdx[fechaStr] && fechasIdx[fechaStr].some(f => f.tipo === 'festivo');
 
         const div = document.createElement('div');
-        div.className = 'mes-dia' + (esHoy ? ' hoy' : '');
+        div.className = 'mes-dia' + (esHoy ? ' hoy' : '') + (esFestivo ? ' dia-festivo' : '');
 
         const numDiv = document.createElement('div');
         numDiv.className = 'mes-num' + (esHoy ? ' hoy-num' : '');
         numDiv.textContent = d;
         div.appendChild(numDiv);
 
-        horariosData.forEach(h => {
-            if (diasNum[h.dia] === diaSemana) {
-                const color = colorMap[h.materia_id] || '#25a865';
+        // Mostrar fechas importantes
+        if (fechasIdx[fechaStr]) {
+            fechasIdx[fechaStr].forEach(fi => {
                 const evento = document.createElement('div');
-                evento.className = 'mes-evento';
-                evento.style.background = color;
-                evento.textContent = h.materia;
-                evento.onclick = () => verDetalle(h.id, h.materia, h.dia,
-                    h.hora_inicio.substring(0,5), h.hora_fin.substring(0,5), h.salon, fecha);
+                evento.className = 'mes-evento fecha-importante';
+                evento.style.background = fi.color || '#e84545';
+                evento.textContent = fi.nombre;
+                evento.title = fi.nombre + ' (' + fi.tipo + ')';
                 div.appendChild(evento);
-            }
-        });
+            });
+        }
+
+        // Mostrar clases (solo si la fecha cae dentro del bimestre asignado y no es festivo)
+        if (!esFestivo) {
+            horariosData.forEach(h => {
+                if (diasNum[h.dia] === diaSemana) {
+                    // Filtrar por bimestre seleccionado
+                    if (bimestreFiltro > 0 && h.bimestre_id != bimestreFiltro) return;
+
+                    // Solo mostrar si la fecha cae dentro del rango del bimestre
+                    if (h.bim_inicio && h.bim_fin) {
+                        if (!fechaEnBimestre(fecha, h.bim_inicio, h.bim_fin)) return;
+                    }
+
+                    const color = colorMap[h.materia_id] || '#25a865';
+                    const evento = document.createElement('div');
+                    evento.className = 'mes-evento';
+                    evento.style.background = color;
+                    evento.textContent = h.materia;
+                    evento.title = h.materia + ' · ' + h.hora_inicio.substring(0,5) + '-' + h.hora_fin.substring(0,5);
+                    evento.onclick = () => verDetalle(h.id, h.materia, h.dia,
+                        h.hora_inicio.substring(0,5), h.hora_fin.substring(0,5), h.salon, fecha,
+                        h.bimestre_num, h.bim_inicio, h.bim_fin);
+                    div.appendChild(evento);
+                }
+            });
+        }
 
         grid.appendChild(div);
     }
@@ -508,11 +661,21 @@ function renderMes(mes, anio) {
 // Estado del modal
 let modalData = {};
 
-function verDetalle(id, materia, dia, inicio, fin, salon, fechaEvento) {
+function verDetalle(id, materia, dia, inicio, fin, salon, fechaEvento, bimestreNum, bimInicio, bimFin) {
     document.getElementById('modal-materia').textContent = materia;
     document.getElementById('modal-dia').textContent = dia;
     document.getElementById('modal-horario').textContent = inicio + ' – ' + fin;
     document.getElementById('modal-salon').textContent = salon || 'No asignado';
+
+    const bimInfo = document.getElementById('modal-bimestre');
+    if (bimInfo) {
+        if (bimestreNum) {
+            bimInfo.textContent = 'Bimestre ' + bimestreNum + ' (' + bimInicio + ' a ' + bimFin + ')';
+            bimInfo.parentElement.style.display = '';
+        } else {
+            bimInfo.parentElement.style.display = 'none';
+        }
+    }
 
     const editarBtn = document.getElementById('modal-editar');
     if (editarBtn) editarBtn.href = 'admin/gestionar_horarios.php?estudiante_id=<?php echo $estudiante_id; ?>&editar=' + id;
