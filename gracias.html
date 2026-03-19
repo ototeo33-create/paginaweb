@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Egresados — INTEP | Instituto Técnico Pedagógico</title>
+<title>¡Gracias! — INTEP | Instituto Técnico Pedagógico</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<meta name="description" content="Testimonios, experiencias y galería de egresados del Instituto Técnico Pedagógico INTEP.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
@@ -19,8 +18,8 @@
   --text:#2D2235;--text-mid:#5A4D66;--text-light:#8A7D96;
   --radius:16px;
 }
-html{scroll-behavior:smooth;scroll-padding-top:90px}
-body{font-family:'Exo 2',sans-serif;color:var(--text);background:var(--cream);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{font-family:'Exo 2',sans-serif;color:var(--text);background:var(--cream);overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
 h1,h2,h3,h4,h5{font-family:'Exo 2',sans-serif;font-weight:800}
 a{text-decoration:none;color:inherit}
 img{max-width:100%;display:block}
@@ -49,21 +48,16 @@ body::before{
   transition:all .3s;letter-spacing:.2px;
 }
 .nav-menu a:hover,.nav-menu a.active{background:var(--green-pale);color:var(--green-dark)}
-/* Dropdown */
 .nav-dropdown{position:relative}
 .nav-dropdown>a{cursor:pointer}
 .nav-dropdown>a::after{content:'\f107';font-family:'Font Awesome 6 Free';font-weight:900;margin-left:.35rem;font-size:.7rem}
 .nav-dropdown-menu{
   display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);
   background:#fff;border-radius:12px;padding:.5rem;min-width:180px;
-  box-shadow:0 8px 30px rgba(74,25,66,.12);z-index:9999;
-  margin-top:.5rem;
+  box-shadow:0 8px 30px rgba(74,25,66,.12);z-index:9999;margin-top:.5rem;
 }
 .nav-dropdown:hover .nav-dropdown-menu{display:block}
-.nav-dropdown-menu a{
-  display:block;padding:.55rem 1rem;border-radius:8px;font-size:.85rem;
-  white-space:nowrap;
-}
+.nav-dropdown-menu a{display:block;padding:.55rem 1rem;border-radius:8px;font-size:.85rem;white-space:nowrap}
 .nav-cta{background:var(--green)!important;color:#fff!important;font-weight:600!important;padding:.6rem 1.5rem!important;display:inline-flex;align-items:center;gap:.5rem}
 .nav-cta:hover{background:var(--green-dark)!important}
 .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
@@ -77,64 +71,116 @@ body::before{
 .mob-menu a{font-size:1.2rem;font-weight:600;color:var(--purple);padding:.5rem 1rem;border-radius:12px;transition:all .3s}
 .mob-menu a:hover{background:var(--green-pale);color:var(--green-dark)}
 
-/* PAGE HERO */
-.page-hero{
-  padding:10rem 2rem 4rem;text-align:center;
+/* THANK YOU SECTION */
+.gracias-section{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:8rem 2rem 4rem;
   background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);
   position:relative;overflow:hidden;
 }
-.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(16,185,129,.15) 0%,transparent 60%)}
-.page-hero-inner{max-width:800px;margin:0 auto;position:relative;z-index:1}
-.page-hero h1{font-size:clamp(2.2rem,5vw,3.5rem);color:#fff;margin-bottom:1rem}
-.page-hero h1 em{color:var(--green-light);font-style:normal}
-.page-hero p{font-size:1.1rem;color:rgba(255,255,255,.7);line-height:1.7;max-width:600px;margin:0 auto}
-.page-hero-stripe{position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--green),var(--purple-mid),var(--green-light))}
+.gracias-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 20%,rgba(16,185,129,.15) 0%,transparent 60%);
+}
+.gracias-section::after{
+  content:'';position:absolute;top:-30%;right:-15%;width:700px;height:700px;
+  border-radius:50%;border:1px solid rgba(255,255,255,.04);
+}
 
-/* COMING SOON SECTION */
-.coming-soon{
-  padding:6rem 2rem;text-align:center;
+.gracias-card{
+  position:relative;z-index:1;
+  max-width:680px;width:100%;
+  background:rgba(255,255,255,.97);
+  border-radius:24px;
+  padding:3.5rem 3rem;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.15);
+  animation:fadeUp .8s ease-out;
 }
-.coming-soon-inner{
-  max-width:700px;margin:0 auto;
-  background:#fff;border-radius:24px;padding:4rem 3rem;
-  box-shadow:0 4px 30px rgba(74,25,66,.06);
-  position:relative;overflow:hidden;
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(40px)}
+  to{opacity:1;transform:translateY(0)}
 }
-.coming-soon-inner::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:4px;
-  background:linear-gradient(90deg,var(--green),var(--green-light),var(--purple-mid));
-}
-.coming-soon-icon{
+
+.gracias-icon{
   width:90px;height:90px;border-radius:50%;
-  background:var(--green-pale);color:var(--green);
+  background:linear-gradient(135deg,var(--green-pale),#d1fae5);
   display:flex;align-items:center;justify-content:center;
-  font-size:2.2rem;margin:0 auto 2rem;
+  margin:0 auto 1.8rem;
+  font-size:2.5rem;color:var(--green);
+  animation:pulse 2s ease-in-out infinite;
 }
-.coming-soon h2{font-size:1.8rem;color:var(--purple);margin-bottom:1rem}
-.coming-soon p{color:var(--text-mid);line-height:1.8;font-size:1.05rem;margin-bottom:1.5rem}
-.coming-soon .highlight{
-  display:inline-block;padding:.6rem 1.5rem;border-radius:99px;
-  background:var(--green-pale);color:var(--green-dark);
-  font-weight:600;font-size:.9rem;
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.08)}
 }
 
-/* SECTIONS PREVIEW */
-.sections-preview{
-  padding:0 2rem 6rem;
+.gracias-card h1{
+  font-size:clamp(1.8rem,4vw,2.5rem);
+  color:var(--purple);margin-bottom:.8rem;
+  line-height:1.3;
 }
-.sections-grid{
-  max-width:900px;margin:0 auto;
-  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;
+.gracias-card h1 em{
+  color:var(--green);font-style:normal;
+  background:linear-gradient(transparent 60%,rgba(5,150,105,.12) 60%);
 }
-.sp-card{
-  background:#fff;border-radius:var(--radius);padding:2rem 1.5rem;
-  text-align:center;box-shadow:0 2px 16px rgba(74,25,66,.04);
-  transition:transform .3s;
+
+.gracias-quote{
+  font-size:1.1rem;color:var(--text-mid);
+  line-height:1.8;margin-bottom:1.5rem;
+  font-style:italic;
+  padding:0 1rem;
 }
-.sp-card:hover{transform:translateY(-4px)}
-.sp-card i{font-size:2rem;color:var(--green);margin-bottom:1rem;display:block}
-.sp-card h3{font-size:1rem;color:var(--purple);margin-bottom:.5rem}
-.sp-card p{font-size:.85rem;color:var(--text-light);line-height:1.5}
+
+.gracias-msg{
+  font-size:.95rem;color:var(--text-light);
+  line-height:1.7;margin-bottom:2rem;
+}
+
+.gracias-divider{
+  width:60px;height:3px;border-radius:99px;
+  background:linear-gradient(90deg,var(--green),var(--purple-mid));
+  margin:0 auto 1.5rem;
+}
+
+.gracias-buttons{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+}
+.btn-gracias{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:.9rem 2rem;border-radius:99px;
+  font-weight:700;font-size:.92rem;font-family:'Exo 2',sans-serif;
+  transition:all .3s;border:none;cursor:pointer;text-decoration:none;
+}
+.btn-gracias-primary{
+  background:var(--green);color:#fff;
+  box-shadow:0 4px 16px rgba(5,150,105,.25);
+}
+.btn-gracias-primary:hover{
+  background:var(--green-dark);transform:translateY(-2px);
+  box-shadow:0 8px 28px rgba(5,150,105,.35);
+}
+.btn-gracias-secondary{
+  background:var(--purple-pale);color:var(--purple);
+}
+.btn-gracias-secondary:hover{
+  background:var(--purple);color:#fff;transform:translateY(-2px);
+}
+
+/* Confetti particles */
+.confetti{
+  position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden;
+}
+.confetti-piece{
+  position:absolute;width:10px;height:10px;top:-20px;
+  border-radius:2px;
+  animation:confettiFall 4s ease-in forwards;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
 
 /* FOOTER */
 .footer{background:var(--purple);padding:3rem 2rem 1rem;color:rgba(255,255,255,.5);font-size:.85rem}
@@ -148,21 +194,15 @@ body::before{
 .footer-social a:hover{background:var(--green);color:#fff}
 .footer-bottom{text-align:center;padding:2rem 0 0;margin-top:2rem;border-top:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.3);font-size:.78rem}
 
-/* SCROLL REVEAL */
-.sr{opacity:0;transform:translateY(50px);transition:all .9s cubic-bezier(.22,1,.36,1)}
-.sr.vis{opacity:1;transform:translateY(0)}
-.sr-d1{transition-delay:.15s}.sr-d2{transition-delay:.3s}.sr-d3{transition-delay:.45s}
-
-/* RESPONSIVE */
 @media(max-width:900px){
   .nav-menu{display:none}
   .burger{display:flex}
-  .sections-grid{grid-template-columns:1fr}
 }
 @media(max-width:520px){
   .footer-inner{flex-direction:column;text-align:center}
   .footer-links{justify-content:center}
-  .coming-soon-inner{padding:3rem 1.5rem}
+  .gracias-card{padding:2.5rem 1.8rem}
+  .gracias-buttons{flex-direction:column;align-items:center}
 }
 </style>
 </head>
@@ -174,7 +214,7 @@ body::before{
   <a href="index.html" class="nav-logo"><img src="logointep.png" alt="INTEP"></a>
   <ul class="nav-menu">
     <li><a href="index.html">Inicio</a></li>
-    <li><a href="nosotros.html">Quiénes Somos</a></li>
+    <li><a href="nosotros.html">Quienes Somos</a></li>
     <li><a href="index.html#programas">Programas</a></li>
     <li><a href="index.html#novedades">Novedades</a></li>
     <li><a href="index.html#contacto">Contacto</a></li>
@@ -182,7 +222,7 @@ body::before{
       <a>Comunidad</a>
       <div class="nav-dropdown-menu">
         <a href="aprendices.html">Aprendices</a>
-        <a href="egresados.html" class="active">Egresados</a>
+        <a href="egresados.html">Egresados</a>
         <a href="empresas.html">Empresas</a>
         <a href="calintep.html">CALINTEP</a>
       </div>
@@ -194,7 +234,7 @@ body::before{
 </nav>
 <div class="mob-menu" id="mob">
   <a href="index.html" onclick="toggleMob()">Inicio</a>
-  <a href="nosotros.html" onclick="toggleMob()">Quiénes Somos</a>
+  <a href="nosotros.html" onclick="toggleMob()">Quienes Somos</a>
   <a href="index.html#programas" onclick="toggleMob()">Programas</a>
   <a href="index.html#novedades" onclick="toggleMob()">Novedades</a>
   <a href="index.html#contacto" onclick="toggleMob()">Contacto</a>
@@ -205,42 +245,31 @@ body::before{
   <a href="https://portal.institutointep.edu.co/intep/login.php" class="btn btn-fill" target="_blank" style="display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;border-radius:99px;font-weight:600;font-size:.88rem;background:var(--green);color:#fff;font-family:'Exo 2',sans-serif"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a>
 </div>
 
-<!-- PAGE HERO -->
-<section class="page-hero">
-  <div class="page-hero-inner">
-    <h1 class="sr">Nuestros <em>Egresados</em></h1>
-    <p class="sr sr-d1">Testimonios, experiencias y la voz de quienes se formaron en INTEP.</p>
-  </div>
-  <div class="page-hero-stripe"></div>
-</section>
+<!-- CONFETTI -->
+<div class="confetti" id="confetti"></div>
 
-<!-- COMING SOON -->
-<section class="coming-soon">
-  <div class="coming-soon-inner sr">
-    <div class="coming-soon-icon"><i class="fas fa-user-graduate"></i></div>
-    <h2>Estamos preparando esta sección</h2>
-    <p>Pronto podrás encontrar aquí testimonios de nuestros egresados, encuestas de satisfacción, galería de fotos y mucho más. Estamos recopilando las mejores experiencias para compartirlas contigo.</p>
-    <span class="highlight"><i class="fas fa-clock"></i> Próximamente disponible</span>
-  </div>
-</section>
-
-<!-- WHAT'S COMING -->
-<section class="sections-preview">
-  <div class="sections-grid">
-    <div class="sp-card sr">
-      <i class="fas fa-quote-left"></i>
-      <h3>Testimonios</h3>
-      <p>Historias reales de nuestros egresados.</p>
+<!-- THANK YOU -->
+<section class="gracias-section">
+  <div class="gracias-card">
+    <div class="gracias-icon">
+      <i class="fas fa-graduation-cap"></i>
     </div>
-    <div class="sp-card sr sr-d1">
-      <i class="fas fa-poll"></i>
-      <h3>Encuestas</h3>
-      <p>Resultados de satisfacción y retroalimentación.</p>
-    </div>
-    <div class="sp-card sr sr-d2">
-      <i class="fas fa-camera"></i>
-      <h3>Galería</h3>
-      <p>Fotos de eventos, clases y actividades institucionales.</p>
+    <h1>Tu futuro empieza <em>hoy</em></h1>
+    <div class="gracias-divider"></div>
+    <p class="gracias-quote">
+      "La educacion es el arma mas poderosa que puedes usar para cambiar el mundo."<br>
+      <small>— Nelson Mandela</small>
+    </p>
+    <p class="gracias-msg">
+      Hemos recibido tu informacion exitosamente. Nuestro equipo se pondra en contacto contigo muy pronto para acompanarte en este gran paso hacia tu crecimiento profesional.
+    </p>
+    <div class="gracias-buttons">
+      <a href="index.html" class="btn-gracias btn-gracias-primary">
+        <i class="fas fa-home"></i> Volver al inicio
+      </a>
+      <a href="index.html#programas" class="btn-gracias btn-gracias-secondary">
+        <i class="fas fa-book-open"></i> Ver programas
+      </a>
     </div>
   </div>
 </section>
@@ -251,7 +280,7 @@ body::before{
   <div class="footer-logo"><img src="logointep.png" alt="INTEP"></div>
   <div class="footer-links">
     <a href="index.html">Inicio</a>
-    <a href="nosotros.html">Quiénes Somos</a>
+    <a href="nosotros.html">Quienes Somos</a>
     <a href="index.html#programas">Programas</a>
     <a href="index.html#contacto">Contacto</a>
     <a href="aprendices.html">Aprendices</a>
@@ -272,13 +301,32 @@ body::before{
     <span style="font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.3">Parte del <strong style="color:rgba(255,255,255,.7)">Grupo Educativo Colpein</strong></span>
   </a>
 </div>
-<div class="footer-bottom">© 2026 Instituto Técnico Pedagógico INTEP — Madrid, Cundinamarca, Colombia</div>
+<div class="footer-bottom">&copy; 2026 Instituto Tecnico Pedagogico INTEP — Madrid, Cundinamarca, Colombia</div>
 </footer>
 
 <script>
+// Mobile menu
 function toggleMob(){document.getElementById('mob').classList.toggle('open')}
-const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.15});
-document.querySelectorAll('.sr').forEach(el=>obs.observe(el));
+
+// Confetti
+function createConfetti(){
+  const container=document.getElementById('confetti');
+  const colors=['#059669','#10B981','#4A1942','#6B3FA0','#9B6FCF','#fbbf24','#f472b6'];
+  for(let i=0;i<60;i++){
+    const piece=document.createElement('div');
+    piece.className='confetti-piece';
+    piece.style.left=Math.random()*100+'%';
+    piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDelay=Math.random()*2+'s';
+    piece.style.animationDuration=(3+Math.random()*3)+'s';
+    piece.style.width=(6+Math.random()*8)+'px';
+    piece.style.height=(6+Math.random()*8)+'px';
+    piece.style.borderRadius=Math.random()>.5?'50%':'2px';
+    container.appendChild(piece);
+  }
+  setTimeout(()=>container.remove(),6000);
+}
+createConfetti();
 </script>
 </body>
 </html>

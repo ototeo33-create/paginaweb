@@ -503,24 +503,28 @@ body::before{
         <p>Establezca un convenio con INTEP y ofrezca a sus colaboradores acceso preferencial a nuestros programas técnicos laborales con tarifas especiales y condiciones exclusivas para su organización.</p>
       </div>
     </div>
-    <form class="cta-form sr sr-d2" onsubmit="sendEmpForm(event)">
+    <form class="cta-form sr sr-d2" id="empForm" onsubmit="sendEmpForm(event)">
+      <input type="hidden" name="_subject" value="Nueva solicitud empresarial — INTEP">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" value="https://institutointep.edu.co/gracias-empresas.html">
       <h3>Solicite su cotización</h3>
       <p class="cf-sub">Complete el formulario y un asesor se pondrá en contacto con usted</p>
       <div class="fg-row">
-        <div class="fg"><label>Nombre de la empresa</label><input type="text" name="empresa" placeholder="Razón social" required></div>
-        <div class="fg"><label>NIT</label><input type="text" name="nit" placeholder="000.000.000-0"></div>
+        <div class="fg"><label>Nombre de la empresa</label><input type="text" name="Empresa" placeholder="Razón social" required></div>
+        <div class="fg"><label>NIT</label><input type="text" name="NIT" placeholder="000.000.000-0"></div>
       </div>
       <div class="fg-row">
-        <div class="fg"><label>Persona de contacto</label><input type="text" name="contacto" placeholder="Nombre completo" required></div>
-        <div class="fg"><label>Cargo</label><input type="text" name="cargo" placeholder="Ej: Gerente de Talento Humano"></div>
+        <div class="fg"><label>Persona de contacto</label><input type="text" name="Persona de contacto" placeholder="Nombre completo" required></div>
+        <div class="fg"><label>Cargo</label><input type="text" name="Cargo" placeholder="Ej: Gerente de Talento Humano"></div>
       </div>
       <div class="fg-row">
-        <div class="fg"><label>Teléfono</label><input type="tel" name="telefono" placeholder="300 123 4567" required></div>
-        <div class="fg"><label>Correo electrónico</label><input type="email" name="email" placeholder="correo@empresa.com" required></div>
+        <div class="fg"><label>Teléfono</label><input type="tel" name="Teléfono" placeholder="300 123 4567" required></div>
+        <div class="fg"><label>Correo electrónico</label><input type="email" name="Correo" placeholder="correo@empresa.com" required></div>
       </div>
       <div class="fg">
         <label>Servicio de interés</label>
-        <select name="servicio" required>
+        <select name="Servicio de interés" required>
           <option value="" disabled selected>Seleccione una opción</option>
           <option value="Capacitación empresarial (cursos, diplomados, talleres)">Capacitación empresarial (cursos, diplomados, talleres)</option>
           <option value="Convenio institucional para programas técnicos">Convenio institucional para programas técnicos</option>
@@ -529,13 +533,12 @@ body::before{
       </div>
       <div class="fg">
         <label>¿Cómo prefiere que lo contactemos?</label>
-        <select name="medio">
+        <select name="Preferencia de contacto" id="medioSelect">
           <option value="WhatsApp">WhatsApp</option>
-          <option value="Llamada">Llamada telefónica</option>
           <option value="Correo">Correo electrónico</option>
         </select>
       </div>
-      <div class="fg"><label>Mensaje o requerimiento adicional</label><textarea name="mensaje" placeholder="Describa brevemente las necesidades de formación de su empresa..."></textarea></div>
+      <div class="fg"><label>Mensaje o requerimiento adicional</label><textarea name="Mensaje" placeholder="Describa brevemente las necesidades de formación de su empresa..."></textarea></div>
       <button type="submit" class="btn-send-emp"><i class="fas fa-paper-plane"></i> Enviar solicitud</button>
     </form>
   </div>
@@ -567,9 +570,15 @@ body::before{
   </div>
   <div class="footer-social">
     <a href="https://www.facebook.com/p/INTEP-Instituto-T%C3%A9cnico-Pedag%C3%B3gico-100064131155331/" target="_blank"><i class="fab fa-facebook-f"></i></a>
-    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://www.instagram.com/intep_madrid/" target="_blank"><i class="fab fa-instagram"></i></a>
     <a href="https://wa.me/573166307633" target="_blank"><i class="fab fa-whatsapp"></i></a>
   </div>
+</div>
+<div class="footer-collpein" style="display:flex;align-items:center;gap:.8rem;padding:1.5rem 0 0;margin-top:1.5rem;border-top:1px solid rgba(255,255,255,.06)">
+  <a href="https://colegiopedagogicoingles.edu.co/web/" target="_blank" style="display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;transition:opacity .3s;opacity:.7" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">
+    <img src="logo-collpein.png" alt="Colegio Pedagógico Inglés — Colpein" style="height:40px;border-radius:6px;object-fit:contain">
+    <span style="font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.3">Parte del <strong style="color:rgba(255,255,255,.7)">Grupo Educativo Colpein</strong></span>
+  </a>
 </div>
 <div class="footer-bottom">© 2026 Instituto Técnico Pedagógico INTEP — Madrid, Cundinamarca, Colombia</div>
 </footer>
@@ -627,27 +636,47 @@ document.addEventListener('keydown',function(e){
 function sendEmpForm(e){
   e.preventDefault();
   const f=e.target;
-  const empresa=f.empresa.value;
-  const nit=f.nit.value;
-  const contacto=f.contacto.value;
-  const cargo=f.cargo.value;
-  const tel=f.telefono.value;
-  const email=f.email.value;
-  const servicio=f.servicio.value;
-  const medio=f.medio.value;
-  const mensaje=f.mensaje.value;
+  const medio=document.getElementById('medioSelect').value;
 
-  if(medio==='WhatsApp'||medio==='Llamada'){
-    const msg=`Hola, soy *${contacto}* de la empresa *${empresa}*${nit?'\nNIT: '+nit:''}.\n📋 Cargo: ${cargo}\n📱 Tel: ${tel}${email?'\n✉️ Correo: '+email:''}\n🏢 Servicio de interés: *${servicio}*\n💬 Prefiero contacto por: ${medio}${mensaje?'\n\n'+mensaje:''}`;
+  if(medio==='WhatsApp'){
+    // Build WhatsApp message with all form data
+    const empresa=f.querySelector('[name="Empresa"]').value;
+    const nit=f.querySelector('[name="NIT"]').value;
+    const contacto=f.querySelector('[name="Persona de contacto"]').value;
+    const cargo=f.querySelector('[name="Cargo"]').value;
+    const tel=f.querySelector('[name="Teléfono"]').value;
+    const correo=f.querySelector('[name="Correo"]').value;
+    const servicio=f.querySelector('[name="Servicio de interés"]').value;
+    const mensaje=f.querySelector('[name="Mensaje"]').value;
+
+    const msg='Hola, soy *'+contacto+'* de la empresa *'+empresa+'*'
+      +(nit?'\nNIT: '+nit:'')
+      +'\n📋 Cargo: '+(cargo||'No proporcionado')
+      +'\n📱 Tel: '+tel
+      +(correo?'\n✉️ Correo: '+correo:'')
+      +'\n🏢 Servicio de interés: *'+servicio+'*'
+      +'\n💬 Prefiero contacto por: '+medio
+      +(mensaje?'\n\n'+mensaje:'');
+
+    // Also send via FormSubmit so the data is saved by email
+    const formData=new FormData(f);
+    fetch('https://formsubmit.co/ajax/institutointepmadrid@gmail.com',{
+      method:'POST',
+      headers:{'Accept':'application/json'},
+      body:formData
+    });
+
+    // Open WhatsApp
     window.open('https://wa.me/573166307633?text='+encodeURIComponent(msg),'_blank');
-    alert('¡Gracias! Te redirigimos a WhatsApp.');
+    // Redirect to thank you page
+    window.location.href='gracias-empresas.html';
   } else {
-    const asunto=encodeURIComponent('Solicitud empresarial — '+empresa);
-    const cuerpo=encodeURIComponent('Empresa: '+empresa+'\nNIT: '+(nit||'No proporcionado')+'\nContacto: '+contacto+'\nCargo: '+(cargo||'No proporcionado')+'\nTeléfono: '+tel+'\nCorreo: '+(email||'No proporcionado')+'\nServicio de interés: '+servicio+'\nPreferencia de contacto: '+medio+'\n\n'+(mensaje||'Sin mensaje adicional.'));
-    window.open('mailto:institutointepmadrid@gmail.com?subject='+asunto+'&body='+cuerpo);
-    alert('¡Gracias! Se abrirá tu cliente de correo.');
+    // Submit via FormSubmit (like inscripciones form)
+    f.action='https://formsubmit.co/institutointepmadrid@gmail.com';
+    f.method='POST';
+    f.removeAttribute('onsubmit');
+    f.submit();
   }
-  f.reset();
 }
 </script>
 </body>
