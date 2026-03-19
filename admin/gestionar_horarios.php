@@ -35,24 +35,86 @@ foreach ($estudiantes as $e) {
     }
 }
 
-// Obtener materias del programa del estudiante
-$materias = [];
+// Obtener módulos del programa del estudiante
+$modulos = [];
 if ($estudiante_actual) {
-    $q_mat = "SELECT * FROM materias WHERE programa_id = ? ORDER BY nombre ASC";
-    $stmt_mat = mysqli_prepare($conexion, $q_mat);
-    mysqli_stmt_bind_param($stmt_mat, 'i', $estudiante_actual['programa_id']);
-    mysqli_stmt_execute($stmt_mat);
-    $res_mat = mysqli_stmt_get_result($stmt_mat);
-    while ($m = mysqli_fetch_assoc($res_mat)) $materias[] = $m;
+    $q_mod = "SELECT * FROM materias WHERE programa_id = ? ORDER BY nombre ASC";
+    $stmt_mod = mysqli_prepare($conexion, $q_mod);
+    mysqli_stmt_bind_param($stmt_mod, 'i', $estudiante_actual['programa_id']);
+    mysqli_stmt_execute($stmt_mod);
+    $res_mod = mysqli_stmt_get_result($stmt_mod);
+    while ($m = mysqli_fetch_assoc($res_mod)) $modulos[] = $m;
 }
+
+// AJAX: Agregar nuevo módulo
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'agregar_modulo') {
+    header('Content-Type: application/json; charset=utf-8');
+    $nombre_modulo = trim($_POST['nombre_modulo'] ?? '');
+    $prog_id = (int)($_POST['programa_id'] ?? 0);
+    if ($nombre_modulo && $prog_id) {
+        // Verificar que no exista ya
+        $q_check = "SELECT id FROM materias WHERE nombre = ? AND programa_id = ?";
+        $stmt_check = mysqli_prepare($conexion, $q_check);
+        mysqli_stmt_bind_param($stmt_check, 'si', $nombre_modulo, $prog_id);
+        mysqli_stmt_execute($stmt_check);
+        $res_check = mysqli_stmt_get_result($stmt_check);
+        if ($existente = mysqli_fetch_assoc($res_check)) {
+            echo json_encode(['ok' => true, 'id' => $existente['id'], 'nombre' => $nombre_modulo, 'existia' => true]);
+        } else {
+            $q_ins = "INSERT INTO materias (nombre, programa_id) VALUES (?, ?)";
+            $stmt_ins = mysqli_prepare($conexion, $q_ins);
+            mysqli_stmt_bind_param($stmt_ins, 'si', $nombre_modulo, $prog_id);
+            mysqli_stmt_execute($stmt_ins);
+            $nuevo_id = mysqli_insert_id($conexion);
+            echo json_encode(['ok' => true, 'id' => $nuevo_id, 'nombre' => $nombre_modulo, 'existia' => false]);
+        }
+    } else {
+        echo json_encode(['ok' => false, 'error' => 'Datos incompletos']);
+    }
+    exit;
+}
+
+// AJAX: Eliminar módulo
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'eliminar_modulo') {
+    header('Content-Type: application/json; charset=utf-8');
+    $modulo_id = (int)($_POST['modulo_id'] ?? 0);
+    if ($modulo_id) {
+        // Verificar si tiene horarios asignados
+        $q_uso = "SELECT COUNT(*) as total FROM horarios WHERE materia_id = ?";
+        $stmt_uso = mysqli_prepare($conexion, $q_uso);
+        mysqli_stmt_bind_param($stmt_uso, 'i', $modulo_id);
+        mysqli_stmt_execute($stmt_uso);
+        $res_uso = mysqli_stmt_get_result($stmt_uso);
+        $uso = mysqli_fetch_assoc($res_uso);
+        if ($uso['total'] > 0) {
+            echo json_encode(['ok' => false, 'error' => 'Este módulo tiene ' . $uso['total'] . ' clase(s) asignada(s). Elimínalas primero.']);
+        } else {
+            $q_del = "DELETE FROM materias WHERE id = ?";
+            $stmt_del = mysqli_prepare($conexion, $q_del);
+            mysqli_stmt_bind_param($stmt_del, 'i', $modulo_id);
+            mysqli_stmt_execute($stmt_del);
+            echo json_encode(['ok' => true]);
+        }
+    } else {
+        echo json_encode(['ok' => false, 'error' => 'ID de módulo inválido']);
+    }
+    exit;
+}
+
+// Obtener bimestres activos
+$bimestres = [];
+$res_bim = mysqli_query($conexion, "SELECT * FROM bimestres WHERE estado = 'activo' ORDER BY anio DESC, numero ASC");
+while ($b = mysqli_fetch_assoc($res_bim)) $bimestres[] = $b;
 
 // Obtener horarios del estudiante seleccionado
 $horarios = [];
-$q_hor = "SELECT h.*, m.nombre as materia 
-          FROM horarios h 
-          JOIN materias m ON h.materia_id = m.id 
+$q_hor = "SELECT h.*, m.nombre as materia, b.numero as bimestre_num, b.anio as bimestre_anio,
+                 b.fecha_inicio as bim_inicio, b.fecha_fin as bim_fin
+          FROM horarios h
+          JOIN materias m ON h.materia_id = m.id
+          LEFT JOIN bimestres b ON h.bimestre_id = b.id
           WHERE h.estudiante_id = ?
-          ORDER BY FIELD(h.dia,'Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'), h.hora_inicio";
+          ORDER BY b.numero ASC, FIELD(h.dia,'Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'), h.hora_inicio";
 $stmt_hor = mysqli_prepare($conexion, $q_hor);
 mysqli_stmt_bind_param($stmt_hor, 'i', $estudiante_id);
 mysqli_stmt_execute($stmt_hor);
@@ -65,19 +127,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($accion === 'agregar') {
         $materia_id = (int)$_POST['materia_id'];
-        $dia = $_POST['dia'];
+        $dias_par = $_POST['dias_par'];
         $hora_inicio = $_POST['hora_inicio'];
         $hora_fin = $_POST['hora_fin'];
         $salon = trim($_POST['salon']);
+        $bimestre_id = !empty($_POST['bimestre_id']) ? (int)$_POST['bimestre_id'] : null;
 
-        $q = "INSERT INTO horarios (programa_id, estudiante_id, materia_id, dia, hora_inicio, hora_fin, salon) 
-              VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = mysqli_prepare($conexion, $q);
-        mysqli_stmt_bind_param($stmt, 'iiissss', 
-            $estudiante_actual['programa_id'], $estudiante_id, 
-            $materia_id, $dia, $hora_inicio, $hora_fin, $salon);
-        mysqli_stmt_execute($stmt);
-        $mensaje = 'success|Clase agregada correctamente al horario del estudiante.';
+        // Separar el par de días e insertar uno por cada día
+        $dias_array = explode('-', $dias_par);
+        $q = "INSERT INTO horarios (programa_id, estudiante_id, materia_id, dia, hora_inicio, hora_fin, salon, bimestre_id)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        foreach ($dias_array as $dia) {
+            $dia = trim($dia);
+            $stmt = mysqli_prepare($conexion, $q);
+            mysqli_stmt_bind_param($stmt, 'iiissssi',
+                $estudiante_actual['programa_id'], $estudiante_id,
+                $materia_id, $dia, $hora_inicio, $hora_fin, $salon, $bimestre_id);
+            mysqli_stmt_execute($stmt);
+        }
+        $mensaje = 'success|Módulo agregado correctamente (' . implode(' y ', $dias_array) . ').';
 
     } elseif ($accion === 'eliminar') {
         $id = (int)$_POST['horario_id'];
@@ -158,6 +226,12 @@ $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
         .estudiante-selector select { flex: 1; padding: 0.7rem 1rem; border: 2px solid var(--verde-muted); border-radius: 10px; font-size: 0.9rem; outline: none; min-width: 200px; }
         .estudiante-selector select:focus { border-color: var(--verde-claro); }
         .estudiante-badge { background: var(--verde-muted); color: var(--verde); padding: 0.4rem 1rem; border-radius: 99px; font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
+        .btn-nuevo-modulo { background: linear-gradient(135deg, #059669, #10B981); color: white; border: none; width: 38px; height: 38px; border-radius: 8px; font-size: 1.3rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .btn-nuevo-modulo:hover { transform: scale(1.08); box-shadow: 0 3px 10px rgba(5,150,105,0.3); }
+        .btn-guardar-modulo { background: #059669; color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+        .btn-guardar-modulo:hover { background: #047857; }
+        .btn-eliminar-modulo { background: #fee2e2; border: 2px solid #fca5a5; width: 38px; height: 38px; border-radius: 8px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .btn-eliminar-modulo:hover { background: #fecaca; border-color: #ef4444; }
         @media(max-width:700px) { .grid-2 { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -208,31 +282,53 @@ $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
             <form method="POST" action="?estudiante_id=<?php echo $estudiante_id; ?>">
                 <input type="hidden" name="accion" value="agregar">
                 <div class="campo-admin">
-                    <label>Materia</label>
-                    <select name="materia_id" required>
-                        <option value="">Selecciona una materia</option>
-                        <?php foreach ($materias as $m): ?>
-                            <option value="<?php echo $m['id']; ?>"><?php echo htmlspecialchars($m['nombre']); ?></option>
+                    <label>Bimestre</label>
+                    <select name="bimestre_id" required>
+                        <option value="">Selecciona un bimestre</option>
+                        <?php foreach ($bimestres as $b): ?>
+                            <option value="<?php echo $b['id']; ?>">
+                                Bimestre <?php echo $b['numero']; ?> (<?php echo date('d M', strtotime($b['fecha_inicio'])); ?> – <?php echo date('d M Y', strtotime($b['fecha_fin'])); ?>)
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="campo-admin">
-                    <label>Día</label>
-                    <select name="dia" required>
-                        <option value="">Selecciona un día</option>
-                        <?php foreach ($dias as $d): ?>
-                            <option value="<?php echo $d; ?>"><?php echo $d; ?></option>
-                        <?php endforeach; ?>
+                    <label>Módulo</label>
+                    <div style="display:flex;gap:0.5rem;align-items:center;">
+                        <select name="materia_id" id="select-modulo" required style="flex:1;">
+                            <option value="">Selecciona un módulo</option>
+                            <?php foreach ($modulos as $m): ?>
+                                <option value="<?php echo $m['id']; ?>"><?php echo htmlspecialchars($m['nombre']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button type="button" onclick="toggleNuevoModulo()" class="btn-nuevo-modulo" title="Agregar nuevo módulo">+</button>
+                        <button type="button" onclick="eliminarModulo()" class="btn-eliminar-modulo" title="Eliminar módulo seleccionado">🗑</button>
+                    </div>
+                    <div id="nuevo-modulo-form" style="display:none;margin-top:0.5rem;">
+                        <div style="display:flex;gap:0.5rem;align-items:center;">
+                            <input type="text" id="input-nuevo-modulo" placeholder="Nombre del módulo" style="flex:1;padding:0.6rem 0.8rem;border:2px solid rgba(16,185,129,0.3);border-radius:8px;font-size:0.88rem;">
+                            <button type="button" onclick="guardarModulo()" class="btn-guardar-modulo">Guardar</button>
+                        </div>
+                        <small id="modulo-msg" style="display:none;margin-top:0.3rem;font-size:0.78rem;"></small>
+                    </div>
+                </div>
+                <div class="campo-admin">
+                    <label>Días</label>
+                    <select name="dias_par" required>
+                        <option value="">Selecciona los días</option>
+                        <option value="Lunes-Martes">Lunes y Martes</option>
+                        <option value="Miércoles-Jueves">Miércoles y Jueves</option>
+                        <option value="Viernes">Viernes</option>
                     </select>
                 </div>
                 <div class="grid-horas">
                     <div class="campo-admin">
                         <label>Hora inicio</label>
-                        <input type="time" name="hora_inicio" required>
+                        <input type="time" name="hora_inicio" value="18:30" required>
                     </div>
                     <div class="campo-admin">
                         <label>Hora fin</label>
-                        <input type="time" name="hora_fin" required>
+                        <input type="time" name="hora_fin" value="21:30" required>
                     </div>
                 </div>
                 <div class="campo-admin">
@@ -253,7 +349,8 @@ $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
                     <table>
                         <thead>
                             <tr>
-                                <th>Materia</th>
+                                <th>Bim.</th>
+                                <th>Módulo</th>
                                 <th>Día</th>
                                 <th>Horario</th>
                                 <th>Salón</th>
@@ -263,6 +360,7 @@ $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
                         <tbody>
                             <?php foreach ($horarios as $h): ?>
                             <tr>
+                                <td><span style="background:var(--verde-muted);color:var(--verde);padding:0.2rem 0.5rem;border-radius:6px;font-size:0.75rem;font-weight:700;"><?php echo $h['bimestre_num'] ? 'B'.$h['bimestre_num'] : '–'; ?></span></td>
                                 <td style="font-size:0.82rem;"><?php echo htmlspecialchars($h['materia']); ?></td>
                                 <td><?php echo $h['dia']; ?></td>
                                 <td><?php echo substr($h['hora_inicio'],0,5); ?> – <?php echo substr($h['hora_fin'],0,5); ?></td>
@@ -288,6 +386,106 @@ $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 
 </div>
 
+<script>
+function toggleNuevoModulo() {
+    const form = document.getElementById('nuevo-modulo-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    if (form.style.display === 'block') document.getElementById('input-nuevo-modulo').focus();
+}
+
+function guardarModulo() {
+    const nombre = document.getElementById('input-nuevo-modulo').value.trim();
+    const msg = document.getElementById('modulo-msg');
+    if (!nombre) {
+        msg.style.display = 'block';
+        msg.style.color = '#ef4444';
+        msg.textContent = 'Escribe el nombre del módulo';
+        return;
+    }
+    const programaId = <?php echo $estudiante_actual ? (int)$estudiante_actual['programa_id'] : 0; ?>;
+    if (!programaId) {
+        msg.style.display = 'block';
+        msg.style.color = '#ef4444';
+        msg.textContent = 'Selecciona un estudiante primero';
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('accion', 'agregar_modulo');
+    formData.append('nombre_modulo', nombre);
+    formData.append('programa_id', programaId);
+
+    fetch('gestionar_horarios.php?estudiante_id=<?php echo $estudiante_id; ?>', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            const select = document.getElementById('select-modulo');
+            // Verificar si ya existe en el select
+            let existe = false;
+            for (let opt of select.options) {
+                if (opt.value == data.id) { existe = true; opt.selected = true; break; }
+            }
+            if (!existe) {
+                const opt = new Option(data.nombre, data.id, true, true);
+                select.appendChild(opt);
+            }
+            msg.style.display = 'block';
+            msg.style.color = '#059669';
+            msg.textContent = data.existia ? 'Módulo ya existía, seleccionado.' : 'Módulo guardado correctamente.';
+            document.getElementById('input-nuevo-modulo').value = '';
+            setTimeout(() => { document.getElementById('nuevo-modulo-form').style.display = 'none'; msg.style.display = 'none'; }, 1500);
+        } else {
+            msg.style.display = 'block';
+            msg.style.color = '#ef4444';
+            msg.textContent = data.error || 'Error al guardar';
+        }
+    })
+    .catch(() => {
+        msg.style.display = 'block';
+        msg.style.color = '#ef4444';
+        msg.textContent = 'Error de conexión';
+    });
+}
+
+function eliminarModulo() {
+    const select = document.getElementById('select-modulo');
+    const moduloId = select.value;
+    const moduloNombre = select.options[select.selectedIndex]?.text;
+    if (!moduloId) {
+        alert('Selecciona un módulo para eliminar.');
+        return;
+    }
+    if (!confirm('¿Eliminar el módulo "' + moduloNombre + '"?\nEsto solo es posible si no tiene clases asignadas.')) return;
+
+    const formData = new FormData();
+    formData.append('accion', 'eliminar_modulo');
+    formData.append('modulo_id', moduloId);
+
+    fetch('gestionar_horarios.php?estudiante_id=<?php echo $estudiante_id; ?>', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            select.options[select.selectedIndex].remove();
+            select.value = '';
+            alert('Módulo eliminado correctamente.');
+        } else {
+            alert(data.error || 'Error al eliminar');
+        }
+    })
+    .catch(() => alert('Error de conexión'));
+}
+
+// Permitir guardar con Enter
+document.getElementById('input-nuevo-modulo')?.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); guardarModulo(); }
+});
+</script>
 <script src="/intep/sesion.js"></script>
 </body>
 </html>
