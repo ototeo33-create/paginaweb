@@ -51,6 +51,21 @@ body::before{
 }
 .nav-menu a:hover{background:var(--purple-pale);color:var(--purple-mid)}
 .nav-menu a.active{background:var(--green-pale);color:var(--green)}
+/* Dropdown */
+.nav-dropdown{position:relative}
+.nav-dropdown>a{cursor:pointer}
+.nav-dropdown>a::after{content:'\f107';font-family:'Font Awesome 6 Free';font-weight:900;margin-left:.35rem;font-size:.7rem}
+.nav-dropdown-menu{
+  display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  background:#fff;border-radius:12px;padding:.5rem;min-width:180px;
+  box-shadow:0 8px 30px rgba(74,25,66,.12);z-index:9999;
+  margin-top:.5rem;
+}
+.nav-dropdown:hover .nav-dropdown-menu{display:block}
+.nav-dropdown-menu a{
+  display:block;padding:.55rem 1rem;border-radius:8px;font-size:.85rem;
+  white-space:nowrap;
+}
 .nav-cta{
   background:var(--green);color:#fff!important;
   padding:.65rem 1.5rem!important;border-radius:99px!important;
@@ -326,8 +341,15 @@ body::before{
     <li><a href="index.html#programas">Programas</a></li>
     <li><a href="index.html#novedades">Novedades</a></li>
     <li><a href="index.html#contacto">Contacto</a></li>
-    <li><a href="aprendices.html">Aprendices</a></li>
-    <li><a href="empresas.html">Empresas</a></li>
+    <li class="nav-dropdown">
+      <a>Comunidad</a>
+      <div class="nav-dropdown-menu">
+        <a href="aprendices.html">Aprendices</a>
+        <a href="egresados.html">Egresados</a>
+        <a href="empresas.html">Empresas</a>
+        <a href="calintep.html">CALINTEP</a>
+      </div>
+    </li>
     <li><a href="https://portal.institutointep.edu.co/intep/login.php" class="nav-cta" target="_blank"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a></li>
   </ul>
   <div class="burger" onclick="toggleMob()"><span></span><span></span><span></span></div>
@@ -340,7 +362,9 @@ body::before{
   <a href="index.html#novedades" onclick="toggleMob()">Novedades</a>
   <a href="index.html#contacto" onclick="toggleMob()">Contacto</a>
   <a href="aprendices.html" onclick="toggleMob()">Aprendices</a>
+  <a href="egresados.html" onclick="toggleMob()">Egresados</a>
   <a href="empresas.html" onclick="toggleMob()">Empresas</a>
+  <a href="calintep.html" onclick="toggleMob()">CALINTEP</a>
   <a href="https://portal.institutointep.edu.co/intep/login.php" class="btn btn-fill" target="_blank" style="display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;border-radius:99px;font-weight:600;font-size:.88rem;background:var(--green);color:#fff;font-family:'Exo 2',sans-serif"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a>
 </div>
 
@@ -505,6 +529,10 @@ body::before{
     <a href="index.html#programas">Programas</a>
     <a href="index.html#novedades">Novedades</a>
     <a href="index.html#contacto">Contacto</a>
+    <a href="aprendices.html">Aprendices</a>
+    <a href="egresados.html">Egresados</a>
+    <a href="empresas.html">Empresas</a>
+    <a href="calintep.html">CALINTEP</a>
     <a href="https://portal.institutointep.edu.co/intep/login.php" target="_blank">Portal Estudiantil</a>
   </div>
   <div class="footer-social">

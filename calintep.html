@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aprendices — INTEP | Instituto Técnico Pedagógico</title>
+<title>CALINTEP — Sistema de Gestión de Calidad | INTEP</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<meta name="description" content="Espacio dedicado a los aprendices activos del Instituto Técnico Pedagógico INTEP.">
+<meta name="description" content="Sistema de Gestión de Calidad del Instituto Técnico Pedagógico INTEP — CALINTEP.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
@@ -78,11 +78,19 @@ body::before{
 .coming-soon{padding:6rem 2rem;text-align:center}
 .coming-soon-inner{max-width:700px;margin:0 auto;background:#fff;border-radius:24px;padding:4rem 3rem;box-shadow:0 4px 30px rgba(74,25,66,.06);position:relative;overflow:hidden}
 .coming-soon-inner::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green),var(--green-light),var(--purple-mid))}
-.coming-soon-icon{width:90px;height:90px;border-radius:50%;background:var(--green-pale);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 2rem}
+.coming-soon-icon{width:90px;height:90px;border-radius:50%;background:var(--purple-pale);color:var(--purple-mid);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 2rem}
 .coming-soon h2{font-size:1.8rem;color:var(--purple);margin-bottom:1rem}
 .coming-soon p{color:var(--text-mid);line-height:1.8;font-size:1.05rem;margin-bottom:1.5rem}
-.coming-soon .highlight{display:inline-block;padding:.6rem 1.5rem;border-radius:99px;background:var(--green-pale);color:var(--green-dark);font-weight:600;font-size:.9rem}
+.coming-soon .highlight{display:inline-block;padding:.6rem 1.5rem;border-radius:99px;background:var(--purple-pale);color:var(--purple-mid);font-weight:600;font-size:.9rem}
 .coming-soon .highlight i{margin-right:.4rem}
+
+.sgc-pillars{padding:0 2rem 6rem}
+.sgc-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.sgc-card{background:#fff;border-radius:var(--radius);padding:2rem 1.5rem;text-align:center;box-shadow:0 2px 16px rgba(74,25,66,.04);transition:transform .3s}
+.sgc-card:hover{transform:translateY(-4px)}
+.sgc-card i{font-size:2rem;color:var(--purple-mid);margin-bottom:1rem;display:block}
+.sgc-card h3{font-size:1rem;color:var(--purple);margin-bottom:.5rem}
+.sgc-card p{font-size:.85rem;color:var(--text-light);line-height:1.5}
 
 .footer{background:var(--purple);padding:3rem 2rem 1rem;color:rgba(255,255,255,.5);font-size:.85rem}
 .footer-inner{max-width:1340px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
@@ -97,9 +105,9 @@ body::before{
 
 .sr{opacity:0;transform:translateY(50px);transition:all .9s cubic-bezier(.22,1,.36,1)}
 .sr.vis{opacity:1;transform:translateY(0)}
-.sr-d1{transition-delay:.15s}
+.sr-d1{transition-delay:.15s}.sr-d2{transition-delay:.3s}.sr-d3{transition-delay:.45s}
 
-@media(max-width:900px){.nav-menu{display:none}.burger{display:flex}}
+@media(max-width:900px){.nav-menu{display:none}.burger{display:flex}.sgc-grid{grid-template-columns:1fr}}
 @media(max-width:520px){.footer-inner{flex-direction:column;text-align:center}.footer-links{justify-content:center}.coming-soon-inner{padding:3rem 1.5rem}}
 </style>
 </head>
@@ -118,10 +126,10 @@ body::before{
     <li class="nav-dropdown">
       <a>Comunidad</a>
       <div class="nav-dropdown-menu">
-        <a href="aprendices.html" class="active">Aprendices</a>
+        <a href="aprendices.html">Aprendices</a>
         <a href="egresados.html">Egresados</a>
         <a href="empresas.html">Empresas</a>
-        <a href="calintep.html">CALINTEP</a>
+        <a href="calintep.html" class="active">CALINTEP</a>
       </div>
     </li>
     <li><a href="https://portal.institutointep.edu.co/intep/login.php" class="nav-cta" target="_blank"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a></li>
@@ -144,18 +152,38 @@ body::before{
 
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1 class="sr">Nuestros <em>Aprendices</em></h1>
-    <p class="sr sr-d1">Espacio dedicado a quienes actualmente se forman en INTEP.</p>
+    <h1 class="sr"><em>CALINTEP</em></h1>
+    <p class="sr sr-d1">Sistema de Gestión de Calidad del Instituto Técnico Pedagógico.</p>
   </div>
   <div class="page-hero-stripe"></div>
 </section>
 
 <section class="coming-soon">
   <div class="coming-soon-inner sr">
-    <div class="coming-soon-icon"><i class="fas fa-book-reader"></i></div>
-    <h2>Sección en desarrollo</h2>
-    <p>Estamos construyendo un espacio exclusivo para nuestros aprendices activos. Aquí encontrarás recursos, novedades académicas y herramientas que acompañarán tu proceso formativo en INTEP.</p>
-    <span class="highlight"><i class="fas fa-tools"></i> Próximamente en funcionamiento</span>
+    <div class="coming-soon-icon"><i class="fas fa-award"></i></div>
+    <h2>Sistema de Gestión de Calidad en implementación</h2>
+    <p>CALINTEP es el sistema integral de gestión de calidad del Instituto Técnico Pedagógico. Estamos trabajando en la documentación, procesos y mejora continua para garantizar los más altos estándares en nuestra oferta educativa.</p>
+    <span class="highlight"><i class="fas fa-cogs"></i> En proceso de implementación</span>
+  </div>
+</section>
+
+<section class="sgc-pillars">
+  <div class="sgc-grid">
+    <div class="sgc-card sr">
+      <i class="fas fa-file-alt"></i>
+      <h3>Documentación</h3>
+      <p>Manuales, procedimientos y formatos del SGC.</p>
+    </div>
+    <div class="sgc-card sr sr-d1">
+      <i class="fas fa-chart-line"></i>
+      <h3>Indicadores</h3>
+      <p>Métricas de desempeño y mejora continua.</p>
+    </div>
+    <div class="sgc-card sr sr-d2">
+      <i class="fas fa-clipboard-check"></i>
+      <h3>Auditorías</h3>
+      <p>Seguimiento y evaluación de procesos institucionales.</p>
+    </div>
   </div>
 </section>
 

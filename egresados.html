@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aprendices — INTEP | Instituto Técnico Pedagógico</title>
+<title>Egresados — INTEP | Instituto Técnico Pedagógico</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<meta name="description" content="Espacio dedicado a los aprendices activos del Instituto Técnico Pedagógico INTEP.">
+<meta name="description" content="Testimonios, experiencias y galería de egresados del Instituto Técnico Pedagógico INTEP.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
@@ -24,24 +24,30 @@ body{font-family:'Exo 2',sans-serif;color:var(--text);background:var(--cream);ov
 h1,h2,h3,h4,h5{font-family:'Exo 2',sans-serif;font-weight:800}
 a{text-decoration:none;color:inherit}
 img{max-width:100%;display:block}
+
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:10000;
   opacity:.025;mix-blend-mode:multiply;
   background:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.rockets-bg{position:fixed;inset:0;pointer-events:none;z-index:9998;overflow:hidden}
-.rocket{position:absolute;font-size:18px;opacity:.15;animation-timing-function:linear;animation-iteration-count:infinite}
-.rocket:nth-child(1){top:15%;left:-30px;animation:rocketR 24s 0s infinite}
-.rocket:nth-child(2){top:50%;right:-30px;animation:rocketL 28s 8s infinite;font-size:16px;opacity:.12}
-.rocket:nth-child(3){top:80%;left:-30px;animation:rocketR 30s 16s infinite;font-size:14px;opacity:.1}
-@keyframes rocketR{0%{transform:translateX(-40px) rotate(25deg);opacity:0}5%{opacity:.15}95%{opacity:.15}100%{transform:translateX(calc(100vw + 60px)) rotate(25deg);opacity:0}}
-@keyframes rocketL{0%{transform:translateX(40px) rotate(-155deg) scaleX(-1);opacity:0}5%{opacity:.15}95%{opacity:.15}100%{transform:translateX(calc(-100vw - 60px)) rotate(-155deg) scaleX(-1);opacity:0}}
 
-.nav{position:fixed;top:0;left:0;right:0;z-index:9000;background:rgba(253,251,247,.92);backdrop-filter:blur(24px) saturate(1.8);box-shadow:0 1px 0 rgba(74,25,66,.06);padding:.7rem 0}
-.nav-inner{max-width:1340px;margin:0 auto;padding:0 2.5rem;display:flex;align-items:center;justify-content:space-between}
+/* NAV */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:9000;
+  background:rgba(253,251,247,.92);backdrop-filter:blur(24px) saturate(1.8);
+  box-shadow:0 1px 0 rgba(74,25,66,.06);padding:.7rem 0;
+}
+.nav-inner{
+  max-width:1340px;margin:0 auto;padding:0 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
 .nav-logo img{height:55px;transition:height .4s;object-fit:contain}
 .nav-menu{display:flex;align-items:center;gap:.3rem;list-style:none}
-.nav-menu a{padding:.55rem 1.1rem;font-size:.88rem;font-weight:500;color:var(--purple);border-radius:99px;transition:all .3s;letter-spacing:.2px}
+.nav-menu a{
+  padding:.55rem 1.1rem;font-size:.88rem;font-weight:500;
+  color:var(--purple);border-radius:99px;
+  transition:all .3s;letter-spacing:.2px;
+}
 .nav-menu a:hover,.nav-menu a.active{background:var(--green-pale);color:var(--green-dark)}
 /* Dropdown */
 .nav-dropdown{position:relative}
@@ -62,12 +68,21 @@ body::before{
 .nav-cta:hover{background:var(--green-dark)!important}
 .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
 .burger span{width:24px;height:2.5px;background:var(--purple);border-radius:4px;transition:all .3s}
-.mob-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:8999;background:rgba(253,251,247,.98);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:1.5rem}
+.mob-menu{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:8999;
+  background:rgba(253,251,247,.98);backdrop-filter:blur(20px);
+  flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;
+}
 .mob-menu.open{display:flex}
 .mob-menu a{font-size:1.2rem;font-weight:600;color:var(--purple);padding:.5rem 1rem;border-radius:12px;transition:all .3s}
 .mob-menu a:hover{background:var(--green-pale);color:var(--green-dark)}
 
-.page-hero{padding:10rem 2rem 4rem;text-align:center;background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);position:relative;overflow:hidden}
+/* PAGE HERO */
+.page-hero{
+  padding:10rem 2rem 4rem;text-align:center;
+  background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);
+  position:relative;overflow:hidden;
+}
 .page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(16,185,129,.15) 0%,transparent 60%)}
 .page-hero-inner{max-width:800px;margin:0 auto;position:relative;z-index:1}
 .page-hero h1{font-size:clamp(2.2rem,5vw,3.5rem);color:#fff;margin-bottom:1rem}
@@ -75,15 +90,53 @@ body::before{
 .page-hero p{font-size:1.1rem;color:rgba(255,255,255,.7);line-height:1.7;max-width:600px;margin:0 auto}
 .page-hero-stripe{position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--green),var(--purple-mid),var(--green-light))}
 
-.coming-soon{padding:6rem 2rem;text-align:center}
-.coming-soon-inner{max-width:700px;margin:0 auto;background:#fff;border-radius:24px;padding:4rem 3rem;box-shadow:0 4px 30px rgba(74,25,66,.06);position:relative;overflow:hidden}
-.coming-soon-inner::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green),var(--green-light),var(--purple-mid))}
-.coming-soon-icon{width:90px;height:90px;border-radius:50%;background:var(--green-pale);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 2rem}
+/* COMING SOON SECTION */
+.coming-soon{
+  padding:6rem 2rem;text-align:center;
+}
+.coming-soon-inner{
+  max-width:700px;margin:0 auto;
+  background:#fff;border-radius:24px;padding:4rem 3rem;
+  box-shadow:0 4px 30px rgba(74,25,66,.06);
+  position:relative;overflow:hidden;
+}
+.coming-soon-inner::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--green),var(--green-light),var(--purple-mid));
+}
+.coming-soon-icon{
+  width:90px;height:90px;border-radius:50%;
+  background:var(--green-pale);color:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;margin:0 auto 2rem;
+}
 .coming-soon h2{font-size:1.8rem;color:var(--purple);margin-bottom:1rem}
 .coming-soon p{color:var(--text-mid);line-height:1.8;font-size:1.05rem;margin-bottom:1.5rem}
-.coming-soon .highlight{display:inline-block;padding:.6rem 1.5rem;border-radius:99px;background:var(--green-pale);color:var(--green-dark);font-weight:600;font-size:.9rem}
-.coming-soon .highlight i{margin-right:.4rem}
+.coming-soon .highlight{
+  display:inline-block;padding:.6rem 1.5rem;border-radius:99px;
+  background:var(--green-pale);color:var(--green-dark);
+  font-weight:600;font-size:.9rem;
+}
 
+/* SECTIONS PREVIEW */
+.sections-preview{
+  padding:0 2rem 6rem;
+}
+.sections-grid{
+  max-width:900px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;
+}
+.sp-card{
+  background:#fff;border-radius:var(--radius);padding:2rem 1.5rem;
+  text-align:center;box-shadow:0 2px 16px rgba(74,25,66,.04);
+  transition:transform .3s;
+}
+.sp-card:hover{transform:translateY(-4px)}
+.sp-card i{font-size:2rem;color:var(--green);margin-bottom:1rem;display:block}
+.sp-card h3{font-size:1rem;color:var(--purple);margin-bottom:.5rem}
+.sp-card p{font-size:.85rem;color:var(--text-light);line-height:1.5}
+
+/* FOOTER */
 .footer{background:var(--purple);padding:3rem 2rem 1rem;color:rgba(255,255,255,.5);font-size:.85rem}
 .footer-inner{max-width:1340px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
 .footer-logo img{height:50px;opacity:.9;object-fit:contain}
@@ -95,17 +148,27 @@ body::before{
 .footer-social a:hover{background:var(--green);color:#fff}
 .footer-bottom{text-align:center;padding:2rem 0 0;margin-top:2rem;border-top:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.3);font-size:.78rem}
 
+/* SCROLL REVEAL */
 .sr{opacity:0;transform:translateY(50px);transition:all .9s cubic-bezier(.22,1,.36,1)}
 .sr.vis{opacity:1;transform:translateY(0)}
-.sr-d1{transition-delay:.15s}
+.sr-d1{transition-delay:.15s}.sr-d2{transition-delay:.3s}.sr-d3{transition-delay:.45s}
 
-@media(max-width:900px){.nav-menu{display:none}.burger{display:flex}}
-@media(max-width:520px){.footer-inner{flex-direction:column;text-align:center}.footer-links{justify-content:center}.coming-soon-inner{padding:3rem 1.5rem}}
+/* RESPONSIVE */
+@media(max-width:900px){
+  .nav-menu{display:none}
+  .burger{display:flex}
+  .sections-grid{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .footer-inner{flex-direction:column;text-align:center}
+  .footer-links{justify-content:center}
+  .coming-soon-inner{padding:3rem 1.5rem}
+}
 </style>
 </head>
 <body>
-<div class="rockets-bg"><div class="rocket">&#128640;</div><div class="rocket">&#128640;</div><div class="rocket">&#128640;</div></div>
 
+<!-- NAV -->
 <nav class="nav">
 <div class="nav-inner">
   <a href="index.html" class="nav-logo"><img src="logointep.png" alt="INTEP"></a>
@@ -118,8 +181,8 @@ body::before{
     <li class="nav-dropdown">
       <a>Comunidad</a>
       <div class="nav-dropdown-menu">
-        <a href="aprendices.html" class="active">Aprendices</a>
-        <a href="egresados.html">Egresados</a>
+        <a href="aprendices.html">Aprendices</a>
+        <a href="egresados.html" class="active">Egresados</a>
         <a href="empresas.html">Empresas</a>
         <a href="calintep.html">CALINTEP</a>
       </div>
@@ -142,23 +205,47 @@ body::before{
   <a href="https://portal.institutointep.edu.co/intep/login.php" class="btn btn-fill" target="_blank" style="display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;border-radius:99px;font-weight:600;font-size:.88rem;background:var(--green);color:#fff;font-family:'Exo 2',sans-serif"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a>
 </div>
 
+<!-- PAGE HERO -->
 <section class="page-hero">
   <div class="page-hero-inner">
-    <h1 class="sr">Nuestros <em>Aprendices</em></h1>
-    <p class="sr sr-d1">Espacio dedicado a quienes actualmente se forman en INTEP.</p>
+    <h1 class="sr">Nuestros <em>Egresados</em></h1>
+    <p class="sr sr-d1">Testimonios, experiencias y la voz de quienes se formaron en INTEP.</p>
   </div>
   <div class="page-hero-stripe"></div>
 </section>
 
+<!-- COMING SOON -->
 <section class="coming-soon">
   <div class="coming-soon-inner sr">
-    <div class="coming-soon-icon"><i class="fas fa-book-reader"></i></div>
-    <h2>Sección en desarrollo</h2>
-    <p>Estamos construyendo un espacio exclusivo para nuestros aprendices activos. Aquí encontrarás recursos, novedades académicas y herramientas que acompañarán tu proceso formativo en INTEP.</p>
-    <span class="highlight"><i class="fas fa-tools"></i> Próximamente en funcionamiento</span>
+    <div class="coming-soon-icon"><i class="fas fa-user-graduate"></i></div>
+    <h2>Estamos preparando esta sección</h2>
+    <p>Pronto podrás encontrar aquí testimonios de nuestros egresados, encuestas de satisfacción, galería de fotos y mucho más. Estamos recopilando las mejores experiencias para compartirlas contigo.</p>
+    <span class="highlight"><i class="fas fa-clock"></i> Próximamente disponible</span>
   </div>
 </section>
 
+<!-- WHAT'S COMING -->
+<section class="sections-preview">
+  <div class="sections-grid">
+    <div class="sp-card sr">
+      <i class="fas fa-quote-left"></i>
+      <h3>Testimonios</h3>
+      <p>Historias reales de nuestros egresados.</p>
+    </div>
+    <div class="sp-card sr sr-d1">
+      <i class="fas fa-poll"></i>
+      <h3>Encuestas</h3>
+      <p>Resultados de satisfacción y retroalimentación.</p>
+    </div>
+    <div class="sp-card sr sr-d2">
+      <i class="fas fa-camera"></i>
+      <h3>Galería</h3>
+      <p>Fotos de eventos, clases y actividades institucionales.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer class="footer">
 <div class="footer-inner">
   <div class="footer-logo"><img src="logointep.png" alt="INTEP"></div>

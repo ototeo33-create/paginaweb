@@ -95,6 +95,21 @@ body::before{
   transition:all .3s;letter-spacing:.2px;
 }
 .nav-menu a:hover{background:var(--purple-pale);color:var(--purple-mid)}
+/* Dropdown */
+.nav-dropdown{position:relative}
+.nav-dropdown>a{cursor:pointer}
+.nav-dropdown>a::after{content:'\f107';font-family:'Font Awesome 6 Free';font-weight:900;margin-left:.35rem;font-size:.7rem}
+.nav-dropdown-menu{
+  display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  background:#fff;border-radius:12px;padding:.5rem;min-width:180px;
+  box-shadow:0 8px 30px rgba(74,25,66,.12);z-index:9999;
+  margin-top:.5rem;
+}
+.nav-dropdown:hover .nav-dropdown-menu{display:block}
+.nav-dropdown-menu a{
+  display:block;padding:.55rem 1rem;border-radius:8px;font-size:.85rem;
+  white-space:nowrap;
+}
 .nav-cta{
   background:var(--green);color:#fff!important;
   padding:.65rem 1.5rem!important;border-radius:99px!important;
@@ -119,7 +134,7 @@ body::before{
 /* ═══ HERO ═══ */
 .hero{
   min-height:100vh;display:grid;
-  grid-template-columns:.9fr 1.1fr;
+  grid-template-columns:.85fr 1.15fr;
   position:relative;overflow:hidden;
   background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);
 }
@@ -136,11 +151,11 @@ body::before{
 /* Hero Tag - Badge elegante */
 .hero-tag{
   display:inline-flex;align-items:center;gap:.6rem;
-  font-size:.7rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  font-size:clamp(.7rem,.9vw,.85rem);font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
   color:#fff;margin-bottom:2rem;
   background:rgba(255,255,255,.1);backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,.15);
-  padding:.55rem 1.2rem;border-radius:99px;
+  padding:clamp(.55rem,.7vw,.75rem) clamp(1.2rem,1.5vw,1.6rem);border-radius:99px;
   animation:heroTagIn .8s ease-out both;
 }
 .hero-tag i{color:var(--green-light);font-size:.65rem}
@@ -190,7 +205,7 @@ body::before{
 /* Hero Subtitle - Instituto completo */
 .hero-subtitle{
   font-family:'Exo 2',sans-serif;
-  font-size:clamp(.75rem,1.2vw,1rem);font-weight:600;
+  font-size:clamp(.8rem,1.3vw,1.15rem);font-weight:600;
   letter-spacing:4px;text-transform:uppercase;
   color:rgba(255,255,255,.5);margin-bottom:2rem;
   animation:heroSubIn .8s ease-out .3s both;
@@ -219,9 +234,9 @@ body::before{
 
 /* Hero Description - Grande y dinámico */
 .hero-desc{
-  font-size:clamp(1.5rem,2.8vw,2.2rem);line-height:1.4;
+  font-size:clamp(1.5rem,2.8vw,2.5rem);line-height:1.4;
   color:#fff;
-  max-width:560px;margin-bottom:2.8rem;font-weight:300;
+  max-width:620px;margin-bottom:2.8rem;font-weight:300;
   animation:heroDescIn .9s ease-out .5s both;
   position:relative;
   letter-spacing:-.01em;
@@ -285,9 +300,9 @@ body::before{
 .hero-slideshow{
   position:absolute;z-index:1;
   top:50%;left:50%;transform:translate(-50%,-50%);
-  width:82%;max-width:620px;
-  aspect-ratio:16/9;
-  border-radius:18px;overflow:hidden;
+  width:88%;max-width:780px;
+  aspect-ratio:16/10;
+  border-radius:22px;overflow:hidden;
   box-shadow:0 24px 64px rgba(0,0,0,.35);
   border:3px solid rgba(255,255,255,.2);
 }
@@ -315,10 +330,9 @@ body::before{
   animation:heroFloat 6s ease-in-out infinite;
   font-size:.9rem;
 }
-.hero-float.f1{bottom:12%;right:5%;animation-delay:-2s}
-.hero-float.f2{top:15%;right:3%;animation-delay:-4s}
-.hero-float .fl-number{font-family:'Exo 2',sans-serif;font-size:1.8rem;font-weight:800}
-.hero-float .fl-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.2px;opacity:.8;margin-top:.1rem}
+.hero-float.f2{top:15%;left:5%;animation-delay:-4s}
+.hero-float .fl-number{font-family:'Exo 2',sans-serif;font-size:clamp(1.8rem,2.2vw,2.6rem);font-weight:800}
+.hero-float .fl-label{font-size:clamp(.65rem,.8vw,.85rem);text-transform:uppercase;letter-spacing:1.2px;opacity:.8;margin-top:.1rem}
 @keyframes heroFloat{
   0%,100%{transform:translateY(0)}
   50%{transform:translateY(-12px)}
@@ -584,8 +598,8 @@ body::before{
 }
 .programs-inner{max-width:1340px;margin:0 auto;position:relative;z-index:1}
 .programs-head{
-  display:flex;justify-content:space-between;align-items:flex-end;
-  margin-bottom:3.5rem;flex-wrap:wrap;gap:2rem;
+  display:flex;justify-content:center;align-items:flex-end;
+  margin-bottom:3.5rem;flex-wrap:wrap;gap:3.5rem;
 }
 .programs-head-left{max-width:600px}
 .programs h2{font-size:clamp(2rem,3.5vw,3.2rem);color:var(--purple);line-height:1.12;margin-bottom:.8rem}
@@ -594,6 +608,54 @@ body::before{
   font-family:'Exo 2',sans-serif;font-size:5rem;font-weight:900;
   color:var(--green);opacity:.15;line-height:1;
 }
+/* ═══ SELLO APROBACIÓN ═══ */
+.sello-aprobacion{
+  transform:rotate(2.5deg);
+  background:#fff;
+  border:2.5px solid var(--green);
+  border-radius:18px;
+  padding:1.8rem 2rem 1.5rem;
+  max-width:320px;
+  position:relative;
+  box-shadow:0 8px 35px rgba(5,150,105,.10),0 2px 8px rgba(74,25,66,.05);
+  transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s;
+}
+.sello-aprobacion:hover{
+  transform:rotate(0deg) scale(1.02);
+  box-shadow:0 12px 45px rgba(5,150,105,.16),0 4px 12px rgba(74,25,66,.08);
+}
+.sello-ribbon{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:#fff;font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:.35rem 1.2rem;border-radius:99px;white-space:nowrap;
+  box-shadow:0 3px 12px rgba(5,150,105,.3);
+}
+.sello-icon{
+  width:50px;height:50px;border-radius:50%;
+  background:var(--green-pale);color:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;margin:0 auto .8rem;
+}
+.sello-aprobacion h4{
+  font-size:.95rem;font-weight:700;color:var(--purple);
+  text-align:center;line-height:1.4;margin-bottom:1.2rem;
+}
+.sello-aprobacion h4 span{
+  color:var(--green);display:block;font-size:.85rem;font-weight:600;margin-top:.2rem;
+}
+.sello-docs{display:flex;flex-direction:column;gap:.5rem}
+.sello-doc{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.55rem .8rem;border-radius:10px;
+  background:var(--green-pale);
+  font-size:.75rem;font-weight:600;color:var(--green-dark);
+  transition:all .3s;cursor:pointer;text-decoration:none;
+}
+.sello-doc:hover{background:var(--green);color:#fff;transform:translateX(3px)}
+.sello-doc i.fa-file-pdf{font-size:1.1rem;flex-shrink:0}
+.sello-doc i.fa-download{margin-left:auto;font-size:.7rem;opacity:.6}
+.sello-doc:hover i.fa-download{opacity:1}
 .programs-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
@@ -696,6 +758,26 @@ body::before{
   background:linear-gradient(135deg,var(--green-pale),var(--sand));
   display:flex;align-items:center;justify-content:center;
   font-size:3rem;color:var(--green);opacity:.3;
+}
+/* News card carousel */
+.nc-carousel{
+  width:100%;height:220px;overflow:hidden;position:relative;
+  mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent);
+}
+.nc-track{
+  display:flex;gap:0;width:max-content;height:100%;
+  animation:ncScroll 20s linear infinite;
+}
+.nc-track:hover{animation-play-state:paused}
+@keyframes ncScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.nc-slide{flex-shrink:0;width:320px;height:100%}
+.nc-slide img{width:100%;height:100%;object-fit:cover}
+.nc-carousel .n-badge{
+  position:absolute;top:14px;left:14px;z-index:2;
+  background:var(--green);color:#fff;
+  padding:.35rem .9rem;border-radius:99px;
+  font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
 }
 .n-card-body{padding:1.6rem 1.8rem 1.8rem}
 .n-card-date{
@@ -884,6 +966,24 @@ body::before{
 .sr-scale{transform:scale(.9);opacity:0}.sr-scale.vis{transform:scale(1);opacity:1}
 
 /* ═══ RESPONSIVE ═══ */
+@media(min-width:1600px){
+  .hero{min-height:100vh}
+  .hero-left{padding:10rem 3rem 5rem 6rem}
+  .hero h1{font-size:clamp(4rem,5.5vw,7rem)}
+  .hero-desc{font-size:clamp(1.8rem,2vw,2.5rem);max-width:680px}
+  .hero-slideshow{width:90%;max-width:900px}
+  .hero-float{padding:1.5rem 2rem}
+  .hero-float .fl-number{font-size:2.6rem}
+  .hero-float .fl-label{font-size:.85rem}
+  .hero-tag{font-size:.85rem;padding:.75rem 1.6rem}
+  .hero-subtitle{font-size:1.15rem;letter-spacing:5px}
+}
+@media(min-width:1920px){
+  .hero-left{padding:12rem 4rem 6rem 8rem}
+  .hero-slideshow{width:92%;max-width:1050px}
+  .hero-float{padding:1.8rem 2.2rem}
+  .hero-float .fl-number{font-size:3rem}
+}
 @media(max-width:1024px){
   .hero{grid-template-columns:1fr}
   .hero-left{padding:8rem 2rem 4rem;text-align:center;align-items:center}
@@ -906,6 +1006,7 @@ body::before{
   .contact-cards{grid-template-columns:1fr}
   .about-stats{flex-direction:column}
   .programs-head{flex-direction:column;align-items:flex-start}
+  .sello-aprobacion{transform:rotate(0);max-width:100%;margin-top:1rem}
   .program-count{font-size:3rem}
 }
 @media(max-width:520px){
@@ -1035,8 +1136,15 @@ body::before{
     <li><a href="#programas">Programas</a></li>
     <li><a href="#novedades">Novedades</a></li>
     <li><a href="#contacto">Contacto</a></li>
-    <li><a href="aprendices.html">Aprendices</a></li>
-    <li><a href="empresas.html">Empresas</a></li>
+    <li class="nav-dropdown">
+      <a>Comunidad</a>
+      <div class="nav-dropdown-menu">
+        <a href="aprendices.html">Aprendices</a>
+        <a href="egresados.html">Egresados</a>
+        <a href="empresas.html">Empresas</a>
+        <a href="calintep.html">CALINTEP</a>
+      </div>
+    </li>
     <li><a href="https://portal.institutointep.edu.co/intep/login.php" class="nav-cta" target="_blank"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a></li>
   </ul>
   <div class="burger" onclick="toggleMob()"><span></span><span></span><span></span></div>
@@ -1049,7 +1157,9 @@ body::before{
   <a href="#novedades" onclick="toggleMob()">Novedades</a>
   <a href="#contacto" onclick="toggleMob()">Contacto</a>
   <a href="aprendices.html" onclick="toggleMob()">Aprendices</a>
+  <a href="egresados.html" onclick="toggleMob()">Egresados</a>
   <a href="empresas.html" onclick="toggleMob()">Empresas</a>
+  <a href="calintep.html" onclick="toggleMob()">CALINTEP</a>
   <a href="https://portal.institutointep.edu.co/intep/login.php" class="btn btn-fill" target="_blank"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a>
 </div>
 
@@ -1077,10 +1187,6 @@ body::before{
       <img src="presentacion/7.jpg" alt="INTEP">
       <img src="presentacion/8.jpg" alt="INTEP">
       <div class="hero-dots" id="heroDots"></div>
-    </div>
-    <div class="hero-float f1">
-      <div class="fl-number">11+</div>
-      <div class="fl-label">Programas técnicos</div>
     </div>
     <div class="hero-float f2">
       <div class="fl-number">10+</div>
@@ -1152,6 +1258,16 @@ body::before{
       <div class="about-label sr">Oferta académica</div>
       <h2 class="sr">Programas técnicos<br>que abren puertas</h2>
       <p class="sr sr-d1">Elige tu camino profesional. Todos nuestros programas están diseñados para el mercado laboral actual.</p>
+    </div>
+    <div class="sello-aprobacion sr sr-d1">
+      <div class="sello-ribbon"><i class="fas fa-shield-alt"></i> Oficial</div>
+      <div class="sello-icon"><i class="fas fa-award"></i></div>
+      <h4>Programas aprobados por la<span>Secretaría de Educación de Cundinamarca</span></h4>
+      <div class="sello-docs">
+        <a href="resoluciones/RESOLUCIÓN DE LICENCIA DE FUNCIONAMIENTO INTEP Resolución No. 009605 de 2014.jsp.pdf" target="_blank" class="sello-doc"><i class="fas fa-file-pdf"></i> Licencia de Funcionamiento<i class="fas fa-download"></i></a>
+        <a href="resoluciones/RESOLUCIÓN DE REGISTRO DE PROGRAMAS INTEP.jsp.pdf" target="_blank" class="sello-doc"><i class="fas fa-file-pdf"></i> Registro de Programas<i class="fas fa-download"></i></a>
+        <a href="resoluciones/RESOLUCIÓN DE REGISTRO SISTEMAS INFORMÁTICOS Y DIGITALES -INTEP.jsp.pdf" target="_blank" class="sello-doc"><i class="fas fa-file-pdf"></i> Registro Sistemas Informáticos<i class="fas fa-download"></i></a>
+      </div>
     </div>
   </div>
   <div class="programs-grid">
@@ -1291,6 +1407,10 @@ body::before{
     <a href="#programas">Programas</a>
     <a href="#novedades">Novedades</a>
     <a href="#contacto">Contacto</a>
+    <a href="aprendices.html">Aprendices</a>
+    <a href="egresados.html">Egresados</a>
+    <a href="empresas.html">Empresas</a>
+    <a href="calintep.html">CALINTEP</a>
     <a href="https://portal.institutointep.edu.co/intep/login.php" target="_blank">Portal Estudiantil</a>
   </div>
   <div class="footer-social">
@@ -1452,12 +1572,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePM()});
 
 // News / Novedades — datos incrustados
 const noticiasData=[
-  {"id":"1","titulo":"Nuevas inscripciones abiertas 2026","descripcion":"Matricúlate en cualquiera de nuestros 14 programas técnicos. Horarios diurnos y nocturnos disponibles.","fecha":"15 Mar 2026","categoria":"Inscripciones","imagen":"imagen.jpg"},
-  {"id":"2","titulo":"Ceremonia de graduación promoción 2025","descripcion":"Celebramos a nuestros nuevos egresados que hoy dan el siguiente paso en su vida profesional.","fecha":"10 Mar 2026","categoria":"Graduaciones","imagen":"imagen.jpg"},
-  {"id":"3","titulo":"Convenio con empresas de la región","descripcion":"Nuevas alianzas estratégicas para las prácticas laborales de nuestros estudiantes en Madrid y alrededores.","fecha":"28 Feb 2026","categoria":"Convenios","imagen":"imagen.jpg"},
-  {"id":"4","titulo":"Semana de la salud ocupacional","descripcion":"Actividades, charlas y talleres sobre seguridad y salud en el trabajo para toda la comunidad INTEP.","fecha":"20 Feb 2026","categoria":"Eventos","imagen":"imagen.jpg"},
-  {"id":"5","titulo":"Taller de emprendimiento estudiantil","descripcion":"Nuestros estudiantes desarrollaron sus ideas de negocio con asesoría de expertos del sector.","fecha":"12 Feb 2026","categoria":"Eventos","imagen":"imagen.jpg"},
-  {"id":"6","titulo":"INTEP celebra 10 años formando profesionales","descripcion":"Una década de compromiso con la educación técnica de calidad en Madrid, Cundinamarca.","fecha":"01 Feb 2026","categoria":"Institucional","imagen":"imagen.jpg"}
+  {"id":"1","titulo":"Nuevas inscripciones abiertas 2026","descripcion":"Matricúlate en cualquiera de nuestros 14 programas técnicos. Horarios diurnos y nocturnos disponibles.","categoria":"Inscripciones","fotos":2},
+  {"id":"2","titulo":"Ceremonia de graduación promoción 2025","descripcion":"Celebramos a nuestros nuevos egresados que hoy dan el siguiente paso en su vida profesional.","categoria":"Graduaciones","fotos":20},
+  {"id":"3","titulo":"Primera infancia","descripcion":"Formación integral para el cuidado y desarrollo de la primera infancia con enfoque pedagógico.","categoria":"Programas","fotos":6},
+  {"id":"4","titulo":"FOTOS INTEP","descripcion":"Momentos que capturan la esencia de nuestra comunidad educativa en Madrid, Cundinamarca.","categoria":"Galería","fotos":0},
+  {"id":"5","titulo":"Taller de emprendimiento estudiantil","descripcion":"Nuestros estudiantes desarrollaron sus ideas de negocio con asesoría de expertos del sector.","categoria":"Eventos","fotos":26},
+  {"id":"6","titulo":"Proyección Social","descripcion":"Comprometidos con el desarrollo social de Madrid y la región a través de la educación y el servicio comunitario.","categoria":"Institucional","fotos":22}
 ];
 (function(){
   const grid=document.getElementById('newsGrid');
@@ -1465,17 +1585,16 @@ const noticiasData=[
   noticiasData.forEach(n=>{
     const card=document.createElement('div');
     card.className='n-card sr';
-    card.innerHTML=`
-      <div class="n-card-img">
-        <img src="noticias/${n.id}/${n.imagen}" alt="${n.titulo}"
-             onerror="this.outerHTML='<div class=\\'n-no-img\\'><i class=\\'fas fa-newspaper\\'></i></div>'">
-        <span class="n-badge">${n.categoria}</span>
-      </div>
-      <div class="n-card-body">
-        <div class="n-card-date"><i class="far fa-calendar-alt"></i> ${n.fecha}</div>
-        <h3>${n.titulo}</h3>
-        <p>${n.descripcion}</p>
-      </div>`;
+    let imgHTML='';
+    if(n.fotos>0){
+      let items='';
+      for(let i=1;i<=n.fotos;i++) items+=`<div class="nc-slide"><img src="noticias/${n.id}/${i}.jpg" alt="${n.titulo} ${i}" loading="lazy"></div>`;
+      items+=items;
+      imgHTML=`<div class="nc-carousel"><div class="nc-track" style="animation-duration:${Math.max(n.fotos*4,16)}s">${items}</div><span class="n-badge">${n.categoria}</span></div>`;
+    } else {
+      imgHTML=`<div class="n-card-img"><div class="n-no-img"><i class="fas fa-camera"></i></div><span class="n-badge">${n.categoria}</span></div>`;
+    }
+    card.innerHTML=imgHTML+`<div class="n-card-body"><h3>${n.titulo}</h3><p>${n.descripcion}</p></div>`;
     grid.appendChild(card);
   });
   grid.querySelectorAll('.sr').forEach(el=>obs.observe(el));
