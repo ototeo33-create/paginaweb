@@ -297,7 +297,15 @@ $total_fechas = count($todas_fechas);
 </head>
 <body data-rol="<?php echo $_SESSION['usuario_rol'] ?? ''; ?>">
 
+<div class="dashboard-header">
+    <h1><img src="/intep/img/Logo.png" alt="INTEP" height="36"></h1>
+    <span class="usuario-info">📋 Control de Asistencia</span>
+    <a href="../logout.php" class="btn-salir">Cerrar sesión</a>
+</div>
+
 <div class="container" style="max-width:1200px;margin:1rem auto;padding:0 0.8rem;">
+
+    <a href="../dashboard.php" class="btn-volver" style="display:inline-block;margin-bottom:1rem;font-size:0.82rem;color:#059669;text-decoration:none;font-weight:600;">← Volver al inicio</a>
 
     <!-- Filtros -->
     <div class="filtros-bar">
@@ -331,8 +339,6 @@ $total_fechas = count($todas_fechas);
                 </option>
             <?php endforeach; ?>
         </select>
-
-        <a href="../dashboard.php" style="margin-left:auto;font-size:0.82rem;color:#059669;text-decoration:none;font-weight:600;">← Volver</a>
     </div>
 
     <?php

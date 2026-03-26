@@ -38,6 +38,18 @@ if ($rol !== 'estudiante') {
     while ($e = mysqli_fetch_assoc($res_est)) $estudiantes[] = $e;
 }
 
+// Auto-limpiar links virtuales de clases que ya terminaron hoy
+date_default_timezone_set('America/Bogota');
+$dias_map_es = ['Monday'=>'Lunes','Tuesday'=>'Martes','Wednesday'=>'Miércoles','Thursday'=>'Jueves','Friday'=>'Viernes','Saturday'=>'Sábado','Sunday'=>'Domingo'];
+$dia_hoy_es = $dias_map_es[date('l')] ?? '';
+$hora_actual = date('H:i:s');
+if ($dia_hoy_es) {
+    $q_clean = "UPDATE horarios SET link_virtual = NULL WHERE dia = ? AND hora_fin <= ? AND link_virtual IS NOT NULL AND link_virtual != ''";
+    $stmt_clean = mysqli_prepare($conexion, $q_clean);
+    mysqli_stmt_bind_param($stmt_clean, 'ss', $dia_hoy_es, $hora_actual);
+    mysqli_stmt_execute($stmt_clean);
+}
+
 // Obtener horarios del estudiante con datos de bimestre
 $query = "SELECT h.*, m.nombre as materia, b.numero as bimestre_num, b.anio as bimestre_anio,
                  b.fecha_inicio as bim_inicio, b.fecha_fin as bim_fin
@@ -473,7 +485,23 @@ if ($rol !== 'estudiante' && $estudiante_id) {
         <div class="modal-info"><strong>Horario:</strong> <span id="modal-horario"></span></div>
         <div class="modal-info"><strong>Salón:</strong> <span id="modal-salon"></span></div>
         <div class="modal-info"><strong>Bimestre:</strong> <span id="modal-bimestre"></span></div>
-        <div class="modal-info" id="modal-link-row" style="display:none;"><strong>Link:</strong> <a id="modal-link" href="#" target="_blank" style="color:var(--verde);font-weight:600;">Ir a clase virtual →</a></div>
+        <div id="modal-link-row" style="display:none; margin-top:12px;">
+            <a id="modal-link" href="#" target="_blank" style="
+                display:flex; align-items:center; gap:10px;
+                background:linear-gradient(135deg,#059669,#10B981);
+                color:white; text-decoration:none;
+                padding:14px 20px; border-radius:12px;
+                font-weight:700; font-size:0.92rem;
+                box-shadow:0 4px 15px rgba(5,150,105,0.3);
+                transition:all 0.2s;
+            " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(5,150,105,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 15px rgba(5,150,105,0.3)'">
+                <span style="font-size:1.4rem;">📹</span>
+                <span>
+                    <span style="display:block;font-size:0.72rem;opacity:0.8;font-weight:400;letter-spacing:1px;text-transform:uppercase;">Clase Virtual Disponible</span>
+                    <span style="display:block;">Unirse a la clase →</span>
+                </span>
+            </a>
+        </div>
 
         <div class="agenda-titulo">📆 Agregar a mi agenda</div>
         <div class="agenda-btns">

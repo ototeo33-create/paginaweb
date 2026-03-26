@@ -850,6 +850,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Registra la asistencia de los estudiantes por módulo</p>
                     <span class="card-arrow">→</span>
                 </a>
+                <a href="admin/links_virtuales.php" class="menu-card-v2">
+                    <div class="card-icon azul">🔗</div>
+                    <h3>Links de Clases Virtuales</h3>
+                    <p>Agrega o edita los links de Meet, Zoom o Teams para cada clase</p>
+                    <span class="card-arrow">→</span>
+                </a>
                 <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)" style="display:none;">
                     <div class="card-icon verde">📲</div>
                     <h3>Descargar App</h3>
@@ -914,6 +920,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <div class="card-icon verde">📋</div>
                     <h3>Asistencia</h3>
                     <p>Registra y controla la asistencia de los estudiantes por módulo</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="admin/links_virtuales.php" class="menu-card-v2">
+                    <div class="card-icon azul">🔗</div>
+                    <h3>Links de Clases Virtuales</h3>
+                    <p>Agrega o edita los links de Meet, Zoom o Teams para cada clase</p>
                     <span class="card-arrow">→</span>
                 </a>
                 <a href="admin/cartera.php" class="menu-card-v2">

@@ -151,11 +151,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($accion === 'actualizar_link') {
         $horario_id = (int)$_POST['horario_id'];
         $link_virtual = trim($_POST['link_virtual'] ?? '');
-        $q = "UPDATE horarios SET link_virtual = ? WHERE id = ? AND estudiante_id = ?";
-        $stmt = mysqli_prepare($conexion, $q);
-        mysqli_stmt_bind_param($stmt, 'sii', $link_virtual, $horario_id, $estudiante_id);
-        mysqli_stmt_execute($stmt);
-        $mensaje = 'success|Link de clase virtual actualizado.';
+
+        // Obtener materia_id, programa_id y dia de este horario para actualizar TODOS los de la misma clase
+        $q_info = "SELECT materia_id, programa_id, dia FROM horarios WHERE id = ?";
+        $stmt_info = mysqli_prepare($conexion, $q_info);
+        mysqli_stmt_bind_param($stmt_info, 'i', $horario_id);
+        mysqli_stmt_execute($stmt_info);
+        $info = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_info));
+
+        if ($info) {
+            // Actualizar link en TODAS las filas con el mismo módulo + programa + día
+            $q = "UPDATE horarios SET link_virtual = ? WHERE materia_id = ? AND programa_id = ? AND dia = ?";
+            $stmt = mysqli_prepare($conexion, $q);
+            mysqli_stmt_bind_param($stmt, 'siis', $link_virtual, $info['materia_id'], $info['programa_id'], $info['dia']);
+            mysqli_stmt_execute($stmt);
+            $afectados = mysqli_affected_rows($conexion);
+            $mensaje = "success|Link de clase virtual actualizado para $afectados estudiante(s).";
+        } else {
+            $mensaje = 'error|No se encontró el horario.';
+        }
 
     } elseif ($accion === 'eliminar') {
         $id = (int)$_POST['horario_id'];
