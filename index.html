@@ -807,9 +807,100 @@ body::before{
 .n-card p{
   font-size:.9rem;color:var(--text-mid);line-height:1.7;font-weight:300;
 }
+/* Video card */
+.n-card-video{
+  position:relative;width:100%;height:220px;overflow:hidden;
+  background:#000;cursor:pointer;
+}
+.n-card-video video{
+  width:100%;height:100%;object-fit:cover;
+}
+.n-video-overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.35);
+  transition:opacity .3s;z-index:2;
+}
+.n-video-overlay i{
+  width:56px;height:56px;border-radius:50%;
+  background:rgba(255,255,255,.95);color:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;padding-left:3px;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);
+  transition:transform .2s;
+}
+.n-video-overlay:hover i{transform:scale(1.1)}
+.n-vid-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  z-index:3;background:rgba(255,255,255,.9);border:none;
+  width:32px;height:32px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;color:var(--purple);
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  transition:transform .2s,background .2s;
+}
+.n-vid-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.1)}
+.n-vid-prev{left:10px}
+.n-vid-next{right:10px}
+.n-video-counter{
+  position:absolute;bottom:10px;right:10px;z-index:3;
+  background:rgba(0,0,0,.6);color:#fff;
+  padding:4px 10px;border-radius:20px;
+  font-size:.72rem;font-weight:600;
+  display:flex;align-items:center;gap:5px;
+}
+.n-card-video .n-badge{
+  position:absolute;top:14px;left:14px;z-index:3;
+  background:var(--green);color:#fff;
+  padding:.35rem .9rem;border-radius:99px;
+  font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+}
+
+/* Video modal fullscreen */
+.vid-modal{
+  position:fixed;inset:0;z-index:99999;
+  background:#000000ee;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:16px;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s;
+}
+.vid-modal.open{opacity:1;pointer-events:all}
+.vid-modal video{
+  max-width:92vw;max-height:80vh;border-radius:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);
+  background:#000;
+}
+.vid-modal-close{
+  position:absolute;top:18px;right:22px;z-index:3;
+  background:rgba(255,255,255,.15);border:none;
+  color:#fff;font-size:1.4rem;cursor:pointer;
+  width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.vid-modal-close:hover{background:rgba(255,255,255,.3)}
+.vid-modal-nav{
+  display:flex;align-items:center;gap:20px;
+}
+.vid-modal-nav button{
+  background:rgba(255,255,255,.15);border:none;
+  color:#fff;font-size:1.1rem;cursor:pointer;
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,transform .2s;
+}
+.vid-modal-nav button:hover{background:rgba(255,255,255,.3);transform:scale(1.1)}
+.vid-modal-counter{
+  color:rgba(255,255,255,.8);font-size:.9rem;font-weight:600;
+  min-width:60px;text-align:center;
+}
+
 @media(max-width:480px){
   .news-grid{grid-template-columns:1fr}
   .n-card-img{height:180px}
+  .n-card-video{height:200px}
+  .vid-modal video{max-width:100vw;max-height:70vh;border-radius:0}
 }
 
 /* ═══ CTA SECTION ═══ */
@@ -1310,7 +1401,19 @@ body::before{
     <!-- Se llena dinámicamente desde noticias.json -->
   </div>
 </div>
+</div>
 </section>
+
+<!-- Video Modal -->
+<div class="vid-modal" id="vidModal">
+  <button class="vid-modal-close" onclick="closeVidModal()"><i class="fas fa-times"></i></button>
+  <video id="vidModalPlayer" controls playsinline></video>
+  <div class="vid-modal-nav">
+    <button onclick="modalChangeVid(-1)"><i class="fas fa-chevron-left"></i></button>
+    <div class="vid-modal-counter"><span id="vidModalIdx">1</span> / <span id="vidModalTotal">6</span></div>
+    <button onclick="modalChangeVid(1)"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</div>
 
 <!-- CTA -->
 <section class="cta">
@@ -1594,8 +1697,8 @@ const noticiasData=[
   {"id":"1","titulo":"Nuevas inscripciones abiertas 2026","descripcion":"Matricúlate en cualquiera de nuestros 14 programas técnicos. Horarios diurnos y nocturnos disponibles.","categoria":"Inscripciones","fotos":2},
   {"id":"2","titulo":"Ceremonia de graduación promoción 2025","descripcion":"Celebramos a nuestros nuevos egresados que hoy dan el siguiente paso en su vida profesional.","categoria":"Graduaciones","fotos":20},
   {"id":"3","titulo":"Primera infancia","descripcion":"Formación integral para el cuidado y desarrollo de la primera infancia con enfoque pedagógico.","categoria":"Programas","fotos":6},
-  {"id":"4","titulo":"FOTOS INTEP","descripcion":"Momentos que capturan la esencia de nuestra comunidad educativa en Madrid, Cundinamarca.","categoria":"Galería","fotos":0},
   {"id":"5","titulo":"Taller de emprendimiento estudiantil","descripcion":"Nuestros estudiantes desarrollaron sus ideas de negocio con asesoría de expertos del sector.","categoria":"Eventos","fotos":26},
+  {"id":"4","titulo":"Videos INTEP","descripcion":"Momentos que capturan la esencia de nuestra comunidad educativa en Madrid, Cundinamarca.","categoria":"Galería","fotos":0,"videos":6},
   {"id":"6","titulo":"Proyección Social","descripcion":"Comprometidos con el desarrollo social de Madrid y la región a través de la educación y el servicio comunitario.","categoria":"Institucional","fotos":22}
 ];
 (function(){
@@ -1605,7 +1708,16 @@ const noticiasData=[
     const card=document.createElement('div');
     card.className='n-card sr';
     let imgHTML='';
-    if(n.fotos>0){
+    if(n.videos&&n.videos>0){
+      imgHTML=`<div class="n-card-video" data-total="${n.videos}" data-current="1">
+        <video src="videos/1.mp4" muted playsinline loop preload="metadata"></video>
+        <div class="n-video-overlay" onclick="toggleVid(this)"><i class="fas fa-play"></i></div>
+        <button class="n-vid-arrow n-vid-prev" onclick="event.stopPropagation();changeVid(this,-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="n-vid-arrow n-vid-next" onclick="event.stopPropagation();changeVid(this,1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="n-video-counter"><i class="fas fa-video"></i> <span class="n-vid-idx">1</span>/${n.videos}</div>
+        <span class="n-badge">${n.categoria}</span>
+      </div>`;
+    } else if(n.fotos>0){
       let items='';
       for(let i=1;i<=n.fotos;i++) items+=`<div class="nc-slide"><img src="noticias/${n.id}/${i}.jpg" alt="${n.titulo} ${i}" loading="lazy"></div>`;
       items+=items;
@@ -1618,6 +1730,66 @@ const noticiasData=[
   });
   grid.querySelectorAll('.sr').forEach(el=>obs.observe(el));
 })();
+
+// Video player functions
+let vidModalCur=1, vidModalTotal=6;
+
+function toggleVid(overlay){
+  const wrap=overlay.closest('.n-card-video');
+  vidModalCur=parseInt(wrap.dataset.current)||1;
+  vidModalTotal=parseInt(wrap.dataset.total)||6;
+  openVidModal();
+}
+
+function changeVid(btn,dir){
+  const wrap=btn.closest('.n-card-video');
+  const total=parseInt(wrap.dataset.total);
+  let cur=parseInt(wrap.dataset.current)+dir;
+  if(cur<1)cur=total;if(cur>total)cur=1;
+  wrap.dataset.current=cur;
+  const v=wrap.querySelector('video');
+  v.src=`videos/${cur}.mp4`;
+  v.load();
+  wrap.querySelector('.n-vid-idx').textContent=cur;
+}
+
+function openVidModal(){
+  const modal=document.getElementById('vidModal');
+  const player=document.getElementById('vidModalPlayer');
+  player.src=`videos/${vidModalCur}.mp4`;
+  document.getElementById('vidModalIdx').textContent=vidModalCur;
+  document.getElementById('vidModalTotal').textContent=vidModalTotal;
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+  player.play();
+}
+
+function closeVidModal(){
+  const modal=document.getElementById('vidModal');
+  const player=document.getElementById('vidModalPlayer');
+  player.pause();
+  player.src='';
+  modal.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function modalChangeVid(dir){
+  vidModalCur+=dir;
+  if(vidModalCur<1)vidModalCur=vidModalTotal;
+  if(vidModalCur>vidModalTotal)vidModalCur=1;
+  const player=document.getElementById('vidModalPlayer');
+  player.src=`videos/${vidModalCur}.mp4`;
+  document.getElementById('vidModalIdx').textContent=vidModalCur;
+  player.play();
+  // sync card counter
+  const wrap=document.querySelector('.n-card-video');
+  if(wrap){wrap.dataset.current=vidModalCur;wrap.querySelector('.n-vid-idx').textContent=vidModalCur;}
+}
+
+// Close modal with Escape
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeVidModal()});
+// Close modal clicking backdrop
+document.getElementById('vidModal')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVidModal()});
 
 // Mostrar confirmación si viene de FormSubmit
 if(new URLSearchParams(window.location.search).get('enviado')==='1'){

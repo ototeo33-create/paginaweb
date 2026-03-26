@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#059669">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="App del estudiante INTEP - Asistencia, pagos y más">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="../favicon.png">
+  <link rel="apple-touch-icon" href="../favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./style.css">
+  <title>INTEP Estudiantes</title>
+</head>
+<body>
+
+  <!-- Splash Screen -->
+  <div class="splash">
+    <div class="splash-logo">
+      <img src="../favicon.png" alt="INTEP">
+    </div>
+    <div class="splash-text">INTEP</div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-mascot">
+      <!-- Happy mascot for login -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="loginGrad" cx="40%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#10B981" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#059669"/>
+          </radialGradient>
+        </defs>
+        <rect x="25" y="18" width="50" height="6" rx="2" fill="#2D2235"/>
+        <polygon points="50,8 78,22 50,26 22,22" fill="#2D2235"/>
+        <line x1="70" y1="20" x2="78" y2="32" stroke="#F59E0B" stroke-width="2"/>
+        <circle cx="79" cy="34" r="3" fill="#F59E0B"/>
+        <ellipse cx="50" cy="58" rx="34" ry="32" fill="url(#loginGrad)"/>
+        <ellipse cx="50" cy="88" rx="22" ry="8" fill="#059669" opacity="0.3"/>
+        <path d="M 28 48 Q 35 42 42 48" stroke="#2D2235" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 58 48 Q 65 42 72 48" stroke="#2D2235" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 38 62 Q 50 76 62 62" stroke="#2D2235" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="24" cy="56" r="7" fill="#FFB7B7" opacity="0.5"/>
+        <circle cx="76" cy="56" r="7" fill="#FFB7B7" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="login-title">INTEP Estudiantes</div>
+    <div class="login-subtitle">Inicia sesión para continuar</div>
+    <form class="login-form" id="loginForm">
+      <div class="input-group">
+        <i class="fas fa-id-card"></i>
+        <input type="text" id="studentCode" placeholder="Código de estudiante" required autocomplete="off">
+      </div>
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="studentPin" placeholder="PIN" maxlength="4" required>
+      </div>
+      <button type="submit" class="btn-login">
+        <i class="fas fa-sign-in-alt"></i> Ingresar
+      </button>
+    </form>
+    <div style="margin-top:24px;text-align:center;font-size:0.75rem;color:var(--text-light)">
+      <strong>Demo:</strong> Códigos 1001, 1002 o 1003 · PIN: 1234
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div class="app" id="mainApp">
+    <!-- Pages -->
+    <div class="page active" id="page-home"></div>
+    <div class="page" id="page-attendance"></div>
+    <div class="page" id="page-payments"></div>
+    <div class="page" id="page-notifications"></div>
+    <div class="page" id="page-profile"></div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-page="home">
+        <i class="fas fa-home"></i>
+        <span>Inicio</span>
+      </button>
+      <button class="nav-item" data-page="attendance">
+        <i class="fas fa-calendar-check"></i>
+        <span>Asistencia</span>
+      </button>
+      <button class="nav-item" data-page="payments">
+        <i class="fas fa-wallet"></i>
+        <span>Pagos</span>
+      </button>
+      <button class="nav-item" data-page="notifications">
+        <i class="fas fa-bell"></i>
+        <span>Alertas</span>
+        <div class="nav-badge"></div>
+      </button>
+      <button class="nav-item" data-page="profile">
+        <i class="fas fa-user"></i>
+        <span>Perfil</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
