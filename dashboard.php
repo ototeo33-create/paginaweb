@@ -800,7 +800,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Certificados, paz y salvo, reparación de equipos y más trámites</p>
                     <span class="card-arrow">→</span>
                 </a>
-                <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)" style="display:none;">
+                <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)">
                     <div class="card-icon verde">📲</div>
                     <h3>Descargar App</h3>
                     <p>Instala la aplicación en tu celular para acceso rápido</p>
@@ -942,16 +942,15 @@ let deferredPrompt = null;
 
 // Si ya está instalada (modo standalone), no mostrar botón
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-    // App ya instalada, no hacer nada
+    // App ya instalada → ocultar botón
+    document.querySelectorAll('.btn-instalar-app').forEach(function(btn) {
+        btn.style.display = 'none';
+    });
 } else {
-    // Capturar evento de instalación PWA
+    // Capturar evento de instalación PWA (Android Chrome)
     window.addEventListener('beforeinstallprompt', function(e) {
         e.preventDefault();
         deferredPrompt = e;
-        // Mostrar todas las tarjetas de instalar
-        document.querySelectorAll('.btn-instalar-app').forEach(function(btn) {
-            btn.style.display = '';
-        });
     });
 }
 
