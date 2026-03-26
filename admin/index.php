@@ -1,5 +1,6 @@
 <?php
 require_once '../config.php';
+require_once '../mail_helper.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: ../login.php');
@@ -60,6 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt2 = mysqli_prepare($conexion, $q2);
                 mysqli_stmt_bind_param($stmt2, 'ssi', $documento, $passwordHash, $nuevo_id);
                 mysqli_stmt_execute($stmt2);
+                // Enviar correo de bienvenida (no interrumpe el flujo si falla)
+                enviarCorreoBienvenida($nombre, $email, $documento, $password);
                 $mensaje = 'success|✅ Estudiante "' . $nombre . '" creado correctamente.';
             } else {
                 $mensaje = 'error|Error al crear el estudiante. Intenta de nuevo.';
@@ -270,6 +273,11 @@ while ($e = mysqli_fetch_assoc($res_est)) {
 $programas = [];
 $res_prog = mysqli_query($conexion, "SELECT * FROM programas ORDER BY nombre ASC");
 while ($p = mysqli_fetch_assoc($res_prog)) $programas[] = $p;
+
+// Bimestres
+$bimestres = [];
+$res_bim = mysqli_query($conexion, "SELECT * FROM bimestres ORDER BY anio ASC, numero ASC");
+if ($res_bim) while ($b = mysqli_fetch_assoc($res_bim)) $bimestres[] = $b;
 
 // Docentes
 $docentes = [];
@@ -1147,8 +1155,15 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
                     </div>
                     <div class="campos-row">
                         <div class="campo-admin">
-                            <label>Fecha de ingreso</label>
-                            <input type="date" name="fecha_ingreso" required>
+                            <label>Bimestre de ingreso</label>
+                            <select name="fecha_ingreso" required>
+                                <option value="">Selecciona bimestre</option>
+                                <?php foreach ($bimestres as $i => $b): ?>
+                                    <option value="<?php echo $b['fecha_inicio']; ?>" <?php echo $i === 0 ? 'selected' : ''; ?>>
+                                        Bimestre <?php echo $b['numero']; ?> — <?php echo date('d/m/Y', strtotime($b['fecha_inicio'])); ?> al <?php echo date('d/m/Y', strtotime($b['fecha_fin'])); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="campo-admin">
                             <label>Contraseña inicial</label>
