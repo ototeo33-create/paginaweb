@@ -473,6 +473,7 @@ if ($rol !== 'estudiante' && $estudiante_id) {
         <div class="modal-info"><strong>Horario:</strong> <span id="modal-horario"></span></div>
         <div class="modal-info"><strong>Salón:</strong> <span id="modal-salon"></span></div>
         <div class="modal-info"><strong>Bimestre:</strong> <span id="modal-bimestre"></span></div>
+        <div class="modal-info" id="modal-link-row" style="display:none;"><strong>Link:</strong> <a id="modal-link" href="#" target="_blank" style="color:var(--verde);font-weight:600;">Ir a clase virtual →</a></div>
 
         <div class="agenda-titulo">📆 Agregar a mi agenda</div>
         <div class="agenda-btns">
@@ -637,7 +638,7 @@ function renderMes(mes, anio) {
                     evento.title = h.materia + ' · ' + h.hora_inicio.substring(0,5) + '-' + h.hora_fin.substring(0,5);
                     evento.onclick = () => verDetalle(h.id, h.materia, h.dia,
                         h.hora_inicio.substring(0,5), h.hora_fin.substring(0,5), h.salon, fecha,
-                        h.bimestre_num, h.bim_inicio, h.bim_fin);
+                        h.bimestre_num, h.bim_inicio, h.bim_fin, h.link_virtual);
                     div.appendChild(evento);
                 }
             });
@@ -661,7 +662,7 @@ function renderMes(mes, anio) {
 // Estado del modal
 let modalData = {};
 
-function verDetalle(id, materia, dia, inicio, fin, salon, fechaEvento, bimestreNum, bimInicio, bimFin) {
+function verDetalle(id, materia, dia, inicio, fin, salon, fechaEvento, bimestreNum, bimInicio, bimFin, linkVirtual) {
     document.getElementById('modal-materia').textContent = materia;
     document.getElementById('modal-dia').textContent = dia;
     document.getElementById('modal-horario').textContent = inicio + ' – ' + fin;
@@ -675,6 +676,15 @@ function verDetalle(id, materia, dia, inicio, fin, salon, fechaEvento, bimestreN
         } else {
             bimInfo.parentElement.style.display = 'none';
         }
+    }
+
+    const linkRow = document.getElementById('modal-link-row');
+    const linkEl = document.getElementById('modal-link');
+    if (linkVirtual) {
+        linkEl.href = linkVirtual;
+        linkRow.style.display = '';
+    } else {
+        linkRow.style.display = 'none';
     }
 
     const editarBtn = document.getElementById('modal-editar');

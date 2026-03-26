@@ -131,21 +131,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hora_inicio = $_POST['hora_inicio'];
         $hora_fin = $_POST['hora_fin'];
         $salon = trim($_POST['salon']);
+        $link_virtual = trim($_POST['link_virtual'] ?? '');
         $bimestre_id = !empty($_POST['bimestre_id']) ? (int)$_POST['bimestre_id'] : null;
 
         // Separar el par de días e insertar uno por cada día
         $dias_array = explode('-', $dias_par);
-        $q = "INSERT INTO horarios (programa_id, estudiante_id, materia_id, dia, hora_inicio, hora_fin, salon, bimestre_id)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $q = "INSERT INTO horarios (programa_id, estudiante_id, materia_id, dia, hora_inicio, hora_fin, salon, bimestre_id, link_virtual)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         foreach ($dias_array as $dia) {
             $dia = trim($dia);
             $stmt = mysqli_prepare($conexion, $q);
-            mysqli_stmt_bind_param($stmt, 'iiissssi',
+            mysqli_stmt_bind_param($stmt, 'iiissssis',
                 $estudiante_actual['programa_id'], $estudiante_id,
-                $materia_id, $dia, $hora_inicio, $hora_fin, $salon, $bimestre_id);
+                $materia_id, $dia, $hora_inicio, $hora_fin, $salon, $bimestre_id, $link_virtual);
             mysqli_stmt_execute($stmt);
         }
         $mensaje = 'success|Módulo agregado correctamente (' . implode(' y ', $dias_array) . ').';
+
+    } elseif ($accion === 'actualizar_link') {
+        $horario_id = (int)$_POST['horario_id'];
+        $link_virtual = trim($_POST['link_virtual'] ?? '');
+        $q = "UPDATE horarios SET link_virtual = ? WHERE id = ? AND estudiante_id = ?";
+        $stmt = mysqli_prepare($conexion, $q);
+        mysqli_stmt_bind_param($stmt, 'sii', $link_virtual, $horario_id, $estudiante_id);
+        mysqli_stmt_execute($stmt);
+        $mensaje = 'success|Link de clase virtual actualizado.';
 
     } elseif ($accion === 'eliminar') {
         $id = (int)$_POST['horario_id'];
@@ -335,6 +345,10 @@ $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
                     <label>Salón</label>
                     <input type="text" name="salon" placeholder="Ej: Aula 101">
                 </div>
+                <div class="campo-admin">
+                    <label>🔗 Link clase virtual (opcional)</label>
+                    <input type="url" name="link_virtual" placeholder="https://meet.google.com/xxx-xxx-xxx">
+                </div>
                 <button type="submit" class="btn-agregar">➕ Agregar Clase</button>
             </form>
         </div>
@@ -354,6 +368,7 @@ $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
                                 <th>Día</th>
                                 <th>Horario</th>
                                 <th>Salón</th>
+                                <th>Link virtual</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -366,7 +381,13 @@ $dias = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
                                 <td><?php echo substr($h['hora_inicio'],0,5); ?> – <?php echo substr($h['hora_fin'],0,5); ?></td>
                                 <td><?php echo htmlspecialchars($h['salon']); ?></td>
                                 <td>
-                                    <form method="POST" action="?estudiante_id=<?php echo $estudiante_id; ?>" 
+                                    <?php if (!empty($h['link_virtual'])): ?>
+                                        <a href="<?php echo htmlspecialchars($h['link_virtual']); ?>" target="_blank" style="color:var(--verde);font-size:0.8rem;font-weight:600;text-decoration:none;" title="<?php echo htmlspecialchars($h['link_virtual']); ?>">🔗 Abrir</a>
+                                    <?php endif; ?>
+                                    <button type="button" class="btn-eliminar" style="color:var(--verde);" onclick="editarLink(<?php echo $h['id']; ?>, '<?php echo htmlspecialchars(addslashes($h['link_virtual'] ?? ''), ENT_QUOTES); ?>')" title="Editar link">✏️</button>
+                                </td>
+                                <td>
+                                    <form method="POST" action="?estudiante_id=<?php echo $estudiante_id; ?>"
                                           onsubmit="return confirm('¿Eliminar esta clase?')">
                                         <input type="hidden" name="accion" value="eliminar">
                                         <input type="hidden" name="horario_id" value="<?php echo $h['id']; ?>">
@@ -485,6 +506,19 @@ function eliminarModulo() {
 document.getElementById('input-nuevo-modulo')?.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); guardarModulo(); }
 });
+
+function editarLink(horarioId, linkActual) {
+    const nuevoLink = prompt('Link de clase virtual:', linkActual || '');
+    if (nuevoLink === null) return; // Canceló
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '?estudiante_id=<?php echo $estudiante_id; ?>';
+    form.innerHTML = '<input type="hidden" name="accion" value="actualizar_link">' +
+        '<input type="hidden" name="horario_id" value="' + horarioId + '">' +
+        '<input type="hidden" name="link_virtual" value="' + nuevoLink.replace(/"/g, '&quot;') + '">';
+    document.body.appendChild(form);
+    form.submit();
+}
 </script>
 <script src="/intep/sesion.js"></script>
 </body>
