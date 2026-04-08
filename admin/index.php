@@ -228,8 +228,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // --- ELIMINAR DOCENTE PERMANENTEMENTE ---
     } elseif ($accion === 'eliminar_docente') {
         $id = (int)$_POST['docente_id'];
-        // Desasignar módulos del docente (no borrarlos, solo quitar asignación)
+        // Desasignar de programa_modulo (nuevo modelo)
         $stmt = mysqli_prepare($conexion, "UPDATE programa_modulo SET docente_id = NULL WHERE docente_id = ?");
+        mysqli_stmt_bind_param($stmt, 'i', $id);
+        mysqli_stmt_execute($stmt);
+        // Desasignar de modulos (tabla legacy - evita FK constraint al borrar usuario)
+        $stmt = mysqli_prepare($conexion, "UPDATE modulos SET docente_id = NULL WHERE docente_id = ?");
         mysqli_stmt_bind_param($stmt, 'i', $id);
         mysqli_stmt_execute($stmt);
         // Eliminar el usuario docente
