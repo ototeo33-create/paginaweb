@@ -8,13 +8,14 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['usuario_rol'], ['adm
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-if (!$input || !isset($input['estudiante_id']) || !isset($input['modulo_id']) || !isset($input['observacion'])) {
+$pm_id = isset($input['programa_modulo_id']) ? (int)$input['programa_modulo_id'] : (isset($input['modulo_id']) ? (int)$input['modulo_id'] : 0);
+if (!$input || !isset($input['estudiante_id']) || !$pm_id || !isset($input['observacion'])) {
     echo json_encode(['ok' => false, 'error' => 'Datos inválidos']);
     exit;
 }
 
 $estudiante_id = (int)$input['estudiante_id'];
-$modulo_id = (int)$input['modulo_id'];
+$programa_modulo_id = $pm_id;
 $observacion = trim($input['observacion']);
 $autor_id = (int)$_SESSION['usuario_id'];
 
@@ -23,8 +24,8 @@ if ($observacion === '') {
     exit;
 }
 
-$stmt = mysqli_prepare($conexion, "INSERT INTO observaciones (estudiante_id, modulo_id, observacion, autor_id) VALUES (?, ?, ?, ?)");
-mysqli_stmt_bind_param($stmt, 'iisi', $estudiante_id, $modulo_id, $observacion, $autor_id);
+$stmt = mysqli_prepare($conexion, "INSERT INTO observaciones (estudiante_id, programa_modulo_id, observacion, autor_id) VALUES (?, ?, ?, ?)");
+mysqli_stmt_bind_param($stmt, 'iisi', $estudiante_id, $programa_modulo_id, $observacion, $autor_id);
 
 if (mysqli_stmt_execute($stmt)) {
     $id = mysqli_insert_id($conexion);

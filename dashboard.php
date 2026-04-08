@@ -50,16 +50,16 @@ if ($rol === 'estudiante') {
 if ($rol === 'docente') {
     $doc_id = $_SESSION['usuario_id'];
 
-    $q = "SELECT COUNT(*) as modulos FROM modulos WHERE docente_id = ?";
+    $q = "SELECT COUNT(*) as modulos FROM programa_modulo WHERE docente_id = ?";
     $stmt = mysqli_prepare($conexion, $q);
     mysqli_stmt_bind_param($stmt, 'i', $doc_id);
     mysqli_stmt_execute($stmt);
     $stats_doc = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 
-    $q2 = "SELECT COUNT(DISTINCT n.estudiante_id) as estudiantes 
-           FROM notas n 
-           JOIN modulos m ON n.modulo_id = m.id 
-           WHERE m.docente_id = ?";
+    $q2 = "SELECT COUNT(DISTINCT n.estudiante_id) as estudiantes
+           FROM notas n
+           JOIN programa_modulo pm ON n.programa_modulo_id = pm.id
+           WHERE pm.docente_id = ?";
     $stmt2 = mysqli_prepare($conexion, $q2);
     mysqli_stmt_bind_param($stmt2, 'i', $doc_id);
     mysqli_stmt_execute($stmt2);
@@ -78,7 +78,7 @@ if ($rol === 'admin') {
     $r = mysqli_query($conexion, "SELECT COUNT(*) as total FROM programas");
     $stats_admin['programas'] = mysqli_fetch_assoc($r)['total'];
 
-    $r = mysqli_query($conexion, "SELECT COUNT(*) as total FROM modulos");
+    $r = mysqli_query($conexion, "SELECT COUNT(*) as total FROM programa_modulo");
     $stats_admin['modulos'] = mysqli_fetch_assoc($r)['total'];
 }
 

@@ -14,6 +14,12 @@ if ($_SESSION['usuario_rol'] !== 'admin') {
 
 $mensaje = '';
 
+// Auto-migración: agregar programa_id a usuarios si no existe
+$col_check = mysqli_query($conexion, "SHOW COLUMNS FROM usuarios LIKE 'programa_id'");
+if (mysqli_num_rows($col_check) === 0) {
+    mysqli_query($conexion, "ALTER TABLE usuarios ADD COLUMN programa_id INT NULL DEFAULT NULL");
+}
+
 // ============================================
 // PROCESAR ACCIONES POST
 // ============================================
@@ -147,11 +153,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($stmt2);
         $mensaje = 'success|Estudiante reactivado correctamente.';
 
+    // --- ELIMINAR ESTUDIANTE PERMANENTEMENTE ---
+    } elseif ($accion === 'eliminar_estudiante') {
+        $id = (int)$_POST['estudiante_id'];
+        // Eliminar registros dependientes
+        $tablas = ['notas', 'asistencia', 'observaciones', 'horarios', 'pagos'];
+        foreach ($tablas as $tabla) {
+            $stmt = mysqli_prepare($conexion, "DELETE FROM $tabla WHERE estudiante_id = ?");
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, 'i', $id);
+                mysqli_stmt_execute($stmt);
+            }
+        }
+        // Eliminar usuario asociado
+        $stmt = mysqli_prepare($conexion, "DELETE FROM usuarios WHERE estudiante_id = ?");
+        mysqli_stmt_bind_param($stmt, 'i', $id);
+        mysqli_stmt_execute($stmt);
+        // Eliminar estudiante
+        $stmt = mysqli_prepare($conexion, "DELETE FROM estudiantes WHERE id = ?");
+        mysqli_stmt_bind_param($stmt, 'i', $id);
+        mysqli_stmt_execute($stmt);
+        $mensaje = 'success|🗑 Estudiante eliminado permanentemente.';
+
     // --- CREAR DOCENTE ---
     } elseif ($accion === 'crear_docente') {
         $nombre_doc = trim($_POST['nombre_docente']);
         $username_doc = trim($_POST['username_docente']);
         $password_doc = trim($_POST['password_docente']);
+        $programa_id_doc = !empty($_POST['programa_id_docente']) ? (int)$_POST['programa_id_docente'] : null;
 
         $validacion = validarPassword($password_doc);
         if ($validacion !== true) {
@@ -167,9 +196,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mensaje = 'error|El nombre de usuario ya existe.';
         } else {
             $passwordHashDoc = hashPassword($password_doc);
-            $q = "INSERT INTO usuarios (username, password_hash, rol, estado) VALUES (?, ?, 'docente', 'activo')";
+            $q = "INSERT INTO usuarios (username, password_hash, rol, estado, programa_id) VALUES (?, ?, 'docente', 'activo', ?)";
             $stmt = mysqli_prepare($conexion, $q);
-            mysqli_stmt_bind_param($stmt, 'ss', $username_doc, $passwordHashDoc);
+            mysqli_stmt_bind_param($stmt, 'ssi', $username_doc, $passwordHashDoc, $programa_id_doc);
             if (mysqli_stmt_execute($stmt)) {
                 $mensaje = 'success|✅ Docente "' . $nombre_doc . '" creado correctamente.';
             } else {
@@ -195,6 +224,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_bind_param($stmt, 'i', $id);
         mysqli_stmt_execute($stmt);
         $mensaje = 'success|Docente reactivado.';
+
+    // --- ELIMINAR DOCENTE PERMANENTEMENTE ---
+    } elseif ($accion === 'eliminar_docente') {
+        $id = (int)$_POST['docente_id'];
+        // Desasignar módulos del docente (no borrarlos, solo quitar asignación)
+        $stmt = mysqli_prepare($conexion, "UPDATE programa_modulo SET docente_id = NULL WHERE docente_id = ?");
+        mysqli_stmt_bind_param($stmt, 'i', $id);
+        mysqli_stmt_execute($stmt);
+        // Eliminar el usuario docente
+        $stmt = mysqli_prepare($conexion, "DELETE FROM usuarios WHERE id = ? AND rol = 'docente'");
+        mysqli_stmt_bind_param($stmt, 'i', $id);
+        mysqli_stmt_execute($stmt);
+        $mensaje = 'success|🗑 Docente eliminado permanentemente.';
 
     // --- RESET PASSWORD DOCENTE ---
     } elseif ($accion === 'reset_password_docente') {
@@ -281,7 +323,10 @@ if ($res_bim) while ($b = mysqli_fetch_assoc($res_bim)) $bimestres[] = $b;
 
 // Docentes
 $docentes = [];
-$q_doc = "SELECT * FROM usuarios WHERE rol = 'docente' ORDER BY username ASC";
+$q_doc = "SELECT u.*, p.nombre as programa_nombre
+          FROM usuarios u
+          LEFT JOIN programas p ON u.programa_id = p.id
+          WHERE u.rol = 'docente' ORDER BY u.username ASC";
 $res_doc = mysqli_query($conexion, $q_doc);
 while ($d = mysqli_fetch_assoc($res_doc)) $docentes[] = $d;
 
@@ -1255,6 +1300,12 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
                                         <input type="hidden" name="estudiante_id" value="<?php echo $est['id']; ?>">
                                         <button type="submit" class="btn-accion btn-desactivar">🚫</button>
                                     </form>
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('⚠️ ¿ELIMINAR permanentemente a <?php echo htmlspecialchars(addslashes($est['nombre'])); ?>? Se borrarán todas sus notas, asistencias y datos. Esta acción NO se puede deshacer.')">
+                                        <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                                        <input type="hidden" name="accion" value="eliminar_estudiante">
+                                        <input type="hidden" name="estudiante_id" value="<?php echo $est['id']; ?>">
+                                        <button type="submit" class="btn-accion" style="background:#fee2e2;color:#dc2626;" title="Eliminar permanentemente">🗑</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -1307,12 +1358,20 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
                             <td><?php echo $est['fecha_ingreso']; ?></td>
                             <td><span class="badge-inactivo">Inactivo</span></td>
                             <td>
-                                <form method="POST" onsubmit="return confirm('¿Reactivar a <?php echo htmlspecialchars(addslashes($est['nombre'])); ?>?')">
-                                    <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
-                                    <input type="hidden" name="accion" value="activar">
-                                    <input type="hidden" name="estudiante_id" value="<?php echo $est['id']; ?>">
-                                    <button type="submit" class="btn-accion btn-activar">✅ Reactivar</button>
-                                </form>
+                                <div class="acciones-cell">
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('¿Reactivar a <?php echo htmlspecialchars(addslashes($est['nombre'])); ?>?')">
+                                        <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                                        <input type="hidden" name="accion" value="activar">
+                                        <input type="hidden" name="estudiante_id" value="<?php echo $est['id']; ?>">
+                                        <button type="submit" class="btn-accion btn-activar">✅ Reactivar</button>
+                                    </form>
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('⚠️ ¿ELIMINAR permanentemente a <?php echo htmlspecialchars(addslashes($est['nombre'])); ?>? Se borrarán todas sus notas, asistencias y datos. Esta acción NO se puede deshacer.')">
+                                        <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                                        <input type="hidden" name="accion" value="eliminar_estudiante">
+                                        <input type="hidden" name="estudiante_id" value="<?php echo $est['id']; ?>">
+                                        <button type="submit" class="btn-accion" style="background:#fee2e2;color:#dc2626;" title="Eliminar permanentemente">🗑</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -1346,6 +1405,15 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
                         <label>Contraseña</label>
                         <input type="password" name="password_docente" placeholder="Contraseña del docente" required>
                     </div>
+                    <div class="campo-admin">
+                        <label>Programa asignado</label>
+                        <select name="programa_id_docente" required>
+                            <option value="">Selecciona un programa</option>
+                            <?php foreach ($programas as $p): ?>
+                                <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['nombre']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <button type="submit" class="btn-crear">👨‍🏫 Crear Docente</button>
                 </form>
             </div>
@@ -1366,6 +1434,9 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
                                         <span class="badge-inactivo">Inactivo</span>
                                     <?php endif; ?>
                                 </span>
+                                <?php if (!empty($doc['programa_nombre'])): ?>
+                                    <small style="display:block;color:#666;margin-top:0.2rem;font-size:0.78rem;">📚 <?php echo htmlspecialchars($doc['programa_nombre']); ?></small>
+                                <?php endif; ?>
                             </div>
                             <div class="docente-actions">
                                 <button class="btn-accion btn-key" onclick="abrirModalPasswordDocente(<?php echo $doc['id']; ?>, '<?php echo htmlspecialchars($doc['username']); ?>')" title="Resetear contraseña">🔑</button>
@@ -1384,6 +1455,12 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
                                         <button type="submit" class="btn-accion btn-activar">✅</button>
                                     </form>
                                 <?php endif; ?>
+                                <form method="POST" style="display:inline;" onsubmit="return confirm('⚠️ ¿ELIMINAR permanentemente a <?php echo htmlspecialchars($doc['username']); ?>? Esta acción NO se puede deshacer.')">
+                                    <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                                    <input type="hidden" name="accion" value="eliminar_docente">
+                                    <input type="hidden" name="docente_id" value="<?php echo $doc['id']; ?>">
+                                    <button type="submit" class="btn-accion" style="background:#fee2e2;color:#dc2626;" title="Eliminar permanentemente">🗑</button>
+                                </form>
                             </div>
                         </div>
                         <?php endforeach; ?>

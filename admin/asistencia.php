@@ -13,12 +13,13 @@ while ($p = mysqli_fetch_assoc($res_p)) $programas[] = $p;
 
 $programa_id = isset($_GET['programa_id']) ? (int)$_GET['programa_id'] : (!empty($programas) ? $programas[0]['id'] : 0);
 
-// Módulos del programa (materias que tienen horarios asignados)
+// Módulos del programa (desde programa_modulo)
 $modulos = [];
 if ($programa_id) {
-    $q = "SELECT DISTINCT m.id, m.nombre FROM materias m
-          JOIN horarios h ON h.materia_id = m.id
-          WHERE m.programa_id = ? ORDER BY m.nombre";
+    $q = "SELECT pm.id, mf.nombre FROM programa_modulo pm
+          JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
+          WHERE pm.programa_id = ? AND pm.estado = 'activo'
+          ORDER BY pm.bimestre, pm.orden";
     $stmt = mysqli_prepare($conexion, $q);
     mysqli_stmt_bind_param($stmt, 'i', $programa_id);
     mysqli_stmt_execute($stmt);
@@ -40,16 +41,14 @@ foreach ($bimestres as $b) { if ($b['id'] == $bimestre_id) { $bimestre_actual = 
 $materia_nombre = '';
 foreach ($modulos as $m) { if ($m['id'] == $materia_id) $materia_nombre = $m['nombre']; }
 
-// Estudiantes que tienen este módulo en horarios
+// Estudiantes activos del programa
 $estudiantes = [];
 if ($materia_id && $programa_id) {
-    $q = "SELECT DISTINCT e.id, e.nombre, e.documento
-          FROM estudiantes e
-          JOIN horarios h ON h.estudiante_id = e.id
-          WHERE h.materia_id = ? AND h.programa_id = ? AND e.estado = 'activo'
-          ORDER BY e.nombre ASC";
+    $q = "SELECT id, nombre, documento FROM estudiantes
+          WHERE programa_id = ? AND estado = 'activo'
+          ORDER BY nombre ASC";
     $stmt = mysqli_prepare($conexion, $q);
-    mysqli_stmt_bind_param($stmt, 'ii', $materia_id, $programa_id);
+    mysqli_stmt_bind_param($stmt, 'i', $programa_id);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
     while ($e = mysqli_fetch_assoc($res)) $estudiantes[] = $e;
@@ -59,17 +58,21 @@ if ($materia_id && $programa_id) {
 $semanas = [];
 $todas_fechas = [];
 if ($bimestre_actual && $materia_id) {
-    // Obtener días de clase para esta materia en este programa
+    // Obtener días de clase para este módulo en este programa
     $dias_clase = [];
-    $q_d = "SELECT DISTINCT dia FROM horarios WHERE materia_id = ? AND programa_id = ?";
+    $q_d = "SELECT DISTINCT dia FROM horarios WHERE programa_modulo_id = ? AND programa_id = ?";
     $stmt_d = mysqli_prepare($conexion, $q_d);
     mysqli_stmt_bind_param($stmt_d, 'ii', $materia_id, $programa_id);
     mysqli_stmt_execute($stmt_d);
     $res_d = mysqli_stmt_get_result($stmt_d);
     while ($d = mysqli_fetch_assoc($res_d)) $dias_clase[] = $d['dia'];
+    // Fallback: si no hay horarios con programa_modulo_id, asumir todos los días laborales
+    if (empty($dias_clase)) {
+        $dias_clase = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
+    }
 
-    $dias_map = ['Monday'=>'Lunes','Tuesday'=>'Martes','Wednesday'=>'Miércoles','Thursday'=>'Jueves','Friday'=>'Viernes','Saturday'=>'Sábado'];
-    $dias_cortos = ['Lunes'=>'LUN','Martes'=>'MAR','Miércoles'=>'MIÉ','Jueves'=>'JUE','Viernes'=>'VIE','Sábado'=>'SÁB'];
+    $dias_map = ['Monday'=>'Lunes','Tuesday'=>'Martes','Wednesday'=>'Miércoles','Thursday'=>'Jueves','Friday'=>'Viernes'];
+    $dias_cortos = ['Lunes'=>'LUN','Martes'=>'MAR','Miércoles'=>'MIÉ','Jueves'=>'JUE','Viernes'=>'VIE'];
 
     $inicio = new DateTime($bimestre_actual['fecha_inicio']);
     $fin = new DateTime($bimestre_actual['fecha_fin']);
@@ -106,7 +109,7 @@ if ($bimestre_actual && $materia_id) {
 $asist_map = []; // [estudiante_id][fecha] => estado
 if (!empty($estudiantes) && !empty($todas_fechas)) {
     $est_ids = implode(',', array_map(fn($e) => (int)$e['id'], $estudiantes));
-    $q_a = "SELECT * FROM asistencias WHERE estudiante_id IN ($est_ids) AND materia_id = ? AND bimestre_id = ?";
+    $q_a = "SELECT * FROM asistencias WHERE estudiante_id IN ($est_ids) AND programa_modulo_id = ? AND bimestre_id = ?";
     $stmt_a = mysqli_prepare($conexion, $q_a);
     mysqli_stmt_bind_param($stmt_a, 'ii', $materia_id, $bimestre_id);
     mysqli_stmt_execute($stmt_a);
@@ -130,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $obs_datos = $_POST['obs'] ?? [];
             $guardados = 0;
 
-            $q = "INSERT INTO asistencias (estudiante_id, materia_id, bimestre_id, fecha, estado, observacion, registrado_por)
+            $q = "INSERT INTO asistencias (estudiante_id, programa_modulo_id, bimestre_id, fecha, estado, observacion, registrado_por)
                   VALUES (?, ?, ?, ?, ?, ?, ?)
                   ON DUPLICATE KEY UPDATE estado = VALUES(estado), observacion = VALUES(observacion), registrado_por = VALUES(registrado_por)";
             $stmt = mysqli_prepare($conexion, $q);
@@ -369,11 +372,11 @@ $total_fechas = count($todas_fechas);
                 </div>
             </div>
             <div>
-                <div class="leyenda" style="color:rgba(255,255,255,0.8);">
-                    <div class="leyenda-item"><span class="leyenda-dot" style="background:#d1fae5;border:1px solid #10B981;"></span> P</div>
-                    <div class="leyenda-item"><span class="leyenda-dot" style="background:#fee2e2;border:1px solid #ef4444;"></span> A</div>
-                    <div class="leyenda-item"><span class="leyenda-dot" style="background:#fef3c7;border:1px solid #f59e0b;"></span> T</div>
-                    <div class="leyenda-item"><span class="leyenda-dot" style="background:#dbeafe;border:1px solid #3b82f6;"></span> E</div>
+                <div class="leyenda" style="color:rgba(255,255,255,0.85);">
+                    <div class="leyenda-item"><span class="leyenda-dot" style="background:#d1fae5;border:1px solid #10B981;"></span> <strong>P</strong> &mdash; Presente</div>
+                    <div class="leyenda-item"><span class="leyenda-dot" style="background:#fee2e2;border:1px solid #ef4444;"></span> <strong>A</strong> &mdash; Ausente</div>
+                    <div class="leyenda-item"><span class="leyenda-dot" style="background:#fef3c7;border:1px solid #f59e0b;"></span> <strong>T</strong> &mdash; Tardanza</div>
+                    <div class="leyenda-item"><span class="leyenda-dot" style="background:#dbeafe;border:1px solid #3b82f6;"></span> <strong>E</strong> &mdash; Excusa</div>
                 </div>
             </div>
         </div>

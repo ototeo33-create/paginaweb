@@ -6,9 +6,14 @@ if ($_SESSION['usuario_rol'] !== 'estudiante') { header('Location: dashboard.php
 
 $estudiante_id = $_SESSION['estudiante_id'];
 
-// Módulos del estudiante
+// Módulos del estudiante (desde programa_modulo del programa del estudiante)
 $modulos = [];
-$q_mod = "SELECT DISTINCT m.id, m.nombre FROM horarios h JOIN materias m ON h.materia_id = m.id WHERE h.estudiante_id = ? ORDER BY m.nombre";
+$q_mod = "SELECT pm.id, mf.nombre
+          FROM programa_modulo pm
+          JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
+          JOIN estudiantes e ON e.programa_id = pm.programa_id
+          WHERE e.id = ? AND pm.estado = 'activo'
+          ORDER BY pm.bimestre, pm.orden";
 $stmt = mysqli_prepare($conexion, $q_mod);
 mysqli_stmt_bind_param($stmt, 'i', $estudiante_id);
 mysqli_stmt_execute($stmt);
@@ -29,7 +34,7 @@ foreach ($bimestres as $b) { if ($b['id'] == $bimestre_id) { $bimestre_actual = 
 // Obtener asistencias
 $asistencias = [];
 if ($materia_id && $bimestre_id) {
-    $q = "SELECT * FROM asistencias WHERE estudiante_id = ? AND materia_id = ? AND bimestre_id = ? ORDER BY fecha ASC";
+    $q = "SELECT * FROM asistencias WHERE estudiante_id = ? AND programa_modulo_id = ? AND bimestre_id = ? ORDER BY fecha ASC";
     $stmt = mysqli_prepare($conexion, $q);
     mysqli_stmt_bind_param($stmt, 'iii', $estudiante_id, $materia_id, $bimestre_id);
     mysqli_stmt_execute($stmt);
@@ -58,7 +63,7 @@ foreach ($modulos as $m) { if ($m['id'] == $materia_id) $materia_nombre = $m['no
 // Resumen global por todos los módulos
 $resumen_global = [];
 foreach ($modulos as $mod) {
-    $q_g = "SELECT estado, COUNT(*) as total FROM asistencias WHERE estudiante_id = ? AND materia_id = ? AND bimestre_id = ? GROUP BY estado";
+    $q_g = "SELECT estado, COUNT(*) as total FROM asistencias WHERE estudiante_id = ? AND programa_modulo_id = ? AND bimestre_id = ? GROUP BY estado";
     $stmt_g = mysqli_prepare($conexion, $q_g);
     mysqli_stmt_bind_param($stmt_g, 'iii', $estudiante_id, $mod['id'], $bimestre_id);
     mysqli_stmt_execute($stmt_g);
@@ -167,6 +172,8 @@ foreach ($modulos as $mod) {
 
 
 <div class="container" style="max-width:800px;margin:1rem auto;padding:0 1rem;">
+
+    <a href="dashboard.php" class="btn-volver">← Volver al inicio</a>
 
     <!-- Filtros -->
     <div class="filtros-bar">
