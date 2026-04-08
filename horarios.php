@@ -89,8 +89,9 @@ $colores = ['#25a865','#2d6bbf','#e84545','#f5a623','#9b59b6','#1abc9c','#e67e22
 $color_map = [];
 $color_idx = 0;
 foreach ($horarios_json as $h) {
-    if (!isset($color_map[$h['materia_id']])) {
-        $color_map[$h['materia_id']] = $colores[$color_idx % count($colores)];
+    $clave = $h['programa_modulo_id'] ?? $h['materia_id'] ?? 0;
+    if ($clave && !isset($color_map[$clave])) {
+        $color_map[$clave] = $colores[$color_idx % count($colores)];
         $color_idx++;
     }
 }
@@ -659,7 +660,7 @@ function renderMes(mes, anio) {
                         if (!fechaEnBimestre(fecha, h.bim_inicio, h.bim_fin)) return;
                     }
 
-                    const color = colorMap[h.materia_id] || '#25a865';
+                    const color = colorMap[h.programa_modulo_id || h.materia_id] || '#25a865';
                     const evento = document.createElement('div');
                     evento.className = 'mes-evento';
                     evento.style.background = color;
