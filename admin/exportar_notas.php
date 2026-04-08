@@ -23,13 +23,14 @@ $modulo_id = (int)$_GET['modulo_id'];
 $es_admin = $_SESSION['usuario_rol'] === 'admin';
 $usuario_id = (int)$_SESSION['usuario_id'];
 
-// Info del modulo
-$stmt = mysqli_prepare($conexion, "SELECT m.*, mat.nombre as materia_nombre, mat.programa_id, p.nombre as programa_nombre, u.username as docente_nombre
-    FROM modulos m
-    JOIN materias mat ON m.materia_id = mat.id
-    JOIN programas p ON mat.programa_id = p.id
-    LEFT JOIN usuarios u ON m.docente_id = u.id
-    WHERE m.id = ?");
+// Info del modulo (desde programa_modulo)
+$stmt = mysqli_prepare($conexion, "SELECT pm.id, mf.nombre, pm.bimestre, pm.orden, pm.tipo, pm.docente_id,
+    pm.programa_id, p.nombre as programa_nombre, u.username as docente_nombre
+    FROM programa_modulo pm
+    JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
+    JOIN programas p ON pm.programa_id = p.id
+    LEFT JOIN usuarios u ON pm.docente_id = u.id
+    WHERE pm.id = ?");
 mysqli_stmt_bind_param($stmt, 'i', $modulo_id);
 mysqli_stmt_execute($stmt);
 $modulo = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
@@ -55,7 +56,7 @@ while ($row = mysqli_fetch_assoc($res)) {
 }
 
 // Notas
-$stmt = mysqli_prepare($conexion, "SELECT * FROM notas WHERE modulo_id = ?");
+$stmt = mysqli_prepare($conexion, "SELECT * FROM notas WHERE programa_modulo_id = ?");
 mysqli_stmt_bind_param($stmt, 'i', $modulo_id);
 mysqli_stmt_execute($stmt);
 $notas = [];
@@ -65,7 +66,7 @@ while ($row = mysqli_fetch_assoc($res)) {
 }
 
 // Asistencia
-$stmt = mysqli_prepare($conexion, "SELECT * FROM asistencia WHERE modulo_id = ?");
+$stmt = mysqli_prepare($conexion, "SELECT * FROM asistencia WHERE programa_modulo_id = ?");
 mysqli_stmt_bind_param($stmt, 'i', $modulo_id);
 mysqli_stmt_execute($stmt);
 $asistencia = [];
@@ -75,7 +76,7 @@ while ($row = mysqli_fetch_assoc($res)) {
 }
 
 // Observaciones
-$stmt = mysqli_prepare($conexion, "SELECT o.*, u.username as autor_nombre FROM observaciones o JOIN usuarios u ON o.autor_id = u.id WHERE o.modulo_id = ? ORDER BY o.fecha DESC");
+$stmt = mysqli_prepare($conexion, "SELECT o.*, u.username as autor_nombre FROM observaciones o JOIN usuarios u ON o.autor_id = u.id WHERE o.programa_modulo_id = ? ORDER BY o.fecha DESC");
 mysqli_stmt_bind_param($stmt, 'i', $modulo_id);
 mysqli_stmt_execute($stmt);
 $observaciones = [];

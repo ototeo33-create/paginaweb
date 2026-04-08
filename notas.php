@@ -28,17 +28,17 @@ if ($stmt_est) {
     $info_estudiante = mysqli_fetch_assoc($res_est);
 }
 
-// Obtener notas del estudiante con módulos y materias
-$query = "SELECT n.*, 
-                 mod_t.nombre AS modulo_nombre, 
-                 mod_t.bimestre,
-                 mod_t.orden,
-                 mat.nombre AS materia_nombre
+// Obtener notas del estudiante con módulos desde programa_modulo
+$query = "SELECT n.*,
+                 mf.nombre AS modulo_nombre,
+                 pm.bimestre,
+                 pm.orden,
+                 pm.tipo AS modulo_tipo
           FROM notas n
-          JOIN modulos mod_t ON n.modulo_id = mod_t.id
-          JOIN materias mat ON mod_t.materia_id = mat.id
+          JOIN programa_modulo pm ON n.programa_modulo_id = pm.id
+          JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
           WHERE n.estudiante_id = ?
-          ORDER BY mod_t.bimestre ASC, mod_t.orden ASC";
+          ORDER BY pm.bimestre ASC, pm.orden ASC";
 
 $stmt = mysqli_prepare($conexion, $query);
 $notas_por_bimestre = [];
@@ -492,7 +492,7 @@ foreach ($notas_por_bimestre as $modulos) {
                                 📘 <?php echo htmlspecialchars($nota['modulo_nombre']); ?>
                             </div>
                             <div class="modulo-materia">
-                                Materia: <?php echo htmlspecialchars($nota['materia_nombre']); ?> · Módulo <?php echo $nota['orden']; ?>
+                                <?php echo htmlspecialchars($nota['modulo_tipo'] ?? ''); ?> · Orden <?php echo $nota['orden']; ?>
                             </div>
 
                             <!-- Grid de 3 evidencias -->

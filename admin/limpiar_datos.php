@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
         $confirmacion = $_POST['confirmacion'] ?? '';
         if ($confirmacion === 'ELIMINAR TODO') {
 
-            $tablas_borrar = ['notas', 'horarios', 'pagos', 'modulos', 'estudiantes'];
+            $tablas_borrar = ['notas', 'horarios', 'pagos', 'observaciones', 'asistencia', 'programa_modulo', 'estudiantes'];
             $usuarios_prueba = "DELETE FROM usuarios WHERE rol != 'admin'";
 
             $errores = [];
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
 // ── Obtener preview de lo que se va a borrar ──────────────────────────────────
 $preview = [];
 if ($autenticado && $resultado === null) {
-    $tablas = ['estudiantes', 'usuarios', 'modulos', 'notas', 'horarios', 'pagos'];
+    $tablas = ['estudiantes', 'usuarios', 'programa_modulo', 'notas', 'horarios', 'pagos', 'observaciones', 'asistencia'];
     foreach ($tablas as $t) {
         $r = mysqli_query($conexion, "SELECT COUNT(*) as total FROM `$t`");
         if ($r) {

@@ -8,12 +8,15 @@ if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['usuario_rol'], ['adm
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-if (!$input || !isset($input['modulo_id']) || !isset($input['notas']) || !is_array($input['notas'])) {
+// Aceptar programa_modulo_id (nuevo) o modulo_id (legado)
+$pm_id = isset($input['programa_modulo_id']) ? (int)$input['programa_modulo_id'] : (isset($input['modulo_id']) ? (int)$input['modulo_id'] : 0);
+if (!$input || !$pm_id || !isset($input['notas']) || !is_array($input['notas'])) {
     echo json_encode(['ok' => false, 'error' => 'Datos inválidos']);
     exit;
 }
 
-$modulo_id = (int)$input['modulo_id'];
+$modulo_id = $pm_id; // compatibilidad con columna vieja
+$programa_modulo_id = $pm_id;
 $guardados = 0;
 $errores = 0;
 
@@ -54,8 +57,8 @@ foreach ($input['notas'] as $nota) {
     $aprobado = ($nota_final !== null && $nota_final >= 3.5) ? 1 : 0;
 
     // Upsert
-    $check = mysqli_prepare($conexion, "SELECT id FROM notas WHERE estudiante_id = ? AND modulo_id = ?");
-    mysqli_stmt_bind_param($check, 'ii', $estudiante_id, $modulo_id);
+    $check = mysqli_prepare($conexion, "SELECT id FROM notas WHERE estudiante_id = ? AND programa_modulo_id = ?");
+    mysqli_stmt_bind_param($check, 'ii', $estudiante_id, $programa_modulo_id);
     mysqli_stmt_execute($check);
     $existe = mysqli_stmt_get_result($check);
 
@@ -74,13 +77,13 @@ foreach ($input['notas'] as $nota) {
             $nota_final, $aprobado, $id_nota
         );
     } else {
-        $sql = "INSERT INTO notas (estudiante_id, modulo_id, parcial1, parcial2, nota_conocimiento,
+        $sql = "INSERT INTO notas (estudiante_id, programa_modulo_id, parcial1, parcial2, nota_conocimiento,
                 producto1, producto2, producto3, nota_producto,
                 desempeno1, desempeno2, desempeno3, nota_desempeno,
                 nota_final, aprobado) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $stmt = mysqli_prepare($conexion, $sql);
         mysqli_stmt_bind_param($stmt, 'iiddddddddddddi',
-            $estudiante_id, $modulo_id,
+            $estudiante_id, $programa_modulo_id,
             $parcial1, $parcial2, $nota_conocimiento,
             $producto1, $producto2, $producto3, $nota_producto,
             $desempeno1, $desempeno2, $desempeno3, $nota_desempeno,

@@ -14,26 +14,26 @@ if (!in_array($_SESSION['usuario_rol'], ['admin', 'docente'])) {
 $es_admin = $_SESSION['usuario_rol'] === 'admin';
 $usuario_id = (int)$_SESSION['usuario_id'];
 
-// ===== OBTENER MÓDULOS =====
+// ===== OBTENER MÓDULOS (desde programa_modulo) =====
 $modulos = [];
 if ($es_admin) {
-    $sql_mod = "SELECT m.id, m.nombre, m.bimestre, m.orden, mat.nombre as materia_nombre,
+    $sql_mod = "SELECT pm.id, mf.nombre, pm.bimestre, pm.orden, pm.tipo,
                        p.nombre as programa_nombre, p.id as programa_id, u.username as docente_nombre
-                FROM modulos m
-                JOIN materias mat ON m.materia_id = mat.id
-                JOIN programas p ON mat.programa_id = p.id
-                LEFT JOIN usuarios u ON m.docente_id = u.id
-                ORDER BY p.nombre, m.bimestre, m.orden";
+                FROM programa_modulo pm
+                JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
+                JOIN programas p ON pm.programa_id = p.id
+                LEFT JOIN usuarios u ON pm.docente_id = u.id
+                ORDER BY p.nombre, pm.bimestre, pm.orden";
     $res_mod = mysqli_query($conexion, $sql_mod);
 } else {
-    $sql_mod = "SELECT m.id, m.nombre, m.bimestre, m.orden, mat.nombre as materia_nombre,
+    $sql_mod = "SELECT pm.id, mf.nombre, pm.bimestre, pm.orden, pm.tipo,
                        p.nombre as programa_nombre, p.id as programa_id, u.username as docente_nombre
-                FROM modulos m
-                JOIN materias mat ON m.materia_id = mat.id
-                JOIN programas p ON mat.programa_id = p.id
-                LEFT JOIN usuarios u ON m.docente_id = u.id
-                WHERE m.docente_id = ?
-                ORDER BY p.nombre, m.bimestre, m.orden";
+                FROM programa_modulo pm
+                JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
+                JOIN programas p ON pm.programa_id = p.id
+                LEFT JOIN usuarios u ON pm.docente_id = u.id
+                WHERE pm.docente_id = ?
+                ORDER BY p.nombre, pm.bimestre, pm.orden";
     $stmt_mod = mysqli_prepare($conexion, $sql_mod);
     mysqli_stmt_bind_param($stmt_mod, 'i', $usuario_id);
     mysqli_stmt_execute($stmt_mod);
@@ -53,12 +53,13 @@ $observaciones_existentes = [];
 if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
     $modulo_id_sel = (int)$_GET['modulo_id'];
 
-    $sql_info = "SELECT m.*, mat.nombre as materia_nombre, mat.programa_id, p.nombre as programa_nombre, u.username as docente_nombre
-                 FROM modulos m
-                 JOIN materias mat ON m.materia_id = mat.id
-                 JOIN programas p ON mat.programa_id = p.id
-                 LEFT JOIN usuarios u ON m.docente_id = u.id
-                 WHERE m.id = ?";
+    $sql_info = "SELECT pm.id, mf.nombre, pm.bimestre, pm.orden, pm.tipo, pm.docente_id,
+                        pm.programa_id, p.nombre as programa_nombre, u.username as docente_nombre
+                 FROM programa_modulo pm
+                 JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
+                 JOIN programas p ON pm.programa_id = p.id
+                 LEFT JOIN usuarios u ON pm.docente_id = u.id
+                 WHERE pm.id = ?";
     $stmt_info = mysqli_prepare($conexion, $sql_info);
     mysqli_stmt_bind_param($stmt_info, 'i', $modulo_id_sel);
     mysqli_stmt_execute($stmt_info);
@@ -83,7 +84,7 @@ if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
         }
 
         // Notas existentes
-        $sql_notas = "SELECT * FROM notas WHERE modulo_id = ?";
+        $sql_notas = "SELECT * FROM notas WHERE programa_modulo_id = ?";
         $stmt_notas = mysqli_prepare($conexion, $sql_notas);
         mysqli_stmt_bind_param($stmt_notas, 'i', $modulo_id_sel);
         mysqli_stmt_execute($stmt_notas);
@@ -93,7 +94,7 @@ if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
         }
 
         // Asistencia existente
-        $sql_asist = "SELECT * FROM asistencia WHERE modulo_id = ?";
+        $sql_asist = "SELECT * FROM asistencia WHERE programa_modulo_id = ?";
         $stmt_asist = mysqli_prepare($conexion, $sql_asist);
         mysqli_stmt_bind_param($stmt_asist, 'i', $modulo_id_sel);
         mysqli_stmt_execute($stmt_asist);
@@ -106,7 +107,7 @@ if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
         $sql_obs = "SELECT o.*, u.username as autor_nombre
                     FROM observaciones o
                     JOIN usuarios u ON o.autor_id = u.id
-                    WHERE o.modulo_id = ?
+                    WHERE o.programa_modulo_id = ?
                     ORDER BY o.fecha DESC";
         $stmt_obs = mysqli_prepare($conexion, $sql_obs);
         mysqli_stmt_bind_param($stmt_obs, 'i', $modulo_id_sel);
@@ -391,7 +392,7 @@ foreach ($estudiantes as $e) {
                 ?>
                     <option value="<?php echo $mod['id']; ?>"
                         <?php echo (isset($_GET['modulo_id']) && $_GET['modulo_id'] == $mod['id']) ? 'selected' : ''; ?>>
-                        Bim. <?php echo $mod['bimestre']; ?> -- <?php echo htmlspecialchars($mod['nombre']); ?> (<?php echo htmlspecialchars($mod['materia_nombre']); ?>)
+                        Bim. <?php echo $mod['bimestre']; ?> -- <?php echo htmlspecialchars($mod['nombre']); ?> (<?php echo htmlspecialchars($mod['tipo'] ?? ''); ?>)
                     </option>
                 <?php endforeach; ?>
                 <?php if ($prog_actual !== '') echo '</optgroup>'; ?>
@@ -405,7 +406,7 @@ foreach ($estudiantes as $e) {
                 <div>
                     <h2><?php echo htmlspecialchars($modulo_seleccionado['nombre']); ?></h2>
                     <p class="meta">
-                        <?php echo htmlspecialchars($modulo_seleccionado['materia_nombre']); ?> &middot;
+                        <?php echo htmlspecialchars($modulo_seleccionado['tipo'] ?? ''); ?> &middot;
                         <?php echo htmlspecialchars($modulo_seleccionado['programa_nombre']); ?>
                         <?php if ($modulo_seleccionado['docente_nombre']): ?>
                             &middot; Docente: <?php echo htmlspecialchars($modulo_seleccionado['docente_nombre']); ?>
@@ -726,7 +727,7 @@ foreach ($estudiantes as $e) {
         fetch('guardar_notas_masivo.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ modulo_id: MODULO_ID, notas: notas })
+            body: JSON.stringify({ programa_modulo_id: MODULO_ID, notas: notas })
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {
@@ -767,7 +768,7 @@ foreach ($estudiantes as $e) {
         fetch('guardar_asistencia.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ modulo_id: MODULO_ID, asistencias: asistencias })
+            body: JSON.stringify({ programa_modulo_id: MODULO_ID, asistencias: asistencias })
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {
@@ -799,7 +800,7 @@ foreach ($estudiantes as $e) {
         fetch('guardar_observacion.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ estudiante_id: estId, modulo_id: MODULO_ID, observacion: texto })
+            body: JSON.stringify({ estudiante_id: estId, programa_modulo_id: MODULO_ID, observacion: texto })
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {

@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $link = trim($_POST['link_virtual'] ?? '');
 
         if ($accion === 'guardar_link' && $materia_id && $programa_id && $dia) {
-            $q = "UPDATE horarios SET link_virtual = ? WHERE materia_id = ? AND programa_id = ? AND dia = ?";
+            $q = "UPDATE horarios SET link_virtual = ? WHERE programa_modulo_id = ? AND programa_id = ? AND dia = ?";
             $stmt = mysqli_prepare($conexion, $q);
             mysqli_stmt_bind_param($stmt, 'siis', $link, $materia_id, $programa_id, $dia);
             mysqli_stmt_execute($stmt);
@@ -36,17 +36,18 @@ if (isset($_GET['msg'])) $mensaje = $_GET['msg'];
 
 // Obtener clases únicas agrupadas (sin repetir por estudiante)
 $clases = [];
-$q = "SELECT h.materia_id, h.programa_id, h.dia, h.hora_inicio, h.hora_fin, h.salon, h.bimestre_id,
-             m.nombre as materia, p.nombre as programa,
+$q = "SELECT h.programa_modulo_id as materia_id, h.programa_id, h.dia, h.hora_inicio, h.hora_fin, h.salon, h.bimestre_id,
+             mf.nombre as materia, p.nombre as programa,
              b.numero as bimestre_num, b.anio as bimestre_anio,
              h.link_virtual,
              COUNT(DISTINCT h.estudiante_id) as total_estudiantes
       FROM horarios h
-      JOIN materias m ON h.materia_id = m.id
+      JOIN programa_modulo pm ON h.programa_modulo_id = pm.id
+      JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
       JOIN programas p ON h.programa_id = p.id
       LEFT JOIN bimestres b ON h.bimestre_id = b.id
-      GROUP BY h.materia_id, h.programa_id, h.dia, h.hora_inicio, h.hora_fin
-      ORDER BY p.nombre, m.nombre, FIELD(h.dia,'Lunes','Martes','Miércoles','Jueves','Viernes','Sábado')";
+      GROUP BY h.programa_modulo_id, h.programa_id, h.dia, h.hora_inicio, h.hora_fin
+      ORDER BY p.nombre, mf.nombre, FIELD(h.dia,'Lunes','Martes','Miércoles','Jueves','Viernes','Sábado')";
 $res = mysqli_query($conexion, $q);
 while ($c = mysqli_fetch_assoc($res)) $clases[] = $c;
 

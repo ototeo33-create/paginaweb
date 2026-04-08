@@ -51,10 +51,11 @@ if ($dia_hoy_es) {
 }
 
 // Obtener horarios del estudiante con datos de bimestre
-$query = "SELECT h.*, m.nombre as materia, b.numero as bimestre_num, b.anio as bimestre_anio,
+$query = "SELECT h.*, mf.nombre as materia, b.numero as bimestre_num, b.anio as bimestre_anio,
                  b.fecha_inicio as bim_inicio, b.fecha_fin as bim_fin
           FROM horarios h
-          JOIN materias m ON h.materia_id = m.id
+          JOIN programa_modulo pm ON h.programa_modulo_id = pm.id
+          JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
           LEFT JOIN bimestres b ON h.bimestre_id = b.id
           WHERE h.estudiante_id = ?
           ORDER BY FIELD(h.dia,'Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'), h.hora_inicio";
