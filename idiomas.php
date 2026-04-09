@@ -760,6 +760,97 @@ body {
   background: var(--ing-azul); color: white; font-family: inherit;
   font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 8px;
 }
+
+/* ══ VOICE MODE ══════════════════════════════ */
+.gus-voice-toggle {
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);
+  color:white;font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.gus-voice-toggle:hover{background:rgba(59,130,246,.3);}
+.gus-voice-toggle.vactive{background:#EF4444;border-color:#EF4444;animation:micPulse 1.2s ease-in-out infinite;}
+
+.gus-voice-panel {
+  position:absolute;left:0;right:0;bottom:0;top:74px;
+  background:linear-gradient(180deg,#050A14 0%,#080F20 100%);
+  z-index:16;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  padding:16px 24px 20px;opacity:0;pointer-events:none;
+  transition:opacity .3s ease;
+}
+.gus-voice-panel.vopen{opacity:1;pointer-events:all;}
+
+.voice-txt-gus {
+  min-height:54px;max-height:80px;overflow:hidden;
+  text-align:center;font-size:14px;line-height:1.55;
+  color:rgba(255,255,255,.88);font-weight:500;width:100%;
+  transition:color .3s;
+}
+.voice-txt-user {
+  min-height:22px;text-align:center;font-size:13px;
+  color:rgba(255,255,255,.4);font-style:italic;width:100%;
+}
+.voice-topic-lbl {
+  font-size:10px;color:rgba(255,255,255,.35);font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+
+/* Orb */
+.gus-orb-wrap {
+  position:relative;width:170px;height:170px;
+  flex-shrink:0;cursor:pointer;user-select:none;
+}
+.orb-ring {
+  position:absolute;border-radius:50%;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  border:2px solid transparent;pointer-events:none;
+}
+/* listening */
+.gus-orb-wrap.listening .orb-ring-1{width:80px;height:80px;border-color:rgba(59,130,246,.9);animation:lisR 1.5s ease-out infinite;}
+.gus-orb-wrap.listening .orb-ring-2{width:80px;height:80px;border-color:rgba(59,130,246,.5);animation:lisR 1.5s ease-out .3s infinite;}
+.gus-orb-wrap.listening .orb-ring-3{width:80px;height:80px;border-color:rgba(59,130,246,.2);animation:lisR 1.5s ease-out .6s infinite;}
+@keyframes lisR{0%{transform:translate(-50%,-50%) scale(.9);opacity:1}100%{transform:translate(-50%,-50%) scale(2.3);opacity:0}}
+/* thinking */
+.gus-orb-wrap.thinking .orb-ring-1{width:145px;height:145px;border-top-color:#F5C842;border-right-color:rgba(245,200,66,.3);animation:spinR .8s linear infinite;}
+.gus-orb-wrap.thinking .orb-ring-2{width:125px;height:125px;border-bottom-color:#F59E0B;border-left-color:rgba(245,158,11,.3);animation:spinR 1.2s linear reverse infinite;}
+.gus-orb-wrap.thinking .orb-ring-3{display:none;}
+@keyframes spinR{to{transform:translate(-50%,-50%) rotate(360deg)}}
+/* speaking */
+.gus-orb-wrap.speaking .orb-ring-1{width:100px;height:100px;border-color:rgba(16,185,129,.7);animation:speakP .5s ease-in-out infinite alternate;}
+.gus-orb-wrap.speaking .orb-ring-2{width:135px;height:135px;border-color:rgba(16,185,129,.35);animation:speakP .5s ease-in-out .15s infinite alternate;}
+.gus-orb-wrap.speaking .orb-ring-3{width:165px;height:165px;border-color:rgba(16,185,129,.15);animation:speakP .5s ease-in-out .3s infinite alternate;}
+@keyframes speakP{0%{transform:translate(-50%,-50%) scale(.93);opacity:.6}100%{transform:translate(-50%,-50%) scale(1.07);opacity:1}}
+
+.orb-center {
+  position:absolute;width:78px;height:78px;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  background:linear-gradient(135deg,#1D4ED8,#3B82F6);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 35px rgba(59,130,246,.45);
+  transition:background .3s,box-shadow .3s;
+}
+.gus-orb-wrap.thinking .orb-center{background:linear-gradient(135deg,#92400E,#D97706);box-shadow:0 0 35px rgba(245,200,66,.4);}
+.gus-orb-wrap.speaking .orb-center{background:linear-gradient(135deg,#065F46,#10B981);box-shadow:0 0 35px rgba(16,185,129,.5);}
+
+.orb-state-lbl{font-size:12px;font-weight:700;text-align:center;transition:color .3s;letter-spacing:.2px;}
+
+/* Waveform */
+.voice-wave{display:flex;align-items:center;gap:3px;height:22px;opacity:0;transition:opacity .3s;}
+.gus-voice-panel.spk .voice-wave{opacity:1;}
+.wbar{width:3px;border-radius:2px;background:#10B981;animation:wA .45s ease-in-out infinite alternate;}
+.wbar:nth-child(1){height:6px;animation-delay:.00s}.wbar:nth-child(2){height:16px;animation-delay:.10s}
+.wbar:nth-child(3){height:22px;animation-delay:.05s}.wbar:nth-child(4){height:13px;animation-delay:.15s}
+.wbar:nth-child(5){height:19px;animation-delay:.08s}.wbar:nth-child(6){height:9px;animation-delay:.12s}
+.wbar:nth-child(7){height:17px;animation-delay:.03s}
+@keyframes wA{to{height:3px}}
+
+.voice-btn-chat{
+  padding:7px 18px;border-radius:50px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);
+  font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.voice-btn-chat:hover{background:rgba(255,255,255,.12);color:white;}
 </style>
 </head>
 <body>
@@ -1767,6 +1858,38 @@ if (trIn) trIn.addEventListener('keydown', e => { if (e.key==='Enter' && !e.shif
       <button class="gus-cel-btn" onclick="nuevaLeccion()">Nueva lección →</button>
     </div>
 
+    <!-- Voice Mode Panel -->
+    <div class="gus-voice-panel" id="gusVoicePanel">
+      <div class="voice-topic-lbl" id="voiceTopicLbl">—</div>
+      <div class="voice-txt-gus" id="voiceTxtGus"></div>
+      <div class="gus-orb-wrap idle" id="gusOrb" onclick="orbTap()">
+        <div class="orb-ring orb-ring-1"></div>
+        <div class="orb-ring orb-ring-2"></div>
+        <div class="orb-ring orb-ring-3"></div>
+        <div class="orb-center">
+          <svg viewBox="0 0 80 80" style="width:60px;height:60px">
+            <ellipse cx="40" cy="34" rx="20" ry="20" fill="#FDDCB5"/>
+            <circle cx="33" cy="30" r="4" fill="white"/><circle cx="47" cy="30" r="4" fill="white"/>
+            <circle cx="34" cy="30" r="2.5" fill="#1e3a5f"/><circle cx="48" cy="30" r="2.5" fill="#1e3a5f"/>
+            <rect x="28" y="26" width="12" height="9" rx="3" fill="none" stroke="#374151" stroke-width="1.5"/>
+            <rect x="41" y="26" width="12" height="9" rx="3" fill="none" stroke="#374151" stroke-width="1.5"/>
+            <path d="M33 39 Q40 45 47 39" stroke="#C07030" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <rect x="28" y="52" width="24" height="18" rx="4" fill="currentColor" style="color:#1D4ED8"/>
+            <polygon points="40,54 37,58 40,70 43,58" fill="#EF4444"/>
+            <ellipse cx="20" cy="34" rx="4" ry="5" fill="#FDDCB5"/>
+            <ellipse cx="60" cy="34" rx="4" ry="5" fill="#FDDCB5"/>
+          </svg>
+        </div>
+      </div>
+      <div class="orb-state-lbl" id="orbStateLbl" style="color:rgba(255,255,255,.4)">Toca el orbe para activar</div>
+      <div class="voice-wave" id="voiceWave">
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+      </div>
+      <div class="voice-txt-user" id="voiceTxtUser"></div>
+      <button class="voice-btn-chat" onclick="desactivarModoVoz()">💬 Modo Chat</button>
+    </div>
+
     <!-- Header -->
     <div class="gus-modal-head">
       <div class="gus-head-av">
@@ -1797,6 +1920,7 @@ if (trIn) trIn.addEventListener('keydown', e => { if (e.key==='Enter' && !e.shif
         <div class="gus-head-name">My Teacher GUS</div>
         <div class="gus-head-sub" id="gusStatus">Great Understanding System · INTEP</div>
       </div>
+      <button class="gus-voice-toggle" id="gusVoiceToggle" onclick="toggleModoVoz()" title="Modo Voz Continua">🎤</button>
       <button class="gus-head-close" onclick="cerrarGUS()">✕</button>
     </div>
 
@@ -1899,14 +2023,23 @@ function iniciarLeccion() {
     gusLeccionId = d.leccion_id;
     document.getElementById('gusTopicTxt').textContent = d.tema || '—';
 
+    // Sync topic label in voice panel
+    document.getElementById('voiceTopicLbl').textContent = d.tema || '—';
+
     if (d.retomando && d.historial) {
       setGusStatus('Retomando lección · ' + (d.tema||''));
       agregarMensaje('📌 Estamos retomando tu lección anterior sobre "' + d.tema + '"', 'system');
       d.historial.forEach(m => agregarMensaje(m.content, m.role === 'assistant' ? 'gus' : 'user', false));
-      // No TTS para historial
+      // En modo voz, resume con escucha inmediata
+      if (voiceModeActive) { setOrb('listening'); startVoiceRec(); }
     } else if (d.mensaje) {
       setGusStatus('En clase · ' + (d.tema||''));
-      agregarMensaje(d.mensaje, 'gus', true);
+      if (voiceModeActive) {
+        agregarMensaje(d.mensaje, 'gus', false);
+        voiceHandleGusMessage(d.mensaje);
+      } else {
+        agregarMensaje(d.mensaje, 'gus', true);
+      }
     }
     cargarHistorial();
   })
@@ -2048,7 +2181,7 @@ function agregarMensaje(texto, tipo, tts = false) {
   const typing = document.getElementById('gusTyping');
   chat.insertBefore(div, typing);
   chat.scrollTop = chat.scrollHeight;
-  if (tts && tipo === 'gus') gusHabla(texto);
+  if (tts && tipo === 'gus' && !voiceModeActive) gusHabla(texto);
 }
 
 function mostrarTyping(show) {
@@ -2118,6 +2251,263 @@ function formatFecha(f) {
   if (!f) return '';
   const d = new Date(f);
   return d.toLocaleDateString('es-CO', {day:'numeric', month:'short'});
+}
+
+// ════════════════════════════════════════
+// GUS VOICE MODE — Conversación continua
+// ════════════════════════════════════════
+let voiceModeActive  = false;
+let voiceOrbState    = 'idle';
+let voiceRec         = null;
+let voiceRecRunning  = false;
+let ttsQueue         = [];
+let ttsPlaying       = false;
+let streamBuf        = '';
+let capturedSpeech   = '';
+let silTimer         = null;
+
+function toggleModoVoz() {
+  voiceModeActive ? desactivarModoVoz() : activarModoVoz();
+}
+
+function activarModoVoz() {
+  if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+    agregarMensaje('⚠️ Usa Google Chrome para el modo voz.', 'system'); return;
+  }
+  voiceModeActive = true;
+  document.getElementById('gusVoicePanel').classList.add('vopen');
+  document.getElementById('gusVoiceToggle').classList.add('vactive');
+  document.getElementById('gusVoiceToggle').textContent = '🔴';
+  // Update topic label
+  const tema = document.getElementById('gusTopicTxt').textContent;
+  document.getElementById('voiceTopicLbl').textContent = tema !== '—' ? tema : 'Preparando lección...';
+  if (!gusLeccionId && !gusCargando) iniciarLeccion();
+  else if (gusLeccionId) { setOrb('listening'); startVoiceRec(); }
+}
+
+function desactivarModoVoz() {
+  voiceModeActive = false;
+  document.getElementById('gusVoicePanel').classList.remove('vopen', 'spk');
+  document.getElementById('gusVoiceToggle').classList.remove('vactive');
+  document.getElementById('gusVoiceToggle').textContent = '🎤';
+  if (voiceRec) { try { voiceRec.stop(); } catch(e){} }
+  voiceRecRunning = false;
+  window.speechSynthesis.cancel();
+  ttsQueue = []; ttsPlaying = false;
+  clearTimeout(silTimer);
+  setOrb('idle');
+}
+
+function orbTap() {
+  if (voiceOrbState === 'speaking') {
+    // Interrupt: stop TTS, start listening
+    window.speechSynthesis.cancel();
+    ttsQueue = []; ttsPlaying = false;
+    document.getElementById('gusVoicePanel').classList.remove('spk');
+    setOrb('listening'); startVoiceRec();
+  } else if (voiceOrbState === 'idle') {
+    activarModoVoz();
+  }
+}
+
+function setOrb(state) {
+  voiceOrbState = state;
+  const orb = document.getElementById('gusOrb');
+  const lbl = document.getElementById('orbStateLbl');
+  const panel = document.getElementById('gusVoicePanel');
+  if (!orb) return;
+  orb.className = 'gus-orb-wrap ' + state;
+  const map = {
+    idle:      ['Toca el orbe para activar', 'rgba(255,255,255,.4)'],
+    listening: ['🎤 Escuchando... habla en inglés', '#3B82F6'],
+    thinking:  ['🤔 GUS está pensando...', '#F5C842'],
+    speaking:  ['🔊 GUS está hablando  •  toca para interrumpir', '#10B981'],
+  };
+  const [txt, color] = map[state] || map.idle;
+  if (lbl) { lbl.textContent = txt; lbl.style.color = color; }
+  if (panel) panel.classList.toggle('spk', state === 'speaking');
+}
+
+function startVoiceRec() {
+  if (!voiceModeActive || voiceRecRunning) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  voiceRec = new SR();
+  voiceRec.lang = 'en-US';
+  voiceRec.continuous = false;
+  voiceRec.interimResults = true;
+  voiceRecRunning = true;
+  capturedSpeech = '';
+
+  voiceRec.onstart = () => {
+    setOrb('listening');
+    document.getElementById('voiceTxtUser').textContent = '';
+  };
+
+  voiceRec.onresult = (e) => {
+    clearTimeout(silTimer);
+    let interim = ''; capturedSpeech = '';
+    for (let i = 0; i < e.results.length; i++) {
+      if (e.results[i].isFinal) capturedSpeech += e.results[i][0].transcript + ' ';
+      else interim += e.results[i][0].transcript;
+    }
+    const showing = (capturedSpeech + interim).trim();
+    document.getElementById('voiceTxtUser').textContent = showing ? '"' + showing + '"' : '';
+    if (capturedSpeech.trim()) {
+      silTimer = setTimeout(() => { try { voiceRec.stop(); } catch(e){} }, 900);
+    }
+  };
+
+  voiceRec.onend = () => {
+    voiceRecRunning = false;
+    const text = capturedSpeech.trim();
+    if (text && voiceModeActive) {
+      sendVoiceMsg(text);
+    } else if (voiceModeActive && voiceOrbState === 'listening') {
+      setTimeout(() => { if (voiceModeActive && voiceOrbState === 'listening') startVoiceRec(); }, 250);
+    }
+  };
+
+  voiceRec.onerror = (e) => {
+    voiceRecRunning = false;
+    if (e.error === 'no-speech' || e.error === 'aborted') {
+      if (voiceModeActive && voiceOrbState === 'listening')
+        setTimeout(() => startVoiceRec(), 300);
+    } else {
+      document.getElementById('voiceTxtUser').textContent = '⚠️ ' + e.error;
+    }
+  };
+
+  try { voiceRec.start(); } catch(e) {
+    voiceRecRunning = false;
+    setTimeout(() => startVoiceRec(), 500);
+  }
+}
+
+function sendVoiceMsg(texto) {
+  if (!gusLeccionId || gusCargando || gusLeccionDone) return;
+  clearTimeout(silTimer);
+  setOrb('thinking');
+  agregarMensaje(texto, 'user', false);
+  document.getElementById('voiceTxtGus').textContent = '';
+  document.getElementById('voiceTxtUser').textContent = '"' + texto + '"';
+  enviarVozStream(texto);
+}
+
+async function enviarVozStream(texto) {
+  gusCargando = true;
+  streamBuf = ''; ttsQueue = []; ttsPlaying = false;
+  try {
+    const resp = await fetch('api/gus_stream.php', {
+      method: 'POST',
+      body: new URLSearchParams({ leccion_id: gusLeccionId, mensaje: texto })
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+    const reader = resp.body.getReader();
+    const dec = new TextDecoder();
+    let raw = '', fullText = '', firstChunk = true;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      raw += dec.decode(value, { stream: true });
+      const lines = raw.split('\n'); raw = lines.pop() ?? '';
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        let data; try { data = JSON.parse(line.slice(6)); } catch { continue; }
+
+        if (data.error) {
+          setOrb('listening');
+          document.getElementById('voiceTxtGus').textContent = '⚠️ ' + data.error;
+          setTimeout(() => { if (voiceModeActive) startVoiceRec(); }, 800);
+          return;
+        }
+        if (data.chunk) {
+          fullText += data.chunk;
+          streamBuf += data.chunk;
+          document.getElementById('voiceTxtGus').textContent =
+            fullText.replace(/\[LECCION_COMPLETADA\]/g,'').trim();
+          if (firstChunk) { firstChunk = false; setOrb('speaking'); }
+          speakPending();
+        }
+        if (data.done) {
+          const rem = streamBuf.replace(/\[LECCION_COMPLETADA\]/g,'').trim();
+          if (rem) { queueVTTS(rem); streamBuf = ''; }
+          if (data.full) agregarMensaje(data.full, 'gus', false);
+          if (data.completada) {
+            gusLeccionDone = true; gusLeccionId = null;
+            const iv = setInterval(() => {
+              if (!ttsPlaying && !ttsQueue.length) {
+                clearInterval(iv); desactivarModoVoz();
+                setTimeout(() => mostrarCelebracion(data.xp || 0), 400);
+              }
+            }, 300);
+          }
+        }
+      }
+    }
+  } catch(e) {
+    setOrb('listening');
+    document.getElementById('voiceTxtGus').textContent = '⚠️ Error de conexión';
+    setTimeout(() => { if (voiceModeActive) startVoiceRec(); }, 1000);
+  } finally { gusCargando = false; }
+}
+
+function speakPending() {
+  while (true) {
+    const m = streamBuf.match(/^(.*?[.!?])\s+(.*)/s);
+    if (!m) break;
+    const sent = m[1].replace(/\[LECCION_COMPLETADA\]/g,'').trim();
+    streamBuf = m[2];
+    if (sent.length > 2) queueVTTS(sent);
+  }
+}
+
+function queueVTTS(text) {
+  text = text.replace(/[*_#\[\]]/g,'').replace(/\[LECCION_COMPLETADA\]/g,'').trim();
+  if (!text) return;
+  ttsQueue.push(text);
+  if (!ttsPlaying) processVQueue();
+}
+
+function processVQueue() {
+  if (!ttsQueue.length) {
+    ttsPlaying = false;
+    if (voiceModeActive && !gusLeccionDone) {
+      setTimeout(() => {
+        if (voiceModeActive && !gusLeccionDone) {
+          document.getElementById('gusVoicePanel').classList.remove('spk');
+          setOrb('listening');
+          document.getElementById('voiceTxtUser').textContent = '';
+          startVoiceRec();
+        }
+      }, 500);
+    }
+    return;
+  }
+  ttsPlaying = true;
+  const text = ttsQueue.shift();
+  const utt  = new SpeechSynthesisUtterance(text);
+  utt.lang = 'en-US'; utt.rate = 0.92; utt.pitch = 1.02;
+  const vs = speechSynthesis.getVoices();
+  const voz = vs.find(v => v.name === 'Google US English')
+           || vs.find(v => v.name.includes('Google') && v.lang === 'en-US')
+           || vs.find(v => v.lang === 'en-US')
+           || vs.find(v => v.lang.startsWith('en'));
+  if (voz) utt.voice = voz;
+  utt.onend = utt.onerror = () => setTimeout(processVQueue, 80);
+  speechSynthesis.speak(utt);
+}
+
+// Voice mode hook: después de que GUS saluda en iniciarLeccion,
+// habla el primer mensaje y pasa a escuchar automáticamente.
+// Se llama desde iniciarLeccion() cuando voiceModeActive está activo.
+function voiceHandleGusMessage(texto) {
+  const clean = texto.replace(/[*_#\[\]]/g,'').substring(0, 300).trim();
+  document.getElementById('voiceTxtGus').textContent = clean;
+  setOrb('speaking');
+  queueVTTS(clean);
 }
 </script>
 <?php endif; ?>
