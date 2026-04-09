@@ -2,6 +2,8 @@
 ob_start();
 require_once '../config.php';
 ob_clean();
+ini_set('display_errors', 0);
+error_reporting(0);
 header('Content-Type: application/json; charset=utf-8');
 
 $key = $_ENV['GROQ_API_KEY'] ?? getenv('GROQ_API_KEY') ?: Config::get('GROQ_API_KEY','');
