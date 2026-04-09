@@ -1160,5 +1160,10 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
         }
     }
 </script>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/intep/sw.js');
+}
+</script>
 </body>
 </html>
