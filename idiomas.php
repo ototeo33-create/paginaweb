@@ -2415,9 +2415,22 @@ function sendVoiceMsg(texto) {
   enviarVozStream(texto);
 }
 
+// Detectar si el navegador soporta streaming (no funciona en iOS Safari/móvil)
+const soportaStreaming = typeof Response !== 'undefined'
+  && typeof ReadableStream !== 'undefined'
+  && (() => { try { new ReadableStream(); return true; } catch(e){ return false; } })()
+  && !/iPad|iPhone|iPod|Android/i.test(navigator.userAgent);
+
 async function enviarVozStream(texto) {
   gusCargando = true;
   streamBuf = ''; ttsQueue = []; ttsPlaying = false;
+
+  // Móvil / iOS: usar API normal sin streaming
+  if (!soportaStreaming) {
+    await enviarVozNormal(texto);
+    return;
+  }
+
   try {
     const resp = await fetch('api/gus_stream.php', {
       method: 'POST',
@@ -2470,9 +2483,46 @@ async function enviarVozStream(texto) {
       }
     }
   } catch(e) {
+    // Fallback a API normal si el streaming falla
+    console.warn('Streaming falló, usando API normal:', e);
+    await enviarVozNormal(texto);
+  } finally { gusCargando = false; }
+}
+
+// Fallback sin streaming — para móvil/iOS
+async function enviarVozNormal(texto) {
+  try {
+    setOrb('thinking');
+    const resp = await fetch('api/gus.php', {
+      method: 'POST',
+      body: new URLSearchParams({ accion: 'mensaje', leccion_id: gusLeccionId, mensaje: texto })
+    });
+    const d = await resp.json();
+    if (d.error) {
+      document.getElementById('voiceTxtGus').textContent = '⚠️ ' + d.error;
+      setOrb('listening');
+      setTimeout(() => { if (voiceModeActive) startVoiceRec(); }, 800);
+      return;
+    }
+    const respuesta = d.mensaje || '';
+    agregarMensaje(respuesta, 'gus', false);
+    const clean = respuesta.replace(/[*_#\[\]]/g,'').trim();
+    document.getElementById('voiceTxtGus').textContent = clean;
+    setOrb('speaking');
+    queueVTTS(clean);
+    if (d.completada) {
+      gusLeccionDone = true; gusLeccionId = null;
+      const iv = setInterval(() => {
+        if (!ttsPlaying && !ttsQueue.length) {
+          clearInterval(iv); desactivarModoVoz();
+          setTimeout(() => mostrarCelebracion(d.xp || 0), 400);
+        }
+      }, 300);
+    }
+  } catch(e) {
     setOrb('listening');
-    document.getElementById('voiceTxtGus').textContent = '⚠️ Error de conexión';
-    setTimeout(() => { if (voiceModeActive) startVoiceRec(); }, 1000);
+    document.getElementById('voiceTxtGus').textContent = '⚠️ Sin conexión, intenta de nuevo';
+    setTimeout(() => { if (voiceModeActive) startVoiceRec(); }, 1500);
   } finally { gusCargando = false; }
 }
 
