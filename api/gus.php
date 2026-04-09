@@ -1,13 +1,12 @@
 <?php
+ini_set('display_errors', 0);
+error_reporting(0);
 // ============================================================
 // My Teacher GUS — Endpoint conversacional con Groq
-// Solo para estudiantes de programas de Inglés (IDs 16-19)
 // ============================================================
 ob_start();
 require_once '../config.php';
 ob_clean();
-ini_set('display_errors', 0);
-error_reporting(0);
 
 header('Content-Type: application/json; charset=utf-8');
 

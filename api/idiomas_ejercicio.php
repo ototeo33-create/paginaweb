@@ -1,15 +1,12 @@
 <?php
+ini_set('display_errors', 0);
+error_reporting(0);
 // ============================================================
-// INTEP INGLÉS — Endpoint Gemini
-// Genera ejercicios de inglés y evalúa respuestas del quiz
+// INTEP INGLÉS — Endpoint para ejercicios
 // ============================================================
-
-// Suprimir cualquier output previo de config.php (headers, etc.)
 ob_start();
 require_once '../config.php';
 ob_clean();
-ini_set('display_errors', 0);
-error_reporting(0);
 
 header('Content-Type: application/json; charset=utf-8');
 

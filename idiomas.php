@@ -1557,6 +1557,17 @@ function reiniciarSesion() {
   iniciarSesion();
 }
 
+function mostrarErrorEjercicio(msg) {
+  const carg = document.getElementById('ej-cargando');
+  carg.classList.remove('show');
+  carg.style.display = 'flex';
+  carg.innerHTML = '<div style="text-align:center;padding:20px">'
+    + '<div style="font-size:36px;margin-bottom:12px">⚠️</div>'
+    + '<div style="color:var(--ing-rojo);font-weight:700;margin-bottom:16px">' + msg + '</div>'
+    + '<button onclick="cargarEjercicio()" style="padding:10px 24px;border-radius:12px;border:none;background:var(--ing-azul);color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🔄 Reintentar</button>'
+    + '</div>';
+}
+
 function renderCorazones() {
   const wrap = document.getElementById('hearts-wrap');
   wrap.innerHTML = '';
@@ -1578,19 +1589,25 @@ function cargarEjercicio() {
     method: 'POST',
     body: new URLSearchParams({accion:'generar'})
   })
-  .then(r=>r.json())
-  .then(d => {
+  .then(r => {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.text();
+  })
+  .then(txt => {
     document.getElementById('ej-cargando').classList.remove('show');
-    if (!d.ok || d.error) {
-      alert('Error generando ejercicio: ' + (d.error||'inténtalo de nuevo'));
-      return;
+    let d;
+    try { d = JSON.parse(txt); } catch(e) {
+      console.error('Respuesta no JSON:', txt.substring(0,200));
+      mostrarErrorEjercicio('Error del servidor. Intenta de nuevo.'); return;
     }
+    if (!d.ok || d.error) { mostrarErrorEjercicio(d.error||'Error generando ejercicio'); return; }
     ejActual = d.ejercicio;
     mostrarEjercicio(ejActual);
   })
-  .catch(() => {
+  .catch(err => {
     document.getElementById('ej-cargando').classList.remove('show');
-    alert('Error de conexión. Verifica tu internet e intenta de nuevo.');
+    mostrarErrorEjercicio('Sin conexión. Verifica tu internet.');
+    console.error('Fetch error:', err);
   });
 }
 
