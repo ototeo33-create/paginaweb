@@ -456,6 +456,171 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
         .menu-card-v2.danger:hover .card-arrow { color: #EF4444; }
 
         /* ═══════════════════════════════════════════
+           INTEP INGLÉS — card especial
+        ═══════════════════════════════════════════ */
+        .ingles-card {
+            display: block;
+            text-decoration: none;
+            background: linear-gradient(135deg, #0A1628 0%, #0F2040 50%, #162850 100%);
+            border-radius: 20px;
+            padding: 1.6rem 1.8rem;
+            border: 1px solid rgba(59,130,246,0.35);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 24px rgba(59,130,246,0.15);
+        }
+
+        /* Brillo animado tipo shimmer */
+        .ingles-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -60%;
+            width: 40%; height: 200%;
+            background: linear-gradient(105deg, transparent, rgba(255,255,255,0.07), transparent);
+            animation: ingles-shimmer 3s infinite;
+        }
+        @keyframes ingles-shimmer {
+            0%   { left: -60%; }
+            100% { left: 160%; }
+        }
+
+        /* Glow orb fondo */
+        .ingles-card::after {
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 140px; height: 140px;
+            background: radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .ingles-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(59,130,246,0.3);
+            border-color: rgba(59,130,246,0.6);
+        }
+
+        .ingles-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ingles-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59,130,246,0.18);
+            border: 1px solid rgba(59,130,246,0.35);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #93C5FD;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .ingles-streak {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(245,200,66,0.12);
+            border: 1px solid rgba(245,200,66,0.3);
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #F5C842;
+        }
+
+        .ingles-card-body {
+            position: relative;
+            z-index: 1;
+        }
+
+        .ingles-title {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #F1F5F9;
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.3px;
+        }
+
+        .ingles-title span {
+            background: linear-gradient(90deg, #60A5FA, #93C5FD);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ingles-sub {
+            font-size: 0.82rem;
+            color: #64748B;
+            margin-bottom: 1.1rem;
+        }
+
+        .ingles-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ingles-xp-bar-wrap {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .ingles-xp-label {
+            font-size: 0.70rem;
+            color: #475569;
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ingles-xp-label span { color: #F5C842; }
+
+        .ingles-xp-bg {
+            background: rgba(255,255,255,0.08);
+            border-radius: 50px;
+            height: 7px;
+            overflow: hidden;
+        }
+
+        .ingles-xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3B82F6, #60A5FA);
+            border-radius: 50px;
+            transition: width 1s ease;
+        }
+
+        .ingles-cta {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            color: white;
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 9px 18px;
+            border-radius: 50px;
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(59,130,246,0.4);
+            transition: all 0.2s;
+        }
+
+        .ingles-card:hover .ingles-cta {
+            box-shadow: 0 6px 20px rgba(59,130,246,0.55);
+            transform: scale(1.04);
+        }
+
+        /* ═══════════════════════════════════════════
            INFO PROGRAMA (ESTUDIANTE)
         ═══════════════════════════════════════════ */
         .info-programa {
@@ -769,6 +934,54 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             </div>
 
             <div class="seccion-label">Acceso rápido</div>
+
+            <!-- ── INTEP INGLÉS ── -->
+            <a href="idiomas.php" class="ingles-card">
+                <div class="ingles-card-top">
+                    <div class="ingles-badge">🌐 IA · Nuevo</div>
+                    <div class="ingles-streak">🔥 <?php
+                        // Racha del estudiante (0 si no ha empezado)
+                        $q_streak = "SELECT racha_actual FROM idiomas_nivel WHERE estudiante_id = ? LIMIT 1";
+                        $st = mysqli_prepare($conexion, $q_streak);
+                        if ($st) {
+                            mysqli_stmt_bind_param($st, 'i', $est_id);
+                            mysqli_stmt_execute($st);
+                            $r_streak = mysqli_fetch_assoc(mysqli_stmt_get_result($st));
+                            echo ($r_streak['racha_actual'] ?? 0) . ' días';
+                        } else { echo '0 días'; }
+                    ?></div>
+                </div>
+                <div class="ingles-card-body">
+                    <div class="ingles-title">INTEP <span>Inglés</span></div>
+                    <div class="ingles-sub">Ejercicios generados por IA · Ranking · Progreso por niveles</div>
+                    <div class="ingles-card-footer">
+                        <div class="ingles-xp-bar-wrap"><?php
+                            $q_xp = "SELECT xp_total, nivel_actual FROM idiomas_nivel WHERE estudiante_id = ? LIMIT 1";
+                            $st2 = mysqli_prepare($conexion, $q_xp);
+                            $xp = 0; $nivel = 'A1'; $xp_pct = 0;
+                            if ($st2) {
+                                mysqli_stmt_bind_param($st2, 'i', $est_id);
+                                mysqli_stmt_execute($st2);
+                                $r_xp = mysqli_fetch_assoc(mysqli_stmt_get_result($st2));
+                                if ($r_xp) { $xp = $r_xp['xp_total']; $nivel = $r_xp['nivel_actual']; }
+                            }
+                            $xp_map = ['A1'=>[0,300],'A2'=>[300,700],'B1'=>[700,1200],'B2'=>[1200,2000]];
+                            $range = $xp_map[$nivel] ?? [0,300];
+                            $xp_pct = min(100, round(($xp - $range[0]) / ($range[1] - $range[0]) * 100));
+                        ?>
+                            <div class="ingles-xp-label">
+                                <span>Nivel <?php echo $nivel; ?></span>
+                                <span><?php echo $xp; ?> XP</span>
+                            </div>
+                            <div class="ingles-xp-bg">
+                                <div class="ingles-xp-fill" style="width:<?php echo $xp_pct; ?>%"></div>
+                            </div>
+                        </div>
+                        <div class="ingles-cta">Practicar →</div>
+                    </div>
+                </div>
+            </a>
+
             <div class="menu-grid">
                 <a href="notas.php" class="menu-card-v2">
                     <div class="card-icon verde">📊</div>
@@ -798,6 +1011,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <div class="card-icon morado">📋</div>
                     <h3>Solicitudes</h3>
                     <p>Certificados, paz y salvo, reparación de equipos y más trámites</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="materiales.php" class="menu-card-v2">
+                    <div class="card-icon naranja">📚</div>
+                    <h3>Material de Clase</h3>
+                    <p>Descarga guías, talleres y recursos compartidos por tus profesores</p>
                     <span class="card-arrow">→</span>
                 </a>
                 <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)">
@@ -854,6 +1073,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <div class="card-icon azul">🔗</div>
                     <h3>Links de Clases Virtuales</h3>
                     <p>Agrega o edita los links de Meet, Zoom o Teams para cada clase</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="admin/materiales.php" class="menu-card-v2">
+                    <div class="card-icon naranja">📚</div>
+                    <h3>Material de Clase</h3>
+                    <p>Sube guías, talleres, evaluaciones y recursos para tus estudiantes</p>
                     <span class="card-arrow">→</span>
                 </a>
                 <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)" style="display:none;">
@@ -992,6 +1217,87 @@ window.addEventListener('appinstalled', function() {
     });
     deferredPrompt = null;
 });
+</script>
+<!-- ── GATITO NEGRO — se asoma por el borde derecho de la card INTEP Inglés ── -->
+<div id="gato-wrap" style="position:absolute;overflow:hidden;pointer-events:none;border-radius:20px;z-index:10;">
+    <div id="gato-container" style="position:absolute;bottom:8px;right:-42px;">
+        <div id="gato-inner">
+            <svg width="34" height="34" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="50" cy="72" rx="22" ry="16" fill="#111"/>
+                <circle cx="50" cy="48" r="18" fill="#111"/>
+                <polygon points="35,36 30,18 44,30" fill="#111"/>
+                <polygon points="65,36 70,18 56,30" fill="#111"/>
+                <polygon points="36,34 32,22 43,31" fill="#1a1a2e"/>
+                <polygon points="64,34 68,22 57,31" fill="#1a1a2e"/>
+                <ellipse cx="43" cy="47" rx="4" ry="5" fill="#f0e130"/>
+                <ellipse cx="57" cy="47" rx="4" ry="5" fill="#f0e130"/>
+                <ellipse cx="43" cy="47" rx="2" ry="4" fill="#111"/>
+                <ellipse cx="57" cy="47" rx="2" ry="4" fill="#111"/>
+                <polygon points="50,53 48,56 52,56" fill="#ff8fa3"/>
+                <line x1="30" y1="54" x2="46" y2="55" stroke="#555" stroke-width="1.2"/>
+                <line x1="30" y1="57" x2="46" y2="57" stroke="#555" stroke-width="1.2"/>
+                <path d="M72,72 Q95,60 90,82 Q80,90 72,82" fill="#111"/>
+                <ellipse cx="36" cy="86" rx="7" ry="5" fill="#111"/>
+                <ellipse cx="64" cy="86" rx="7" ry="5" fill="#111"/>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes gato-bob {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-2px); }
+}
+@keyframes gato-asoma {
+    0%   { right: -42px; }
+    35%  { right:  6px;  }
+    65%  { right:  6px;  }
+    100% { right: -42px; }
+}
+#gato-container { animation: gato-asoma 4s ease-in-out forwards; }
+#gato-inner     { animation: gato-bob .4s ease-in-out infinite; }
+</style>
+
+<script>
+(function() {
+    var wrap = document.getElementById('gato-wrap');
+    var cont = document.getElementById('gato-container');
+
+    function posicionarSobreCard() {
+        // Buscar la card de INTEP Inglés
+        var card = document.querySelector('.ingles-card');
+        if (!card) return false;
+        var rect = card.getBoundingClientRect();
+        var scrollY = window.scrollY || document.documentElement.scrollTop;
+        wrap.style.top    = (rect.top + scrollY) + 'px';
+        wrap.style.left   = rect.left + 'px';
+        wrap.style.width  = rect.width + 'px';
+        wrap.style.height = rect.height + 'px';
+        return true;
+    }
+
+    function lanzarGato() {
+        if (!posicionarSobreCard()) return;
+        // Reiniciar animación
+        cont.style.animation = 'none';
+        void cont.offsetWidth;
+        cont.style.animation = '';
+        cont.style.animationName = 'gato-asoma';
+        cont.style.animationDuration = '4s';
+        cont.style.animationTimingFunction = 'ease-in-out';
+        cont.style.animationFillMode = 'forwards';
+    }
+
+    // Primera aparición: entre 15 y 35 seg
+    setTimeout(function() {
+        lanzarGato();
+        setInterval(lanzarGato, 60000);
+    }, Math.random() * 20000 + 15000);
+
+    // Re-posicionar si cambia el tamaño
+    window.addEventListener('resize', posicionarSobreCard);
+})();
 </script>
 </body>
 </html>
