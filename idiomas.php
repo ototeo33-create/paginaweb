@@ -2110,11 +2110,16 @@ function gusHabla(texto) {
 
   const utt = new SpeechSynthesisUtterance(limpio);
   utt.lang = 'en-US';
-  utt.rate = 0.95;
-  utt.pitch = 1.05;
-  // Buscar voz en inglés
+  utt.rate = 0.92;
+  utt.pitch = 0.85; // voz más grave = masculina
+  // Priorizar voz masculina
   const voices = speechSynthesis.getVoices();
-  const voz = voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male'))
+  const voz = voices.find(v => v.name === 'Google UK English Male')
+           || voices.find(v => v.name === 'Microsoft David Desktop')
+           || voices.find(v => v.name === 'Microsoft David - English (United States)')
+           || voices.find(v => v.name.toLowerCase().includes('david'))
+           || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male'))
+           || voices.find(v => v.lang === 'en-US' && !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('zira') && !v.name.toLowerCase().includes('samantha'))
            || voices.find(v => v.lang.startsWith('en-US'))
            || voices.find(v => v.lang.startsWith('en'));
   if (voz) utt.voice = voz;
@@ -2489,11 +2494,15 @@ function processVQueue() {
   ttsPlaying = true;
   const text = ttsQueue.shift();
   const utt  = new SpeechSynthesisUtterance(text);
-  utt.lang = 'en-US'; utt.rate = 0.92; utt.pitch = 1.02;
+  utt.lang = 'en-US'; utt.rate = 0.92; utt.pitch = 0.85;
   const vs = speechSynthesis.getVoices();
-  const voz = vs.find(v => v.name === 'Google US English')
-           || vs.find(v => v.name.includes('Google') && v.lang === 'en-US')
-           || vs.find(v => v.lang === 'en-US')
+  const voz = vs.find(v => v.name === 'Google UK English Male')
+           || vs.find(v => v.name === 'Microsoft David Desktop')
+           || vs.find(v => v.name === 'Microsoft David - English (United States)')
+           || vs.find(v => v.name.toLowerCase().includes('david'))
+           || vs.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male'))
+           || vs.find(v => v.lang === 'en-US' && !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('zira') && !v.name.toLowerCase().includes('samantha'))
+           || vs.find(v => v.lang.startsWith('en-US'))
            || vs.find(v => v.lang.startsWith('en'));
   if (voz) utt.voice = voz;
   utt.onend = utt.onerror = () => setTimeout(processVQueue, 80);

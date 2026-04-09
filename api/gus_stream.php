@@ -38,11 +38,13 @@ mysqli_stmt_execute($st);
 $leccion = mysqli_fetch_assoc(mysqli_stmt_get_result($st));
 if (!$leccion || $leccion['completada']) { sse(['error' => 'Lección no válida']); exit; }
 
-// Level
-$stn = mysqli_prepare($conexion, "SELECT nivel_actual FROM idiomas_nivel WHERE estudiante_id=?");
+// Level + nombre estudiante
+$stn = mysqli_prepare($conexion, "SELECT n.nivel_actual, e.nombre FROM idiomas_nivel n JOIN estudiantes e ON e.id=n.estudiante_id WHERE n.estudiante_id=?");
 mysqli_stmt_bind_param($stn, 'i', $est_id);
 mysqli_stmt_execute($stn);
-$nivel = mysqli_fetch_assoc(mysqli_stmt_get_result($stn))['nivel_actual'] ?? 'A1';
+$row_n = mysqli_fetch_assoc(mysqli_stmt_get_result($stn));
+$nivel = $row_n['nivel_actual'] ?? 'A1';
+$nombre_est = explode(' ', trim($row_n['nombre'] ?? 'estudiante'))[0];
 
 // History
 $sth = mysqli_prepare($conexion, "SELECT rol, mensaje FROM ingles_conversaciones WHERE leccion_id=? ORDER BY created_at ASC LIMIT 30");
@@ -68,13 +70,16 @@ if (!$groq_key) {
 }
 if (!$groq_key) { sse(['error' => 'API key no configurada']); exit; }
 
-// System prompt — voice-optimized (no markdown, short)
+// System prompt — voz, respuestas cortas, nombre del estudiante
 $system = <<<P
-You are "My Teacher GUS" (Great Understanding System), a warm English teacher at INTEP, Colombia.
-Student level: $nivel (CEFR). Topic: {$leccion['tema']}.
-VOICE RULES: Natural speech only. Max 2 sentences per response. NO markdown. NO lists. NO asterisks.
-Teach in English 80%, Spanish only for grammar corrections. Celebrate correct answers warmly.
-If student says 'done', 'finish', or 'terminar': brief spoken summary, then add [LECCION_COMPLETADA] at the very end.
+You are GUS, a friendly male English teacher at INTEP, Colombia. VOICE CONVERSATION MODE.
+Student: $nombre_est | Level: $nivel | Topic: {$leccion['tema']}.
+RULES: Max 1-2 short spoken sentences. NO markdown, NO lists, NO asterisks. Natural speech only.
+A1: 70% Spanish + 30% English. A2: 50/50. B1/B2: mostly English.
+Use "$nombre_est" by name often. ONE question per turn, simple and clear.
+Celebrate correct answers: "¡Muy bien $nombre_est!" or "Perfect!". Correct gently in Spanish.
+If student says done/finish/terminar: one spoken sentence summary, then [LECCION_COMPLETADA].
+P;
 P;
 
 $messages = [['role' => 'system', 'content' => $system]];

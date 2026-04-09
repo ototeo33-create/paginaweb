@@ -95,15 +95,20 @@ function get_temas_recientes(int $est_id, $db): string {
 if ($accion === 'generar') {
     $nivel  = get_nivel($est_id, $conexion);
     $temas  = get_temas_recientes($est_id, $conexion);
-    $tipos  = ['fill_blank','multiple_choice','traduccion','corrige_error','vocabulario'];
-    $tipo   = $tipos[array_rand($tipos)];
+    // A1/A2: sin corrige_error (demasiado difícil), más vocabulario y traducción simple
+    if (in_array($nivel, ['A1','A2'])) {
+        $tipos = ['vocabulario','vocabulario','fill_blank','multiple_choice','traduccion'];
+    } else {
+        $tipos = ['fill_blank','multiple_choice','traduccion','corrige_error','vocabulario'];
+    }
+    $tipo = $tipos[array_rand($tipos)];
 
     $desc_tipos = [
-        'fill_blank'       => 'fill-in-the-blank: una frase con un espacio en blanco y 4 opciones (A/B/C/D)',
-        'multiple_choice'  => 'opción múltiple: una pregunta de gramática o comprensión con 4 opciones (A/B/C/D)',
-        'traduccion'       => 'traducción: una frase en español y el estudiante debe escribir la traducción en inglés',
+        'fill_blank'       => 'fill-in-the-blank: una frase MUY corta con un espacio en blanco y 4 opciones (A/B/C/D). Ejemplo: "I ___ a student. A. am  B. is  C. are  D. be"',
+        'multiple_choice'  => 'opción múltiple: una pregunta simple de vocabulario o gramática con 4 opciones (A/B/C/D)',
+        'traduccion'       => 'traducción: una frase CORTA y simple en español, el estudiante escribe en inglés',
         'corrige_error'    => 'corrige el error: una frase en inglés con un error gramatical, 4 opciones de corrección (A/B/C/D)',
-        'vocabulario'      => 'vocabulario: definición en inglés y el estudiante elige la palabra correcta entre 4 opciones (A/B/C/D)',
+        'vocabulario'      => 'vocabulario: mostrar UNA palabra en español y elegir su traducción en inglés entre 4 opciones (A/B/C/D). Ejemplo: "¿Cómo se dice PERRO en inglés? A. cat  B. dog  C. bird  D. fish"',
     ];
 
     // Estadísticas del estudiante para ajustar dificultad
@@ -123,40 +128,40 @@ if ($accion === 'generar') {
     if ($precision >= 80) $subnivel = 'avanzado';
     elseif ($precision >= 60) $subnivel = 'intermedio';
 
-    // Contexto de progresión para Gemini
+    // Contexto muy específico por nivel
     $contexto_nivel = [
-        'A1' => 'El estudiante es principiante absoluto. Usa vocabulario cotidiano muy simple, frases cortas, verbo to be, present simple básico, números, colores, saludos.',
-        'A2' => 'El estudiante conoce lo básico. Introduce: past simple, present continuous, comparativos, preguntas con do/does/did, vocabulario de rutinas y familia.',
-        'B1' => 'El estudiante tiene base sólida. Usa: present perfect, first conditional, passive voice (presente/pasado), modal verbs (should/must/might), phrasal verbs comunes.',
-        'B2' => 'El estudiante es intermedio alto. Usa: second/third conditional, reported speech, passive voice compleja, collocations avanzadas, expresiones idiomáticas, vocabulario formal.',
+        'A1' => 'PRINCIPIANTE ABSOLUTO con casi cero inglés. SOLO: colores (red/blue/green), números (1-20), animales (cat/dog/bird), objetos del salón (book/pen/table), saludos (hello/goodbye/thanks), verbo to be (am/is/are), familia (mother/father/sister/brother). Frases máximo 4 palabras. Opciones obvias donde la respuesta correcta se intuye fácil.',
+        'A2' => 'Conoce palabras básicas. Introduce: cuerpo humano, comidas, colores de ropa, rutinas diarias (wake up/eat breakfast/go to school), present simple con he/she/they, preguntas cortas (What is this? / Do you like...?). Frases de máximo 6 palabras.',
+        'B1' => 'Base sólida. Usa: present perfect, first conditional, modal verbs (should/must/can), phrasal verbs comunes, tiempo libre y trabajo.',
+        'B2' => 'Intermedio alto. Usa: second/third conditional, reported speech, passive voice, collocations, expresiones idiomáticas, vocabulario formal.',
     ];
 
     $prompt = <<<PROMPT
-Eres un profesor experto de inglés para estudiantes colombianos.
+Eres un profesor de inglés para estudiantes colombianos de instituto técnico.
 
-PERFIL DEL ESTUDIANTE:
-- Nivel CEFR: $nivel ($subnivel dentro del nivel)
-- Ejercicios completados: $total_ej
-- Precisión actual: $precision%
-- Contexto pedagógico: {$contexto_nivel[$nivel]}
+PERFIL:
+- Nivel: $nivel ($subnivel)
+- Ejercicios hechos: $total_ej | Precisión: $precision%
+- {$contexto_nivel[$nivel]}
 
-TAREA: Genera UN ejercicio de inglés de tipo: {$desc_tipos[$tipo]}.
+TAREA: Genera UN ejercicio tipo: {$desc_tipos[$tipo]}
 
-REGLAS PEDAGÓGICAS:
-- Si precisión >= 80%: sube la complejidad al límite superior del nivel $nivel
-- Si precisión < 50%: simplifica, refuerza conceptos fundamentales del nivel
-- Temas recientes (NO repetir): $temas
-- Opciones múltiples: siempre 4 opciones etiquetadas A, B, C, D
-- Los distractores deben ser errores comunes de estudiantes colombianos
-- La explicación en español, máximo 2 oraciones, menciona la regla gramatical
+REGLAS CRÍTICAS:
+- Nivel A1: vocabulario de UNA sola palabra, opciones muy diferentes entre sí (no confundibles)
+- Nivel A1: NUNCA uses gramática compleja, contracciones raras ni phrasal verbs
+- Nivel A2: frases simples del diario vivir
+- Temas recientes a evitar: $temas
+- Opciones: siempre 4, etiquetadas A B C D
+- Explicación: en español, máximo 1 oración, muy simple
+- instruccion: en español, amigable (ej: "¿Cómo se dice en inglés?", "Completa la frase", "Traduce")
 
-Responde ÚNICAMENTE con JSON válido, sin texto adicional, sin bloques markdown:
+Responde SOLO con JSON válido, sin markdown:
 
-Para ejercicios con opciones (fill_blank, multiple_choice, corrige_error, vocabulario):
-{"tipo":"$tipo","nivel":"$nivel","instruccion":"instrucción en español","pregunta":"pregunta en inglés","traduccion_ayuda":"traducción al español o null","opciones":["A. ...","B. ...","C. ...","D. ..."],"correcta":"A","respuesta_texto":"texto de la respuesta correcta","explicacion":"explicación en español"}
+Opciones (fill_blank/multiple_choice/corrige_error/vocabulario):
+{"tipo":"$tipo","nivel":"$nivel","instruccion":"...","pregunta":"...","traduccion_ayuda":"...o null","opciones":["A. ...","B. ...","C. ...","D. ..."],"correcta":"A","respuesta_texto":"...","explicacion":"..."}
 
-Para traduccion:
-{"tipo":"traduccion","nivel":"$nivel","instruccion":"Traduce la siguiente frase al inglés","pregunta":"frase en español","traduccion_ayuda":null,"opciones":[],"correcta":null,"respuesta_texto":"traducción correcta en inglés","explicacion":"explicación breve en español"}
+Traducción:
+{"tipo":"traduccion","nivel":"$nivel","instruccion":"Escribe en inglés:","pregunta":"frase simple en español","traduccion_ayuda":null,"opciones":[],"correcta":null,"respuesta_texto":"respuesta en inglés","explicacion":"..."}
 PROMPT;
 
     $ejercicio = llamar_gemini($prompt, $groq_key);

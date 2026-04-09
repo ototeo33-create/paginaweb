@@ -1218,11 +1218,11 @@ window.addEventListener('appinstalled', function() {
     deferredPrompt = null;
 });
 </script>
-<!-- ── GATITO NEGRO — se asoma por el borde derecho de la card INTEP Inglés ── -->
+<!-- ── GATITO NEGRO — permanente, cambia de posición en la card ── -->
 <div id="gato-wrap" style="position:absolute;overflow:hidden;pointer-events:none;border-radius:20px;z-index:10;">
-    <div id="gato-container" style="position:absolute;bottom:8px;right:-42px;">
+    <div id="gato-container" style="position:absolute;">
         <div id="gato-inner">
-            <svg width="34" height="34" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <ellipse cx="50" cy="72" rx="22" ry="16" fill="#111"/>
                 <circle cx="50" cy="48" r="18" fill="#111"/>
                 <polygon points="35,36 30,18 44,30" fill="#111"/>
@@ -1246,26 +1246,34 @@ window.addEventListener('appinstalled', function() {
 
 <style>
 @keyframes gato-bob {
-    0%,100% { transform: translateY(0); }
-    50%      { transform: translateY(-2px); }
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    30%      { transform: translateY(-3px) rotate(-3deg); }
+    70%      { transform: translateY(-1px) rotate(2deg); }
 }
-@keyframes gato-asoma {
-    0%   { right: -42px; }
-    35%  { right:  6px;  }
-    65%  { right:  6px;  }
-    100% { right: -42px; }
-}
-#gato-container { animation: gato-asoma 4s ease-in-out forwards; }
-#gato-inner     { animation: gato-bob .4s ease-in-out infinite; }
+@keyframes gato-fade-in  { from { opacity:0; transform: scale(.6); } to { opacity:1; transform: scale(1); } }
+@keyframes gato-fade-out { from { opacity:1; transform: scale(1); } to { opacity:0; transform: scale(.6); } }
+#gato-container { transition: top .8s cubic-bezier(.34,1.56,.64,1), left .8s cubic-bezier(.34,1.56,.64,1); }
+#gato-inner { animation: gato-bob .9s ease-in-out infinite; }
 </style>
 
 <script>
 (function() {
     var wrap = document.getElementById('gato-wrap');
     var cont = document.getElementById('gato-container');
+    var inner = document.getElementById('gato-inner');
+    var sz = 30; // tamaño del gato px
+    var margin = 8;
+
+    // 4 posiciones: esquinas de la card
+    var posiciones = [
+        { bottom: margin, right: margin,  top: 'auto', left: 'auto'  },  // inf-der
+        { bottom: margin, left:  margin,  top: 'auto', right: 'auto' },  // inf-izq
+        { top:    margin, right: margin,  bottom: 'auto', left: 'auto' },// sup-der
+        { top:    margin, left:  margin,  bottom: 'auto', right: 'auto'},// sup-izq
+    ];
+    var posActual = 0;
 
     function posicionarSobreCard() {
-        // Buscar la card de INTEP Inglés
         var card = document.querySelector('.ingles-card');
         if (!card) return false;
         var rect = card.getBoundingClientRect();
@@ -1277,26 +1285,68 @@ window.addEventListener('appinstalled', function() {
         return true;
     }
 
-    function lanzarGato() {
-        if (!posicionarSobreCard()) return;
-        // Reiniciar animación
-        cont.style.animation = 'none';
-        void cont.offsetWidth;
-        cont.style.animation = '';
-        cont.style.animationName = 'gato-asoma';
-        cont.style.animationDuration = '4s';
-        cont.style.animationTimingFunction = 'ease-in-out';
-        cont.style.animationFillMode = 'forwards';
+    function aplicarPosicion(idx) {
+        var p = posiciones[idx];
+        cont.style.top    = p.top    !== undefined ? (p.top    === 'auto' ? '' : p.top    + 'px') : '';
+        cont.style.bottom = p.bottom !== undefined ? (p.bottom === 'auto' ? '' : p.bottom + 'px') : '';
+        cont.style.left   = p.left   !== undefined ? (p.left   === 'auto' ? '' : p.left   + 'px') : '';
+        cont.style.right  = p.right  !== undefined ? (p.right  === 'auto' ? '' : p.right  + 'px') : '';
+        // limpiar el opuesto
+        if (p.top    === 'auto') cont.style.top    = '';
+        if (p.bottom === 'auto') cont.style.bottom = '';
+        if (p.left   === 'auto') cont.style.left   = '';
+        if (p.right  === 'auto') cont.style.right  = '';
     }
 
-    // Primera aparición: entre 15 y 35 seg
-    setTimeout(function() {
-        lanzarGato();
-        setInterval(lanzarGato, 60000);
-    }, Math.random() * 20000 + 15000);
+    function moverGato() {
+        // Fade out
+        inner.style.animation = 'none';
+        inner.style.opacity = '0';
+        inner.style.transform = 'scale(.6)';
+        inner.style.transition = 'opacity .35s ease, transform .35s ease';
 
-    // Re-posicionar si cambia el tamaño
+        setTimeout(function() {
+            // Cambiar a posición aleatoria diferente
+            var opciones = [0,1,2,3].filter(function(i){ return i !== posActual; });
+            posActual = opciones[Math.floor(Math.random() * opciones.length)];
+            posicionarSobreCard();
+            aplicarPosicion(posActual);
+
+            // Fade in
+            setTimeout(function() {
+                inner.style.opacity = '1';
+                inner.style.transform = 'scale(1)';
+                setTimeout(function() {
+                    inner.style.transition = '';
+                    inner.style.animation = 'gato-bob .9s ease-in-out infinite';
+                }, 400);
+            }, 100);
+        }, 380);
+    }
+
+    // Mostrar inmediatamente en posición inicial
+    function init() {
+        if (!posicionarSobreCard()) { setTimeout(init, 300); return; }
+        aplicarPosicion(posActual);
+        inner.style.opacity = '0';
+        inner.style.transform = 'scale(.6)';
+        inner.style.transition = 'opacity .5s ease, transform .5s ease';
+        setTimeout(function() {
+            inner.style.opacity = '1';
+            inner.style.transform = 'scale(1)';
+            setTimeout(function() {
+                inner.style.transition = '';
+                inner.style.animation = 'gato-bob .9s ease-in-out infinite';
+            }, 500);
+        }, 800);
+        // Cambiar posición cada 35-55 seg
+        setInterval(moverGato, Math.random() * 20000 + 35000);
+    }
+
     window.addEventListener('resize', posicionarSobreCard);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else { init(); }
 })();
 </script>
 </body>
