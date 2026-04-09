@@ -1349,5 +1349,10 @@ window.addEventListener('appinstalled', function() {
     } else { init(); }
 })();
 </script>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/intep/sw.js');
+}
+</script>
 </body>
 </html>
