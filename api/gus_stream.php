@@ -99,7 +99,7 @@ curl_setopt_array($ch, [
         'model' => 'llama-3.3-70b-versatile',
         'messages' => $messages,
         'temperature' => 0.75,
-        'max_tokens'  => 200,
+        'max_tokens'  => 90,
         'stream'      => true,
     ]),
     CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: Bearer ' . $groq_key],
