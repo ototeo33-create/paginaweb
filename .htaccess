@@ -1,0 +1,11 @@
+# Evitar listado de directorios
+Options -Indexes
+
+# Index por defecto
+DirectoryIndex index.php
+
+# Bloquear acceso directo a uploads de materiales (forzar descarga vía PHP)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^uploads/materiales/ - [F,L]
+</IfModule>
