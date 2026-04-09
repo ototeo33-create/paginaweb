@@ -51,7 +51,7 @@ function llamar_groq(array $messages, string $key): array {
         'model'       => 'llama-3.3-70b-versatile',
         'messages'    => $messages,
         'temperature' => 0.75,
-        'max_tokens'  => 500,
+        'max_tokens'  => 90,
         'stream'      => false,
     ]);
     $ch = curl_init($url);
@@ -157,7 +157,7 @@ PROMPT;
         ]);
     } else {
         // Nueva lección — GUS saluda y propone tema
-        $messages[] = ['role' => 'user', 'content' => 'Hello GUS, I\'m ready for my English lesson!'];
+        $messages[] = ['role' => 'user', 'content' => "Hi GUS! My name is $nombre_est and I'm ready to learn English!"];
         [$respuesta, $err_groq] = llamar_groq($messages, $groq_key);
         if (!$respuesta) { echo json_encode(['error' => 'GUS no disponible: ' . ($err_groq ?: 'sin respuesta')]); exit; }
 

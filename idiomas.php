@@ -2134,9 +2134,13 @@ function gusHabla(texto) {
   const voz = voices.find(v => v.name === 'Google UK English Male')
            || voices.find(v => v.name === 'Microsoft David Desktop')
            || voices.find(v => v.name === 'Microsoft David - English (United States)')
+           || voices.find(v => v.name === 'Alex')          // iOS/macOS male
+           || voices.find(v => v.name === 'Daniel')        // iOS UK male
+           || voices.find(v => v.name === 'Rishi')         // iOS Indian male
            || voices.find(v => v.name.toLowerCase().includes('david'))
+           || voices.find(v => v.name.toLowerCase().includes('daniel'))
            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male'))
-           || voices.find(v => v.lang === 'en-US' && !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('zira') && !v.name.toLowerCase().includes('samantha'))
+           || voices.find(v => v.lang === 'en-US' && !['samantha','zira','susan','female','karen','moira','tessa','veena','fiona'].some(n => v.name.toLowerCase().includes(n)))
            || voices.find(v => v.lang.startsWith('en-US'))
            || voices.find(v => v.lang.startsWith('en'));
   if (voz) utt.voice = voz;
@@ -2566,9 +2570,13 @@ function processVQueue() {
   const voz = vs.find(v => v.name === 'Google UK English Male')
            || vs.find(v => v.name === 'Microsoft David Desktop')
            || vs.find(v => v.name === 'Microsoft David - English (United States)')
+           || vs.find(v => v.name === 'Alex')
+           || vs.find(v => v.name === 'Daniel')
+           || vs.find(v => v.name === 'Rishi')
            || vs.find(v => v.name.toLowerCase().includes('david'))
+           || vs.find(v => v.name.toLowerCase().includes('daniel'))
            || vs.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male'))
-           || vs.find(v => v.lang === 'en-US' && !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('zira') && !v.name.toLowerCase().includes('samantha'))
+           || vs.find(v => v.lang === 'en-US' && !['samantha','zira','susan','female','karen','moira','tessa','veena','fiona'].some(n => v.name.toLowerCase().includes(n)))
            || vs.find(v => v.lang.startsWith('en-US'))
            || vs.find(v => v.lang.startsWith('en'));
   if (voz) utt.voice = voz;
