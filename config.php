@@ -53,28 +53,27 @@ mysqli_query($conexion, "SET CHARACTER_SET_CONNECTION = 'utf8mb4'");
 // SESIÓN SEGURA
 // ============================================
 if (session_status() === PHP_SESSION_NONE) {
-    // Configuración de cookies seguras
     session_set_cookie_params([
         'lifetime' => SESSION_LIFETIME,
-        'path' => '/',
-        'domain' => '',
-        'secure' => isset($_SERVER['HTTPS']),
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => isset($_SERVER['HTTPS']),
         'httponly' => true,
-        'samesite' => 'Strict'
+        'samesite' => 'Lax',  // Strict bloqueaba cookies en WebViews/Telegram
     ]);
     session_start();
 }
 
-// Regenerar ID de sesión periódicamente para prevenir hijacking
+// Primera vez: iniciar sesión sin borrar la cookie anterior
 if (!isset($_SESSION['initiated'])) {
-    session_regenerate_id(true);
+    session_regenerate_id(false); // false = no borrar sesión vieja
     $_SESSION['initiated'] = true;
     $_SESSION['created_at'] = time();
 }
 
-// Regenerar ID cada 15 minutos
-if (isset($_SESSION['created_at']) && (time() - $_SESSION['created_at']) > 900) {
-    session_regenerate_id(true);
+// Regenerar ID cada 2 horas (no cada 15 min — causaba "No autorizado" en WebViews)
+if (isset($_SESSION['created_at']) && (time() - $_SESSION['created_at']) > 7200) {
+    session_regenerate_id(false); // false = mantener datos mientras cookie se actualiza
     $_SESSION['created_at'] = time();
 }
 
