@@ -34,3 +34,6 @@ node_modules/
 
 # Ignorar fotos de estudiantes
 uploads/fotos/
+
+# Caché de audio TTS (generado por Kokoro en el servidor)
+tts_cache/
