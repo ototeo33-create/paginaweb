@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador - INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --green: #059669;
+            --green-light: #10B981;
+            --green-dark: #047857;
+            --green-pale: #ECFDF5;
+            --purple: #4A1942;
+            --purple-mid: #6B3FA0;
+            --purple-light: #9B6FCF;
+            --purple-pale: #f3ecf8;
+            --cream: #F5F2EC;
+            --warm-white: #F0EDE6;
+            --red: #ef4444;
+            --orange: #f59e0b;
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: linear-gradient(135deg, #033d2e 0%, var(--green-dark) 50%, #0a5c3f 100%);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .topbar-logo h1 {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .topbar-nav {
+            display: flex;
+            gap: 5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--green-light);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--purple-mid);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .user-role {
+            font-size: 0.75em;
+            opacity: 0.7;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 30px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(74, 25, 66, 0.06);
+            margin-bottom: 25px;
+        }
+
+        .card-title {
+            font-size: 1.1em;
+            color: var(--purple);
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--green);
+        }
+
+        .status-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 25px;
+            background: var(--cream);
+            border-radius: var(--radius);
+        }
+
+        .status-info h3 {
+            font-size: 1.1em;
+            color: var(--purple);
+            margin-bottom: 5px;
+        }
+
+        .status-info p {
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 70px;
+            height: 36px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #ccc;
+            border-radius: 36px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            height: 28px;
+            width: 28px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--green);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(34px);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: var(--green-pale);
+            color: var(--green);
+        }
+
+        .status-badge.inactive {
+            background: #fee2e2;
+            color: var(--red);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--cream);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 1.3em;
+        }
+
+        .stat-card .icon.green { background: var(--green-pale); color: var(--green); }
+        .stat-card .icon.purple { background: var(--purple-pale); color: var(--purple-light); }
+        .stat-card .icon.orange { background: #fef3c7; color: var(--orange); }
+
+        .stat-card .number {
+            font-size: 2em;
+            font-weight: 800;
+            color: var(--purple);
+        }
+
+        .stat-card .label {
+            font-size: 0.85em;
+            color: var(--text-light);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--purple-light);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--purple-mid);
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--green-dark);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--purple-light);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: var(--cream);
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.85em;
+        }
+
+        .action-btn.view {
+            background: var(--green-pale);
+            color: var(--green);
+        }
+
+        .action-btn.delete {
+            background: #fee2e2;
+            color: var(--red);
+        }
+
+        @media (max-width: 1024px) {
+            .topbar-nav {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-top: 70px;
+                padding: 20px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-logo">
+                <h1>INTEP - Panel Administrador</h1>
+            </div>
+            <nav class="topbar-nav">
+                <div class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>Evaluación</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Docentes</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="card">
+            <h3 class="card-title">
+                <i class="fas fa-toggle-on"></i>
+                Control de Evaluación Docente
+            </h3>
+            <div class="status-toggle">
+                <div class="status-info">
+                    <h3>Estado de la Evaluación</h3>
+                    <p>Habilitar o deshabilitar el formulario para estudiantes</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="evalToggle" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <span class="status-badge active" id="statusBadge">Activo</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="verFormulario()">
+                        <i class="fas fa-external-link-alt"></i> Ver Formulario
+                    </button>
+                    <button class="btn btn-success" onclick="guardarCambios()">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon green"><i class="fas fa-user-graduate"></i></div>
+                <div class="number">156</div>
+                <div class="label">Estudiantes</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon purple"><i class="fas fa-chalkboard-teacher"></i></div>
+                <div class="number">24</div>
+                <div class="label">Docentes</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon orange"><i class="fas fa-clipboard-check"></i></div>
+                <div class="number">89</div>
+                <div class="label">Evaluaciones</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon green"><i class="fas fa-check-circle"></i></div>
+                <div class="number">98%</div>
+                <div class="label">Completadas</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">
+                <i class="fas fa-history"></i>
+                Historial de Evaluaciones
+            </h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Periodo</th>
+                            <th>Docente</th>
+                            <th>Evaluaciones</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>14/04/2026</td>
+                            <td>2025-2026 II</td>
+                            <td>María González</td>
+                            <td>18/20</td>
+                            <td><span class="status-badge active">Completado</span></td>
+                            <td><button class="action-btn view">Ver</button></td>
+                        </tr>
+                        <tr>
+                            <td>10/04/2026</td>
+                            <td>2025-2026 II</td>
+                            <td>Carlos Rodríguez</td>
+                            <td>12/20</td>
+                            <td><span class="status-badge active">En curso</span></td>
+                            <td><button class="action-btn view">Ver</button></td>
+                        </tr>
+                        <tr>
+                            <td>05/04/2026</td>
+                            <td>2025-2026 I</td>
+                            <td>Ana Martínez</td>
+                            <td>20/20</td>
+                            <td><span class="status-badge active">Completado</span></td>
+                            <td><button class="action-btn view">Ver</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const toggle = document.getElementById('evalToggle');
+        const statusBadge = document.getElementById('statusBadge');
+
+        toggle.addEventListener('change', function() {
+            if (this.checked) {
+                statusBadge.textContent = 'Activo';
+                statusBadge.className = 'status-badge active';
+            } else {
+                statusBadge.textContent = 'Inactivo';
+                statusBadge.className = 'status-badge inactive';
+            }
+        });
+
+        function guardarCambios() {
+            alert('Cambios guardados exitosamente');
+        }
+
+        function verFormulario() {
+            window.open('index.html', '_blank');
+        }
+    </script>
+</body>
+</html>

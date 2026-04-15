@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Resultados - INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --green: #059669;
+            --green-light: #10B981;
+            --green-dark: #047857;
+            --green-pale: #ECFDF5;
+            --purple: #4A1942;
+            --purple-mid: #6B3FA0;
+            --purple-light: #9B6FCF;
+            --purple-pale: #f3ecf8;
+            --cream: #F5F2EC;
+            --warm-white: #F0EDE6;
+            --red: #ef4444;
+            --orange: #f59e0b;
+            --blue: #3B82F6;
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--cream);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: linear-gradient(135deg, #033d2e 0%, var(--green-dark) 50%, #0a5c3f 100%);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .topbar-logo h1 {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .topbar-nav {
+            display: flex;
+            gap: 5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--green-light);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--purple-mid);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .user-role {
+            font-size: 0.75em;
+            opacity: 0.7;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 30px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .welcome-section {
+            margin-bottom: 30px;
+        }
+
+        .welcome-section h1 {
+            font-size: 1.8em;
+            color: var(--purple);
+            margin-bottom: 5px;
+        }
+
+        .welcome-section p {
+            color: var(--text-light);
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(74, 25, 66, 0.06);
+            margin-bottom: 25px;
+        }
+
+        .card-title {
+            font-size: 1.1em;
+            color: var(--purple);
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--green);
+        }
+
+        .score-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .score-card.purple {
+            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple-mid) 100%);
+        }
+
+        .score-card .big-score {
+            font-size: 3.5em;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .score-card .score-label {
+            font-size: 1em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .score-card .students-count {
+            font-size: 0.85em;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+
+        .score-card .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .criteria-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .criteria-item {
+            display: grid;
+            grid-template-columns: 1fr auto 100px;
+            align-items: center;
+            gap: 20px;
+            padding: 18px 20px;
+            background: var(--cream);
+            border-radius: 12px;
+        }
+
+        .criteria-name {
+            font-weight: 600;
+            color: var(--purple);
+        }
+
+        .criteria-bar-container {
+            width: 200px;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .criteria-bar {
+            height: 100%;
+            border-radius: 6px;
+        }
+
+        .criteria-bar.excellent { background: var(--green); }
+        .criteria-bar.good { background: var(--blue); }
+        .criteria-bar.regular { background: var(--orange); }
+        .criteria-bar.insufficient { background: var(--red); }
+
+        .criteria-score {
+            font-weight: 700;
+            font-size: 1.1em;
+            text-align: right;
+        }
+
+        .criteria-score.excellent { color: var(--green); }
+        .criteria-score.good { color: var(--blue); }
+        .criteria-score.regular { color: var(--orange); }
+        .criteria-score.insufficient { color: var(--red); }
+
+        .period-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .period-btn {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s;
+        }
+
+        .period-btn:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .period-btn.active {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
+        }
+
+        .comments-section {
+            margin-top: 20px;
+        }
+
+        .comment-item {
+            padding: 15px;
+            background: var(--cream);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--green);
+        }
+
+        .comment-type {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: var(--green);
+            margin-bottom: 5px;
+        }
+
+        .comment-text {
+            color: var(--text-mid);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .chart-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .chart-placeholder {
+            height: 250px;
+            background: var(--cream);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+        }
+
+        .chart-placeholder i {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: var(--green);
+            opacity: 0.5;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--purple-light);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--purple-mid);
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--green-dark);
+        }
+
+        @media (max-width: 1024px) {
+            .topbar-nav {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-top: 70px;
+                padding: 20px;
+            }
+            .score-overview {
+                grid-template-columns: 1fr;
+            }
+            .criteria-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .criteria-bar-container {
+                width: 100%;
+            }
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-logo">
+                <h1>INTEP - Portal Docente</h1>
+            </div>
+            <nav class="topbar-nav">
+                <div class="nav-item active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Mis Resultados</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-history"></i>
+                    <span>Historial</span>
+                </div>
+            </nav>
+        </div>
+        <div class="topbar-right">
+            <div class="user-info">
+                <div>
+                    <div class="user-name">Prof. María González</div>
+                    <div class="user-role">Auxiliar Administrativa</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1>Mis Resultados de Evaluación</h1>
+            <p>Periodo: 2025-2026 Segundo Periodo</p>
+        </div>
+
+        <div class="score-overview">
+            <div class="score-card">
+                <div class="big-score">92%</div>
+                <div class="score-label">Nota Final</div>
+                <div class="students-count">Basado en 18 evaluaciones</div>
+                <div class="status-badge">Excelente</div>
+            </div>
+            <div class="score-card purple">
+                <div class="big-score">3.68</div>
+                <div class="score-label">Promedio General</div>
+                <div class="students-count">Escala 1-4</div>
+                <div class="status-badge">Bueno</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">
+                <i class="fas fa-list-ul"></i>
+                Resultados por Criterio
+            </h3>
+            <div class="period-selector">
+                <button class="period-btn active">Periodo Actual</button>
+                <button class="period-btn">Periodo Anterior</button>
+                <button class="period-btn">Historial</button>
+            </div>
+            <div class="criteria-grid">
+                <div class="criteria-item">
+                    <div class="criteria-name">1. Dominio del Contenido</div>
+                    <div class="criteria-bar-container">
+                        <div class="criteria-bar excellent" style="width: 95%;"></div>
+                    </div>
+                    <div class="criteria-score excellent">3.8/4</div>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-name">2. Claridad en la Explicación</div>
+                    <div class="criteria-bar-container">
+                        <div class="criteria-bar excellent" style="width: 88%;"></div>
+                    </div>
+                    <div class="criteria-score excellent">3.5/4</div>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-name">3. Metodología de Enseñanza</div>
+                    <div class="criteria-bar-container">
+                        <div class="criteria-bar good" style="width: 80%;"></div>
+                    </div>
+                    <div class="criteria-score good">3.2/4</div>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-name">4. Relación con los Estudiantes</div>
+                    <div class="criteria-bar-container">
+                        <div class="criteria-bar excellent" style="width: 93%;"></div>
+                    </div>
+                    <div class="criteria-score excellent">3.7/4</div>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-name">5. Gestión del Aula</div>
+                    <div class="criteria-bar-container">
+                        <div class="criteria-bar good" style="width: 75%;"></div>
+                    </div>
+                    <div class="criteria-score good">3.0/4</div>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-name">6. Evaluación y Retroalimentación</div>
+                    <div class="criteria-bar-container">
+                        <div class="criteria-bar excellent" style="width: 90%;"></div>
+                    </div>
+                    <div class="criteria-score excellent">3.6/4</div>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-name">7. Puntualidad y Asistencia</div>
+                    <div class="criteria-bar-container">
+                        <div class="criteria-bar excellent" style="width: 98%;"></div>
+                    </div>
+                    <div class="criteria-score excellent">3.9/4</div>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-name">8. Uso de Recursos Tecnológicos</div>
+                    <div class="criteria-bar-container">
+                        <div class="criteria-bar regular" style="width: 68%;"></div>
+                    </div>
+                    <div class="criteria-score regular">2.7/4</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">
+                <i class="fas fa-chart-line"></i>
+                Comparativa de Resultados
+            </h3>
+            <div class="chart-container">
+                <div class="chart-placeholder">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Gráfico de Tendencia</span>
+                    <small>Evolución por periodo</small>
+                </div>
+                <div class="chart-placeholder">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Distribución de Calificaciones</span>
+                    <small>% por nivel</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">
+                <i class="fas fa-comment-alt"></i>
+                Comentarios de Estudiantes
+            </h3>
+            <div class="comments-section">
+                <div class="comment-item">
+                    <div class="comment-type"><i class="fas fa-thumbs-up"></i> Aspectos Positivos</div>
+                    <div class="comment-text">"La profesora explica muy bien los temas y es muy paciente con nosotros."</div>
+                </div>
+                <div class="comment-item">
+                    <div class="comment-type"><i class="fas fa-thumbs-up"></i> Aspectos Positivos</div>
+                    <div class="comment-text">"Muy buena metodología de enseñanza, aprende uno rápido."</div>
+                </div>
+                <div class="comment-item">
+                    <div class="comment-type"><i class="fas fa-lightbulb"></i> Áreas de Mejora</div>
+                    <div class="comment-text">"Podría usar más recursos tecnológicos como videos o presentaciones interactivas."</div>
+                </div>
+                <div class="comment-item">
+                    <div class="comment-type"><i class="fas fa-lightbulb"></i> Áreas de Mejora</div>
+                    <div class="comment-text">"A veces las clases se extienden un poco más de lo necesario."</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="motivational-card" id="motivationalCard">
+            <div class="motivational-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="motivational-content">
+                <h3 id="motivationalTitle">¡Felicidades! ¡Eres un docente excepcional!</h3>
+                <p id="motivationalText">El 92% de tus estudiantes te califican de manera excelente. Tu dedicación y compromiso con la educación inspiran a diario. Sigue así, estás dejando una huella imborrable en la formación de tus estudiantes.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function showMotivationalMessage(percentage) {
+            const card = document.getElementById('motivationalCard');
+            const icon = card.querySelector('.motivational-icon i');
+            const title = document.getElementById('motivationalTitle');
+            const text = document.getElementById('motivationalText');
+            
+            card.className = 'motivational-card';
+            icon.className = 'fas fa-trophy';
+            
+            if (percentage >= 90) {
+                card.classList.add('excellent');
+                icon.className = 'fas fa-trophy';
+                title.textContent = '¡Felicidades! ¡Eres un docente excepcional!';
+                text.textContent = 'El ' + percentage + '% de tus estudiantes te califican de manera excelente. Tu dedicación y compromiso con la educación inspiran a diario. Sigue así, estás dejando una huella imborrable en la formación de tus estudiantes.';
+            } else if (percentage >= 75) {
+                card.classList.add('good');
+                icon.className = 'fas fa-star';
+                title.textContent = '¡Muy bien! Estás en el camino correcto';
+                text.textContent = 'Con un ' + percentage + '% de aprobación, demuestras que eres un docente valorado. Tus estudiantes reconocen tu esfuerzo. Un poco más de dedicación en las áreas de mejora y alcanzarás la excelencia.';
+            } else if (percentage >= 50) {
+                card.classList.add('regular');
+                icon.className = 'fas fa-chart-line';
+                title.textContent = 'Tienes potencial, ¡anímate a mejorar!';
+                text.textContent = 'Con un ' + percentage + '% hay espacio para crecer. La educación es un viaje de mejora continua. Identifica las áreas de mejora y trabaja en ellas. Cada día es una oportunidad para ser mejor docente.';
+            } else {
+                card.classList.add('insufficient');
+                icon.className = 'fas fa-seedling';
+                title.textContent = 'Este es el momento de reinventarte';
+                text.textContent = 'Con un ' + percentage + '% es momento de reflexionar y tomar acción. No te desanimes, los grandes docentes también pasaron por esto. Busca apoyo, capacítate y recuerda: cada desafío es una oportunidad de crecimiento.';
+            }
+        }
+        
+        showMotivationalMessage(92);
+    </script>
+
+    <style>
+        .motivational-card {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding: 30px;
+            border-radius: 16px;
+            margin-top: 25px;
+        }
+
+        .motivational-card.excellent {
+            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+            color: white;
+        }
+
+        .motivational-card.good {
+            background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+            color: white;
+        }
+
+        .motivational-card.regular {
+            background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+            color: white;
+        }
+
+        .motivational-card.insufficient {
+            background: linear-gradient(135deg, #6B3FA0 0%, #9B6FCF 100%);
+            color: white;
+        }
+
+        .motivational-icon {
+            font-size: 3em;
+            flex-shrink: 0;
+        }
+
+        .motivational-content h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .motivational-content p {
+            font-size: 1em;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        @media (max-width: 768px) {
+            .motivational-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</body>
+</html>

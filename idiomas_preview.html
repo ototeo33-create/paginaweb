@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INTEP Inglés — Vista Previa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+  :root {
+    --azul:       #3B82F6;
+    --azul-dark:  #1D4ED8;
+    --azul-glow:  rgba(59,130,246,0.25);
+    --amarillo:   #F5C842;
+    --verde:      #10B981;
+    --rojo:       #EF4444;
+    --dark:       #0A1628;
+    --dark2:      #0F2040;
+    --dark3:      #162850;
+    --card:       #1A3060;
+    --card2:      #203570;
+    --text:       #E2E8F0;
+    --text-soft:  #94A3B8;
+    --border:     rgba(59,130,246,0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    background: #060E1A;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* ── NAV DEMO ── */
+  .demo-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .demo-btn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    border: 2px solid var(--border);
+    background: transparent;
+    color: var(--text-soft);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .demo-btn.active, .demo-btn:hover {
+    background: var(--azul);
+    border-color: var(--azul);
+    color: white;
+  }
+  .demo-label {
+    text-align: center;
+    color: var(--text-soft);
+    font-size: 12px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── PHONE FRAME ── */
+  .phone {
+    width: 390px;
+    min-height: 780px;
+    background: var(--dark);
+    border-radius: 40px;
+    border: 2px solid rgba(59,130,246,0.3);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 60px rgba(59,130,246,0.15), 0 30px 60px rgba(0,0,0,0.5);
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; flex-direction: column; min-height: 780px; }
+  .screen.active { display: flex; }
+
+  /* ════════════════════════════
+     SCREEN 1 — PERFIL / HOME
+  ════════════════════════════ */
+  .home-header {
+    background: linear-gradient(160deg, var(--dark2) 0%, var(--dark3) 100%);
+    padding: 50px 24px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .home-header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .home-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .home-greeting { font-size: 13px; color: var(--text-soft); }
+  .home-name { font-size: 20px; font-weight: 800; color: var(--text); }
+
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(245,200,66,0.15);
+    border: 1px solid rgba(245,200,66,0.3);
+    padding: 6px 12px;
+    border-radius: 50px;
+    color: var(--amarillo);
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  .level-card {
+    background: linear-gradient(135deg, var(--azul-dark) 0%, var(--azul) 100%);
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .level-card::after {
+    content: 'A2';
+    position: absolute;
+    right: 20px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 56px;
+    font-weight: 900;
+    opacity: 0.15;
+    color: white;
+  }
+  .level-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .level-xp { font-size: 28px; font-weight: 900; }
+  .level-sub { font-size: 12px; opacity: 0.8; margin-bottom: 12px; }
+  .xp-bar-bg {
+    background: rgba(255,255,255,0.2);
+    border-radius: 50px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .xp-bar-fill {
+    height: 100%;
+    background: var(--amarillo);
+    border-radius: 50px;
+    width: 64%;
+    transition: width 1s ease;
+  }
+  .xp-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  .home-body { padding: 20px 24px; flex: 1; }
+
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .stat-box {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 14px 10px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .stat-icon { font-size: 22px; margin-bottom: 4px; }
+  .stat-num { font-size: 18px; font-weight: 900; color: var(--text); }
+  .stat-lbl { font-size: 10px; color: var(--text-soft); font-weight: 600; }
+
+  .practice-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-dark) 100%);
+    border: none;
+    border-radius: 18px;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 25px rgba(59,130,246,0.4);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .practice-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(59,130,246,0.5); }
+
+  .ranking-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .ranking-btn:hover { background: var(--card2); }
+  .ranking-btn-left { display: flex; align-items: center; gap: 10px; }
+  .rank-pos {
+    background: var(--azul-glow);
+    color: var(--azul);
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  /* ════════════════════════════
+     SCREEN 2 — EJERCICIO
+  ════════════════════════════ */
+  .ex-header {
+    padding: 50px 20px 16px;
+    background: var(--dark2);
+  }
+  .ex-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .hearts { display: flex; gap: 4px; }
+  .heart { font-size: 20px; }
+  .heart.lost { opacity: 0.2; }
+  .progress-bar-bg {
+    flex: 1;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--azul), var(--verde));
+    border-radius: 50px;
+    width: 47%;
+    transition: width .4s ease;
+  }
+  .ex-counter { font-size: 12px; color: var(--text-soft); font-weight: 700; white-space: nowrap; }
+
+  .ex-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: var(--azul);
+    padding: 5px 14px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .ex-body { padding: 24px 20px; flex: 1; display: flex; flex-direction: column; }
+
+  .ex-instruction {
+    font-size: 13px;
+    color: var(--text-soft);
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .ex-sentence {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .ex-blank {
+    display: inline-block;
+    border-bottom: 3px solid var(--azul);
+    min-width: 80px;
+    text-align: center;
+    color: var(--azul);
+    font-size: 22px;
+    font-weight: 900;
+  }
+  .ex-translation {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .option-btn {
+    padding: 18px 12px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: all .15s;
+  }
+  .option-btn:hover { border-color: var(--azul); background: var(--card2); transform: scale(1.02); }
+  .option-btn.correct {
+    background: rgba(16,185,129,0.15);
+    border-color: var(--verde);
+    color: var(--verde);
+    animation: pulse-green .4s ease;
+  }
+  .option-btn.wrong {
+    background: rgba(239,68,68,0.15);
+    border-color: var(--rojo);
+    color: var(--rojo);
+    animation: shake .4s ease;
+  }
+
+  @keyframes pulse-green {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* Feedback banner */
+  .feedback-banner {
+    padding: 16px 20px;
+    border-radius: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .3s ease;
+  }
+  .feedback-banner.show { opacity: 1; transform: translateY(0); }
+  .feedback-banner.correct-fb { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); }
+  .feedback-banner.wrong-fb { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); }
+  .fb-icon { font-size: 24px; }
+  .fb-title { font-size: 15px; font-weight: 800; margin-bottom: 2px; }
+  .fb-title.correct-fb { color: var(--verde); }
+  .fb-title.wrong-fb { color: var(--rojo); }
+  .fb-text { font-size: 13px; color: var(--text-soft); }
+
+  .next-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--verde);
+    border: none;
+    border-radius: 16px;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .3s;
+    margin-top: auto;
+  }
+  .next-btn.show { opacity: 1; }
+  .next-btn:hover { background: #059669; }
+
+  /* ════════════════════════════
+     SCREEN 3 — RANKING
+  ════════════════════════════ */
+  .rank-header {
+    background: linear-gradient(160deg, var(--dark2), var(--dark3));
+    padding: 50px 24px 24px;
+    text-align: center;
+  }
+  .rank-title { font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+  .rank-sub { font-size: 13px; color: var(--text-soft); margin-bottom: 20px; }
+
+  .tabs {
+    display: flex;
+    background: var(--dark);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+  }
+  .tab {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-soft);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .tab.active { background: var(--azul); color: white; }
+
+  .podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 20px 24px;
+    background: var(--dark2);
+  }
+  .podium-item { text-align: center; }
+  .podium-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin: 0 auto 6px;
+    border: 3px solid transparent;
+    font-weight: 900;
+    color: var(--dark);
+  }
+  .podium-avatar.gold { background: var(--amarillo); border-color: var(--amarillo); box-shadow: 0 0 20px rgba(245,200,66,0.4); }
+  .podium-avatar.silver { background: #CBD5E1; border-color: #CBD5E1; }
+  .podium-avatar.bronze { background: #CD7C3E; border-color: #CD7C3E; }
+  .podium-name { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .podium-xp { font-size: 10px; color: var(--text-soft); }
+  .podium-block {
+    border-radius: 10px 10px 0 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.3);
+  }
+  .p1 .podium-block { background: linear-gradient(180deg, rgba(245,200,66,0.3), rgba(245,200,66,0.1)); height: 70px; width: 80px; }
+  .p2 .podium-block { background: linear-gradient(180deg, rgba(203,213,225,0.2), rgba(203,213,225,0.05)); height: 50px; width: 70px; }
+  .p3 .podium-block { background: linear-gradient(180deg, rgba(205,124,62,0.2), rgba(205,124,62,0.05)); height: 35px; width: 70px; }
+
+  .rank-list { padding: 0 20px 20px; flex: 1; overflow-y: auto; }
+
+  .rank-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--card);
+    border-radius: 16px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+    transition: background .2s;
+  }
+  .rank-item.me {
+    background: rgba(59,130,246,0.12);
+    border-color: rgba(59,130,246,0.4);
+  }
+  .rank-item:hover { background: var(--card2); }
+  .rank-num { font-size: 15px; font-weight: 900; color: var(--text-soft); width: 24px; text-align: center; }
+  .rank-avatar-sm {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--azul-dark), var(--azul));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+  }
+  .rank-info { flex: 1; }
+  .rank-nick { font-size: 14px; font-weight: 800; }
+  .rank-detail { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+  .rank-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 50px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+  .badge-b1 { background: rgba(59,130,246,0.2); color: var(--azul); }
+  .badge-a2 { background: rgba(16,185,129,0.2); color: var(--verde); }
+  .badge-a1 { background: rgba(245,200,66,0.2); color: var(--amarillo); }
+  .rank-xp { font-size: 13px; font-weight: 800; color: var(--amarillo); }
+
+  .my-position {
+    margin: 12px 20px 20px;
+    padding: 14px 16px;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+  .my-pos-left { display: flex; align-items: center; gap: 8px; }
+  .my-pos-num { font-size: 20px; font-weight: 900; color: var(--azul); }
+
+  /* ════════════════════════════
+     SCREEN 4 — QUIZ NIVEL
+  ════════════════════════════ */
+  .quiz-header {
+    padding: 50px 24px 24px;
+    background: var(--dark2);
+    text-align: center;
+  }
+  .quiz-icon { font-size: 48px; margin-bottom: 12px; }
+  .quiz-title { font-size: 24px; font-weight: 900; margin-bottom: 6px; }
+  .quiz-sub { font-size: 14px; color: var(--text-soft); line-height: 1.5; }
+
+  .quiz-progress {
+    display: flex;
+    gap: 4px;
+    padding: 16px 20px;
+    background: var(--dark2);
+  }
+  .quiz-dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.1);
+    transition: background .3s;
+  }
+  .quiz-dot.done { background: var(--azul); }
+  .quiz-dot.current { background: var(--amarillo); }
+
+  .quiz-body { padding: 24px 20px; flex: 1; display: flex; flex-direction: column; }
+
+  .quiz-q-num { font-size: 12px; color: var(--text-soft); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .quiz-question { font-size: 20px; font-weight: 800; margin-bottom: 24px; line-height: 1.4; }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .quiz-opt {
+    padding: 16px 20px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .quiz-opt-letter {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .quiz-opt:hover { border-color: var(--azul); background: var(--card2); }
+  .quiz-opt.selected {
+    border-color: var(--azul);
+    background: rgba(59,130,246,0.15);
+  }
+  .quiz-opt.selected .quiz-opt-letter { background: var(--azul); color: white; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    display: flex;
+    background: var(--dark2);
+    border-top: 1px solid var(--border);
+    padding: 12px 0 20px;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .nav-icon { font-size: 22px; opacity: 0.4; transition: opacity .2s; }
+  .nav-label { font-size: 10px; color: var(--text-soft); font-weight: 700; }
+  .nav-item.active .nav-icon { opacity: 1; }
+  .nav-item.active .nav-label { color: var(--azul); }
+
+  /* ── DEMO LABEL BADGE ── */
+  .demo-watermark {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(59,130,246,0.9);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* ════════════════════════════
+     SCREEN 5 — FIN DE SESIÓN
+  ════════════════════════════ */
+  .finish-screen {
+    background: var(--dark);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* confetti particles */
+  .confetti-wrap {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    animation: confettiFall linear infinite;
+    opacity: 0;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(820px) rotate(720deg); opacity: 0; }
+  }
+
+  .finish-trophy {
+    font-size: 72px;
+    margin-bottom: 8px;
+    animation: trophyPop .5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes trophyPop {
+    from { transform: scale(0) rotate(-10deg); opacity: 0; }
+    to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+  }
+
+  .finish-title {
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .finish-sub {
+    font-size: 14px;
+    color: var(--text-soft);
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .finish-streak-card {
+    background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(245,200,66,0.05));
+    border: 1px solid rgba(245,200,66,0.35);
+    border-radius: 20px;
+    padding: 18px 24px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    animation: slideUp .4s .2s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .fs-fire { font-size: 40px; }
+  .fs-streak-num { font-size: 32px; font-weight: 900; color: var(--amarillo); line-height: 1; }
+  .fs-streak-lbl { font-size: 12px; color: var(--text-soft); font-weight: 700; }
+  .fs-streak-msg { font-size: 13px; color: var(--amarillo); font-weight: 700; margin-top: 2px; }
+
+  .finish-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+    animation: slideUp .4s .3s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .finish-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 8px;
+    text-align: center;
+  }
+  .finish-stat-icon { font-size: 20px; margin-bottom: 4px; }
+  .finish-stat-val { font-size: 20px; font-weight: 900; }
+  .finish-stat-val.green { color: var(--verde); }
+  .finish-stat-val.blue  { color: var(--azul);  }
+  .finish-stat-val.gold  { color: var(--amarillo); }
+  .finish-stat-lbl { font-size: 10px; color: var(--text-soft); font-weight: 700; }
+
+  .xp-gained {
+    background: linear-gradient(135deg, var(--azul-dark), var(--azul));
+    border-radius: 16px;
+    padding: 14px 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    animation: slideUp .4s .4s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .xp-gained-left { font-size: 14px; font-weight: 700; }
+  .xp-gained-right { font-size: 22px; font-weight: 900; color: var(--amarillo); }
+
+  .finish-friend-row {
+    width: 100%;
+    animation: slideUp .4s .5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .finish-friend-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .friend-mini-list { display: flex; flex-direction: column; gap: 8px; }
+  .friend-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .friend-mini-av {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900;
+    color: var(--dark);
+  }
+  .friend-mini-name { flex: 1; font-size: 13px; font-weight: 700; }
+  .friend-mini-streak { font-size: 12px; color: var(--amarillo); font-weight: 800; }
+  .friend-mini-done { font-size: 11px; }
+
+  .finish-cta {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--azul), var(--azul-dark));
+    border: none;
+    border-radius: 16px;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 16px;
+    box-shadow: 0 8px 25px rgba(59,130,246,0.35);
+    animation: slideUp .4s .6s cubic-bezier(.34,1.56,.64,1) both;
+  }
+
+  /* ════════════════════════════
+     SCREEN 6 — AMIGOS / RACHA
+  ════════════════════════════ */
+  .friends-header {
+    padding: 50px 24px 20px;
+    background: var(--dark2);
+  }
+  .friends-title { font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+  .friends-sub { font-size: 13px; color: var(--text-soft); }
+
+  .streak-summary {
+    margin: 16px 20px 0;
+    background: linear-gradient(135deg, rgba(245,200,66,0.12), rgba(245,200,66,0.04));
+    border: 1px solid rgba(245,200,66,0.3);
+    border-radius: 18px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .ss-fire { font-size: 36px; }
+  .ss-num { font-size: 28px; font-weight: 900; color: var(--amarillo); }
+  .ss-lbl { font-size: 12px; color: var(--text-soft); font-weight: 700; }
+  .ss-alert {
+    margin-left: auto;
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--rojo);
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .weekly-grid {
+    display: flex;
+    gap: 6px;
+    padding: 16px 20px 0;
+    justify-content: center;
+  }
+  .week-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .week-day-lbl { font-size: 10px; color: var(--text-soft); font-weight: 700; }
+  .week-day-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    border: 2px solid var(--border);
+  }
+  .week-day-circle.done { background: rgba(245,200,66,0.15); border-color: var(--amarillo); }
+  .week-day-circle.today { background: var(--azul); border-color: var(--azul); }
+  .week-day-circle.missed { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); font-size: 12px; }
+
+  .friends-section { padding: 20px 20px 0; flex: 1; overflow-y: auto; }
+  .friends-section-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .friend-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .friend-card.active-today { border-color: rgba(16,185,129,0.4); }
+  .friend-card.inactive { opacity: 0.6; }
+
+  .friend-av {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900;
+    color: white;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .friend-av-badge {
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+  .friend-av-badge.green { background: var(--verde); }
+  .friend-av-badge.gray  { background: var(--gray);  }
+
+  .friend-info { flex: 1; }
+  .friend-name { font-size: 14px; font-weight: 800; }
+  .friend-detail { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+
+  .friend-right { text-align: right; }
+  .friend-streak-big { font-size: 18px; font-weight: 900; color: var(--amarillo); }
+  .friend-streak-lbl { font-size: 10px; color: var(--text-soft); }
+
+  .friend-progress-bar {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 3px;
+    border-radius: 0 2px 0 0;
+    background: var(--verde);
+    opacity: 0.4;
+  }
+
+  .challenge-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: rgba(59,130,246,0.08);
+    border: 1px dashed rgba(59,130,246,0.3);
+    border-radius: 16px;
+    color: var(--azul);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-label">Vista Previa — INTEP Inglés</div>
+
+<div class="demo-nav">
+  <button class="demo-btn active" onclick="showScreen('home', this)">🏠 Mi Inglés</button>
+  <button class="demo-btn" onclick="showScreen('ejercicio', this)">✏️ Ejercicio</button>
+  <button class="demo-btn" onclick="showScreen('ranking', this)">🏆 Ranking</button>
+  <button class="demo-btn" onclick="showScreen('quiz', this)">🎯 Quiz Nivel</button>
+  <button class="demo-btn" onclick="showScreen('finish', this)">🎉 Fin Sesión</button>
+  <button class="demo-btn" onclick="showScreen('amigos', this)">🔥 Amigos</button>
+</div>
+
+<div class="phone">
+
+  <!-- ══════════════ SCREEN HOME ══════════════ -->
+  <div class="screen active" id="screen-home">
+    <div class="home-header">
+      <div class="home-top">
+        <div>
+          <div class="home-greeting">Bienvenido de vuelta</div>
+          <div class="home-name">CarlosRocks 👋</div>
+        </div>
+        <div class="streak-badge">🔥 12</div>
+      </div>
+      <div class="level-card">
+        <div class="level-tag">📚 Nivel actual</div>
+        <div class="level-xp">640 XP</div>
+        <div class="level-sub">A2 Elemental → próximo: B1 Intermedio (en 360 XP)</div>
+        <div class="xp-bar-bg"><div class="xp-bar-fill"></div></div>
+        <div class="xp-labels"><span>A2</span><span>640/1000</span><span>B1</span></div>
+      </div>
+    </div>
+
+    <div class="home-body">
+      <div class="section-title">Esta semana</div>
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-icon">✅</div>
+          <div class="stat-num">47</div>
+          <div class="stat-lbl">Ejercicios</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-num">84%</div>
+          <div class="stat-lbl">Precisión</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-num">2.4h</div>
+          <div class="stat-lbl">Tiempo</div>
+        </div>
+      </div>
+
+      <div class="section-title">Practicar</div>
+      <button class="practice-btn" onclick="showScreen('ejercicio', document.querySelectorAll('.demo-btn')[1])">
+        ⚡ Iniciar práctica de hoy
+      </button>
+      <button class="ranking-btn" onclick="showScreen('ranking', document.querySelectorAll('.demo-btn')[2])">
+        <div class="ranking-btn-left">🏆 Ver ranking</div>
+        <div><span class="rank-pos">#4</span> Tu posición →</div>
+      </button>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-label">Inicio</div></div>
+      <div class="nav-item" onclick="showScreen('ejercicio', document.querySelectorAll('.demo-btn')[1])"><div class="nav-icon">✏️</div><div class="nav-label">Practicar</div></div>
+      <div class="nav-item" onclick="showScreen('ranking', document.querySelectorAll('.demo-btn')[2])"><div class="nav-icon">🏆</div><div class="nav-label">Ranking</div></div>
+      <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Perfil</div></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SCREEN EJERCICIO ══════════════ -->
+  <div class="screen" id="screen-ejercicio">
+    <div class="ex-header">
+      <div class="ex-top">
+        <div class="hearts">
+          <span class="heart">❤️</span>
+          <span class="heart">❤️</span>
+          <span class="heart">❤️</span>
+          <span class="heart lost">❤️</span>
+          <span class="heart lost">❤️</span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="ex-progress"></div></div>
+        <div class="ex-counter" id="ex-counter">7/15</div>
+      </div>
+      <div class="ex-type-badge">✍️ Completa la frase</div>
+    </div>
+
+    <div class="ex-body">
+      <div class="ex-instruction">Selecciona la opción correcta</div>
+      <div class="ex-sentence">She <span class="ex-blank" id="blank-word">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> to school every day.</div>
+      <div class="ex-translation">Ella va a la escuela todos los días.</div>
+
+      <div class="options-grid" id="options-grid">
+        <button class="option-btn" onclick="checkAnswer(this, false)">go</button>
+        <button class="option-btn" onclick="checkAnswer(this, true)">goes</button>
+        <button class="option-btn" onclick="checkAnswer(this, false)">went</button>
+        <button class="option-btn" onclick="checkAnswer(this, false)">going</button>
+      </div>
+
+      <div class="feedback-banner" id="feedback-banner">
+        <div class="fb-icon" id="fb-icon"></div>
+        <div>
+          <div class="fb-title" id="fb-title"></div>
+          <div class="fb-text" id="fb-text"></div>
+        </div>
+      </div>
+
+      <button class="next-btn" id="next-btn" onclick="nextExercise()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ SCREEN RANKING ══════════════ -->
+  <div class="screen" id="screen-ranking">
+    <div class="rank-header">
+      <div class="rank-title">🏆 Ranking INTEP</div>
+      <div class="rank-sub">¡Sube de nivel y escala posiciones!</div>
+      <div class="tabs">
+        <button class="tab active">Esta semana</button>
+        <button class="tab" onclick="this.parentNode.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); this.classList.add('active')">Este mes</button>
+        <button class="tab" onclick="this.parentNode.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); this.classList.add('active')">Total</button>
+      </div>
+    </div>
+
+    <!-- Podio top 3 -->
+    <div class="podium">
+      <div class="podium-item p2">
+        <div class="podium-avatar silver">M</div>
+        <div class="podium-name">MariaIngles</div>
+        <div class="podium-xp">340 XP</div>
+        <div class="podium-block">2</div>
+      </div>
+      <div class="podium-item p1">
+        <div class="podium-avatar gold">S</div>
+        <div class="podium-name">SofiaStar</div>
+        <div class="podium-xp">410 XP</div>
+        <div class="podium-block">1</div>
+      </div>
+      <div class="podium-item p3">
+        <div class="podium-avatar bronze">J</div>
+        <div class="podium-name">JuanProEng</div>
+        <div class="podium-xp">290 XP</div>
+        <div class="podium-block">3</div>
+      </div>
+    </div>
+
+    <!-- Tu posición destacada -->
+    <div class="my-position">
+      <div class="my-pos-left">
+        <div class="my-pos-num">#4</div>
+        <div>
+          <div style="font-weight:800;color:var(--azul);font-size:14px;">CarlosRocks — Tú</div>
+          <div style="font-size:11px;color:var(--text-soft);">A2 · 280 XP esta semana</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text-soft);">A 10 XP de<br>subir al #3</div>
+    </div>
+
+    <!-- Lista 4-8 -->
+    <div class="rank-list">
+      <div class="rank-item me">
+        <div class="rank-num">4</div>
+        <div class="rank-avatar-sm">C</div>
+        <div class="rank-info">
+          <div class="rank-nick">CarlosRocks <span style="font-size:11px">← Tú</span></div>
+          <div class="rank-detail">🔥 12 días · 47 ejercicios <span class="rank-badge badge-a2">A2</span></div>
+        </div>
+        <div class="rank-xp">280 XP</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num">5</div>
+        <div class="rank-avatar-sm">A</div>
+        <div class="rank-info">
+          <div class="rank-nick">AndresVocab</div>
+          <div class="rank-detail">🔥 5 días · 31 ejercicios <span class="rank-badge badge-a2">A2</span></div>
+        </div>
+        <div class="rank-xp">210 XP</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num">6</div>
+        <div class="rank-avatar-sm">L</div>
+        <div class="rank-info">
+          <div class="rank-nick">LuciaGrammar</div>
+          <div class="rank-detail">🔥 3 días · 22 ejercicios <span class="rank-badge badge-a1">A1</span></div>
+        </div>
+        <div class="rank-xp">165 XP</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num">7</div>
+        <div class="rank-avatar-sm">D</div>
+        <div class="rank-info">
+          <div class="rank-nick">DiegoEnglish</div>
+          <div class="rank-detail">🔥 1 día · 15 ejercicios <span class="rank-badge badge-a1">A1</span></div>
+        </div>
+        <div class="rank-xp">98 XP</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SCREEN QUIZ NIVEL ══════════════ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-header">
+      <div class="quiz-icon">🎯</div>
+      <div class="quiz-title">Test de Nivel</div>
+      <div class="quiz-sub">Responde honestamente.<br>La IA detectará tu nivel A1 → B2.</div>
+    </div>
+
+    <div class="quiz-progress">
+      <div class="quiz-dot done"></div>
+      <div class="quiz-dot done"></div>
+      <div class="quiz-dot done"></div>
+      <div class="quiz-dot current"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+      <div class="quiz-dot"></div>
+    </div>
+
+    <div class="quiz-body">
+      <div class="quiz-q-num">Pregunta 4 de 15</div>
+      <div class="quiz-question">Which sentence is grammatically correct?</div>
+
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="selectQuizOpt(this)">
+          <div class="quiz-opt-letter">A</div>
+          She don't likes coffee in the morning.
+        </button>
+        <button class="quiz-opt selected" onclick="selectQuizOpt(this)">
+          <div class="quiz-opt-letter">B</div>
+          She doesn't like coffee in the morning.
+        </button>
+        <button class="quiz-opt" onclick="selectQuizOpt(this)">
+          <div class="quiz-opt-letter">C</div>
+          She not like coffee in the morning.
+        </button>
+        <button class="quiz-opt" onclick="selectQuizOpt(this)">
+          <div class="quiz-opt-letter">D</div>
+          She isn't like coffee in the morning.
+        </button>
+      </div>
+
+      <button class="practice-btn" style="margin-top:20px" onclick="nextQuizQ()">
+        Siguiente →
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════ SCREEN FINISH — FIN DE SESIÓN ══════════════ -->
+  <div class="screen" id="screen-finish">
+    <div class="finish-screen">
+      <!-- Confetti -->
+      <div class="confetti-wrap" id="confetti-wrap"></div>
+
+      <div class="finish-trophy">🏆</div>
+      <div class="finish-title">¡Sesión completada!</div>
+      <div class="finish-sub">Racha de hoy guardada — ¡sigue así!</div>
+
+      <!-- Racha destacada -->
+      <div class="finish-streak-card">
+        <div class="fs-fire">🔥</div>
+        <div>
+          <div class="fs-streak-num">13</div>
+          <div class="fs-streak-lbl">días seguidos</div>
+          <div class="fs-streak-msg">¡Tu mejor racha hasta ahora!</div>
+        </div>
+      </div>
+
+      <!-- Stats de la sesión -->
+      <div class="finish-stats">
+        <div class="finish-stat">
+          <div class="finish-stat-icon">✅</div>
+          <div class="finish-stat-val green">13/15</div>
+          <div class="finish-stat-lbl">Correctas</div>
+        </div>
+        <div class="finish-stat">
+          <div class="finish-stat-icon">⚡</div>
+          <div class="finish-stat-val blue">87%</div>
+          <div class="finish-stat-lbl">Precisión</div>
+        </div>
+        <div class="finish-stat">
+          <div class="finish-stat-icon">⏱️</div>
+          <div class="finish-stat-val gold">8 min</div>
+          <div class="finish-stat-lbl">Tiempo</div>
+        </div>
+      </div>
+
+      <!-- XP ganado -->
+      <div class="xp-gained">
+        <div class="xp-gained-left">⭐ XP ganados hoy</div>
+        <div class="xp-gained-right">+130 XP</div>
+      </div>
+
+      <!-- Amigos hoy -->
+      <div class="finish-friend-row">
+        <div class="finish-friend-title">Racha de tus compañeros hoy</div>
+        <div class="friend-mini-list">
+          <div class="friend-mini">
+            <div class="friend-mini-av" style="background:var(--amarillo)">S</div>
+            <div class="friend-mini-name">SofiaStar</div>
+            <div class="friend-mini-streak">🔥 20</div>
+            <div class="friend-mini-done">✅</div>
+          </div>
+          <div class="friend-mini">
+            <div class="friend-mini-av" style="background:var(--azul)">M</div>
+            <div class="friend-mini-name">MariaIngles</div>
+            <div class="friend-mini-streak">🔥 15</div>
+            <div class="friend-mini-done">✅</div>
+          </div>
+          <div class="friend-mini">
+            <div class="friend-mini-av" style="background:var(--gray)">A</div>
+            <div class="friend-mini-name">AndresVocab</div>
+            <div class="friend-mini-streak" style="color:var(--text-soft)">🔥 5</div>
+            <div class="friend-mini-done" style="opacity:.4">⏳</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="finish-cta" onclick="showScreen('home', document.querySelectorAll('.demo-btn')[0])">
+        Volver al inicio →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════ SCREEN AMIGOS — RACHA SOCIAL ══════════════ -->
+  <div class="screen" id="screen-amigos">
+    <div class="friends-header">
+      <div class="friends-title">🔥 Rachas y Amigos</div>
+      <div class="friends-sub">Ve quién practica hoy en INTEP</div>
+    </div>
+
+    <!-- Mi racha -->
+    <div class="streak-summary">
+      <div class="ss-fire">🔥</div>
+      <div>
+        <div class="ss-num">13</div>
+        <div class="ss-lbl">días seguidos — CarlosRocks</div>
+      </div>
+      <div class="ss-alert">Practica hoy<br>antes de las 11pm</div>
+    </div>
+
+    <!-- Días de la semana -->
+    <div class="weekly-grid">
+      <div class="week-day"><div class="week-day-lbl">Lun</div><div class="week-day-circle done">🔥</div></div>
+      <div class="week-day"><div class="week-day-lbl">Mar</div><div class="week-day-circle done">🔥</div></div>
+      <div class="week-day"><div class="week-day-lbl">Mié</div><div class="week-day-circle done">🔥</div></div>
+      <div class="week-day"><div class="week-day-lbl">Jue</div><div class="week-day-circle done">🔥</div></div>
+      <div class="week-day"><div class="week-day-lbl">Vie</div><div class="week-day-circle done">🔥</div></div>
+      <div class="week-day"><div class="week-day-lbl">Sáb</div><div class="week-day-circle missed">✗</div></div>
+      <div class="week-day"><div class="week-day-lbl">Hoy</div><div class="week-day-circle today">⚡</div></div>
+    </div>
+
+    <!-- Lista de compañeros -->
+    <div class="friends-section">
+      <div class="friends-section-title">Compañeros activos hoy</div>
+
+      <div class="friend-card active-today">
+        <div class="friend-av" style="background:linear-gradient(135deg,#F59E0B,#D97706)">
+          S
+          <div class="friend-av-badge green">✓</div>
+        </div>
+        <div class="friend-info">
+          <div class="friend-name">SofiaStar</div>
+          <div class="friend-detail">B1 · Practicó hace 2 horas · 15 ejercicios hoy</div>
+        </div>
+        <div class="friend-right">
+          <div class="friend-streak-big">🔥20</div>
+          <div class="friend-streak-lbl">días</div>
+        </div>
+        <div class="friend-progress-bar" style="width:100%"></div>
+      </div>
+
+      <div class="friend-card active-today">
+        <div class="friend-av" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8)">
+          M
+          <div class="friend-av-badge green">✓</div>
+        </div>
+        <div class="friend-info">
+          <div class="friend-name">MariaIngles</div>
+          <div class="friend-detail">B1 · Practicó hace 5 horas · 10 ejercicios hoy</div>
+        </div>
+        <div class="friend-right">
+          <div class="friend-streak-big">🔥15</div>
+          <div class="friend-streak-lbl">días</div>
+        </div>
+        <div class="friend-progress-bar" style="width:70%"></div>
+      </div>
+
+      <div class="friend-card active-today">
+        <div class="friend-av" style="background:linear-gradient(135deg,#10B981,#047857)">
+          J
+          <div class="friend-av-badge green">✓</div>
+        </div>
+        <div class="friend-info">
+          <div class="friend-name">JuanProEng</div>
+          <div class="friend-detail">A2 · Practicó hace 1 hora · 8 ejercicios hoy</div>
+        </div>
+        <div class="friend-right">
+          <div class="friend-streak-big">🔥9</div>
+          <div class="friend-streak-lbl">días</div>
+        </div>
+        <div class="friend-progress-bar" style="width:55%"></div>
+      </div>
+
+      <div class="friends-section-title" style="margin-top:16px">Aún no practicaron hoy</div>
+
+      <div class="friend-card inactive">
+        <div class="friend-av" style="background:linear-gradient(135deg,#6B7280,#374151)">
+          A
+          <div class="friend-av-badge gray">–</div>
+        </div>
+        <div class="friend-info">
+          <div class="friend-name">AndresVocab</div>
+          <div class="friend-detail">A2 · Última vez: ayer · Racha en riesgo ⚠️</div>
+        </div>
+        <div class="friend-right">
+          <div class="friend-streak-big" style="color:var(--text-soft)">🔥5</div>
+          <div class="friend-streak-lbl">días</div>
+        </div>
+      </div>
+
+      <div class="friend-card inactive">
+        <div class="friend-av" style="background:linear-gradient(135deg,#6B7280,#374151)">
+          L
+          <div class="friend-av-badge gray">–</div>
+        </div>
+        <div class="friend-info">
+          <div class="friend-name">LuciaGrammar</div>
+          <div class="friend-detail">A1 · Última vez: hace 2 días · Racha perdida</div>
+        </div>
+        <div class="friend-right">
+          <div class="friend-streak-big" style="color:var(--rojo)">💔0</div>
+          <div class="friend-streak-lbl">días</div>
+        </div>
+      </div>
+
+      <button class="challenge-btn">
+        <span>⚡ Retar a un compañero</span>
+        <span style="font-size:18px">→</span>
+      </button>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="showScreen('home', document.querySelectorAll('.demo-btn')[0])"><div class="nav-icon">🏠</div><div class="nav-label">Inicio</div></div>
+      <div class="nav-item" onclick="showScreen('ejercicio', document.querySelectorAll('.demo-btn')[1])"><div class="nav-icon">✏️</div><div class="nav-label">Practicar</div></div>
+      <div class="nav-item" onclick="showScreen('ranking', document.querySelectorAll('.demo-btn')[2])"><div class="nav-icon">🏆</div><div class="nav-label">Ranking</div></div>
+      <div class="nav-item active"><div class="nav-icon">🔥</div><div class="nav-label">Amigos</div></div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<div class="demo-watermark">INTEP Inglés — Prototipo</div>
+
+<script>
+  function showScreen(name, btn) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    if (name === 'finish') spawnConfetti();
+  }
+
+  function spawnConfetti() {
+    const wrap = document.getElementById('confetti-wrap');
+    wrap.innerHTML = '';
+    const colors = ['#F5C842','#3B82F6','#10B981','#EF4444','#D946A8','#ffffff'];
+    for (let i = 0; i < 60; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random() * 100 + '%';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width = (Math.random() * 8 + 5) + 'px';
+      el.style.height = (Math.random() * 8 + 5) + 'px';
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.animationDuration = (Math.random() * 2.5 + 1.5) + 's';
+      el.style.animationDelay = (Math.random() * 1.5) + 's';
+      wrap.appendChild(el);
+    }
+  }
+
+  let answered = false;
+  function checkAnswer(btn, isCorrect) {
+    if (answered) return;
+    answered = true;
+
+    const grid = document.getElementById('options-grid');
+    grid.querySelectorAll('.option-btn').forEach(b => b.style.pointerEvents = 'none');
+
+    const banner = document.getElementById('feedback-banner');
+    const fbIcon = document.getElementById('fb-icon');
+    const fbTitle = document.getElementById('fb-title');
+    const fbText = document.getElementById('fb-text');
+    const nextBtn = document.getElementById('next-btn');
+    const blank = document.getElementById('blank-word');
+
+    if (isCorrect) {
+      btn.classList.add('correct');
+      blank.textContent = 'goes';
+      blank.style.color = 'var(--verde)';
+      blank.style.borderColor = 'var(--verde)';
+      banner.className = 'feedback-banner correct-fb show';
+      fbIcon.textContent = '🎉';
+      fbTitle.className = 'fb-title correct-fb';
+      fbTitle.textContent = '¡Correcto! +10 XP';
+      fbText.textContent = 'Con she/he/it usamos "goes" (3ª persona singular).';
+    } else {
+      btn.classList.add('wrong');
+      banner.className = 'feedback-banner wrong-fb show';
+      fbIcon.textContent = '💡';
+      fbTitle.className = 'fb-title wrong-fb';
+      fbTitle.textContent = 'Casi. La respuesta es "goes"';
+      fbText.textContent = 'Con she/he/it el verbo en presente simple lleva -s/-es.';
+    }
+
+    nextBtn.classList.add('show');
+  }
+
+  function nextExercise() {
+    answered = false;
+    const grid = document.getElementById('options-grid');
+    grid.querySelectorAll('.option-btn').forEach(b => {
+      b.classList.remove('correct','wrong');
+      b.style.pointerEvents = '';
+    });
+    document.getElementById('feedback-banner').className = 'feedback-banner';
+    document.getElementById('next-btn').classList.remove('show');
+    document.getElementById('blank-word').innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    document.getElementById('blank-word').style.color = '';
+    document.getElementById('blank-word').style.borderColor = '';
+
+    // Simulate progress
+    const fill = document.getElementById('ex-progress');
+    const counter = document.getElementById('ex-counter');
+    let cur = parseInt(counter.textContent.split('/')[0]) + 1;
+    counter.textContent = cur + '/15';
+    fill.style.width = (cur/15*100) + '%';
+  }
+
+  function selectQuizOpt(btn) {
+    document.querySelectorAll('.quiz-opt').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    btn.querySelector('.quiz-opt-letter').style.background = 'var(--azul)';
+    btn.querySelector('.quiz-opt-letter').style.color = 'white';
+  }
+
+  function nextQuizQ() {
+    const dots = document.querySelectorAll('.quiz-dot');
+    let currentIdx = -1;
+    dots.forEach((d, i) => { if (d.classList.contains('current')) currentIdx = i; });
+    if (currentIdx >= 0 && currentIdx < dots.length - 1) {
+      dots[currentIdx].classList.remove('current');
+      dots[currentIdx].classList.add('done');
+      dots[currentIdx + 1].classList.add('current');
+      const qNum = document.querySelector('.quiz-q-num');
+      qNum.textContent = 'Pregunta ' + (currentIdx + 2) + ' de 15';
+    }
+    document.querySelectorAll('.quiz-opt').forEach(b => {
+      b.classList.remove('selected');
+      b.querySelector('.quiz-opt-letter').style.background = '';
+      b.querySelector('.quiz-opt-letter').style.color = '';
+    });
+  }
+</script>
+</body>
+</html>
