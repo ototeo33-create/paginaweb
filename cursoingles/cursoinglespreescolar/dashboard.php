@@ -29,6 +29,10 @@ if (!$es_pi) {
     header('Location: /intep/dashboard.php'); exit;
 }
 
+// Asegurar que la columna examen_aprobado exista (auto-migración)
+mysqli_query($conexion,
+    "ALTER TABLE ingles_cursos_progreso ADD COLUMN IF NOT EXISTS examen_aprobado TINYINT(1) NOT NULL DEFAULT 0");
+
 // Progreso de módulos kids
 $progreso = [];
 $examenes = [];
@@ -42,7 +46,7 @@ if ($st2) {
         $modulo = (int)$r['modulo_num'];
         if ($modulo >= 1 && $modulo <= 4) {
             $progreso[$modulo] = (bool)$r['completado'];
-            $examenes[$modulo] = isset($r['examen_aprobado']) ? (bool)$r['examen_aprobado'] : false;
+            $examenes[$modulo] = (bool)$r['examen_aprobado'];
         }
     }
 }

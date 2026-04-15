@@ -70,13 +70,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $body = json_decode(file_get_contents('php://input'), true) ?? [];
 
-    $nivel      = $body['nivel']      ?? '';
-    $modulo_num = (int)($body['modulo_num'] ?? 0);
-    $porcentaje = min(100, max(0, (int)($body['porcentaje'] ?? 0)));
-    $completado = !empty($body['completado']) ? 1 : 0;
-    $xp_ganado  = max(0, (int)($body['xp_ganado'] ?? 0));
+    $nivel           = $body['nivel']      ?? '';
+    $modulo_num      = (int)($body['modulo_num'] ?? $body['num'] ?? 0);
+    $porcentaje      = min(100, max(0, (int)($body['porcentaje'] ?? 0)));
+    $completado      = !empty($body['completado']) ? 1 : 0;
+    $xp_ganado       = max(0, (int)($body['xp_ganado'] ?? 0));
+    $examen_aprobado = !empty($body['aprobado']) ? 1 : 0;
 
-    if (!in_array($nivel, ['A1','A2','B1','kids']) || $modulo_num < 1 || $modulo_num > 8) {
+    // modulo_num válido: 1-8 cursos normales, 99 examen final kids
+    $valido_num = ($modulo_num >= 1 && $modulo_num <= 8) || $modulo_num === 99;
+    if (!in_array($nivel, ['A1','A2','B1','kids']) || !$valido_num) {
         http_response_code(400);
         echo json_encode(['ok' => false, 'error' => 'Datos inválidos']);
         exit;
@@ -84,19 +87,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $fecha = $completado ? date('Y-m-d H:i:s') : null;
 
+    // Auto-crear columna si no existe (primera vez en servidor nuevo)
+    mysqli_query($conexion,
+        "ALTER TABLE ingles_cursos_progreso ADD COLUMN IF NOT EXISTS examen_aprobado TINYINT(1) NOT NULL DEFAULT 0");
+
     // UPSERT progreso del módulo
     $st = mysqli_prepare($conexion,
         "INSERT INTO ingles_cursos_progreso
-            (estudiante_id, nivel, modulo_num, porcentaje, completado, xp_ganado, fecha_completado)
-         VALUES (?, ?, ?, ?, ?, ?, ?)
+            (estudiante_id, nivel, modulo_num, porcentaje, completado, xp_ganado, examen_aprobado, fecha_completado)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
             porcentaje       = GREATEST(porcentaje, VALUES(porcentaje)),
             completado       = GREATEST(completado, VALUES(completado)),
             xp_ganado        = GREATEST(xp_ganado, VALUES(xp_ganado)),
+            examen_aprobado  = GREATEST(examen_aprobado, VALUES(examen_aprobado)),
             fecha_completado = IF(VALUES(completado)=1 AND fecha_completado IS NULL, VALUES(fecha_completado), fecha_completado)");
 
-    mysqli_stmt_bind_param($st, 'isiiiss',
-        $est_id, $nivel, $modulo_num, $porcentaje, $completado, $xp_ganado, $fecha);
+    mysqli_stmt_bind_param($st, 'isiiiiss',
+        $est_id, $nivel, $modulo_num, $porcentaje, $completado, $xp_ganado, $examen_aprobado, $fecha);
     $ok = mysqli_stmt_execute($st);
 
     if (!$ok) {
