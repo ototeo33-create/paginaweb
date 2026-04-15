@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Examen Final - INTEP Kids 📜</title>
+    <title>Examen Final - INTEP Kids 🎓</title>
     <script>window.__CURSO={nivel:'kids',examen:'final'};</script>
     <script>
     var urlParams = new URLSearchParams(window.location.search);
@@ -20,176 +20,288 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root{--primary:#FF5A5F;--secondary:#08C2A8;--accent:#FFD166;--bg-color:#F8FDFF;--text-dark:#2D3142;--text-light:#4F5D75;--white:#FFFFFF;}
+        :root{--primary:#FF5A5F;--secondary:#08C2A8;--accent:#FFD166;--bg-color:#F8FDFF;--text-dark:#2D3142;--text-light:#4F5D75;}
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family:'Nunito',sans-serif;background:var(--bg-color);color:var(--text-dark);}
         h1,h2,h3,h4{font-family:'Fredoka',sans-serif;}
-        .exam-container{max-width:800px;margin:0 auto;padding:2rem 5%;}
-        .exam-header{background:linear-gradient(135deg,#fff9e6,#f0e6ff);border-radius:30px;padding:2.5rem;text-align:center;border:4px solid #7c3aed;margin-bottom:2rem;box-shadow:0 10px 30px rgba(124,58,237,0.2);}
+
+        /* ---- Header ---- */
+        .exam-container{max-width:820px;margin:0 auto;padding:2rem 5% 4rem;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:white;border:2px solid #7c3aed;color:#7c3aed;padding:10px 20px;border-radius:30px;font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;margin:20px 0;transition:all 0.3s;}
+        .back-btn:hover{background:#7c3aed;color:white;}
+
+        .exam-header{background:linear-gradient(135deg,#fff9e6,#f3e8ff);border-radius:30px;padding:2.5rem;text-align:center;border:4px solid #7c3aed;margin-bottom:2rem;box-shadow:0 10px 30px rgba(124,58,237,0.2);}
+        .exam-header-animals{font-size:2.5rem;letter-spacing:8px;margin-bottom:1rem;}
         .exam-header h1{font-size:2.2rem;color:var(--text-dark);margin-bottom:10px;}
-        .exam-header p{color:var(--text-light);font-size:1.15rem;}
-        .exam-header .modules{font-size:1rem;margin-top:10px;color:#7c3aed;font-weight:600;}
-        .module-separator{background:linear-gradient(90deg,#FF5A5F,#08C2A8,#a855f7,#f59e0b);height:6px;border-radius:3px;margin-bottom:20px;}
-        .question-card{background:white;border-radius:20px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 5px 15px rgba(0,0,0,0.05);border-left:5px solid #ccc;}
+        .exam-header p{color:var(--text-light);font-size:1.1rem;}
+        .exam-modules{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:15px;}
+        .exam-mod-badge{padding:6px 18px;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:0.95rem;font-weight:700;}
+
+        .module-separator{background:linear-gradient(90deg,#FF5A5F,#08C2A8,#a855f7,#f59e0b);height:6px;border-radius:3px;margin-bottom:25px;}
+
+        /* ---- Questions ---- */
+        .question-card{background:white;border-radius:20px;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 5px 15px rgba(0,0,0,0.06);border-left:5px solid #ccc;}
         .question-card.mod1{border-left-color:#FF5A5F;}
         .question-card.mod2{border-left-color:#08C2A8;}
         .question-card.mod3{border-left-color:#a855f7;}
         .question-card.mod4{border-left-color:#f59e0b;}
-        .q-number{color:white;padding:5px 15px;border-radius:15px;font-size:0.85rem;font-weight:700;display:inline-block;margin-bottom:15px;}
+        .q-number{color:white;padding:5px 14px;border-radius:15px;font-size:0.85rem;font-weight:700;display:inline-block;margin-bottom:12px;}
         .mod1 .q-number{background:#FF5A5F;}
         .mod2 .q-number{background:#08C2A8;}
         .mod3 .q-number{background:#a855f7;}
         .mod4 .q-number{background:#f59e0b;}
         .q-text{font-family:'Fredoka',sans-serif;font-size:1.25rem;margin-bottom:1rem;}
-        .q-image{font-size:2.5rem;text-align:center;margin:12px 0;}
+        .q-image{font-size:2.8rem;text-align:center;margin:12px 0;}
         .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
         @media(max-width:500px){.options-grid{grid-template-columns:1fr;}}
-        .option-btn{padding:15px;border-radius:15px;border:3px solid #e5e7eb;background:white;font-family:'Fredoka',sans-serif;font-size:1rem;cursor:pointer;transition:all 0.2s;text-align:center;}
+        .option-btn{padding:14px;border-radius:15px;border:3px solid #e5e7eb;background:white;font-family:'Fredoka',sans-serif;font-size:1rem;cursor:pointer;transition:all 0.2s;text-align:center;}
         .option-btn:hover{border-color:#7c3aed;background:#f5f3ff;}
         .option-btn.selected{border-color:#7c3aed;background:#f5f3ff;}
-        .btn-submit{display:block;width:100%;padding:20px;margin-top:2rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:1.5rem;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(124,58,237,0.4);}
+
+        .btn-submit{display:block;width:100%;padding:20px;margin-top:2.5rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:1.5rem;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(124,58,237,0.4);transition:all 0.3s;}
         .btn-submit:hover{transform:translateY(-3px);}
-        .result-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(45,49,66,0.95);z-index:1000;justify-content:center;align-items:center;}
-        .result-box{background:white;border-radius:30px;padding:3rem;text-align:center;max-width:450px;width:90%;animation:popIn 0.5s;}
-        @keyframes popIn{from{transform:scale(0.8);opacity:0;}to{transform:scale(1);opacity:1;}}
-        .result-icon{font-size:6rem;}
-        .result-title{font-family:'Fredoka',sans-serif;font-size:2.2rem;margin:15px 0;}
-        .result-score{font-size:1.3rem;color:var(--text-light);margin-bottom:25px;}
-        .result-details{background:#f5f3ff;border-radius:15px;padding:15px;margin-bottom:20px;font-size:0.95rem;}
-        .result-details div{margin:8px 0;display:flex;justify-content:space-between;}
-        .btn-retry{width:100%;padding:15px;border-radius:15px;border:3px solid var(--primary);background:white;color:var(--primary);font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;margin-bottom:10px;}
-        .btn-retry:hover{background:var(--primary);color:white;}
-        .btn-cert{width:100%;padding:15px;border-radius:15px;border:none;background:linear-gradient(135deg,#FFD166,#fbbf24);color:var(--text-dark);font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;}
-        .btn-cert:hover{background:linear-gradient(135deg,#fbbf24,#f59e0b);}
+
+        /* ---- MODAL BASE ---- */
+        .result-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;justify-content:center;align-items:center;padding:20px;}
+        .result-overlay.show{display:flex;}
+
+        /* ====== MODAL APROBADO ====== */
+        .modal-pass-bg{background:radial-gradient(ellipse at top,#1a0533 0%,#0d0d2b 60%,#001a0d 100%);width:100%;height:100%;position:absolute;top:0;left:0;}
+        .modal-pass-box{position:relative;z-index:2;background:linear-gradient(145deg,#ffffff,#f3e8ff);border-radius:35px;padding:2.5rem 2rem;text-align:center;max-width:460px;width:100%;border:4px solid #7c3aed;box-shadow:0 20px 60px rgba(124,58,237,0.5);animation:popIn 0.6s cubic-bezier(0.175,0.885,0.32,1.275) forwards;transform:scale(0.7);}
+        @keyframes popIn{to{transform:scale(1);opacity:1;}}
+
+        .pass-stars{font-size:1.8rem;letter-spacing:4px;margin-bottom:0.5rem;animation:starSpin 2s linear infinite;}
+        @keyframes starSpin{0%{filter:hue-rotate(0deg);}100%{filter:hue-rotate(360deg);}}
+        .pass-animals-row{font-size:2.8rem;letter-spacing:6px;margin:0.8rem 0;animation:animalBounce 0.8s ease-in-out infinite alternate;}
+        @keyframes animalBounce{from{transform:translateY(0) scale(1);}to{transform:translateY(-10px) scale(1.05);}}
+        .pass-title{font-family:'Fredoka',sans-serif;font-size:2.6rem;color:#5b21b6;margin:0.5rem 0 0.3rem;text-shadow:0 2px 8px rgba(124,58,237,0.3);}
+        .pass-subtitle{font-family:'Fredoka',sans-serif;font-size:1.3rem;color:#7c3aed;margin-bottom:0.8rem;}
+        .pass-score-box{background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-radius:20px;padding:12px 30px;display:inline-block;font-family:'Fredoka',sans-serif;font-size:1.6rem;font-weight:700;margin:0.8rem 0;box-shadow:0 5px 15px rgba(124,58,237,0.4);}
+        .pass-modules{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0.8rem 0;}
+        .pass-mod{background:white;border:2px solid #a855f7;border-radius:12px;padding:5px 12px;font-family:'Fredoka',sans-serif;font-size:0.9rem;color:#7c3aed;}
+        .pass-message{color:var(--text-light);font-size:1rem;line-height:1.6;margin:0.8rem 0;}
+        .btn-cert{display:block;width:100%;padding:16px;border-radius:18px;border:none;background:linear-gradient(135deg,#FFD166,#fbbf24);color:#1a0533;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(251,191,36,0.5);transition:all 0.3s;text-decoration:none;margin-top:1rem;}
+        .btn-cert:hover{transform:translateY(-3px);}
+        .btn-dashboard-pass{display:block;width:100%;padding:14px;border-radius:18px;border:3px solid #7c3aed;background:white;color:#7c3aed;font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;margin-top:10px;transition:all 0.2s;text-decoration:none;}
+        .btn-dashboard-pass:hover{background:#7c3aed;color:white;}
+
+        /* ====== MODAL REPROBADO ====== */
+        .modal-fail-bg{background:linear-gradient(135deg,#fff5f5,#ffe4e6);width:100%;height:100%;position:absolute;top:0;left:0;}
+        .modal-fail-box{position:relative;z-index:2;background:white;border-radius:35px;padding:2.5rem 2rem;text-align:center;max-width:460px;width:100%;border:4px solid #FF5A5F;box-shadow:0 20px 50px rgba(255,90,95,0.25);animation:popIn 0.6s cubic-bezier(0.175,0.885,0.32,1.275) forwards;transform:scale(0.7);}
+        .fail-animals-row{font-size:2.2rem;letter-spacing:4px;margin:0.5rem 0;}
+        .fail-title{font-family:'Fredoka',sans-serif;font-size:2.4rem;color:#FF5A5F;margin:0.8rem 0 0.3rem;}
+        .fail-score-box{background:linear-gradient(135deg,#FF5A5F,#ff8a8e);color:white;border-radius:20px;padding:12px 30px;display:inline-block;font-family:'Fredoka',sans-serif;font-size:1.6rem;font-weight:700;margin:0.8rem 0;}
+        .fail-speech-bubbles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:1rem 0;}
+        .speech-bubble{background:#fff5f5;border:2px solid #fecdd3;border-radius:15px;padding:10px;font-family:'Fredoka',sans-serif;font-size:0.95rem;color:#9f1239;position:relative;}
+        .speech-animal{font-size:1.6rem;display:block;margin-bottom:5px;}
+        .fail-message{color:var(--text-light);font-size:1rem;line-height:1.6;margin:0.8rem 0 1.2rem;}
+        .btn-retry{display:block;width:100%;padding:16px;border-radius:18px;border:none;background:linear-gradient(135deg,#FF5A5F,#ff8a8e);color:white;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(255,90,95,0.4);transition:all 0.3s;}
+        .btn-retry:hover{transform:translateY(-3px);}
+        .btn-review{display:block;width:100%;padding:14px;border-radius:18px;border:3px solid #FF5A5F;background:white;color:#FF5A5F;font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;margin-top:10px;text-decoration:none;transition:all 0.2s;}
+        .btn-review:hover{background:#FF5A5F;color:white;}
     </style>
 </head>
 <body>
-    <div class="exam-container">
-        <div class="exam-header">
-            <h1>📜 Examen Final INTEP Kids</h1>
-            <p>¡Demuestra todo lo que aprendiste en los 4 módulos!</p>
-            <div class="modules">🦁 Animales · 🎨 Colores · 🔢 Números · 🍎 Comida</div>
-        </div>
-        <div class="module-separator"></div>
-        <div id="questions"></div>
-        <button class="btn-submit" onclick="submitExam()">🏆 Terminar y Ver Resultados</button>
-    </div>
-    <div id="resultModal" class="result-overlay">
-        <div class="result-box">
-            <div class="result-icon" id="resultIcon">🏆</div>
-            <h2 class="result-title" id="resultTitle">¡Felicidades!</h2>
-            <p class="result-score" id="resultScore">Puntaje: 10/10</p>
-            <div class="result-details" id="resultDetails"></div>
-            <div class="result-buttons" id="resultButtons"></div>
+
+<a href="/intep/cursoingles/cursoinglespreescolar/dashboard.php" class="back-btn" style="margin-left:5%;">← Volver al Mapa</a>
+
+<div class="exam-container">
+    <div class="exam-header">
+        <div class="exam-header-animals">🦁 🎨 🔢 🍎</div>
+        <h1>📜 Examen Final INTEP Kids</h1>
+        <p>¡Demuestra todo lo que aprendiste en los 4 módulos!</p>
+        <div class="exam-modules">
+            <span class="exam-mod-badge" style="background:#fff0f0;color:#FF5A5F;border:2px solid #FF5A5F;">🦁 Animales</span>
+            <span class="exam-mod-badge" style="background:#f0fdfb;color:#08C2A8;border:2px solid #08C2A8;">🎨 Colores</span>
+            <span class="exam-mod-badge" style="background:#f5f3ff;color:#7c3aed;border:2px solid #a855f7;">🔢 Números</span>
+            <span class="exam-mod-badge" style="background:#fffbeb;color:#b45309;border:2px solid #f59e0b;">🍎 Comida</span>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="/intep/cursoingles/cursos_api.js"></script>
-    <script>
-        var examVersion = 1;
-        var questions = [
-            {mod:1,m:'🦁 Animales',q:'¿Cómo se dice "león" en inglés?',img:'🦁',options:[{t:'Lion',c:true},{t:'Tiger',c:false},{t:'Bear',c:false},{t:'Cat',c:false}]},
-            {mod:1,m:'🦁 Animales',q:'Selecciona el "dog":',img:'🐶',options:[{t:'Cat',c:false},{t:'Dog',c:true},{t:'Bird',c:false},{t:'Mouse',c:false}]},
-            {mod:1,m:'🦁 Animales',q:'Completa: "The lion is ___."',img:'🦁',options:[{t:'big',c:true},{t:'blue',c:false},{t:'sad',c:false},{t:'cold',c:false}]},
-            {mod:2,m:'🎨 Colores',q:'¿Cómo se dice "rojo" en inglés?',img:'🔴',options:[{t:'Red',c:true},{t:'Blue',c:false},{t:'Green',c:false},{t:'Yellow',c:false}]},
-            {mod:2,m:'🎨 Colores',q:'¿Qué color es "green"?',img:'🟢',options:[{t:'Verde',c:true},{t:'Azul',c:false},{t:'Rosa',c:false},{t:'Morado',c:false}]},
-            {mod:2,m:'🎨 Colores',q:'Completa: "The sky is ___."',img:'☁️',options:[{t:'blue',c:true},{t:'red',c:false},{t:'yellow',c:false},{t:'green',c:false}]},
-            {mod:3,m:'🔢 Números',q:'¿Cómo se dice "tres" en inglés?',img:'3️⃣',options:[{t:'One',c:false},{t:'Two',c:false},{t:'Three',c:true},{t:'Four',c:false}]},
-            {mod:3,m:'🔢 Números',q:'Selecciona "seven":',img:'7️⃣',options:[{t:'Six',c:false},{t:'Seven',c:true},{t:'Eight',c:false},{t:'Nine',c:false}]},
-            {mod:3,m:'🔢 Números',q:'¿Cómo se dice "diez" en inglés?',img:'🔟',options:[{t:'Eight',c:false},{t:'Nine',c:false},{t:'Ten',c:true},{t:'Hundred',c:false}]},
-            {mod:4,m:'🍎 Comida',q:'¿Cómo se dice "manzana" en inglés?',img:'🍎',options:[{t:'Apple',c:true},{t:'Orange',c:false},{t:'Banana',c:false},{t:'Grape',c:false}]},
-            {mod:4,m:'🍎 Comida',q:'Selecciona "milk":',img:'🥛',options:[{t:'Agua',c:false},{t:'Leche',c:true},{t:'Jugo',c:false},{t:'Café',c:false}]},
-            {mod:4,m:'🍎 Comida',q:'Completa: "I ___ pizza."',img:'🍕',options:[{t:'like',c:true},{t:'have',c:false},{t:'want',c:false},{t:'eat',c:false}]}
-        ];
-        var userAnswers = {};
-        var currentQuestions = [];
-        function shuffleArray(array) {
-            for (var i = array.length - 1; i > 0; i--) {
-                var j = Math.floor(Math.random() * (i + 1));
-                var temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
-            }
-            return array;
+    <div class="module-separator"></div>
+    <div id="questions"></div>
+    <button class="btn-submit" onclick="submitExam()">🏆 Terminar y Ver Resultados</button>
+</div>
+
+<!-- MODAL APROBADO -->
+<div id="modalPass" class="result-overlay">
+    <div class="modal-pass-bg"></div>
+    <div class="modal-pass-box">
+        <div class="pass-stars">⭐ ⭐ ⭐ ⭐ ⭐</div>
+        <div class="pass-animals-row">🦁 🐘 🐒 🦒 🎨</div>
+        <div style="font-size:1.5rem; margin-bottom:5px;">🎊 🎉 🎊 🎉 🎊</div>
+        <h2 class="pass-title">¡FELICIDADES!</h2>
+        <p class="pass-subtitle">¡Completaste el Curso INTEP Kids!</p>
+        <div class="pass-score-box" id="passScore">10/10 ⭐</div>
+        <div class="pass-modules">
+            <span class="pass-mod">🦁 Animales ✅</span>
+            <span class="pass-mod">🎨 Colores ✅</span>
+            <span class="pass-mod">🔢 Números ✅</span>
+            <span class="pass-mod">🍎 Comida ✅</span>
+        </div>
+        <p class="pass-message">
+            ¡Eres una superestrella del inglés! 🌟<br>
+            Aprendiste animales, colores, números y comida.<br>
+            ¡Tu certificado te espera! 🎓
+        </p>
+        <a id="btnCert" href="/intep/cursoingles/certificado.php?nivel=kids&modulo=final" class="btn-cert" target="_blank">
+            🎓 Ver Mi Certificado
+        </a>
+        <a href="/intep/cursoingles/cursoinglespreescolar/dashboard.php" class="btn-dashboard-pass">
+            🗺️ Volver al Mapa
+        </a>
+    </div>
+</div>
+
+<!-- MODAL REPROBADO -->
+<div id="modalFail" class="result-overlay">
+    <div class="modal-fail-bg"></div>
+    <div class="modal-fail-box">
+        <div class="fail-animals-row">🦁 💪 🐘 💪 🐒</div>
+        <h2 class="fail-title">¡Casi lo logras!</h2>
+        <div class="fail-score-box" id="failScore">5/10</div>
+        <div class="fail-speech-bubbles">
+            <div class="speech-bubble">
+                <span class="speech-animal">🦁</span>
+                "¡Tú puedes, explorador!"
+            </div>
+            <div class="speech-bubble">
+                <span class="speech-animal">🐘</span>
+                "¡Un poco más y lo logras!"
+            </div>
+            <div class="speech-bubble">
+                <span class="speech-animal">🐒</span>
+                "¡Repasa y vuelve a intentarlo!"
+            </div>
+            <div class="speech-bubble">
+                <span class="speech-animal">🦒</span>
+                "¡Yo creo en ti! ¡Ánimo!"
+            </div>
+        </div>
+        <p class="fail-message">
+            ¡No te rindas! Necesitas 7 o más para aprobar.<br>
+            Repasa los módulos y lo lograrás. ¡Eres muy inteligente! 🌟
+        </p>
+        <button class="btn-retry" onclick="retryExam()">
+            🔄 ¡Intentar de Nuevo!
+        </button>
+        <a href="/intep/cursoingles/cursoinglespreescolar/dashboard.php" class="btn-review">
+            📚 Repasar los Módulos
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="/intep/cursoingles/cursos_api.js"></script>
+<script>
+    var examVersion = 1;
+    var questions = [
+        // Animales
+        {mod:1,m:'🦁 Animales',q:'¿Cómo se dice "león" en inglés?',img:'🦁',options:[{t:'Lion',c:true},{t:'Tiger',c:false},{t:'Bear',c:false},{t:'Cat',c:false}]},
+        {mod:1,m:'🦁 Animales',q:'Selecciona el "dog":',img:'🐶',options:[{t:'Cat',c:false},{t:'Dog',c:true},{t:'Bird',c:false},{t:'Mouse',c:false}]},
+        {mod:1,m:'🦁 Animales',q:'Completa: "The lion is ___."',img:'🦁',options:[{t:'big',c:true},{t:'blue',c:false},{t:'sad',c:false},{t:'cold',c:false}]},
+        // Colores
+        {mod:2,m:'🎨 Colores',q:'¿Cómo se dice "rojo" en inglés?',img:'🔴',options:[{t:'Red',c:true},{t:'Blue',c:false},{t:'Green',c:false},{t:'Yellow',c:false}]},
+        {mod:2,m:'🎨 Colores',q:'¿Qué color es "green"?',img:'🟢',options:[{t:'Verde',c:true},{t:'Azul',c:false},{t:'Rosa',c:false},{t:'Morado',c:false}]},
+        {mod:2,m:'🎨 Colores',q:'Completa: "The sky is ___."',img:'☁️',options:[{t:'blue',c:true},{t:'red',c:false},{t:'yellow',c:false},{t:'green',c:false}]},
+        // Números
+        {mod:3,m:'🔢 Números',q:'¿Cómo se dice "tres" en inglés?',img:'3️⃣',options:[{t:'One',c:false},{t:'Two',c:false},{t:'Three',c:true},{t:'Four',c:false}]},
+        {mod:3,m:'🔢 Números',q:'Selecciona "seven":',img:'7️⃣',options:[{t:'Six',c:false},{t:'Seven',c:true},{t:'Eight',c:false},{t:'Nine',c:false}]},
+        {mod:3,m:'🔢 Números',q:'¿Cómo se dice "diez" en inglés?',img:'🔟',options:[{t:'Eight',c:false},{t:'Nine',c:false},{t:'Ten',c:true},{t:'Eleven',c:false}]},
+        // Comida
+        {mod:4,m:'🍎 Comida',q:'¿Cómo se dice "manzana" en inglés?',img:'🍎',options:[{t:'Apple',c:true},{t:'Orange',c:false},{t:'Banana',c:false},{t:'Grape',c:false}]},
+        {mod:4,m:'🍎 Comida',q:'Selecciona la traducción de "milk":',img:'🥛',options:[{t:'Agua',c:false},{t:'Leche',c:true},{t:'Jugo',c:false},{t:'Café',c:false}]},
+        {mod:4,m:'🍎 Comida',q:'Completa: "I ___ pizza."',img:'🍕',options:[{t:'like',c:true},{t:'have',c:false},{t:'want',c:false},{t:'eat',c:false}]}
+    ];
+
+    var userAnswers = {};
+    var currentQuestions = [];
+
+    function shuffleArray(arr) {
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
         }
-        function init() {
-            currentQuestions = shuffleArray([...questions]).slice(0,10);
-            var container = document.getElementById('questions');
-            container.innerHTML = '';
-            var modNames = {1:'mod1',2:'mod2',3:'mod3',4:'mod4'};
-            currentQuestions.forEach(function(q, idx) {
-                var shuffledOpts = shuffleArray([...q.options]);
-                var card = document.createElement('div');
-                card.className = 'question-card ' + modNames[q.mod];
-                card.innerHTML = '<div class="q-number">' + q.m + '</div><div class="q-image">' + q.img + '</div><div class="q-text">' + q.q + '</div><div class="options-grid" id="q' + idx + '"></div>';
-                container.appendChild(card);
-                var optsContainer = card.querySelector('#q' + idx);
-                shuffledOpts.forEach(function(opt, oi) {
-                    var btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.innerText = opt.t;
-                    btn.onclick = function() { selectOption(idx, oi, opt.c); };
-                    optsContainer.appendChild(btn);
-                });
+        return arr;
+    }
+
+    function init() {
+        currentQuestions = shuffleArray([...questions]).slice(0, 10);
+        userAnswers = {};
+        var container = document.getElementById('questions');
+        container.innerHTML = '';
+        var modMap = {1:'mod1',2:'mod2',3:'mod3',4:'mod4'};
+        currentQuestions.forEach(function(q, idx) {
+            var opts = shuffleArray([...q.options]);
+            var card = document.createElement('div');
+            card.className = 'question-card ' + modMap[q.mod];
+            card.innerHTML =
+                '<div class="q-number">' + q.m + '</div>' +
+                '<div class="q-image">' + q.img + '</div>' +
+                '<div class="q-text">' + q.q + '</div>' +
+                '<div class="options-grid" id="q' + idx + '"></div>';
+            container.appendChild(card);
+            var grid = card.querySelector('#q' + idx);
+            opts.forEach(function(opt) {
+                var btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.t;
+                btn.onclick = (function(i, o) {
+                    return function() { selectOption(i, o.c, this, grid); };
+                })(idx, opt);
+                grid.appendChild(btn);
             });
+        });
+    }
+
+    function selectOption(qIdx, correct, clickedBtn, grid) {
+        grid.querySelectorAll('.option-btn').forEach(function(b) { b.classList.remove('selected'); });
+        clickedBtn.classList.add('selected');
+        userAnswers[qIdx] = correct;
+    }
+
+    function submitExam() {
+        var score = 0;
+        var total = currentQuestions.length;
+        for (var k in userAnswers) { if (userAnswers[k]) score++; }
+        var passed = score >= 7;
+        var pct = Math.round((score / total) * 100);
+
+        window.INTEP_guardarProgreso({
+            nivel: 'kids', num: 99, examen: 'final',
+            porcentaje: pct, aprobado: passed,
+            completado: passed, xp_ganado: passed ? 50 : 0,
+            exam_version: examVersion
+        });
+
+        if (passed) {
+            document.getElementById('passScore').innerText = score + '/' + total + ' ⭐';
+            document.getElementById('modalPass').classList.add('show');
+            // Lluvia de confetti festiva
+            setTimeout(function() {
+                confetti({particleCount:200, spread:120, origin:{y:0.5}, colors:['#7c3aed','#FFD166','#FF5A5F','#08C2A8','#a855f7']});
+            }, 200);
+            setTimeout(function() {
+                confetti({particleCount:100, angle:60, spread:70, origin:{x:0, y:0.6}});
+            }, 600);
+            setTimeout(function() {
+                confetti({particleCount:100, angle:120, spread:70, origin:{x:1, y:0.6}});
+            }, 900);
+            setTimeout(function() {
+                confetti({particleCount:80, spread:90, origin:{y:0.3}, colors:['#fbbf24','#f59e0b','#22c55e']});
+            }, 1400);
+        } else {
+            document.getElementById('failScore').innerText = score + '/' + total + ' — Necesitas 7+';
+            document.getElementById('modalFail').classList.add('show');
         }
-        function selectOption(qIdx, oIdx, correct) {
-            var container = document.getElementById('q' + qIdx);
-            var buttons = container.querySelectorAll('.option-btn');
-            buttons.forEach(function(b, i) {
-                if (i === oIdx) {
-                    b.classList.add('selected');
-                    userAnswers[qIdx] = correct;
-                } else {
-                    b.classList.remove('selected');
-                }
-            });
-        }
-        function submitExam() {
-            var score = 0;
-            var total = currentQuestions.length;
-            for (var key in userAnswers) {
-                if (userAnswers[key]) score++;
-            }
-            var passed = score >= 7;
-            var modal = document.getElementById('resultModal');
-            var icon = document.getElementById('resultIcon');
-            var title = document.getElementById('resultTitle');
-            var scoreText = document.getElementById('resultScore');
-            var details = document.getElementById('resultDetails');
-            var btns = document.getElementById('resultButtons');
-            modal.style.display = 'flex';
-            scoreText.innerText = 'Puntaje: ' + score + '/' + total;
-            var pct = Math.round((score/total)*100);
-            var modCounts = {1:0,2:0,3:0,4:0};
-            currentQuestions.forEach(function(q) { modCounts[q.mod]++; });
-            var modScore = {1:0,2:0,3:0,4:0};
-            var ansIdx = 0;
-            currentQuestions.forEach(function(q) {
-                if (userAnswers[ansIdx]) modScore[q.mod]++;
-                ansIdx++;
-            });
-            details.innerHTML = '<div><span>🦁 Animales</span><span>' + modScore[1] + '/' + modCounts[1] + '</span></div>' +
-                '<div><span>🎨 Colores</span><span>' + modScore[2] + '/' + modCounts[2] + '</span></div>' +
-                '<div><span>🔢 Números</span><span>' + modScore[3] + '/' + modCounts[3] + '</span></div>' +
-                '<div><span>🍎 Comida</span><span>' + modScore[4] + '/' + modCounts[4] + '</span></div>';
-            if (passed) {
-                icon.innerText = '🎓';
-                title.innerText = '¡Curso Completado!';
-                title.style.color = '#7c3aed';
-                btns.innerHTML = '<button class="btn-cert" onclick="window.location.href=\'/intep/cursoingles/certificado.php?nivel=kids&modulo=final\';">🎓 Ver Certificado Final</button>';
-                confetti({particleCount:200,spread:100,origin:{y:0.6},colors:['#7c3aed','#a855f7','#FFD166','#FF5A5F','#08C2A8','#f59e0b']});
-                setTimeout(function(){confetti({particleCount:100,angle:60,spread:55,origin:{x:0}});},400);
-                setTimeout(function(){confetti({particleCount:100,angle:120,spread:55,origin:{x:1}});},600);
-            } else {
-                icon.innerText = '📚';
-                title.innerText = '¡Casi lo logras!';
-                title.style.color = '#ef4444';
-                btns.innerHTML = '<button class="btn-retry" onclick="location.reload();">Intentar de nuevo 📝</button>';
-            }
-            window.INTEP_guardarProgreso({nivel:'kids',num:99,examen:'final',porcentaje:pct,aprobado:passed,exam_version:examVersion});
-        }
+    }
+
+    function retryExam() {
+        document.getElementById('modalFail').classList.remove('show');
+        window.scrollTo({top:0, behavior:'smooth'});
         init();
-    </script>
+    }
+
+    init();
+</script>
 </body>
 </html>

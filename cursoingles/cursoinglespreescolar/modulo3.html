@@ -94,15 +94,11 @@
         .phrase-btn:hover{background:#f97316;color:white;border-color:#f97316;}
         .phrase-btn span{color:#9ca3af;font-size:0.9rem;}
 
-        .btn-complete{display:block;width:100%;padding:18px;margin-top:2rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(124,58,237,0.4);transition:all 0.3s;}
-        .btn-complete:hover{transform:translateY(-3px);}
-        .victory-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(45,49,66,0.85);backdrop-filter:blur(8px);z-index:1000;justify-content:center;align-items:center;}
-        .victory-box{background:white;border-radius:30px;padding:3rem;text-align:center;max-width:380px;width:90%;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards;transform:scale(0.8);}
-        @keyframes popIn{to{transform:scale(1);}}
-        .victory-box h2{font-family:'Fredoka',sans-serif;font-size:2.5rem;color:var(--text-dark);margin:15px 0 10px;}
-        .xp-badge{background:var(--accent);color:var(--text-dark);font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;padding:10px 25px;border-radius:15px;display:inline-block;margin:15px 0;}
-        .btn-continue{width:100%;padding:15px;border-radius:15px;border:none;background:#7c3aed;color:white;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;margin-top:15px;}
-        .btn-exam{display:block;width:100%;padding:15px;margin-top:1rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:15px;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;box-shadow:0 5px 15px rgba(124,58,237,0.3);}
+        .end-lesson-card{background:linear-gradient(135deg,#f3e8ff,#ede9fe);border-radius:25px;padding:2.5rem;text-align:center;border:3px solid #a855f7;box-shadow:0 8px 25px rgba(168,85,247,0.15);}
+        .end-lesson-animals{font-size:2.5rem;letter-spacing:6px;margin-bottom:1rem;animation:bounce 1s ease-in-out infinite alternate;}
+        @keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-8px);}}
+        .btn-ir-examen{display:inline-block;padding:18px 45px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;text-decoration:none;box-shadow:0 8px 25px rgba(124,58,237,0.4);transition:all 0.3s;border:none;cursor:pointer;margin-top:1rem;}
+        .btn-ir-examen:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(124,58,237,0.5);}
     </style>
 </head>
 <body>
@@ -255,23 +251,20 @@
                     </p>
                 </div>
                 
-                <button class="btn-complete" onclick="completarModulo()">🔢 ¡Dominé los Números! +30 XP</button>
             </div>
         </div>
 
-    </div>
-
-    <div id="victoryModal" class="victory-overlay">
-        <div class="victory-box">
-            <div style="font-size:5rem;">🔢</div>
-            <h2>¡Números dominados!</h2>
-            <p style="color:var(--text-light);">¡Sabes contar del 1 al 20 en inglés! ¡Eres un mago de los números!</p>
-            <div class="xp-badge">+ 30 XP 🌟</div>
-            <button class="btn-continue" onclick="window.location.href='dashboard.php'">¡Seguir la aventura! 🗺️</button>
+        <!-- Fin del módulo → Ir al examen -->
+        <div class="end-lesson-card">
+            <div class="end-lesson-animals">1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣</div>
+            <h2 style="font-family:'Fredoka',sans-serif; font-size:2rem; color:#7c3aed; margin-bottom:8px;">¡Lección Terminada!</h2>
+            <p style="color:var(--text-light); font-size:1.1rem; margin-bottom:5px;">¡Eres un mago de los números! Del 1 al 20 en inglés.</p>
+            <p style="color:#7c3aed; font-weight:700; font-size:1rem; margin-bottom:1.5rem;">Ahora demuestra lo que aprendiste en el examen 📝</p>
+            <a href="examen3.html" class="btn-ir-examen">📝 Ir al Examen de Números →</a>
         </div>
+
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="/intep/cursoingles/cursos_api.js"></script>
     <script>
         var numWords = ['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'];
@@ -384,11 +377,7 @@
             }
         }
         
-        function completarModulo() {
-            document.getElementById('victoryModal').style.display = 'flex';
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#a855f7','#7c3aed','#FFD166','#f97316'] });
-            window.INTEP_guardarProgreso({ nivel: 'kids', num: 3, porcentaje: 100, completado: true, xp_ganado: 30 });
-        }
+        // Progreso se guarda al aprobar el examen
         
         loadCountRound();
         loadOrderGame();

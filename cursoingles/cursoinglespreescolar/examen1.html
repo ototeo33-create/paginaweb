@@ -141,34 +141,38 @@
         function submitExam() {
             var score = 0;
             var total = currentQuestions.length;
-            for (var key in userAnswers) {
-                if (userAnswers[key]) score++;
-            }
-            
+            for (var key in userAnswers) { if (userAnswers[key]) score++; }
             var passed = score >= 5;
+            var pct = Math.round((score/total)*100);
+
+            // Guardar progreso una sola vez
+            window.INTEP_guardarProgreso({
+                nivel:'kids', num:1, examen:true,
+                porcentaje:pct, aprobado:passed,
+                completado:passed, xp_ganado: passed ? 15 : 0,
+                exam_version:examVersion
+            });
+
             var modal = document.getElementById('resultModal');
             var icon = document.getElementById('resultIcon');
             var title = document.getElementById('resultTitle');
             var scoreText = document.getElementById('resultScore');
             var btns = document.getElementById('resultButtons');
-            
             modal.style.display = 'flex';
             scoreText.innerText = 'Puntaje: ' + score + '/' + total;
-            
+
             if (passed) {
-                icon.innerText = '🏆';
+                icon.innerText = '🦁🏆';
                 title.innerText = '¡Aprobado!';
                 title.style.color = '#22c55e';
-                btns.innerHTML = '<button class="btn-pass" onclick="window.INTEP_guardarProgreso({nivel:\'kids\',num:1,examen:true,porcentaje:' + Math.round((score/total)*100) + ',completado:true,xp_ganado:15}); window.location.href=\'/intep/cursoingles/cursoinglespreescolar/dashboard.php\';">Continuar al siguiente módulo 🚀</button>';
+                btns.innerHTML = '<a class="btn-pass" href="/intep/cursoingles/cursoinglespreescolar/dashboard.php">🚀 ¡Siguiente Módulo!</a>';
                 confetti({particleCount:150,spread:70,origin:{y:0.6},colors:['#22c55e','#FFD166','#FF5A5F']});
             } else {
-                icon.innerText = '📚';
-                title.innerText = 'Intenta de nuevo';
+                icon.innerText = '🦁💪';
+                title.innerText = '¡Casi lo logras!';
                 title.style.color = '#ef4444';
-                btns.innerHTML = '<button class="btn-retry" onclick="location.reload();">Repetir Examen 📝</button>';
+                btns.innerHTML = '<button class="btn-retry" onclick="location.reload();">🔄 Repetir Examen</button><p style="margin-top:10px;color:#6b7280;font-size:0.9rem;">Necesitas 5 o más respuestas correctas</p>';
             }
-            
-            window.INTEP_guardarProgreso({nivel:'kids',num:1,examen:true,porcentaje:Math.round((score/total)*100),aprobado:passed,exam_version:examVersion});
         }
         
         init();
