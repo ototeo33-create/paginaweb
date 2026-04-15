@@ -788,7 +788,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
 <!-- ===== PANTALLA DE CARGA ===== -->
 <div class="loader-screen" id="loader-screen">
     <div class="loader-logo-container">
-        <img src="img/Logo.png" alt="INTEP">
+        <img src="/intep/img/Logo.png" alt="INTEP">
         <div class="loader-ring-outer"></div>
         <div class="loader-ring-inner"></div>
     </div>
@@ -840,7 +840,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
         <div class="galeria-overlay">
             <div class="galeria-logo">
                 <a href="https://institutointep.edu.co/" target="_blank" rel="noopener">
-                    <img src="img/Logo.png" alt="Logo INTEP" class="logo-galeria">
+                    <img src="/intep/img/Logo.png" alt="Logo INTEP" class="logo-galeria">
                 </a>
             </div>
 
@@ -895,7 +895,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                 <!-- Logo centrado con marco elegante -->
                 <div class="login-logo">
                     <a href="https://institutointep.edu.co/" target="_blank" rel="noopener" class="logo-container">
-                        <img src="img/Logo.png" alt="INTEP">
+                        <img src="/intep/img/Logo.png" alt="INTEP">
                     </a>
                     <h1 class="login-titulo">Portal Estudiantil</h1>
                     <p class="login-subtitulo">Ingresa con tus credenciales</p>
