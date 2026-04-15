@@ -2,7 +2,7 @@
 ini_set('display_errors', 0);
 error_reporting(0);
 // ============================================================
-// My Teacher GUS — Endpoint conversacional con Groq
+// My Teacher GUS — Endpoint conversacional con Gemini
 // ============================================================
 ob_start();
 require_once '../config.php';
@@ -31,8 +31,8 @@ if (!$es_ingles) {
     echo json_encode(['error' => 'Solo disponible para estudiantes de inglés']); exit;
 }
 
-// API key Groq
-$groq_key = $_ENV['GROQ_API_KEY'] ?? getenv('GROQ_API_KEY') ?: Config::get('GROQ_API_KEY','');
+// API key Gemini
+$gemini_key = $_ENV['GEMINI_API_KEY'] ?? getenv('GEMINI_API_KEY') ?: Config::get('GEMINI_API_KEY','');
 
 // Nivel del estudiante en el módulo de inglés
 function get_nivel_estudiante(int $est_id, $db): string {
@@ -43,23 +43,29 @@ function get_nivel_estudiante(int $est_id, $db): string {
     return $r['nivel_actual'] ?? 'A1';
 }
 
-// Llamada a Groq con historial
+// Llamada a Gemini con historial
 // Retorna [content, error_msg]
-function llamar_groq(array $messages, string $key): array {
-    $url  = "https://api.groq.com/openai/v1/chat/completions";
-    $body = json_encode([
-        'model'       => 'llama-3.3-70b-versatile',
-        'messages'    => $messages,
-        'temperature' => 0.75,
-        'max_tokens'  => 90,
-        'stream'      => false,
-    ]);
-    $ch = curl_init($url);
+function llamar_gemini(array $messages, string $key): array {
+    $system_text = '';
+    $contents    = [];
+    foreach ($messages as $msg) {
+        if ($msg['role'] === 'system') { $system_text = $msg['content']; continue; }
+        $role       = ($msg['role'] === 'assistant') ? 'model' : 'user';
+        $contents[] = ['role' => $role, 'parts' => [['text' => $msg['content']]]];
+    }
+    $body = [
+        'contents'         => $contents,
+        'generationConfig' => ['temperature' => 0.75, 'maxOutputTokens' => 120],
+    ];
+    if ($system_text) $body['systemInstruction'] = ['parts' => [['text' => $system_text]]];
+
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$key}";
+    $ch  = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $body,
-        CURLOPT_HTTPHEADER     => ['Content-Type: application/json','Authorization: Bearer '.$key],
+        CURLOPT_POSTFIELDS     => json_encode($body),
+        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
         CURLOPT_TIMEOUT        => 20,
         CURLOPT_SSL_VERIFYPEER => false,
         CURLOPT_SSL_VERIFYHOST => false,
@@ -69,10 +75,10 @@ function llamar_groq(array $messages, string $key): array {
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     if (!$raw) return [null, "cURL error: $cerr"];
-    $resp = json_decode($raw, true);
-    $content = $resp['choices'][0]['message']['content'] ?? null;
+    $resp    = json_decode($raw, true);
+    $content = $resp['candidates'][0]['content']['parts'][0]['text'] ?? null;
     if ($content === null) {
-        $api_err = $resp['error']['message'] ?? $raw;
+        $api_err = $resp['error']['message'] ?? substr($raw, 0, 200);
         return [null, "API ($code): " . substr($api_err, 0, 120)];
     }
     return [$content, null];
@@ -158,8 +164,8 @@ PROMPT;
     } else {
         // Nueva lección — GUS saluda y propone tema
         $messages[] = ['role' => 'user', 'content' => "Hi GUS! My name is $nombre_est and I'm ready to learn English!"];
-        [$respuesta, $err_groq] = llamar_groq($messages, $groq_key);
-        if (!$respuesta) { echo json_encode(['error' => 'GUS no disponible: ' . ($err_groq ?: 'sin respuesta')]); exit; }
+        [$respuesta, $err] = llamar_gemini($messages, $gemini_key);
+        if (!$respuesta) { echo json_encode(['error' => 'GUS no disponible: ' . ($err ?: 'sin respuesta')]); exit; }
 
         // Extraer tema propuesto (primera línea o frase del saludo)
         $tema = 'English Conversation';
@@ -240,9 +246,9 @@ PROMPT;
     mysqli_stmt_bind_param($st_u, 'issi', $est_id, $rol_u, $mensaje, $leccion_id);
     mysqli_stmt_execute($st_u);
 
-    // Llamar a Groq
-    [$respuesta, $err_groq] = llamar_groq($messages, $groq_key);
-    if (!$respuesta) { echo json_encode(['error' => 'GUS no responde: ' . ($err_groq ?: 'intenta de nuevo')]); exit; }
+    // Llamar a Gemini
+    [$respuesta, $err] = llamar_gemini($messages, $gemini_key);
+    if (!$respuesta) { echo json_encode(['error' => 'GUS no responde: ' . ($err ?: 'intenta de nuevo')]); exit; }
 
     // ¿Lección completada?
     $completada = false;

@@ -1532,14 +1532,15 @@ function confirmarSelector() {
 
 // ── SESIÓN DE EJERCICIOS ───────────────
 <?php if ($tiene_perfil && $quiz_completado): ?>
-let sesionIniciada = false;
-let ejActual = null;
-let ejNum    = 0;
-let ejTotal  = <?php echo $ejercicios_sesion; ?>; // preferencia del estudiante (10/15/20)
-let ejOk     = 0;
-let vidas    = 5;
-let xpSesion = 0;
-let rachaSesion = <?php echo $racha; ?>;
+let sesionIniciada  = false;
+let ejActual        = null;
+let ejNum           = 0;
+let ejTotal         = <?php echo $ejercicios_sesion; ?>; // preferencia del estudiante (10/15/20)
+let ejOk            = 0;
+let vidas           = 5;
+let xpSesion        = 0;
+let rachaSesion     = <?php echo $racha; ?>;
+let usedExerciseIds = []; // índices usados en esta sesión (evita repetición)
 
 function iniciarSesion() {
   if (sesionIniciada) return;
@@ -1550,7 +1551,8 @@ function iniciarSesion() {
 }
 
 function reiniciarSesion() {
-  sesionIniciada = false;
+  sesionIniciada  = false;
+  usedExerciseIds = [];
   document.getElementById('finish-wrap').classList.remove('show');
   document.getElementById('ej-wrap').style.display = 'none';
   document.getElementById('ej-cargando').classList.remove('show');
@@ -1587,7 +1589,7 @@ function cargarEjercicio() {
 
   fetch('api/idiomas_ejercicio.php', {
     method: 'POST',
-    body: new URLSearchParams({accion:'generar'})
+    body: new URLSearchParams({accion:'generar', usados: usedExerciseIds.join(',')})
   })
   .then(r => {
     if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -1602,6 +1604,7 @@ function cargarEjercicio() {
     }
     if (!d.ok || d.error) { mostrarErrorEjercicio(d.error||'Error generando ejercicio'); return; }
     ejActual = d.ejercicio;
+    if (d.ejercicio.idx !== undefined) usedExerciseIds.push(d.ejercicio.idx);
     mostrarEjercicio(ejActual);
   })
   .catch(err => {
@@ -2117,40 +2120,39 @@ function nuevaLeccion() {
   iniciarLeccion();
 }
 
-// ── TTS: GUS habla ─────────────────────
+// ── TTS: GUS habla (Kokoro via servidor, fallback Web Speech) ──
 function gusHabla(texto) {
-  if (!gusTTSActivo || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  // Limpiar texto de emojis y markdown
-  const limpio = texto.replace(/[\u{1F000}-\u{1FFFF}]/gu,'').replace(/\*+/g,'').replace(/#+/g,'').substring(0, 300);
-  if (!limpio.trim()) return;
+  if (!gusTTSActivo) return;
+  const limpio = limpiarTextoTTS(texto).substring(0, 300);
+  if (!limpio) return;
+  const a = new Audio('/intep/api/tts.php?text=' + encodeURIComponent(limpio));
+  a.onerror = () => gusHablaWS(limpio);
+  a.play().catch(() => gusHablaWS(limpio));
+}
 
+// Fallback Web Speech API (cuando Kokoro no está disponible)
+function gusHablaWS(limpio) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
   const utt = new SpeechSynthesisUtterance(limpio);
-  utt.lang = 'en-US';
-  utt.rate = 0.92;
-  utt.pitch = 0.85; // voz más grave = masculina
-  // Priorizar voz masculina
-  const voices = speechSynthesis.getVoices();
-  const voz = voices.find(v => v.name === 'Google UK English Male')
-           || voices.find(v => v.name === 'Microsoft David Desktop')
-           || voices.find(v => v.name === 'Microsoft David - English (United States)')
-           || voices.find(v => v.name === 'Alex')          // iOS/macOS male
-           || voices.find(v => v.name === 'Daniel')        // iOS UK male
-           || voices.find(v => v.name === 'Rishi')         // iOS Indian male
-           || voices.find(v => v.name.toLowerCase().includes('david'))
-           || voices.find(v => v.name.toLowerCase().includes('daniel'))
-           || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male'))
-           || voices.find(v => v.lang === 'en-US' && !['samantha','zira','susan','female','karen','moira','tessa','veena','fiona'].some(n => v.name.toLowerCase().includes(n)))
-           || voices.find(v => v.lang.startsWith('en-US'))
-           || voices.find(v => v.lang.startsWith('en'));
+  utt.lang = 'en-US'; utt.rate = 0.92; utt.pitch = 0.85;
+  const vs  = speechSynthesis.getVoices();
+  const voz = vs.find(v => v.name === 'Google UK English Male')
+           || vs.find(v => v.name.toLowerCase().includes('david'))
+           || vs.find(v => v.lang.startsWith('en-US'))
+           || vs.find(v => v.lang.startsWith('en'));
   if (voz) utt.voice = voz;
   speechSynthesis.speak(utt);
 }
 
-// Esperar a que voices estén listas
-if (window.speechSynthesis) {
-  speechSynthesis.onvoiceschanged = () => {};
-  setTimeout(() => speechSynthesis.getVoices(), 100);
+// Limpiar texto para TTS: quitar emojis, markdown, tokens internos
+function limpiarTextoTTS(txt) {
+  return txt
+    .replace(/[\u{1F000}-\u{1FFFF}]/gu, '')
+    .replace(/[*_#`\[\]]/g, '')
+    .replace(/\[LECCION_COMPLETADA\]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 // ── Micrófono ──────────────────────────
@@ -2226,13 +2228,16 @@ function mostrarCelebracion(xp) {
   document.getElementById('gusCelXP').textContent = '+' + xp + ' XP';
   document.getElementById('gusCelebrate').classList.add('show');
   setGusStatus('¡Lección completada! 🎉');
-  // Confetti pequeño dentro del modal
-  window.speechSynthesis && window.speechSynthesis.cancel();
-  if (window.speechSynthesis) {
-    const utt = new SpeechSynthesisUtterance('Excellent work! You completed the lesson!');
-    utt.lang = 'en-US'; utt.rate = 0.9;
-    speechSynthesis.speak(utt);
-  }
+  const msg = 'Excellent work! You completed the lesson!';
+  const a   = new Audio('/intep/api/tts.php?text=' + encodeURIComponent(msg));
+  a.onerror = () => {
+    if (window.speechSynthesis) {
+      const utt = new SpeechSynthesisUtterance(msg);
+      utt.lang = 'en-US'; utt.rate = 0.9;
+      speechSynthesis.speak(utt);
+    }
+  };
+  a.play().catch(() => a.onerror());
 }
 
 // ── Historial de lecciones ─────────────
@@ -2564,24 +2569,20 @@ function processVQueue() {
   }
   ttsPlaying = true;
   const text = ttsQueue.shift();
-  const utt  = new SpeechSynthesisUtterance(text);
-  utt.lang = 'en-US'; utt.rate = 0.92; utt.pitch = 0.85;
-  const vs = speechSynthesis.getVoices();
-  const voz = vs.find(v => v.name === 'Google UK English Male')
-           || vs.find(v => v.name === 'Microsoft David Desktop')
-           || vs.find(v => v.name === 'Microsoft David - English (United States)')
-           || vs.find(v => v.name === 'Alex')
-           || vs.find(v => v.name === 'Daniel')
-           || vs.find(v => v.name === 'Rishi')
-           || vs.find(v => v.name.toLowerCase().includes('david'))
-           || vs.find(v => v.name.toLowerCase().includes('daniel'))
-           || vs.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male'))
-           || vs.find(v => v.lang === 'en-US' && !['samantha','zira','susan','female','karen','moira','tessa','veena','fiona'].some(n => v.name.toLowerCase().includes(n)))
-           || vs.find(v => v.lang.startsWith('en-US'))
-           || vs.find(v => v.lang.startsWith('en'));
-  if (voz) utt.voice = voz;
-  utt.onend = utt.onerror = () => setTimeout(processVQueue, 80);
-  speechSynthesis.speak(utt);
+  const a    = new Audio('/intep/api/tts.php?text=' + encodeURIComponent(text));
+  a.onended = () => setTimeout(processVQueue, 100);
+  a.onerror = () => {
+    // Fallback Web Speech API
+    if (window.speechSynthesis) {
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = 'en-US'; utt.rate = 0.92; utt.pitch = 0.85;
+      utt.onend = utt.onerror = () => setTimeout(processVQueue, 100);
+      speechSynthesis.speak(utt);
+    } else {
+      setTimeout(processVQueue, 100);
+    }
+  };
+  a.play().catch(() => a.onerror());
 }
 
 // Voice mode hook: después de que GUS saluda en iniciarLeccion,
