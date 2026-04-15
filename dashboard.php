@@ -45,6 +45,21 @@ if ($rol === 'estudiante') {
     mysqli_stmt_bind_param($stmt3, 'i', $est_id);
     mysqli_stmt_execute($stmt3);
     $horarios_est = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt3));
+
+    // Detectar estudiante de Primera Infancia para mostrar INTEP Kids
+    $programa_nombre_est  = $info_est['programa'] ?? '';
+    $es_primera_infancia  = stripos($programa_nombre_est, 'primera infancia') !== false
+                         || stripos($programa_nombre_est, 'preescolar') !== false;
+
+    // Detectar si está inscrito al curso de inglés (tiene nivel en idiomas_nivel)
+    $tiene_ingles = false;
+    $q_ingles = "SELECT id FROM idiomas_nivel WHERE estudiante_id = ? LIMIT 1";
+    $st_ing = mysqli_prepare($conexion, $q_ingles);
+    if ($st_ing) {
+        mysqli_stmt_bind_param($st_ing, 'i', $est_id);
+        mysqli_stmt_execute($st_ing);
+        $tiene_ingles = (bool) mysqli_fetch_assoc(mysqli_stmt_get_result($st_ing));
+    }
 }
 
 if ($rol === 'docente') {
@@ -1019,6 +1034,28 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Descarga guías, talleres y recursos compartidos por tus profesores</p>
                     <span class="card-arrow">→</span>
                 </a>
+                <a href="evaluar_docente.php" class="menu-card-v2">
+                    <div class="card-icon morado">⭐</div>
+                    <h3>Evaluar Docentes</h3>
+                    <p>Evalúa el desempeño de tus docentes de forma anónima y confidencial</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <?php if (!empty($tiene_ingles)): ?>
+                <a href="/intep/cursoingles/index.php" class="menu-card-v2">
+                    <div class="card-icon morado">🌍</div>
+                    <h3>Módulos de Inglés</h3>
+                    <p>Aprende con flashcards, juegos y misiones de rol interactivas</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <?php endif; ?>
+                <?php if (!empty($es_primera_infancia)): ?>
+                <a href="/intep/cursoingles/cursoinglespreescolar/index.php" class="menu-card-v2">
+                    <div class="card-icon amarillo">🧸</div>
+                    <h3>INTEP Kids</h3>
+                    <p>Practica inglés con juegos, canciones y actividades para tu seminario</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <?php endif; ?>
                 <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)">
                     <div class="card-icon verde">📲</div>
                     <h3>Descargar App</h3>
@@ -1079,6 +1116,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <div class="card-icon naranja">📚</div>
                     <h3>Material de Clase</h3>
                     <p>Sube guías, talleres, evaluaciones y recursos para tus estudiantes</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="admin/eval_resultados.php" class="menu-card-v2">
+                    <div class="card-icon morado">⭐</div>
+                    <h3>Mi Evaluación de Desempeño</h3>
+                    <p>Consulta los resultados de las evaluaciones que te hacen tus estudiantes</p>
                     <span class="card-arrow">→</span>
                 </a>
                 <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)" style="display:none;">
@@ -1151,6 +1194,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <div class="card-icon azul">🔗</div>
                     <h3>Links de Clases Virtuales</h3>
                     <p>Agrega o edita los links de Meet, Zoom o Teams para cada clase</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="admin/eval_admin.php" class="menu-card-v2">
+                    <div class="card-icon morado">⭐</div>
+                    <h3>Evaluación Docente</h3>
+                    <p>Activa evaluaciones, consulta resultados y estadísticas por docente</p>
                     <span class="card-arrow">→</span>
                 </a>
                 <a href="admin/cartera.php" class="menu-card-v2">
