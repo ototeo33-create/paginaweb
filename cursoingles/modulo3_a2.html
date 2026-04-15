@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>window.__CURSO={nivel:'A2',num:3};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2: Module 3 - Bigger, Better | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--secondary); }</style>
+</head>
+<body>
+    <div class="app-container">
+        <a href="dashboard_a2.html" class="back-nav">← Volver al Menú Principal A2</a>
+
+        <header class="lesson-header">
+    <script>window.__CURSO={nivel:'A2',num:3};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+            <div>
+                <span class="lesson-badge" style="background: rgba(236, 72, 153, 0.1); color: var(--secondary);">Módulo 3 • A2 Elementary</span>
+                <h1>Bigger, <span class="text-gradient">Better, Faster</span></h1>
+                <p>Compara productos, ciudades y personas como un experto.</p>
+            </div>
+        </header>
+
+        <section class="learning-section">
+            <h2 class="section-title">🖼️ 1. Qualities</h2>
+            <div class="flashcards-grid">
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🐢</div><h3>Lento ➡️ Más lento</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Slow ➡️ Slower</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🏎️</div><h3>Rápido ➡️ Más Rápido</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Fast ➡️ Faster</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">💎</div><h3>Caro ➡️ Más caro</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Expensive ➡️ MORE expensive</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">👍</div><h3>Bueno ➡️ Mejor</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Good ➡️ Better</h3></div></div></div>
+            </div>
+        </section>
+
+        <section class="learning-section">
+            <h2 class="section-title">📖 2. Read & Discover</h2>
+            <div class="story-box" style="border-left-color: var(--secondary);">
+                "I bought a new phone. It is <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">bigger than</span> my old phone. Also, it is <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">more beautiful</span>. But to be honest, my old phone was <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">better</span> for taking photos."
+            </div>
+        </section>
+
+        <section class="learning-section">
+            <h2 class="section-title">💡 3. Grammar: The size matters</h2>
+            <div class="grammar-container">
+                <div class="grammar-card normal" style="border-top: 6px solid var(--secondary);">
+                    <h3 style="color: var(--secondary);">Adjetivos Cortos</h3>
+                    <p>Una sílaba. Solo agregamos -ER y ponemos THAN.</p>
+                    <ul class="grammar-list">
+                        <li>Tall ➡️ <span>Taller than...</span> (Más alto que...)</li>
+                        <li>Fast ➡️ <span>Faster than...</span> (Más rápido que...)</li>
+                    </ul>
+                </div>
+                <div class="grammar-card vip">
+                    <h3>Adjetivos Largos / Excepciones</h3>
+                    <p>Tres silabas o más llevan MORE. Good / Bad son raros.</p>
+                    <ul class="grammar-list">
+                        <li>Expensive ➡️ <span>More expensive than...</span></li>
+                        <li>Good ➡️ <span>Better than...</span></li>
+                        <li>Bad ➡️ <span>Worse than...</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="learning-section" style="border: 2px solid var(--secondary);">
+            <h2 class="section-title text-gradient">🎯 4. Mission: The Sales Pitch</h2>
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">🕴️</span>
+                    <h3>Jugador 1: El Vendedor</h3>
+                    <p>Convence a tu cliente de que compre tu producto caro. "The iPhone is more beautiful than the old Nokia."</p>
+                </div>
+                <div class="rp-card" style="background: linear-gradient(135deg, var(--secondary), #be185d);">
+                    <span style="font-size: 2rem;">🙅</span>
+                    <h3>Jugador 2: El Cliente Tacaño</h3>
+                    <p>Contradice todo. "No, the Nokia is stronger! And it is cheaper!"</p>
+                </div>
+            </div>
+        </section>
+    </div>
+<script src="ufo.js"></script><script src="universe_bg.js"></script>
+<script src="/intep/cursoingles/cursos_api.js"></script>
+</body>
+</html>

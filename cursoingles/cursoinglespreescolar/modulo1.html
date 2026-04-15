@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safari de Animales 🦁 | INTEP Kids</title>
+    <!-- INTEP: Session guard -->
+    <script>window.__CURSO={nivel:'kids',num:1};</script>
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/intep/cursoingles/cursoinglespreescolar/index.css">
+    <style>
+        :root {
+            --primary:#FF5A5F; --secondary:#08C2A8; --accent:#FFD166;
+            --bg-color:#F8FDFF; --text-dark:#2D3142; --text-light:#4F5D75; --white:#FFFFFF;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Nunito',sans-serif; background:var(--bg-color); color:var(--text-dark); }
+        h1,h2,h3,h4 { font-family:'Fredoka',sans-serif; }
+
+        .back-btn { display:inline-flex; align-items:center; gap:8px; background:var(--white);
+            border:2px solid var(--primary); color:var(--primary); padding:10px 20px;
+            border-radius:30px; font-family:'Fredoka',sans-serif; font-size:1rem; font-weight:600;
+            cursor:pointer; text-decoration:none; margin:20px 5%; transition:all 0.3s; }
+        .back-btn:hover { background:var(--primary); color:white; }
+
+        .lesson-container { max-width:900px; margin:0 auto; padding:0 5% 4rem; }
+
+        /* Header */
+        .lesson-hero { background:linear-gradient(135deg,#fff9e6,#fff0f0);
+            border-radius:30px; padding:2.5rem; margin-bottom:2rem;
+            display:flex; align-items:center; gap:2rem;
+            border:3px solid var(--accent); box-shadow:0 8px 25px rgba(255,209,102,0.2); }
+        .lesson-hero-icon { font-size:5rem; animation:float 3s ease-in-out infinite; }
+        @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+        .lesson-badge { background:var(--primary); color:white; padding:5px 15px;
+            border-radius:20px; font-size:0.85rem; font-weight:700; display:inline-block; margin-bottom:10px; }
+        .lesson-hero h1 { font-size:2.5rem; color:var(--text-dark); }
+        .lesson-hero p { color:var(--text-light); margin-top:8px; font-size:1.1rem; }
+
+        /* Section */
+        .section-card { background:white; border-radius:25px; padding:2rem;
+            margin-bottom:2rem; box-shadow:0 5px 20px rgba(0,0,0,0.06); }
+        .section-title { font-family:'Fredoka',sans-serif; font-size:1.8rem;
+            color:var(--text-dark); margin-bottom:1.5rem;
+            display:flex; align-items:center; gap:12px; }
+
+        /* Flashcards */
+        .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:20px; }
+        .flip-card { height:200px; perspective:1000px; cursor:pointer; }
+        .flip-inner { position:relative; width:100%; height:100%;
+            transition:transform 0.6s cubic-bezier(0.4,0.2,0.2,1); transform-style:preserve-3d; }
+        .flip-card:hover .flip-inner { transform:rotateY(180deg); }
+        .flip-front, .flip-back { position:absolute; width:100%; height:100%; backface-visibility:hidden;
+            border-radius:20px; display:flex; flex-direction:column;
+            justify-content:center; align-items:center; padding:15px; }
+        .flip-front { background:linear-gradient(135deg,#fff9e6,#fff0f0);
+            border:3px solid var(--accent); }
+        .flip-back { background:linear-gradient(135deg,var(--primary),#ff8a8e);
+            color:white; transform:rotateY(180deg); }
+        .card-emoji { font-size:3.5rem; margin-bottom:10px; }
+        .card-spanish { font-family:'Fredoka',sans-serif; font-size:1rem; color:var(--text-light); }
+        .flip-back h3 { font-family:'Fredoka',sans-serif; font-size:1.4rem; margin-bottom:6px; }
+        .flip-back .pronunciation { font-size:0.9rem; opacity:0.9; }
+
+        /* Story */
+        .story-box { background:linear-gradient(135deg,#f0fdfb,#e6fff9);
+            border-left:6px solid var(--secondary); border-radius:15px;
+            padding:1.5rem; font-size:1.15rem; line-height:1.8; }
+        .highlight { background:rgba(8,194,168,0.15); color:#047d6a; font-weight:700;
+            padding:2px 8px; border-radius:8px; border:1px dashed var(--secondary); }
+
+        /* Grammar */
+        .grammar-box { background:linear-gradient(135deg,#fffdf0,#fff9e6);
+            border:3px solid var(--accent); border-radius:20px; padding:1.5rem; }
+        .grammar-rule { display:flex; align-items:center; gap:15px; padding:12px 0;
+            border-bottom:1px dashed rgba(255,209,102,0.5); font-size:1.1rem; }
+        .grammar-rule:last-child { border-bottom:none; }
+        .grammar-rule .emoji { font-size:1.8rem; min-width:40px; }
+        .grammar-rule .en { font-family:'Fredoka',sans-serif; font-size:1.2rem; color:var(--primary); }
+        .grammar-rule .es { color:var(--text-light); font-size:0.9rem; }
+
+        /* Mission */
+        .mission-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        @media(max-width:600px){ .mission-grid{grid-template-columns:1fr;} }
+        .mission-card { border-radius:20px; padding:1.5rem; color:white; }
+        .mission-card h3 { font-family:'Fredoka',sans-serif; font-size:1.4rem; margin-bottom:10px; }
+        .mission-card ul { list-style:none; padding:0; }
+        .mission-card li { padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.2);
+            font-size:1rem; }
+        .mission-card li:last-child { border-bottom:none; }
+        .mission-card.pink { background:linear-gradient(135deg,#FF5A5F,#ff8a8e); }
+        .mission-card.teal { background:linear-gradient(135deg,#08C2A8,#0eddbc); }
+
+        /* Complete Button */
+        .btn-complete { display:block; width:100%; padding:18px; margin-top:2rem;
+            background:linear-gradient(135deg,var(--secondary),#0eddbc);
+            color:white; border:none; border-radius:20px; font-family:'Fredoka',sans-serif;
+            font-size:1.4rem; font-weight:700; cursor:pointer;
+            box-shadow:0 8px 20px rgba(8,194,168,0.4); transition:all 0.3s; }
+        .btn-complete:hover { transform:translateY(-3px); box-shadow:0 12px 25px rgba(8,194,168,0.5); }
+        .btn-complete:active { transform:translateY(0); }
+
+        /* Victory Modal */
+        .victory-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(45,49,66,0.85); backdrop-filter:blur(8px);
+            z-index:1000; justify-content:center; align-items:center; }
+        .victory-box { background:white; border-radius:30px; padding:3rem;
+            text-align:center; max-width:380px; width:90%;
+            animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards; transform:scale(0.8); }
+        @keyframes popIn { to { transform:scale(1); } }
+        .victory-box h2 { font-family:'Fredoka',sans-serif; font-size:2.5rem;
+            color:var(--text-dark); margin:15px 0 10px; }
+        .xp-badge { background:var(--accent); color:var(--text-dark); font-family:'Fredoka',sans-serif;
+            font-size:1.8rem; font-weight:700; padding:10px 25px; border-radius:15px;
+            display:inline-block; margin:15px 0; }
+        .btn-continue { width:100%; padding:15px; border-radius:15px; border:none;
+            background:var(--primary); color:white; font-family:'Fredoka',sans-serif;
+            font-size:1.2rem; font-weight:700; cursor:pointer; margin-top:15px; transition:all 0.3s; }
+        .btn-continue:hover { background:#e04e53; }
+    </style>
+</head>
+<body>
+
+    <a href="/intep/cursoingles/cursoinglespreescolar/dashboard.php" class="back-btn">← Volver al Mapa</a>
+
+    <div class="lesson-container">
+
+        <!-- Header -->
+        <div class="lesson-hero">
+            <div class="lesson-hero-icon">🦁</div>
+            <div>
+                <span class="lesson-badge">Módulo 1 · Animals</span>
+                <h1>Safari de Animales</h1>
+                <p>¡Conoce a los amigos del safari y aprende sus nombres en inglés!</p>
+            </div>
+        </div>
+
+        <!-- Sección 1: Vocabulario -->
+        <div class="section-card">
+            <h2 class="section-title">🃏 1. Meet the Animals!</h2>
+            <p style="margin-bottom:1.5rem;color:var(--text-light);">Pasa el cursor por cada tarjeta para ver el nombre en inglés.</p>
+            <div class="cards-grid">
+                <div class="flip-card"><div class="flip-inner">
+                    <div class="flip-front"><div class="card-emoji">🦁</div><div class="card-spanish">El León</div></div>
+                    <div class="flip-back"><h3>Lion</h3><div class="pronunciation">[ LAI-on ]</div></div>
+                </div></div>
+                <div class="flip-card"><div class="flip-inner">
+                    <div class="flip-front"><div class="card-emoji">🐘</div><div class="card-spanish">El Elefante</div></div>
+                    <div class="flip-back"><h3>Elephant</h3><div class="pronunciation">[ EL-e-fant ]</div></div>
+                </div></div>
+                <div class="flip-card"><div class="flip-inner">
+                    <div class="flip-front"><div class="card-emoji">🐒</div><div class="card-spanish">El Mono</div></div>
+                    <div class="flip-back"><h3>Monkey</h3><div class="pronunciation">[ MON-ki ]</div></div>
+                </div></div>
+                <div class="flip-card"><div class="flip-inner">
+                    <div class="flip-front"><div class="card-emoji">🐱</div><div class="card-spanish">El Gato</div></div>
+                    <div class="flip-back"><h3>Cat</h3><div class="pronunciation">[ kat ]</div></div>
+                </div></div>
+                <div class="flip-card"><div class="flip-inner">
+                    <div class="flip-front"><div class="card-emoji">🐶</div><div class="card-spanish">El Perro</div></div>
+                    <div class="flip-back"><h3>Dog</h3><div class="pronunciation">[ dog ]</div></div>
+                </div></div>
+                <div class="flip-card"><div class="flip-inner">
+                    <div class="flip-front"><div class="card-emoji">🐦</div><div class="card-spanish">El Pájaro</div></div>
+                    <div class="flip-back"><h3>Bird</h3><div class="pronunciation">[ berd ]</div></div>
+                </div></div>
+            </div>
+        </div>
+
+        <!-- Sección 2: Historia -->
+        <div class="section-card">
+            <h2 class="section-title">📖 2. En el Safari</h2>
+            <div class="story-box">
+                Look! <span class="highlight">The lion</span> is big and brave. 🦁<br>
+                <span class="highlight">The elephant</span> is very tall. 🐘<br>
+                <span class="highlight">The monkey</span> is funny and happy! 🐒<br>
+                <span class="highlight">The bird</span> is small and beautiful. 🐦
+            </div>
+        </div>
+
+        <!-- Sección 3: Gramática -->
+        <div class="section-card">
+            <h2 class="section-title">💡 3. La Fórmula Mágica</h2>
+            <p style="margin-bottom:1.2rem;color:var(--text-light);font-size:1.1rem;">
+                Para describir un animal usamos: <strong style="color:var(--primary);">The [animal] is [adjective]</strong>
+            </p>
+            <div class="grammar-box">
+                <div class="grammar-rule">
+                    <span class="emoji">🦁</span>
+                    <div><div class="en">The lion is big.</div><div class="es">El león es grande.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <span class="emoji">🐘</span>
+                    <div><div class="en">The elephant is tall.</div><div class="es">El elefante es alto.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <span class="emoji">🐒</span>
+                    <div><div class="en">The monkey is funny.</div><div class="es">El mono es gracioso.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <span class="emoji">🐱</span>
+                    <div><div class="en">The cat is small.</div><div class="es">El gato es pequeño.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <span class="emoji">🐶</span>
+                    <div><div class="en">The dog is friendly.</div><div class="es">El perro es amigable.</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 4: Misión -->
+        <div class="section-card" style="border:3px solid var(--secondary);">
+            <h2 class="section-title" style="color:var(--secondary);">🎯 4. Misión: ¡Guía del Safari!</h2>
+            <p style="color:var(--text-light);margin-bottom:1.5rem;font-size:1.05rem;">
+                Imagina que eres un guía del safari. ¡Cuéntale a la clase sobre los animales!
+            </p>
+            <div class="mission-grid">
+                <div class="mission-card pink">
+                    <h3>🦁 Paso 1</h3>
+                    <p style="opacity:0.9;font-size:0.95rem;">Elige un animal y dí su nombre en inglés:</p>
+                    <ul>
+                        <li>"<strong>This is a lion!</strong>"</li>
+                        <li>"<strong>This is an elephant!</strong>"</li>
+                        <li>"<strong>This is a monkey!</strong>"</li>
+                    </ul>
+                </div>
+                <div class="mission-card teal">
+                    <h3>⭐ Paso 2</h3>
+                    <p style="opacity:0.9;font-size:0.95rem;">Ahora describe cómo es tu animal:</p>
+                    <ul>
+                        <li>"<strong>The lion is big.</strong>"</li>
+                        <li>"<strong>The bird is small.</strong>"</li>
+                        <li>"<strong>The monkey is funny!</strong>"</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn-complete" onclick="completarModulo()">
+                🏆 ¡Completé mi Misión! +30 XP
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Modal de Victoria -->
+    <div id="victoryModal" class="victory-overlay">
+        <div class="victory-box">
+            <div style="font-size:5rem;">🏆</div>
+            <h2>¡Lo lograste!</h2>
+            <p style="color:var(--text-light);">Ahora conoces 6 animales en inglés. ¡Eres increíble!</p>
+            <div class="xp-badge">+ 30 XP 🌟</div>
+            <button class="btn-continue" onclick="window.location.href='dashboard.php'">
+                ¡Seguir la aventura! 🗺️
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="/intep/cursoingles/cursos_api.js"></script>
+    <script>
+        function completarModulo() {
+            document.getElementById('victoryModal').style.display = 'flex';
+            confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 },
+                colors: ['#FF5A5F','#08C2A8','#FFD166'] });
+            // Guardar en servidor
+            window.INTEP_guardarProgreso({
+                nivel: 'kids', num: 1, porcentaje: 100, completado: true, xp_ganado: 30
+            });
+        }
+    </script>
+</body>
+</html>

@@ -51,15 +51,9 @@ if ($rol === 'estudiante') {
     $es_primera_infancia  = stripos($programa_nombre_est, 'primera infancia') !== false
                          || stripos($programa_nombre_est, 'preescolar') !== false;
 
-    // Detectar si está inscrito al curso de inglés (tiene nivel en idiomas_nivel)
-    $tiene_ingles = false;
-    $q_ingles = "SELECT id FROM idiomas_nivel WHERE estudiante_id = ? LIMIT 1";
-    $st_ing = mysqli_prepare($conexion, $q_ingles);
-    if ($st_ing) {
-        mysqli_stmt_bind_param($st_ing, 'i', $est_id);
-        mysqli_stmt_execute($st_ing);
-        $tiene_ingles = (bool) mysqli_fetch_assoc(mysqli_stmt_get_result($st_ing));
-    }
+    // Detectar si es estudiante de un programa de inglés (por nombre del programa)
+    $tiene_ingles = stripos($programa_nombre_est, 'inglés') !== false
+                 || stripos($programa_nombre_est, 'ingles') !== false;
 }
 
 if ($rol === 'docente') {

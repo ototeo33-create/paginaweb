@@ -1,0 +1,275 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>window.__CURSO={nivel:'A1',num:1};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 1: Nice to meet you! | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <!-- Inline styles to add the back button -->
+    <style>
+        .back-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+        .back-nav:hover {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
+
+        <!-- Header -->
+        <header class="lesson-header">
+    <script>window.__CURSO={nivel:'A1',num:1};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+            <div>
+                <span class="lesson-badge">Módulo 1 • A1 Principiante</span>
+                <h1>Nice to <span class="text-gradient">Meet You!</span></h1>
+                <p>Tu primer paso. Rompe el hielo, preséntate, di de dónde eres y a qué te dedicas.</p>
+            </div>
+            <div class="progress-container">
+                <div class="progress-circle" style="background: conic-gradient(var(--success) 100%, #e2e8f0 0);">
+                    <span>100%</span>
+                </div>
+                <p style="font-size: 0.85rem; margin-top: 8px; color: var(--success); font-weight:bold;">Completado</p>
+            </div>
+        </header>
+
+        <!-- Section 1: Interactive Vocabulary -->
+        <section class="learning-section">
+            <h2 class="section-title">🖼️ 1. Greetings & Basics</h2>
+            <p style="margin-bottom: 2rem;">Los saludos son la puerta de entrada. Pasa el cursor por las tarjetas.</p>
+            
+            <div class="flashcards-grid">
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">👋</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Hola formal</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Hello / Good morning</h3>
+                            <p>[ he-lóu / gud mor-nin ]</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🤝</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Encantado de conocerte</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Nice to meet you</h3>
+                            <p>[ nais tu miit iu ]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🌍</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">¿De dónde eres?</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Where are you from?</h3>
+                            <p>[ wer ar iu from ]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">💼</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">¿A qué te dedicas?</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>What do you do?</h3>
+                            <p>[ wat du iu du ]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Immersive Reading -->
+        <section class="learning-section">
+            <h2 class="section-title">📖 2. Real Context (Networking)</h2>
+            <p style="margin-bottom: 1.5rem;">Lee esta presentación en un evento. Notas el uso del verbo ser/estar.</p>
+            
+            <div class="story-box" style="border-left-color: var(--secondary);">
+                "Hello! <span class="highlight-verb">I am</span> Sarah. <span class="highlight-verb">I am</span> from Canada. This is my friend Mark. <span class="highlight-verb">He is</span> an engineer. <span class="highlight-verb">We are</span> very happy to be here."
+            </div>
+        </section>
+
+        <!-- Section 3: Grammar Cheat Sheet -->
+        <section class="learning-section">
+            <h2 class="section-title">💡 3. The foundation: Verbo "To Be"</h2>
+            <p style="margin-bottom: 2rem;">El verbo clave del idioma. Significa "Ser" o "Estar". Toma 3 formas diferentes dependiendo de la persona.</p>
+            
+            <div class="grammar-container">
+                <div class="grammar-card normal">
+                    <h3>AM & ARE (Primera persona y Plurales)</h3>
+                    <ul class="grammar-list">
+                        <li><strong>I</strong> <span>am</span> Sarah. (Yo soy Sarah)</li>
+                        <li><strong>You</strong> <span>are</span> from Mexico. (Tú eres de México)</li>
+                        <li><strong>We / They</strong> <span>are</span> happy. (Nosotros/Ellos están felices)</li>
+                    </ul>
+                </div>
+                
+                <div class="grammar-card vip">
+                    <h3>IS (Los singulares VIP: He/She/It)</h3>
+                    <ul class="grammar-list">
+                        <li><strong>He</strong> <span>is</span> an engineer. (Él es un ingeniero)</li>
+                        <li><strong>She</strong> <span>is</span> my sister. (Ella es mi hermana)</li>
+                        <li><strong>It</strong> <span>is</span> a dog. (Eso es un perro)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Mission (Roleplay) -->
+        <section class="learning-section" style="border: 2px solid var(--success);">
+            <h2 class="section-title text-gradient">🎯 4. Final Mission: Speed Dating / Networking</h2>
+            <p style="margin-bottom: 2rem;">Usa todo lo aprendido para interactuar. Finge que estás en un evento de Networking y quieres conocer gente. Al terminar, preséntaselo al resto.</p>
+            
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">👩‍💻</span>
+                    <h3>Paso 1: Entrevista Express</h3>
+                    <p style="color: #cbd5e1; font-size: 0.9rem;">Hazle 3 preguntas a un compañero para rellenar su perfil mental.</p>
+                    <ul>
+                        <li><strong>Name:</strong> "What is your name?"</li>
+                        <li><strong>Origin:</strong> "Where are you from?"</li>
+                        <li><strong>Job:</strong> "What do you do?"</li>
+                    </ul>
+                </div>
+
+                <div class="rp-card" style="background: linear-gradient(135deg, var(--success), var(--primary-light));">
+                    <span style="font-size: 2rem;">🎤</span>
+                    <h3>Paso 2: Presentación Oficial</h3>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Preséntale a tu compañero al resto de la clase usando "He is" o "She is".</p>
+                    <ul>
+                        <li>"Hello! This is [Nombre]."</li>
+                        <li>"He/She is from [Ciudad/País]."</li>
+                        <li>"He/She is a [Profesión]."</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                <button onclick="triggerVictory()" style="background: var(--primary); color: white; padding: 16px 32px; border-radius: 12px; font-weight: bold; border: none; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); transition: transform 0.2s;">🏆 Completar Módulo</button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Modal Victoria -->
+    <div id="victoryModal" class="victory-modal-overlay">
+        <div class="victory-box">
+            <!-- Animated Custom Mascot -->
+            <div class="mascot-container">
+                <svg width="150" height="150" viewBox="0 0 200 200" overflow="visible">
+                    <!-- Shadow -->
+                    <ellipse cx="100" cy="190" rx="40" ry="10" fill="rgba(0,0,0,0.15)" class="mascot-shadow" />
+                    
+                    <g class="mascot-body-wrapper">
+                        <!-- Arms -->
+                        <path d="M 50 120 Q 20 120 20 70" stroke="#ec4899" stroke-width="15" stroke-linecap="round" fill="transparent" class="mascot-arm-left" />
+                        <path d="M 150 120 Q 180 120 180 70" stroke="#f59e0b" stroke-width="15" stroke-linecap="round" fill="transparent" class="mascot-arm-right" />
+                        
+                        <!-- Body -->
+                        <rect x="40" y="60" width="120" height="110" rx="50" fill="#6366f1" />
+                        
+                        <!-- Inner belly accent -->
+                        <rect x="60" y="110" width="80" height="40" rx="20" fill="rgba(255,255,255,0.15)" />
+                        
+                        <!-- Eyes -->
+                        <circle cx="75" cy="95" r="10" fill="white" />
+                        <circle cx="75" cy="95" r="4" fill="#0f172a" />
+                        
+                        <circle cx="125" cy="95" r="10" fill="white" />
+                        <circle cx="125" cy="95" r="4" fill="#0f172a" />
+                        
+                        <!-- Happy Mouth -->
+                        <path d="M 85 130 Q 100 155 115 130" stroke="white" stroke-width="7" stroke-linecap="round" fill="transparent" class="mascot-mouth" />
+                    </g>
+                </svg>
+            </div>
+            
+            <h2>¡Fantástico!</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Completaste el módulo exitosamente.</p>
+            <div class="pts-badge">+ 50 XP</div>
+            <p style="margin-bottom: 20px; font-size: 0.9rem;">Tu recompensa ha sido enviada a tu perfil.</p>
+            <button onclick="window.location.href='/intep/cursoingles/dashboard.php'" style="width: 100%; padding: 15px; border-radius: 12px; border: none; background: #0f172a; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer;">Volver al Panel · Continuar</button>
+        </div>
+    </div>
+
+    <!-- JS para Confeti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        function triggerVictory() {
+            document.getElementById('victoryModal').style.display = 'flex';
+            
+            // Disparar confeti
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#6366f1', '#ec4899', '#fce7f3']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#6366f1', '#ec4899', '#fce7f3']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
+<script src="ufo.js"></script><script src="universe_bg.js"></script>
+<script src="/intep/cursoingles/cursos_api.js"></script>
+</body>
+</html>

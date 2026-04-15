@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>window.__CURSO={nivel:'A1',num:8};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 8: The Past Weekend | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }</style>
+</head>
+<body>
+    <div class="app-container">
+        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
+
+        <header class="lesson-header">
+    <script>window.__CURSO={nivel:'A1',num:8};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+            <div>
+                <span class="lesson-badge">Módulo 8 • A1 Principiante</span>
+                <h1>The <span class="text-gradient">Past Weekend</span></h1>
+                <p>Nombra el ayer. Introducción al verbo To Be en tiempo Pasado.</p>
+            </div>
+        </header>
+
+        <section class="learning-section">
+            <h2 class="section-title">🖼️ 1. Time in the Past</h2>
+            <div class="flashcards-grid">
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">📅</div><h3>Ayer</h3></div><div class="flashcard-back"><h3>Yesterday</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🌙</div><h3>Anoche</h3></div><div class="flashcard-back"><h3>Last night</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🎉</div><h3>El fin de semana pasado</h3></div><div class="flashcard-back"><h3>Last weekend</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">⏱️</div><h3>Hace dos días</h3></div><div class="flashcard-back"><h3>Two days ago</h3></div></div></div>
+            </div>
+        </section>
+
+        <section class="learning-section">
+            <h2 class="section-title">📖 2. Read & Discover</h2>
+            <div class="story-box" style="border-left-color: #ef4444;">
+                "Today I am happy. But <span class="highlight-verb">yesterday</span>, I <span class="highlight-verb">was</span> very tired. The weather <span class="highlight-verb">was</span> bad. We <span class="highlight-verb">were</span> at the cinema watching a boring movie."
+            </div>
+        </section>
+
+        <section class="learning-section">
+            <h2 class="section-title">💡 3. Grammar: Was vs Were</h2>
+            <div class="grammar-container">
+                <div class="grammar-card normal">
+                    <h3>WAS (I / He / She / It)</h3>
+                    <ul class="grammar-list">
+                        <li><strong>I / He</strong> <span>was</span> tired. (Él/Yo estaba cansado)</li>
+                        <li><strong>It</strong> <span>was</span> raining.</li>
+                    </ul>
+                </div>
+                <div class="grammar-card vip">
+                    <h3>WERE (You / We / They)</h3>
+                    <ul class="grammar-list">
+                        <li><strong>You</strong> <span>were</span> at home. (Estabas en casa)</li>
+                        <li><strong>They</strong> <span>were</span> happy.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="learning-section" style="border: 2px solid #ef4444;">
+            <h2 class="section-title text-gradient">🎯 4. Mission: The Alibi (La Coartada)</h2>
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">🕵️‍♂️</span>
+                    <h3>Paso 1: El Policía</h3>
+                    <p>Pregúntale a tu sospechoso: "Where were you last night at 10 PM?"</p>
+                </div>
+                <div class="rp-card" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">
+                    <span style="font-size: 2rem;">🥷</span>
+                    <h3>Paso 2: El Sospechoso</h3>
+                    <p>Inventa una historia usando WAS/WERE: "I was at home. I was with my mother."</p>
+                </div>
+            </div>
+        </section>
+    </div>
+<script src="ufo.js"></script><script src="universe_bg.js"></script>
+<script src="/intep/cursoingles/cursos_api.js"></script>
+</body>
+</html>

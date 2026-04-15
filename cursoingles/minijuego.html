@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade - Mini Juego | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>
+        body { background: transparent;  margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        .game-header { padding: 20px 5%; display: flex; align-items: center; gap: 20px; }
+        .close-btn { color: #94a3b8; font-size: 2.5rem; text-decoration: none; font-weight: bold; transition: color 0.3s; }
+        .close-btn:hover { color: white; }
+        .game-progress-container { flex: 1; background: rgba(255,255,255,0.1); height: 15px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+        .game-progress-bar { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); width: 0%; border-radius: 20px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .lives { font-size: 1.5rem; color: #ef4444; font-weight: bold; }
+        
+        .level-badge { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); color: #6366f1; background: rgba(99, 102, 241, 0.15); font-size: 0.9rem; font-weight: bold; padding: 4px 15px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;}
+        
+        .game-area { flex: 1; max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; padding: 20px; margin-top: 20px;}
+        .mascot-dialog { display: flex; align-items: flex-end; margin-bottom: 40px; gap: 20px; }
+        .chat-bubble { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2); padding: 15px 25px; border-radius: 20px; border-bottom-left-radius: 0; font-size: 1.5rem; color: white; flex: 1; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .answer-zone { min-height: 80px; border-bottom: 2px solid rgba(255,255,255,0.3); display: flex; flex-wrap: wrap; align-content: flex-start; gap: 10px; padding-bottom: 10px; margin-bottom: 40px; }
+        .word-bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .word-btn { background: white; color: #1e293b; border: 2px solid #e2e8f0; border-bottom: 6px solid #cbd5e1; padding: 15px 25px; border-radius: 15px; font-size: 1.5rem; font-weight: bold; cursor: pointer; transition: transform 0.1s, opacity 0.2s, background 0.3s; font-family: 'Inter', sans-serif; user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .word-btn:hover { background: transparent; }
+        .word-btn:active { transform: translateY(4px); border-bottom-width: 2px; margin-top: 4px; }
+        .word-btn.selected { opacity: 0; pointer-events: none; }
+        .footer-bar { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.1); padding: 30px 5%; display: flex; justify-content: space-between; align-items: center; min-height: 140px; transition: background 0.3s; }
+        .footer-bar.correct { background: #10b981; box-shadow: 0 -10px 30px rgba(16, 185, 129, 0.3); }
+        .footer-bar.incorrect { background: #ef4444; box-shadow: 0 -10px 30px rgba(239, 68, 68, 0.3); }
+        .footer-msg { display: none; color: white; }
+        .footer-msg h2 { margin: 0; font-size: 2rem; color: white !important;}
+        .check-btn { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); border: none; border-bottom: 5px solid rgba(255,255,255,0.05); padding: 18px 50px; border-radius: 20px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif; letter-spacing: 1px; }
+        .check-btn.active { background: #6366f1; color: white; border-bottom: 5px solid #4f46e5; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+        .check-btn.active:active, .check-btn.next:active { transform: translateY(3px); border-bottom-width: 2px; margin-top: 3px; }
+        .check-btn.next { background: white; color: #1e293b; border-bottom: 5px solid #cbd5e1; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+        .shake-anim { animation: shake 0.4s; }
+        @keyframes popInAnswer { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        .overlay-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="game-header">
+        <a href="dashboard.php" class="close-btn">×</a>
+        <div class="game-progress-container"><div class="game-progress-bar" id="progressBar"></div></div>
+        <div class="lives" id="livesDisplay">❤️ 3</div>
+    </div>
+    
+    <div class="level-badge" id="levelDisplay">Cargando Dificultad...</div>
+
+    <div class="game-area">
+        <div class="mascot-dialog">
+            <div class="mascot-container" style="margin:0; width: 100px; height: 100px;">
+                <svg width="100" height="100" viewBox="0 0 200 200" overflow="visible">
+                    <g class="mascot-body-wrapper">
+                        <path d="M 50 120 Q 20 120 20 70" stroke="#ec4899" stroke-width="15" stroke-linecap="round" fill="transparent" />
+                        <path d="M 150 120 Q 180 120 180 70" stroke="#f59e0b" stroke-width="15" stroke-linecap="round" fill="transparent" />
+                        <rect x="40" y="60" width="120" height="110" rx="50" fill="#6366f1" />
+                        <rect x="60" y="110" width="80" height="40" rx="20" fill="rgba(255,255,255,0.15)" />
+                        <circle cx="75" cy="95" r="10" fill="white" />
+                        <circle cx="75" cy="95" r="4" fill="#0f172a" />
+                        <circle cx="125" cy="95" r="10" fill="white" />
+                        <circle cx="125" cy="95" r="4" fill="#0f172a" />
+                        <path d="M 85 130 Q 100 155 115 130" stroke="white" stroke-width="7" stroke-linecap="round" fill="transparent" />
+                    </g>
+                </svg>
+            </div>
+            <div class="chat-bubble" id="questionText">Cargando...</div>
+        </div>
+
+        <div class="answer-zone" id="answerZone"></div>
+        <div class="word-bank" id="wordBank"></div>
+    </div>
+
+    <div class="footer-bar" id="footerBar">
+        <div class="footer-msg" id="footerMsg">
+            <h2 id="msgTitle">¡Excelente!</h2>
+            <p id="msgSub" style="font-size:1.1rem; opacity:0.9; margin: 5px 0 0 0;">Significado: Correcto</p>
+        </div>
+        <div></div>
+        <button class="check-btn" id="actionBtn" disabled>COMPROBAR</button>
+    </div>
+
+    <div class="overlay-screen" id="winScreen">
+        <h1 style="font-size: 6rem; margin-bottom: 20px;">🎉🏆🎉</h1>
+        <h2 style="color: white; font-size: 4rem;">¡Sesión Completada!</h2>
+        <p style="color: #94a3b8; font-size: 1.5rem; margin-bottom: 40px;">Eres increíble. Ganaste <strong style="color: #f59e0b;">+50 XP</strong></p>
+        <div style="display: flex; gap: 20px;">
+            <button onclick="location.reload()" class="word-btn" style="background:#6366f1; color:white; border-color:#4f46e5; border-bottom: 8px solid #4338ca; padding: 20px 40px; font-size: 1.2rem;">SIGUIENTE NIVEL</button>
+            <a href="dashboard.php" class="word-btn" style="display:inline-block; text-decoration:none; background:#10b981; color:white; border-color:#059669; border-bottom: 8px solid #047857; padding: 20px 40px; font-size: 1.2rem;">VOLVER</a>
+        </div>
+    </div>
+
+    <div class="overlay-screen" id="loseScreen">
+        <h1 style="font-size: 6rem; margin-bottom: 20px;">💔</h1>
+        <h2 style="color: white; font-size: 4rem;">Te quedaste sin vidas</h2>
+        <p style="color: #94a3b8; font-size: 1.5rem; margin-bottom: 40px;">La práctica hace al maestro. ¡No te rindas!</p>
+        <button onclick="location.reload()" class="word-btn" style="background:#ef4444; color:white; border-color:#dc2626; border-bottom: 8px solid #b91c1c; padding: 20px 60px; font-size: 1.5rem;">INTENTAR DE NUEVO</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const sentencePool = {
+            1: [ // Easy A1 Basic sentences
+                { es: "Yo soy un estudiante.", en: "I am a student", words: ["student", "a", "I", "teacher", "am", "is"] },
+                { es: "Ella tiene un perro.", en: "She has a dog", words: ["have", "dog", "a", "She", "cat", "has"] },
+                { es: "Él es mi amigo.", en: "He is my friend", words: ["friend", "is", "He", "are", "my", "enemy"] },
+                { es: "Me gusta la pizza.", en: "I like pizza", words: ["like", "pizza", "I", "eat", "apple", "a"] },
+                { es: "Nosotros bebemos agua.", en: "We drink water", words: ["drink", "water", "We", "milk", "they", "drinks"] },
+                { es: "Ellos leen libros.", en: "They read books", words: ["read", "books", "They", "book", "we", "write"] },
+                { es: "Yo hablo inglés.", en: "I speak English", words: ["speak", "English", "I", "Spanish", "talk"] },
+                { es: "Tú juegas al fútbol.", en: "You play soccer", words: ["play", "soccer", "You", "plays", "tennis", "are"] },
+                { es: "El niño está feliz.", en: "The boy is happy", words: ["is", "boy", "The", "happy", "sad", "are"] },
+                { es: "Mi casa es azul.", en: "My house is blue", words: ["house", "blue", "My", "is", "red", "car"] },
+                { es: "El gato duerme.", en: "The cat sleeps", words: ["cat", "The", "sleeps", "dog", "is"] },
+                { es: "Ella come manzanas.", en: "She eats apples", words: ["eats", "apples", "She", "eat", "orange", "is"] },
+                { es: "Nosotros somos jóvenes.", en: "We are young", words: ["young", "are", "We", "is", "old", "am"] },
+                { es: "Yo quiero café.", en: "I want coffee", words: ["want", "coffee", "I", "wants", "tea", "is"] },
+                { es: "Ustedes corren rápido.", en: "You run fast", words: ["run", "fast", "You", "slow", "runs", "is"] }
+            ],
+            2: [ // Medium A2 Daily life, continuous, past
+                { es: "Nosotros no jugamos fútbol.", en: "We do not play soccer", words: ["soccer", "does", "play", "not", "We", "do", "playing"] },
+                { es: "¿Dónde está la biblioteca?", en: "Where is the library", words: ["is", "the", "library", "Where", "What", "are", "book"] },
+                { es: "A ella no le gusta el café.", en: "She does not like coffee", words: ["She", "does", "do", "not", "like", "coffee", "tea"] },
+                { es: "Yo estoy estudiando ahora.", en: "I am studying now", words: ["am", "studying", "now", "I", "is", "study", "today"] },
+                { es: "Ellos fueron al parque ayer.", en: "They went to the park yesterday", words: ["went", "to", "the", "park", "yesterday", "They", "go"] },
+                { es: "¿Qué estás haciendo?", en: "What are you doing", words: ["What", "are", "you", "doing", "is", "do", "make"] },
+                { es: "Yo puedo nadar muy rápido.", en: "I can swim very fast", words: ["can", "swim", "very", "fast", "I", "could", "quick"] },
+                { es: "Ella estaba leyendo un libro.", en: "She was reading a book", words: ["was", "reading", "a", "book", "She", "is", "read"] },
+                { es: "No fuimos al cine.", en: "We did not go to the cinema", words: ["did", "not", "go", "to", "the", "cinema", "We", "do"] },
+                { es: "¿Tienes alguna pregunta?", en: "Do you have any questions", words: ["Do", "you", "have", "any", "questions", "Does", "question"] },
+                { es: "Escribí una carta larga.", en: "I wrote a long letter", words: ["I", "wrote", "a", "long", "letter", "am", "write"] },
+                { es: "Tú debes limpiar tu cuarto.", en: "You must clean your room", words: ["must", "clean", "your", "room", "You", "can", "cleaning"] },
+                { es: "Él está comprando comida.", en: "He is buying food", words: ["He", "is", "buying", "food", "was", "buy", "eating"] },
+                { es: "¿Por qué estás llorando?", en: "Why are you crying", words: ["Why", "are", "you", "crying", "is", "do", "cry"] },
+                { es: "Me desperté tarde hoy.", en: "I woke up late today", words: ["I", "woke", "up", "late", "today", "wake", "early"] }
+            ],
+            3: [ // Hard B1 Complex clauses, perfect tenses
+                { es: "Me gustaría un café, por favor.", en: "I would like a coffee please", words: ["a", "like", "would", "I", "please", "coffee", "tea", "want"] },
+                { es: "Si tuviera dinero, viajaría.", en: "If I had money I would travel", words: ["If", "I", "had", "money", "would", "travel", "have", "will"] },
+                { es: "Ella ha estado trabajando todo el día.", en: "She has been working all day", words: ["She", "has", "been", "working", "all", "day", "is", "work"] },
+                { es: "Él nunca había visto el oceano.", en: "He had never seen the ocean", words: ["He", "had", "never", "seen", "the", "ocean", "has", "see"] },
+                { es: "Tienes que terminar tu tarea.", en: "You have to finish your homework", words: ["You", "have", "to", "finish", "your", "homework", "must", "doing"] },
+                { es: "Espero que pasemos el examen.", en: "I hope we pass the exam", words: ["I", "hope", "we", "pass", "the", "exam", "wish", "passing"] },
+                { es: "A pesar de la lluvia, salimos.", en: "Despite the rain we went out", words: ["Despite", "the", "rain", "we", "went", "out", "Although", "go"] },
+                { es: "Mientras yo cocinaba, él dormía.", en: "While I was cooking he was sleeping", words: ["While", "I", "was", "cooking", "he", "sleeping", "is", "cook"] },
+                { es: "No he terminado el informe todavía.", en: "I have not finished the report yet", words: ["I", "have", "not", "finished", "the", "report", "yet", "did"] },
+                { es: "Deberíamos haber ido a casa.", en: "We should have gone home", words: ["We", "should", "have", "gone", "home", "go", "went", "must"] },
+                { es: "Tan pronto como llegues, llámame.", en: "As soon as you arrive call me", words: ["As", "soon", "as", "you", "arrive", "call", "me", "calls"] },
+                { es: "Hará calor mañana.", en: "It is going to be hot tomorrow", words: ["It", "is", "going", "to", "be", "hot", "tomorrow", "will"] },
+                { es: "¿Cuánto tiempo has vivido aquí?", en: "How long have you lived here", words: ["How", "long", "have", "you", "lived", "here", "has", "live"] },
+                { es: "Ese es el hombre que vi.", en: "That is the man who I saw", words: ["That", "is", "the", "man", "who", "I", "saw", "which"] },
+                { es: "A menos que estudies, reprobarás.", en: "Unless you study you will fail", words: ["Unless", "you", "study", "will", "fail", "If", "failing", "not"] }
+            ]
+        };
+
+        // Progression System
+        let totalWins = parseInt(localStorage.getItem('lingua_builder_wins')) || 0;
+        let pChallenge = 1;
+        let cName = "Fácil";
+
+        if (totalWins >= 3 && totalWins < 8) {
+            pChallenge = 2; cName = "Intermedio";
+        } else if (totalWins >= 8) {
+            pChallenge = 3; cName = "Avanzado 👽";
+        }
+        
+        document.getElementById('levelDisplay').innerText = `Sesiones: ${totalWins} | Categoría: ${cName}`;
+
+        // Get 5 random sentences of that difficulty per session
+        const levels = [...sentencePool[pChallenge]].sort(() => Math.random() - 0.5).slice(0, 5);
+
+        let currentLevel = 0; let lives = 3; let gameState = 'playing';
+        const questionText = document.getElementById('questionText'); const wordBank = document.getElementById('wordBank');
+        const answerZone = document.getElementById('answerZone'); const actionBtn = document.getElementById('actionBtn');
+        const footerBar = document.getElementById('footerBar'); const footerMsg = document.getElementById('footerMsg');
+        const msgTitle = document.getElementById('msgTitle'); const msgSub = document.getElementById('msgSub');
+        const progressBar = document.getElementById('progressBar'); const livesDisplay = document.getElementById('livesDisplay');
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration) {
+            try {
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration); osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+        function playTap() { playTone(500, 'sine', 0.1); }
+        function playUntap() { playTone(300, 'sine', 0.1); }
+        function playCorrect() { playTone(600, 'sine', 0.1); setTimeout(()=>playTone(800, 'sine', 0.2), 100); }
+        function playIncorrect() { playTone(150, 'sawtooth', 0.3); }
+
+        function initLevel() {
+            gameState = 'playing'; footerBar.className = 'footer-bar'; footerMsg.style.display = 'none';
+            actionBtn.className = 'check-btn'; actionBtn.innerText = 'COMPROBAR'; actionBtn.disabled = true;
+            answerZone.innerHTML = ''; wordBank.innerHTML = '';
+            
+            progressBar.style.width = ((currentLevel) / levels.length) * 100 + '%';
+            questionText.innerText = levels[currentLevel].es;
+
+            let words = [...levels[currentLevel].words].sort(() => Math.random() - 0.5);
+            words.forEach((word, index) => {
+                let btn = document.createElement('button'); btn.className = 'word-btn'; btn.innerText = word;
+                btn.id = 'word-' + index; btn.onclick = () => selectWord(btn, word); wordBank.appendChild(btn);
+            });
+        }
+
+        function selectWord(originalBtn, word) {
+            if(gameState !== 'playing') return; playTap(); originalBtn.classList.add('selected');
+            let answerBtn = document.createElement('button'); answerBtn.className = 'word-btn'; answerBtn.innerText = word;
+            answerBtn.style.animation = 'popInAnswer 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+            answerBtn.onclick = () => unselectWord(answerBtn, originalBtn);
+            answerZone.appendChild(answerBtn); updateCheckButton();
+        }
+
+        function unselectWord(answerBtn, originalBtn) {
+            if(gameState !== 'playing') return; playUntap(); answerBtn.remove(); originalBtn.classList.remove('selected'); updateCheckButton();
+        }
+
+        function updateCheckButton() {
+            if(answerZone.children.length > 0) { actionBtn.classList.add('active'); actionBtn.disabled = false; }
+            else { actionBtn.classList.remove('active'); actionBtn.disabled = true; }
+        }
+
+        actionBtn.onclick = () => {
+            if (gameState === 'playing') checkAnswer();
+            else if (gameState === 'checked-correct' || gameState === 'checked-incorrect') nextLevel();
+        };
+
+        function checkAnswer() {
+            const currentSentence = Array.from(answerZone.children).map(b => b.innerText).join(" ");
+            const targetSentence = levels[currentLevel].en;
+            if (currentSentence === targetSentence) {
+                playCorrect(); gameState = 'checked-correct'; footerBar.className = 'footer-bar correct'; footerMsg.style.display = 'block';
+                msgTitle.innerText = '¡Excelente!'; msgTitle.style.color = 'white'; msgSub.innerText = targetSentence;
+                actionBtn.className = 'check-btn next'; actionBtn.innerText = 'CONTINUAR';
+            } else {
+                playIncorrect(); gameState = 'checked-incorrect'; lives--; livesDisplay.innerText = '❤️ ' + lives;
+                answerZone.classList.add('shake-anim'); setTimeout(() => answerZone.classList.remove('shake-anim'), 400);
+                footerBar.className = 'footer-bar incorrect'; footerMsg.style.display = 'block';
+                msgTitle.innerText = 'Solución correcta:'; msgSub.innerText = targetSentence;
+                actionBtn.className = 'check-btn next'; actionBtn.innerText = 'ENTENDIDO';
+                if (lives <= 0) setTimeout(() => { document.getElementById('loseScreen').style.display = 'flex'; }, 1000);
+            }
+        }
+
+        function nextLevel() {
+            if (gameState === 'checked-correct') currentLevel++;
+            if (currentLevel >= levels.length && lives > 0) {
+                progressBar.style.width = '100%'; playCorrect(); setTimeout(()=>playCorrect(), 300);
+                
+                // SAVE PROGRESSION
+                localStorage.setItem('lingua_builder_wins', totalWins + 1);
+                
+                document.getElementById('winScreen').style.display = 'flex';
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            } else if (lives > 0) {
+                initLevel();
+            }
+        }
+
+        window.addEventListener('click', () => { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
+        initLevel();
+    </script>
+<script src="universe_bg.js"></script>
+</body>
+</html>

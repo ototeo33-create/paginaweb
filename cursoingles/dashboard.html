@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Estudiante | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>
+        body { margin: 0; }
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            background: transparent;
+            background-size: cover;
+            
+            color: white;
+        }
+
+        .sidebar {
+            background: rgba(15, 23, 42, 0.6);
+            color: white;
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .sidebar-logo span { color: var(--primary-light); }
+
+        .profile-widget {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .main-content {
+            
+            padding: 3rem;
+            background: transparent;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 2rem;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border-color: var(--primary-light);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .module-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .module-num {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-dark);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .module-progress {
+            width: 100%;
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body style="margin: 0;">
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo"><img src="https://institutointep.edu.co/logointep.png" alt="INTEP" style="height: 45px; vertical-align: middle; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));"></div>
+            
+            <div class="profile-widget">
+                <div class="profile-avatar">👨‍🎓</div>
+                <div>
+                    <h3 style="font-size: 1.1rem;">Estudiante</h3>
+                    <p style="font-size: 0.85rem; color: #cbd5e1;">Nivel: A1 Beginner</p>
+                </div>
+            </div>
+
+            <nav style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 5px;">
+                    <a href="dashboard.html" style="color: white; text-decoration: none; padding: 12px; display: block; font-weight: bold;">📚 Mis Cursos 👇</a>
+                    <div style="display: flex; flex-direction: column; padding-left: 20px; gap: 5px; margin-top: 5px; margin-bottom: 5px;">
+                        <a href="dashboard.html" style="color: var(--primary-light); text-decoration: none; font-size: 0.95rem;">🔸 A1 Beginner</a>
+                        <a href="dashboard_a2.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;">🔸 A2 Elementary</a>
+                        <a href="dashboard_b1.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;">🔸 B1 Intermediate</a>
+                    </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 5px;">
+                    <span style="color: #10b981; padding: 12px; display: block; font-weight: bold;">Arcade</span>
+                    <div style="display: flex; flex-direction: column; padding-left: 20px; gap: 5px; margin-top: 5px; margin-bottom: 5px;">
+                        <a href="minijuego.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">🔸 Constructor</a>
+                        <a href="match.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">🔸 Parejas</a>
+                        <a href="visual.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">🔸 Visual <span style="background:#ef4444; color:white; font-size:0.6rem; padding: 2px 6px; border-radius:10px; font-weight:bold; letter-spacing:1px; margin-left: 5px;">NUEVO</span></a>
+                    </div>
+                </div>
+                <a href="musica.html" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s; display: flex; align-items: center; gap: 8px; font-weight: bold;">🎧 Escucha y Aprende <span style="background:#8b5cf6; color:white; font-size:0.6rem; padding: 2px 6px; border-radius:10px; font-weight:bold; letter-spacing:1px;">NUEVO</span></a>
+                <a href="logros.html" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s;">🏆 Logros</a>
+                <a href="#" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s;">⚙️ Ajustes</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Tu Plan de <span class="text-gradient">Estudios A1</span></h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Sigue tu progreso paso a paso. Recuerda: 15 minutos al día.</p>
+
+            <div class="modules-grid">
+                
+                <!-- Módulo 1 -->
+                <a href="modulo1.html" class="module-card">
+                    <div class="module-header">
+                        <span class="module-num">Módulo 1</span>
+                        <span>⭐</span>
+                    </div>
+                    <h3>Nice to meet you!</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Aprende el verbo To Be, saludos y cómo presentarte como un profesional.</p>
+                    <div class="module-progress">
+                        <div class="progress-bar" style="width: 100%;"></div>
+                    </div>
+                    <p style="font-size: 0.8rem; text-align: right; margin-top: 5px; color: var(--success); font-weight: bold;">Completado</p>
+                </a>
+
+                <!-- Módulo 2 -->
+                <a href="modulo2.html" class="module-card">
+                    <div class="module-header">
+                        <span class="module-num">Módulo 2</span>
+                        <span>🏠</span>
+                    </div>
+                    <h3>My World</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Tu familia, tus pertenencias y el verbo "Have".</p>
+                    <div class="module-progress">
+                        <div class="progress-bar" style="width: 100%;"></div>
+                    </div>
+                    <p style="font-size: 0.8rem; text-align: right; margin-top: 5px; color: var(--success); font-weight: bold;">Completado</p>
+                </a>
+
+                <!-- Módulo 3 -->
+                <a href="lesson_rutinas.html" class="module-card" style="border: 2px solid var(--primary);">
+                    <div class="module-header">
+                        <span class="module-num">Módulo 3</span>
+                        <span>⏰</span>
+                    </div>
+                    <h3>Daily Routines</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Habla sobre tu día y domina el Presente Simple.</p>
+                    <div class="module-progress">
+                        <div class="progress-bar" style="width: 35%;"></div>
+                    </div>
+                    <p style="font-size: 0.8rem; text-align: right; margin-top: 5px; color: var(--primary); font-weight: bold;">En Progreso</p>
+                </a>
+
+                <!-- Módulo 4 -->
+                <a href="modulo4.html" class="module-card">
+                    <div class="module-header">
+                        <span class="module-num">Módulo 4</span>
+                        <span>⭐</span>
+                    </div>
+                    <h3>I can do that!</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Habla de tus habilidades, talentos y hobbies usando "Can".</p>
+                </a>
+
+                <!-- Módulo 5 -->
+                <a href="modulo5.html" class="module-card">
+                    <div class="module-header">
+                        <span class="module-num">Módulo 5</span>
+                        <span>⭐</span>
+                    </div>
+                    <h3>City Life</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Moverte por la ciudad guiando "There is / There are".</p>
+                </a>
+
+                 <!-- Módulo 6 -->
+                 <a href="modulo6.html" class="module-card">
+                    <div class="module-header">
+                        <span class="module-num">Módulo 6</span>
+                        <span>⭐</span>
+                    </div>
+                    <h3>Shopping & Food</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Compras, ropa, y pedir correctamente en un restaurante.</p>
+                </a>
+
+                 <!-- Módulo 7 -->
+                 <a href="modulo7.html" class="module-card">
+                    <div class="module-header">
+                        <span class="module-num">Módulo 7</span>
+                        <span>⭐</span>
+                    </div>
+                    <h3>What are you doing?</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Describe instantes en el momento exacto usando Presente Continuo.</p>
+                </a>
+
+                <!-- Módulo 8 -->
+                <a href="modulo8.html" class="module-card">
+                    <div class="module-header">
+                        <span class="module-num">Módulo 8</span>
+                        <span>⭐</span>
+                    </div>
+                    <h3>The Past Weekend</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Habla sobre lo que hiciste ayer. Conoce a Was / Were.</p>
+                </a>
+
+            </div>
+        </main>
+    </div>
+
+<script src="ufo.js"></script><script src="universe_bg.js"></script>
+</body>
+</html>

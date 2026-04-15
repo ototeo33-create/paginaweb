@@ -1,0 +1,270 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Música Bilingüe - INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>
+        body { background: transparent;  margin: 0; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; font-family: 'Inter', sans-serif;}
+        
+        .header { padding: 20px 5%; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10;}
+        .close-btn { color: #94a3b8; font-size: 2.5rem; text-decoration: none; font-weight: bold; transition: color 0.3s; }
+        .close-btn:hover { color: white; }
+        
+        .page-title { color: white; font-size: 2.5rem; font-family: 'Outfit', sans-serif; text-align: center; margin-top: 5px; position: relative; z-index: 10;}
+        
+        .player-container { 
+            max-width: 1100px; 
+            margin: 20px auto; 
+            background: rgba(15, 23, 42, 0.7); 
+            backdrop-filter: blur(25px); 
+            border-radius: 30px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; 
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+            height: 550px;
+            width: 95%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .player-visual { 
+            width: 45%; 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(0,0,0,0.6) 100%); 
+            padding: 40px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+
+        .album-cover { 
+            width: 250px; 
+            height: 250px; 
+            flex-shrink: 0;
+            border-radius: 20px; 
+            background: #1e293b;
+            
+            background-position: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.1); 
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .album-cover::after {
+            content:''; position:absolute; top:0; left:-100%; width:50%; height:100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-20deg);
+        }
+        .album-cover.playing { 
+            transform: scale(1.05); 
+            box-shadow: 0 35px 60px -15px rgba(99, 102, 241, 0.5), 0 0 0 2px rgba(255,255,255,0.2); 
+        }
+        .album-cover.playing::after { animation: shine 3s infinite; }
+        @keyframes shine { 100% { left: 200%; } }
+
+        .song-info { margin-top: 35px; text-align: center; width: 100%;}
+        .song-title { color: white; font-size: 2rem; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 800;}
+        .song-artist { color: #a5b4fc; margin: 8px 0 0 0; font-weight: 500; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px;}
+
+        .player-lyrics { 
+            width: 55%;  
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .lyrics-viewport {
+            flex: 1;
+            padding: 20px 40px;
+            overflow-y: auto; 
+            /* Se restaura el scrollbar clásico para que el estudiante controle su ritmo libremente */
+        }
+        
+        .lyrics-viewport::-webkit-scrollbar { width: 8px; }
+        .lyrics-viewport::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px;}
+        .lyrics-viewport::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.6); border-radius: 10px;}
+        .lyrics-viewport::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.9); }
+
+        .lyrics-track { 
+            width: 100%; 
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 10px 0;
+            padding-bottom: 50px;
+        }
+
+        .lyric-line { 
+            font-family: 'Outfit', sans-serif; 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            color: rgba(255,255,255,0.9); 
+            text-align: left;
+            margin: 0;
+            padding: 15px 25px;
+            border-radius: 15px;
+            background: rgba(0,0,0,0.3); /* Letras destacadas permanentemente */
+            border-left: 5px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .lyric-line:hover { 
+            background: rgba(0,0,0,0.5); 
+            border-left: 5px solid #6366f1; 
+            transform: translateX(5px);
+        }
+
+        .translation { 
+            display: block; 
+            font-family: 'Inter', sans-serif; 
+            font-size: 1.2rem; 
+            font-weight: 500; 
+            color: #f59e0b; 
+            margin-top: 5px; 
+            line-height: 1.4;
+        }
+
+        /* NATIVE AUDIO CONTROLS CONTAINER */
+        .audio-controls-container {
+            padding: 20px 40px;
+            background: rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        audio {
+            width: 100%;
+            border-radius: 30px;
+            outline: none;
+        }
+        /* Customizing native player slightly (Chrome specific filters) */
+        audio::-webkit-media-controls-panel { background-color: #cbd5e1; }
+        
+        .glowing-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; z-index: 1; pointer-events: none; }
+        .orb-1 { width: 400px; height: 400px; background: #6366f1; top: -100px; left: -100px; animation: float 10s infinite alternate; }
+        .orb-2 { width: 350px; height: 350px; background: #ec4899; bottom: -50px; right: -50px; animation: float 8s infinite alternate-reverse; }
+        @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+    </style>
+</head>
+<body>
+
+    <div class="glowing-orb orb-1"></div>
+    <div class="glowing-orb orb-2"></div>
+
+    <div class="header">
+        <a href="dashboard.html" class="close-btn">×</a>
+    </div>
+
+    <h1 class="page-title">🎙️ Letras Libres</h1>
+
+    <div class="player-container">
+        
+        <div class="player-visual">
+            <div class="album-cover" id="albumCover"></div>
+            
+            <div class="song-info">
+                <h2 class="song-title" id="songTitle">Título...</h2>
+                <p class="song-artist" id="songLevel">Nivel...</p>
+            </div>
+            <p style="color:#94a3b8; font-size: 0.9rem; margin-top: 15px; text-align:center;">Desliza libremente las letras y disfruta la canción a tu ritmo. No hay presiones de automatización.</p>
+        </div>
+
+        <div class="player-lyrics">
+            <div class="lyrics-viewport" id="lyricsViewport">
+                <div class="lyrics-track" id="lyricsTrack">
+                    <!-- Generado por JS -->
+                </div>
+            </div>
+            
+            <div class="audio-controls-container">
+                <audio id="audioPlayer" controls preload="auto"></audio>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /**
+         * ==========================================
+         * MODO LECTURA LIBRE DE CANCIONES (SIN SYNC)
+         * ==========================================
+         */
+        const DB_CANCIONES = [
+            {
+                id: "1",
+                title: "Twinkle Twinkle Little Star",
+                level: "Canción Infantil (A1)",
+                cover: "twinkle_cover.png", 
+                audioSrc: "tu_cancion_twinkle.mp3", 
+                lyrics: [
+                    { en: "Twinkle, twinkle, little star", es: "Brilla, brilla, estrellita" },
+                    { en: "How I wonder what you are", es: "Cómo me pregunto qué eres" },
+                    { en: "Up above the world so high", es: "Allá arriba en el mundo tan alto" },
+                    { en: "Like a diamond in the sky", es: "Como un diamante en el cielo" },
+                    { en: "Twinkle, twinkle, little star", es: "Brilla, brilla, estrellita" },
+                    { en: "How I wonder what you are", es: "Cómo me pregunto qué eres" },
+                    { en: "When the blazing sun is gone", es: "Cuando el sol ardiente se ha ido" },
+                    { en: "When he nothing shines upon", es: "Cuando él ya nada ilumina" },
+                    { en: "Then you show your little light", es: "Entonces muestras tu lucecita" },
+                    { en: "Twinkle, twinkle, all the night", es: "Brilla, brilla, toda la noche" }
+                ]
+            }
+        ];
+
+        const currentSong = DB_CANCIONES[0]; 
+
+        // ==========================================
+        // MOTOR REPRODUCTOR & UI
+        // ==========================================
+        const audio = document.getElementById('audioPlayer');
+        const albumCover = document.getElementById('albumCover');
+        const trackUI = document.getElementById('lyricsTrack');
+
+        function loadSong(song) {
+            // Actualizar Interfaz
+            document.getElementById('songTitle').innerText = song.title;
+            document.getElementById('songLevel').innerText = song.level;
+            albumCover.style.backgroundImage = `url('${song.cover}')`;
+            
+            // Cargar Audio
+            audio.src = song.audioSrc;
+            
+            // Renderizar Letras en modo Lectura (sin tiempos)
+            trackUI.innerHTML = '';
+            song.lyrics.forEach((line, index) => {
+                const div = document.createElement('div');
+                div.className = 'lyric-line';
+                
+                div.innerHTML = `
+                    ${line.en}
+                    <span class="translation">${line.es}</span>
+                `;
+                trackUI.appendChild(div);
+            });
+        }
+
+        // Eventos del Audio para girar el vinilo y animar
+        audio.addEventListener('play', () => { albumCover.classList.add('playing'); });
+        audio.addEventListener('pause', () => { albumCover.classList.remove('playing'); });
+        audio.addEventListener('ended', () => { albumCover.classList.remove('playing'); });
+
+        // Iniciar
+        loadSong(currentSong);
+    </script>
+<script src="universe_bg.js"></script>
+</body>
+</html>

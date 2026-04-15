@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade - Visual Vocab | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>
+        body { background: transparent;  margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        .game-header { padding: 20px 5%; display: flex; align-items: center; gap: 20px; }
+        .close-btn { color: #94a3b8; font-size: 2.5rem; text-decoration: none; font-weight: bold; transition: color 0.3s; }
+        .close-btn:hover { color: white; }
+        .game-progress-container { flex: 1; background: rgba(255,255,255,0.1); height: 15px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+        .game-progress-bar { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); width: 0%; border-radius: 20px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .lives { font-size: 1.5rem; color: #ef4444; font-weight: bold; }
+        
+        .level-badge { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); color: #6366f1; background: rgba(99, 102, 241, 0.15); font-size: 0.9rem; font-weight: bold; padding: 4px 15px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;}
+        
+        .game-area { flex: 1; max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; padding: 20px; margin-top: 40px;}
+        
+        .question-subtitle { color: #a5b4fc; font-weight: bold; font-family: 'Inter', sans-serif; font-size: 1rem; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .question-title { color: white; font-size: 2.2rem; font-family: 'Outfit', sans-serif; margin: 0 0 40px 0; }
+        
+        .cards-grid { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
+        
+        .choice-card {
+            background: white; border: 2px solid #e2e8f0; border-bottom: 6px solid #cbd5e1; border-radius: 20px;
+            padding: 20px; width: 160px; height: 210px; display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: all 0.15s; user-select: none; position: relative; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .choice-card:hover { background: transparent; border-bottom-width: 8px; margin-top: -2px; }
+        .choice-card:active { transform: translateY(4px); border-bottom-width: 2px; margin-top: 4px; }
+
+        .choice-card.selected { border-color: #818cf8; border-bottom-color: #6366f1; background: rgba(99, 102, 241, 0.1); }
+        .choice-card.selected .card-label { color: #4f46e5; }
+        .choice-card.selected .card-hotkey { color: #6366f1; border-color: #6366f1; background: white;}
+
+        .card-emoji { font-size: 6rem; line-height: 1; flex: 1; display: flex; align-items: center; }
+        .card-label { font-size: 1.3rem; font-weight: bold; color: #475569; width: 100%; text-align: left; font-family: 'Inter', sans-serif; }
+        .card-hotkey { position: absolute; bottom: 15px; right: 15px; color: #94a3b8; font-size: 0.9rem; border: 2px solid #e2e8f0; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; background: transparent;}
+
+        .footer-bar { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.1); padding: 30px 5%; display: flex; justify-content: space-between; align-items: center; min-height: 140px; transition: background 0.3s; }
+        .footer-bar.correct { background: #10b981; box-shadow: 0 -10px 30px rgba(16, 185, 129, 0.3); }
+        .footer-bar.incorrect { background: #ef4444; box-shadow: 0 -10px 30px rgba(239, 68, 68, 0.3); }
+        .footer-msg { display: none; color: white; }
+        .footer-msg h2 { margin: 0; font-size: 2.2rem; font-family: 'Outfit', sans-serif;}
+        
+        .btn-group { display: flex; gap: 15px; }
+        .skip-btn { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.2); padding: 18px 40px; border-radius: 20px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .skip-btn:hover { background: rgba(255,255,255,0.1); }
+        
+        .check-btn { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); border: none; border-bottom: 5px solid rgba(255,255,255,0.05); padding: 18px 50px; border-radius: 20px; font-size: 1.2rem; font-weight: 800; cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif; letter-spacing: 1px; }
+        .check-btn.active { background: #6366f1; color: white; border-bottom: 5px solid #4f46e5; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+        .check-btn.active:active, .check-btn.next:active { transform: translateY(3px); border-bottom-width: 2px; margin-top: 3px; }
+        .check-btn.next { background: white; color: white; border-bottom: 5px solid #cbd5e1; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+        .shake-anim { animation: shake 0.4s; }
+        .overlay-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        
+        .w-btn { background: white; color: white; border: 2px solid #e2e8f0; border-bottom: 6px solid #cbd5e1; padding: 15px 25px; border-radius: 15px; font-size: 1.5rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; display: inline-block; text-decoration: none;}
+        .w-btn:active { transform: translateY(4px); border-bottom-width: 2px; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="game-header">
+        <a href="dashboard.html" class="close-btn">×</a>
+        <div class="game-progress-container"><div class="game-progress-bar" id="progressBar"></div></div>
+        <div class="lives" id="livesDisplay">❤️ 5</div>
+    </div>
+    
+    <div class="level-badge" id="levelDisplay">Cargando Dificultad...</div>
+
+    <div class="game-area">
+        <div class="question-subtitle">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            PALABRA NUEVA
+        </div>
+        <h1 class="question-title" id="questionText">¿Cuál de estos es "té"?</h1>
+
+        <div class="cards-grid" id="cardsGrid">
+            <!-- Cards rendered via JS -->
+        </div>
+    </div>
+
+    <div class="footer-bar" id="footerBar">
+        <div class="footer-msg" id="footerMsg">
+            <h2 id="msgTitle">¡Impresionante!</h2>
+            <p id="msgSub" style="font-size:1.1rem; opacity:0.9; margin: 5px 0 0 0;">Correcto</p>
+        </div>
+        <div class="btn-group" id="btnGroupLeft">
+            <button class="skip-btn" id="skipBtn" onclick="handleSkip()">SALTAR</button>
+        </div>
+        <button class="check-btn" id="actionBtn" disabled>COMPROBAR</button>
+    </div>
+
+    <div class="overlay-screen" id="winScreen">
+        <h1 style="font-size: 6rem; margin-bottom: 20px;">🏆👀</h1>
+        <h2 style="color: white; font-size: 4rem;">¡Vista de Águila!</h2>
+        <p style="color: #94a3b8; font-size: 1.5rem; margin-bottom: 40px;">Has conectado imagen y palabra perfectamente.</p>
+        <div style="display: flex; gap: 20px;">
+            <button onclick="location.reload()" class="w-btn" style="background:#6366f1; color:white; border-color:#4f46e5; border-bottom: 8px solid #4338ca; padding: 20px 40px; font-size: 1.2rem;">ENTRENAR DE NUEVO</button>
+            <a href="dashboard.html" class="w-btn" style="background:#10b981; color:white; border-color:#059669; border-bottom: 8px solid #047857; padding: 20px 40px; font-size: 1.2rem;">VOLVER</a>
+        </div>
+    </div>
+
+    <div class="overlay-screen" id="loseScreen">
+        <h1 style="font-size: 6rem; margin-bottom: 20px;">💔</h1>
+        <h2 style="color: white; font-size: 4rem;">Te quedaste sin vidas</h2>
+        <p style="color: #94a3b8; font-size: 1.5rem; margin-bottom: 40px;">No te desanimes, reconocer palabras toma tiempo.</p>
+        <button onclick="location.reload()" class="w-btn" style="background:#ef4444; color:white; border-color:#dc2626; border-bottom: 8px solid #b91c1c; padding: 20px 60px; font-size: 1.5rem;">INTENTAR DE NUEVO</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const vocabPool = {
+            1: [ // Fácil A1: Animales, comida, naturaleza básica, objetos diarios.
+                { es: "té", en: "tea", emoji: "🍵", distractors: [{ en: "coffee", emoji: "☕" }, { en: "sugar", emoji: "🧂" }] },
+                { es: "manzana", en: "apple", emoji: "🍎", distractors: [{ en: "orange", emoji: "🍊" }, { en: "banana", emoji: "🍌" }] },
+                { es: "perro", en: "dog", emoji: "🐕", distractors: [{ en: "cat", emoji: "🐈" }, { en: "bird", emoji: "🐦" }] },
+                { es: "coche", en: "car", emoji: "🚗", distractors: [{ en: "bus", emoji: "🚌" }, { en: "bike", emoji: "🚲" }] },
+                { es: "casa", en: "house", emoji: "🏠", distractors: [{ en: "hospital", emoji: "🏥" }, { en: "factory", emoji: "🏭" }] },
+                { es: "agua", en: "water", emoji: "💧", distractors: [{ en: "milk", emoji: "🥛" }, { en: "juice", emoji: "🧃" }] },
+                { es: "gato", en: "cat", emoji: "🐈", distractors: [{ en: "mouse", emoji: "🐁" }, { en: "dog", emoji: "🐕" }] },
+                { es: "libro", en: "book", emoji: "📖", distractors: [{ en: "newspaper", emoji: "📰" }, { en: "notebook", emoji: "📓" }] },
+                { es: "niño", en: "boy", emoji: "👦", distractors: [{ en: "girl", emoji: "👧" }, { en: "man", emoji: "👨" }] },
+                { es: "sol", en: "sun", emoji: "☀️", distractors: [{ en: "moon", emoji: "🌙" }, { en: "star", emoji: "⭐" }] },
+                { es: "pan", en: "bread", emoji: "🍞", distractors: [{ en: "cheese", emoji: "🧀" }, { en: "butter", emoji: "🧈" }] },
+                { es: "fuego", en: "fire", emoji: "🔥", distractors: [{ en: "stone", emoji: "🪨" }, { en: "water", emoji: "💧" }] },
+                { es: "reloj", en: "clock", emoji: "🕰️", distractors: [{ en: "phone", emoji: "📱" }, { en: "computer", emoji: "💻" }] },
+                { es: "árbol", en: "tree", emoji: "🌳", distractors: [{ en: "flower", emoji: "🌸" }, { en: "grass", emoji: "🌿" }] },
+                { es: "mano", en: "hand", emoji: "✋", distractors: [{ en: "foot", emoji: "🦶" }, { en: "leg", emoji: "🦵" }] }
+            ],
+            2: [ // Intermedio A2: Viajes, profesiones, ropa, lugares urbanos.
+                { es: "zapatos", en: "shoes", emoji: "👞", distractors: [{ en: "socks", emoji: "🧦" }, { en: "hat", emoji: "🎩" }] },
+                { es: "computadora", en: "computer", emoji: "💻", distractors: [{ en: "phone", emoji: "📱" }, { en: "tv", emoji: "📺" }] },
+                { es: "llave", en: "key", emoji: "🗝️", distractors: [{ en: "door", emoji: "🚪" }, { en: "lock", emoji: "🔒" }] },
+                { es: "avión", en: "airplane", emoji: "✈️", distractors: [{ en: "train", emoji: "🚆" }, { en: "boat", emoji: "⛵" }] },
+                { es: "dinero", en: "money", emoji: "💵", distractors: [{ en: "wallet", emoji: "🪪" }, { en: "bank", emoji: "🏦" }] },
+                { es: "cámara", en: "camera", emoji: "📷", distractors: [{ en: "video", emoji: "📹" }, { en: "picture", emoji: "🖼️" }] },
+                { es: "gafas", en: "glasses", emoji: "👓", distractors: [{ en: "eyes", emoji: "👀" }, { en: "sun", emoji: "☀️" }] },
+                { es: "billetera", en: "wallet", emoji: "🪪", distractors: [{ en: "coin", emoji: "🪙" }, { en: "money", emoji: "💵" }] },
+                { es: "martillo", en: "hammer", emoji: "🔨", distractors: [{ en: "nail", emoji: "📌" }, { en: "saw", emoji: "🪚" }] },
+                { es: "medicina", en: "medicine", emoji: "💊", distractors: [{ en: "poison", emoji: "🧪" }, { en: "food", emoji: "🍔" }] },
+                { es: "paraguas", en: "umbrella", emoji: "☂️", distractors: [{ en: "cloud", emoji: "☁️" }, { en: "rain", emoji: "🌧️" }] },
+                { es: "biblioteca", en: "library", emoji: "📚", distractors: [{ en: "school", emoji: "🏫" }, { en: "museum", emoji: "🏛️" }] },
+                { es: "boleto", en: "ticket", emoji: "🎫", distractors: [{ en: "money", emoji: "💵" }, { en: "card", emoji: "💳" }] },
+                { es: "policía", en: "police", emoji: "👮", distractors: [{ en: "doctor", emoji: "👨‍⚕️" }, { en: "thief", emoji: "🥷" }] },
+                { es: "regalo", en: "gift", emoji: "🎁", distractors: [{ en: "box", emoji: "📦" }, { en: "bag", emoji: "🛍️" }] }
+            ],
+            3: [ // Avanzado B1: Conceptos específicos, herramientas complejas.
+                { es: "equipaje", en: "luggage", emoji: "🧳", distractors: [{ en: "backpack", emoji: "🎒" }, { en: "bag", emoji: "👜" }] },
+                { es: "brújula", en: "compass", emoji: "🧭", distractors: [{ en: "map", emoji: "🗺️" }, { en: "clock", emoji: "🕰️" }] },
+                { es: "microscopio", en: "microscope", emoji: "🔬", distractors: [{ en: "telescope", emoji: "🔭" }, { en: "syringe", emoji: "💉" }] },
+                { es: "escudo", en: "shield", emoji: "🛡️", distractors: [{ en: "sword", emoji: "⚔️" }, { en: "armor", emoji: "🪖" }] },
+                { es: "ancla", en: "anchor", emoji: "⚓", distractors: [{ en: "boat", emoji: "🛥️" }, { en: "hook", emoji: "🪝" }] },
+                { es: "firma", en: "signature", emoji: "✍️", distractors: [{ en: "paper", emoji: "📄" }, { en: "pen", emoji: "🖊️" }] },
+                { es: "pluma", en: "feather", emoji: "🪶", distractors: [{ en: "bird", emoji: "🕊️" }, { en: "wing", emoji: "🪽" }] },
+                { es: "balanza", en: "scale", emoji: "⚖️", distractors: [{ en: "weight", emoji: "🏋️" }, { en: "law", emoji: "📜" }] },
+                { es: "diamante", en: "diamond", emoji: "💎", distractors: [{ en: "ring", emoji: "💍" }, { en: "glass", emoji: "🥃" }] },
+                { es: "cadena", en: "chain", emoji: "⛓️", distractors: [{ en: "rope", emoji: "🪢" }, { en: "lock", emoji: "🔒" }] },
+                { es: "extintor", en: "extinguisher", emoji: "🧯", distractors: [{ en: "fire", emoji: "🔥" }, { en: "smoke", emoji: "💨" }] },
+                { es: "volcán", en: "volcano", emoji: "🌋", distractors: [{ en: "mountain", emoji: "⛰️" }, { en: "fire", emoji: "🔥" }] },
+                { es: "imán", en: "magnet", emoji: "🧲", distractors: [{ en: "metal", emoji: "🪙" }, { en: "electricity", emoji: "⚡" }] },
+                { es: "tijeras", en: "scissors", emoji: "✂️", distractors: [{ en: "knife", emoji: "🔪" }, { en: "paper", emoji: "📄" }] },
+                { es: "muleta", en: "crutch", emoji: "🩼", distractors: [{ en: "wheelchair", emoji: "♿" }, { en: "leg", emoji: "🦵" }] }
+            ]
+        };
+
+        // Progression System
+        let totalWins = parseInt(localStorage.getItem('lingua_visual_wins')) || 0;
+        let pChallenge = 1;
+        let cName = "Fácil";
+
+        if (totalWins >= 3 && totalWins < 8) {
+            pChallenge = 2; cName = "Intermedio";
+        } else if (totalWins >= 8) {
+            pChallenge = 3; cName = "Avanzado 👽";
+        }
+
+        document.getElementById('levelDisplay').innerText = `Sesiones: ${totalWins} | Categoría: ${cName}`;
+
+        // Get 5 random questions for this session based on difficulty
+        const sessionLevels = [...vocabPool[pChallenge]].sort(() => Math.random() - 0.5).slice(0, 5);
+
+        let currentLevel = 0;
+        let lives = 5;
+        let gameState = 'playing'; // playing, checked-correct, checked-incorrect
+        let selectedIndex = -1;
+        let targetIndex = -1;
+
+        const questionText = document.getElementById('questionText');
+        const cardsGrid = document.getElementById('cardsGrid');
+        const actionBtn = document.getElementById('actionBtn');
+        const skipBtn = document.getElementById('skipBtn');
+        const btnGroupLeft = document.getElementById('btnGroupLeft');
+        const footerBar = document.getElementById('footerBar');
+        const footerMsg = document.getElementById('footerMsg');
+        const progressBar = document.getElementById('progressBar');
+        const livesDisplay = document.getElementById('livesDisplay');
+
+        // Sounds engine
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration) {
+            try {
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                osc.type = type; osc.frequency.value = freq; osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration); osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+        function playTap() { playTone(500, 'sine', 0.1); }
+        function playCorrect() { playTone(600, 'sine', 0.1); setTimeout(()=>playTone(800, 'sine', 0.2), 100); }
+        function playIncorrect() { playTone(150, 'sawtooth', 0.3); }
+
+        function initLevel() {
+            gameState = 'playing';
+            selectedIndex = -1;
+            targetIndex = -1;
+            
+            footerBar.className = 'footer-bar';
+            footerMsg.style.display = 'none';
+            btnGroupLeft.style.display = 'block';
+            actionBtn.className = 'check-btn';
+            actionBtn.innerText = 'COMPROBAR';
+            actionBtn.disabled = true;
+            
+            progressBar.style.width = ((currentLevel) / sessionLevels.length) * 100 + '%';
+            
+            const levelData = sessionLevels[currentLevel];
+            questionText.innerText = `¿Cuál de estos es "${levelData.es}"?`;
+
+            // Mix correct option with distractors
+            let options = [...levelData.distractors];
+            options.push({ en: levelData.en, emoji: levelData.emoji, isCorrect: true });
+            options.sort(() => Math.random() - 0.5);
+
+            cardsGrid.innerHTML = '';
+            cardsGrid.classList.remove('shake-anim');
+
+            options.forEach((opt, index) => {
+                if (opt.isCorrect) targetIndex = index;
+                
+                const card = document.createElement('div');
+                card.className = 'choice-card';
+                card.id = `card-${index}`;
+                card.onclick = () => handleSelect(index);
+                
+                card.innerHTML = `
+                    <div class="card-emoji">${opt.emoji}</div>
+                    <div class="card-label">${opt.en}</div>
+                    <div class="card-hotkey">${index + 1}</div>
+                `;
+                cardsGrid.appendChild(card);
+            });
+        }
+
+        function handleSelect(index) {
+            if (gameState !== 'playing') return;
+            playTap();
+            
+            // Remove previous selection
+            document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+            
+            selectedIndex = index;
+            document.getElementById(`card-${index}`).classList.add('selected');
+            
+            actionBtn.classList.add('active');
+            actionBtn.disabled = false;
+        }
+
+        function handleSkip() {
+            if (gameState !== 'playing') return;
+            playIncorrect();
+            lives--;
+            livesDisplay.innerText = '❤️ ' + lives;
+            
+            showResult(false, "Saltaste la pregunta.");
+        }
+
+        actionBtn.onclick = () => {
+            if (gameState === 'playing') {
+                if (selectedIndex === targetIndex) {
+                    playCorrect();
+                    showResult(true, "");
+                } else {
+                    playIncorrect();
+                    lives--;
+                    livesDisplay.innerText = '❤️ ' + lives;
+                    cardsGrid.classList.add('shake-anim');
+                    setTimeout(() => cardsGrid.classList.remove('shake-anim'), 400);
+                    showResult(false, `La respuesta correcta era "${sessionLevels[currentLevel].en}".`);
+                }
+            } else {
+                nextLevel();
+            }
+        };
+
+        function showResult(isWin, msg) {
+            btnGroupLeft.style.display = 'none';
+            footerMsg.style.display = 'block';
+            
+            if (isWin) {
+                gameState = 'checked-correct';
+                footerBar.className = 'footer-bar correct';
+                document.getElementById('msgTitle').innerText = '¡Impresionante!';
+                document.getElementById('msgSub').innerText = 'Significado correcto';
+                actionBtn.className = 'check-btn next';
+                actionBtn.innerText = 'CONTINUAR';
+            } else {
+                gameState = 'checked-incorrect';
+                footerBar.className = 'footer-bar incorrect';
+                document.getElementById('msgTitle').innerText = 'Respuesta incorrecta';
+                document.getElementById('msgSub').innerText = msg;
+                actionBtn.className = 'check-btn next';
+                actionBtn.innerText = 'ENTENDIDO';
+                
+                if (lives <= 0) setTimeout(() => { document.getElementById('loseScreen').style.display = 'flex'; }, 1000);
+            }
+        }
+
+        function nextLevel() {
+            if (gameState === 'checked-correct') currentLevel++;
+            
+            if (currentLevel >= sessionLevels.length && lives > 0) {
+                progressBar.style.width = '100%';
+                playCorrect(); setTimeout(()=>playCorrect(), 300);
+                
+                // GUARDAR PROGRESO AL GANAR
+                localStorage.setItem('lingua_visual_wins', totalWins + 1);
+                
+                document.getElementById('winScreen').style.display = 'flex';
+                confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
+            } else if (lives > 0) {
+                initLevel();
+            }
+        }
+
+        // Keyboard hotkeys
+        window.addEventListener('keydown', (e) => {
+            if (gameState === 'playing' && ['1', '2', '3'].includes(e.key)) {
+                handleSelect(parseInt(e.key) - 1);
+            } else if (e.key === 'Enter') {
+                if (!actionBtn.disabled) actionBtn.click();
+            }
+        });
+
+        window.addEventListener('click', () => { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
+        initLevel();
+    </script>
+<script src="universe_bg.js"></script>
+</body>
+</html>

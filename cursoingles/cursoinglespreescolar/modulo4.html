@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comida Deliciosa 🍎 | INTEP Kids</title>
+    <script>window.__CURSO={nivel:'kids',num:4};</script>
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/intep/cursoingles/cursoinglespreescolar/index.css">
+    <style>
+        :root{--primary:#FF5A5F;--secondary:#08C2A8;--accent:#FFD166;--bg-color:#F8FDFF;--text-dark:#2D3142;--text-light:#4F5D75;--white:#FFFFFF;}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Nunito',sans-serif;background:var(--bg-color);color:var(--text-dark);}
+        h1,h2,h3,h4{font-family:'Fredoka',sans-serif;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:2px solid #f59e0b;color:#f59e0b;padding:10px 20px;border-radius:30px;font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;margin:20px 5%;transition:all 0.3s;}
+        .back-btn:hover{background:#f59e0b;color:white;}
+        .lesson-container{max-width:900px;margin:0 auto;padding:0 5% 4rem;}
+        .lesson-hero{background:linear-gradient(135deg,#fff9e6,#fffbf0);border-radius:30px;padding:2.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:2rem;border:3px solid #f59e0b;box-shadow:0 8px 25px rgba(245,158,11,0.15);}
+        .lesson-hero-icon{font-size:5rem;animation:float 3s ease-in-out infinite;}
+        @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+        .lesson-badge{background:#f59e0b;color:white;padding:5px 15px;border-radius:20px;font-size:0.85rem;font-weight:700;display:inline-block;margin-bottom:10px;}
+        .section-card{background:white;border-radius:25px;padding:2rem;margin-bottom:2rem;box-shadow:0 5px 20px rgba(0,0,0,0.06);}
+        .section-title{font-family:'Fredoka',sans-serif;font-size:1.8rem;color:var(--text-dark);margin-bottom:1.5rem;display:flex;align-items:center;gap:12px;}
+        /* Food cards */
+        .food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px;}
+        .food-card{background:linear-gradient(135deg,#fffbf0,#fff9e6);border:3px solid var(--accent);border-radius:20px;padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:transform 0.3s;perspective:800px;}
+        .food-card:hover{transform:scale(1.06);}
+        .food-inner{transition:transform 0.5s;transform-style:preserve-3d;}
+        .food-card:hover .food-inner{transform:rotateY(180deg);}
+        .food-front,.food-back{backface-visibility:hidden;}
+        .food-back{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:17px;color:white;transform:rotateY(180deg);}
+        .food-emoji{font-size:3.5rem;margin-bottom:8px;}
+        .food-name{font-family:'Fredoka',sans-serif;font-size:1.1rem;color:var(--text-dark);}
+        .food-es{font-size:0.8rem;color:var(--text-light);margin-top:3px;}
+        /* Like/Dislike game */
+        .like-game{background:linear-gradient(135deg,#fff9e6,#fffbf0);border:3px solid var(--accent);border-radius:20px;padding:2rem;text-align:center;}
+        .lg-food{font-size:5rem;margin:15px 0;}
+        .lg-question{font-family:'Fredoka',sans-serif;font-size:1.6rem;color:var(--text-dark);margin-bottom:20px;}
+        .lg-btns{display:flex;gap:20px;justify-content:center;}
+        .like-btn{padding:15px 35px;border-radius:20px;border:none;font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+        .like-btn.yes{background:linear-gradient(135deg,#22c55e,#4ade80);color:white;box-shadow:0 5px 15px rgba(34,197,94,0.4);}
+        .like-btn.no{background:linear-gradient(135deg,#ef4444,#f87171);color:white;box-shadow:0 5px 15px rgba(239,68,68,0.4);}
+        .like-btn:hover{transform:scale(1.05);}
+        .lg-feedback{font-family:'Fredoka',sans-serif;font-size:1.4rem;min-height:40px;margin-top:15px;}
+        .story-box{background:linear-gradient(135deg,#fff9e6,#fffbf0);border-left:6px solid #f59e0b;border-radius:15px;padding:1.5rem;font-size:1.15rem;line-height:1.9;}
+        .highlight{font-family:'Fredoka',sans-serif;font-weight:700;color:#b45309;background:rgba(245,158,11,0.1);padding:2px 8px;border-radius:8px;}
+        .grammar-box{border:3px solid var(--accent);border-radius:20px;padding:1.5rem;background:linear-gradient(135deg,#fffdf0,#fff9e6);}
+        .grammar-rule{display:flex;align-items:center;gap:15px;padding:12px 0;border-bottom:1px dashed rgba(255,209,102,0.5);font-size:1.1rem;}
+        .grammar-rule:last-child{border-bottom:none;}
+        .grammar-rule .emoji{font-size:1.8rem;min-width:40px;}
+        .grammar-rule .en{font-family:'Fredoka',sans-serif;font-size:1.2rem;}
+        .grammar-rule .en.like{color:#22c55e;}
+        .grammar-rule .en.dislike{color:#ef4444;}
+        .grammar-rule .es{color:var(--text-light);font-size:0.9rem;}
+        .mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+        @media(max-width:600px){.mission-grid{grid-template-columns:1fr;}}
+        .mission-card{border-radius:20px;padding:1.5rem;color:white;}
+        .mission-card h3{font-family:'Fredoka',sans-serif;font-size:1.4rem;margin-bottom:10px;}
+        .mission-card.orange{background:linear-gradient(135deg,#f59e0b,#fbbf24);}
+        .mission-card.green{background:linear-gradient(135deg,#22c55e,#4ade80);}
+        .mission-card ul{list-style:none;padding:0;}
+        .mission-card li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.2);}
+        .mission-card li:last-child{border-bottom:none;}
+        .btn-complete{display:block;width:100%;padding:18px;margin-top:2rem;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:white;border:none;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(245,158,11,0.4);transition:all 0.3s;}
+        .btn-complete:hover{transform:translateY(-3px);}
+        .victory-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(45,49,66,0.85);backdrop-filter:blur(8px);z-index:1000;justify-content:center;align-items:center;}
+        .victory-box{background:white;border-radius:30px;padding:3rem;text-align:center;max-width:380px;width:90%;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards;transform:scale(0.8);}
+        @keyframes popIn{to{transform:scale(1);}}
+        .victory-box h2{font-family:'Fredoka',sans-serif;font-size:2.5rem;color:var(--text-dark);margin:15px 0 10px;}
+        .xp-badge{background:var(--accent);color:var(--text-dark);font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;padding:10px 25px;border-radius:15px;display:inline-block;margin:15px 0;}
+        .btn-continue{width:100%;padding:15px;border-radius:15px;border:none;background:#f59e0b;color:white;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;margin-top:15px;}
+    </style>
+</head>
+<body>
+    <a href="/intep/cursoingles/cursoinglespreescolar/dashboard.php" class="back-btn">← Volver al Mapa</a>
+    <div class="lesson-container">
+
+        <div class="lesson-hero">
+            <div class="lesson-hero-icon">🍎</div>
+            <div>
+                <span class="lesson-badge">Módulo 4 · Food</span>
+                <h1>Comida Deliciosa</h1>
+                <p>¡Aprende a decir qué te gusta y qué no te gusta comer en inglés!</p>
+            </div>
+        </div>
+
+        <!-- Vocabulario -->
+        <div class="section-card">
+            <h2 class="section-title">🍽️ 1. Yummy Food!</h2>
+            <p style="color:var(--text-light);margin-bottom:1.5rem;">Pasa el cursor por cada comida.</p>
+            <div class="food-grid">
+                <div class="food-card"><div class="food-emoji">🍎</div><div class="food-name">Apple</div><div class="food-es">Manzana</div></div>
+                <div class="food-card"><div class="food-emoji">🍌</div><div class="food-name">Banana</div><div class="food-es">Banano</div></div>
+                <div class="food-card"><div class="food-emoji">🍕</div><div class="food-name">Pizza</div><div class="food-es">Pizza</div></div>
+                <div class="food-card"><div class="food-emoji">🎂</div><div class="food-name">Cake</div><div class="food-es">Pastel</div></div>
+                <div class="food-card"><div class="food-emoji">🥛</div><div class="food-name">Milk</div><div class="food-es">Leche</div></div>
+                <div class="food-card"><div class="food-emoji">🍊</div><div class="food-name">Orange</div><div class="food-es">Naranja</div></div>
+            </div>
+        </div>
+
+        <!-- Juego I Like / I Don't Like -->
+        <div class="section-card">
+            <h2 class="section-title">🎮 2. Do You Like It?</h2>
+            <div class="like-game">
+                <div class="lg-question">Do you like this food?</div>
+                <div class="lg-food" id="lgFood">🍎</div>
+                <div class="lg-btns">
+                    <button class="like-btn yes" onclick="answer(true)">✅ I like it!</button>
+                    <button class="like-btn no" onclick="answer(false)">❌ I don't like it!</button>
+                </div>
+                <div class="lg-feedback" id="lgFeedback"></div>
+            </div>
+        </div>
+
+        <!-- Historia -->
+        <div class="section-card">
+            <h2 class="section-title">📖 3. Lunchtime!</h2>
+            <div class="story-box">
+                Maria says: "<span class="highlight">I like pizza!</span>" 🍕<br>
+                Tom says: "<span class="highlight">I like cake!</span>" 🎂<br>
+                Anna says: "<span class="highlight">I don't like milk.</span>" 🥛<br>
+                Ben says: "<span class="highlight">I like apples and bananas!</span>" 🍎🍌
+            </div>
+        </div>
+
+        <!-- Gramática -->
+        <div class="section-card">
+            <h2 class="section-title">💡 4. I Like / I Don't Like</h2>
+            <div class="grammar-box">
+                <div class="grammar-rule">
+                    <span class="emoji">✅</span>
+                    <div><div class="en like">I like pizza.</div><div class="es">Me gusta la pizza.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <span class="emoji">✅</span>
+                    <div><div class="en like">I like cake.</div><div class="es">Me gusta el pastel.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <span class="emoji">❌</span>
+                    <div><div class="en dislike">I don't like milk.</div><div class="es">No me gusta la leche.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <span class="emoji">❌</span>
+                    <div><div class="en dislike">I don't like orange.</div><div class="es">No me gustan las naranjas.</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Misión Final -->
+        <div class="section-card" style="border:3px solid #f59e0b;">
+            <h2 class="section-title" style="color:#b45309;">🎯 5. ¡La Encuesta de Comidas!</h2>
+            <p style="color:var(--text-light);margin-bottom:1.5rem;">Pregúntale a 3 compañeros qué les gusta comer.</p>
+            <div class="mission-grid">
+                <div class="mission-card orange">
+                    <h3>🙋 Pregunta</h3>
+                    <p style="opacity:0.9;font-size:0.95rem;">Dile a un compañero:</p>
+                    <ul>
+                        <li>"<strong>Do you like pizza?</strong>"</li>
+                        <li>"<strong>Do you like cake?</strong>"</li>
+                        <li>"<strong>Do you like milk?</strong>"</li>
+                    </ul>
+                </div>
+                <div class="mission-card green">
+                    <h3>💬 Responde</h3>
+                    <p style="opacity:0.9;font-size:0.95rem;">Tu compañero responde:</p>
+                    <ul>
+                        <li>"<strong>Yes! I like pizza!</strong>"</li>
+                        <li>"<strong>No, I don't like milk.</strong>"</li>
+                        <li>"<strong>I like cake a lot!</strong>"</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn-complete" onclick="completarModulo()">🍽️ ¡Terminé el Curso! +30 XP</button>
+        </div>
+    </div>
+
+    <div id="victoryModal" class="victory-overlay">
+        <div class="victory-box">
+            <div style="font-size:5rem;">🏆</div>
+            <h2>¡Curso Completado!</h2>
+            <p style="color:var(--text-light);">¡Completaste los 4 módulos de INTEP Kids! ¡Eres una estrella!</p>
+            <div class="xp-badge">+ 30 XP 🌟</div>
+            <button class="btn-continue" onclick="window.location.href='dashboard.php'">¡Ver mi progreso! 🗺️</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="/intep/cursoingles/cursos_api.js"></script>
+    <script>
+        var foods=[{e:'🍎',n:'apple'},{e:'🍌',n:'banana'},{e:'🍕',n:'pizza'},{e:'🎂',n:'cake'},{e:'🥛',n:'milk'},{e:'🍊',n:'orange'}];
+        var fi=0;
+        function showFood(){
+            if(fi>=foods.length){document.querySelector('.like-game').innerHTML='<h3 style="font-family:Fredoka,sans-serif;font-size:1.6rem;color:#22c55e;padding:2rem;">¡Excelente! ¡Conoces todas las comidas! 🎉</h3>';return;}
+            document.getElementById('lgFood').innerText=foods[fi].e;
+            document.getElementById('lgFeedback').innerText='';
+            document.querySelectorAll('.like-btn').forEach(function(b){b.style.pointerEvents='auto';b.style.opacity='1';});
+        }
+        function answer(like){
+            var food=foods[fi];
+            var phrase=like?'I like '+food.n+'! 😊':'I don\'t like '+food.n+'. 😅';
+            document.getElementById('lgFeedback').innerHTML='<strong style="color:'+(like?'#15803d':'#dc2626')+';">'+phrase+'</strong>';
+            document.querySelectorAll('.like-btn').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='0.6';});
+            fi++;
+            setTimeout(showFood,1500);
+        }
+        function completarModulo(){
+            document.getElementById('victoryModal').style.display='flex';
+            confetti({particleCount:200,spread:100,origin:{y:0.5},colors:['#f59e0b','#fbbf24','#FF5A5F','#08C2A8','#FFD166']});
+            setTimeout(function(){confetti({particleCount:100,angle:60,spread:55,origin:{x:0}});},300);
+            setTimeout(function(){confetti({particleCount:100,angle:120,spread:55,origin:{x:1}});},600);
+            window.INTEP_guardarProgreso({nivel:'kids',num:4,porcentaje:100,completado:true,xp_ganado:30});
+        }
+        showFood();
+    </script>
+</body>
+</html>

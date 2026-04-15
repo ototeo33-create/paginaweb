@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>window.__CURSO={nivel:'A1',num:5};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 5: City Life | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }</style>
+</head>
+<body>
+    <div class="app-container">
+        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
+
+        <header class="lesson-header">
+    <script>window.__CURSO={nivel:'A1',num:5};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+            <div>
+                <span class="lesson-badge">Módulo 5 • A1 Principiante</span>
+                <h1>City <span class="text-gradient">Life</span></h1>
+                <p>Navega el mundo real usando vocabulario de ciudad y preposiciones.</p>
+            </div>
+        </header>
+
+        <section class="learning-section">
+            <h2 class="section-title">🖼️ 1. Places in Town</h2>
+            <div class="flashcards-grid">
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🏥</div><h3>Hospital</h3></div><div class="flashcard-back"><h3>Hospital</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🏦</div><h3>Banco</h3></div><div class="flashcard-back"><h3>Bank</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">☕</div><h3>Cafetería</h3></div><div class="flashcard-back"><h3>Coffee Shop</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🛒</div><h3>Mercado</h3></div><div class="flashcard-back"><h3>Supermarket</h3></div></div></div>
+            </div>
+        </section>
+
+        <section class="learning-section">
+            <h2 class="section-title">📖 2. Read & Discover</h2>
+            <div class="story-box" style="border-left-color: #10b981;">
+                "<span class="highlight-verb">There is</span> a beautiful park in my city. Next to the park, <span class="highlight-verb">there is</span> a bank. Also, <span class="highlight-verb">there are</span> three coffee shops near my house."
+            </div>
+        </section>
+
+        <section class="learning-section">
+            <h2 class="section-title">💡 3. Grammar: Hay (There is / There are)</h2>
+            <div class="grammar-container">
+                <div class="grammar-card normal">
+                    <h3>There Is (Singular)</h3>
+                    <ul class="grammar-list">
+                        <li><span>There is</span> <strong>a</strong> park. (Hay UN parque)</li>
+                        <li><span>There is</span> <strong>one</strong> hospital.</li>
+                    </ul>
+                </div>
+                <div class="grammar-card vip">
+                    <h3>There Are (Plural)</h3>
+                    <ul class="grammar-list">
+                        <li><span>There are</span> <strong>two</strong> banks. (Hay DOS bancos)</li>
+                        <li><span>There are</span> <strong>many</strong> people. (Hay muchas personas)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="learning-section" style="border: 2px solid #10b981;">
+            <h2 class="section-title text-gradient">🎯 4. Mission: The Lost Tourist</h2>
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">🗺️</span>
+                    <h3>Paso 1: El Turista</h3>
+                    <p>Finge que estás perdido. Pregunta: "Excuse me, where is the... [hospital / bank / park]?"</p>
+                </div>
+                <div class="rp-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <span style="font-size: 2rem;">📍</span>
+                    <h3>Paso 2: El Local</h3>
+                    <p>Usa preposiciones para guiarlo: "It is next to...", "It is in front of..."</p>
+                </div>
+            </div>
+        </section>
+    </div>
+<script src="ufo.js"></script><script src="universe_bg.js"></script>
+<script src="/intep/cursoingles/cursos_api.js"></script>
+</body>
+</html>

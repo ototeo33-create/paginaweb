@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiesta de Colores 🎨 | INTEP Kids</title>
+    <script>window.__CURSO={nivel:'kids',num:2};</script>
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/intep/cursoingles/cursoinglespreescolar/index.css">
+    <style>
+        :root{ --primary:#FF5A5F; --secondary:#08C2A8; --accent:#FFD166; --bg-color:#F8FDFF; --text-dark:#2D3142; --text-light:#4F5D75; --white:#FFFFFF; }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Nunito',sans-serif;background:var(--bg-color);color:var(--text-dark);}
+        h1,h2,h3,h4{font-family:'Fredoka',sans-serif;}
+        .back-btn{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:2px solid var(--secondary);color:var(--secondary);padding:10px 20px;border-radius:30px;font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;margin:20px 5%;transition:all 0.3s;}
+        .back-btn:hover{background:var(--secondary);color:white;}
+        .lesson-container{max-width:900px;margin:0 auto;padding:0 5% 4rem;}
+        .lesson-hero{background:linear-gradient(135deg,#f0f9ff,#e6fff9);border-radius:30px;padding:2.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:2rem;border:3px solid var(--secondary);box-shadow:0 8px 25px rgba(8,194,168,0.15);}
+        .lesson-hero-icon{font-size:5rem;animation:float 3s ease-in-out infinite;}
+        @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+        .lesson-badge{background:var(--secondary);color:white;padding:5px 15px;border-radius:20px;font-size:0.85rem;font-weight:700;display:inline-block;margin-bottom:10px;}
+        .section-card{background:white;border-radius:25px;padding:2rem;margin-bottom:2rem;box-shadow:0 5px 20px rgba(0,0,0,0.06);}
+        .section-title{font-family:'Fredoka',sans-serif;font-size:1.8rem;color:var(--text-dark);margin-bottom:1.5rem;display:flex;align-items:center;gap:12px;}
+        /* Color cards */
+        .colors-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:20px;}
+        .color-card{border-radius:20px;padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:transform 0.3s,box-shadow 0.3s;border:3px solid transparent;box-shadow:0 4px 15px rgba(0,0,0,0.08);}
+        .color-card:hover{transform:translateY(-5px) scale(1.03);box-shadow:0 10px 25px rgba(0,0,0,0.15);}
+        .color-card .color-circle{width:70px;height:70px;border-radius:50%;margin:0 auto 10px;border:3px solid rgba(0,0,0,0.1);}
+        .color-card h3{font-family:'Fredoka',sans-serif;font-size:1.3rem;}
+        .color-card .es{font-size:0.85rem;color:var(--text-light);margin-top:4px;}
+        .story-box{background:linear-gradient(135deg,#fffbf0,#fff7e0);border-left:6px solid var(--accent);border-radius:15px;padding:1.5rem;font-size:1.15rem;line-height:1.9;}
+        .highlight{font-weight:700;padding:2px 8px;border-radius:8px;}
+        .grammar-box{border:3px solid var(--accent);border-radius:20px;padding:1.5rem;background:linear-gradient(135deg,#fffdf0,#fff9e6);}
+        .grammar-rule{display:flex;align-items:center;gap:15px;padding:12px 0;border-bottom:1px dashed rgba(255,209,102,0.5);font-size:1.1rem;}
+        .grammar-rule:last-child{border-bottom:none;}
+        .grammar-rule .dot{width:30px;height:30px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,0.1);}
+        .grammar-rule .en{font-family:'Fredoka',sans-serif;font-size:1.2rem;color:var(--primary);}
+        .grammar-rule .es{color:var(--text-light);font-size:0.9rem;}
+        /* Activity */
+        .activity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:15px;}
+        .act-item{background:white;border-radius:15px;padding:1rem;text-align:center;cursor:pointer;border:3px solid #e5e7eb;transition:all 0.3s;font-family:'Fredoka',sans-serif;font-size:1.1rem;}
+        .act-item:hover{border-color:var(--secondary);background:#f0fdfb;}
+        .act-item.matched{border-color:var(--secondary);background:linear-gradient(135deg,#f0fdfb,#e0fff9);}
+        .mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+        @media(max-width:600px){.mission-grid{grid-template-columns:1fr;}}
+        .mission-card{border-radius:20px;padding:1.5rem;color:white;}
+        .mission-card h3{font-family:'Fredoka',sans-serif;font-size:1.4rem;margin-bottom:10px;}
+        .mission-card ul{list-style:none;padding:0;}
+        .mission-card li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.2);font-size:1rem;}
+        .mission-card.teal{background:linear-gradient(135deg,#08C2A8,#0eddbc);}
+        .mission-card.gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);}
+        .btn-complete{display:block;width:100%;padding:18px;margin-top:2rem;background:linear-gradient(135deg,var(--secondary),#0eddbc);color:white;border:none;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(8,194,168,0.4);transition:all 0.3s;}
+        .btn-complete:hover{transform:translateY(-3px);}
+        .victory-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(45,49,66,0.85);backdrop-filter:blur(8px);z-index:1000;justify-content:center;align-items:center;}
+        .victory-box{background:white;border-radius:30px;padding:3rem;text-align:center;max-width:380px;width:90%;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards;transform:scale(0.8);}
+        @keyframes popIn{to{transform:scale(1);}}
+        .victory-box h2{font-family:'Fredoka',sans-serif;font-size:2.5rem;color:var(--text-dark);margin:15px 0 10px;}
+        .xp-badge{background:var(--accent);color:var(--text-dark);font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;padding:10px 25px;border-radius:15px;display:inline-block;margin:15px 0;}
+        .btn-continue{width:100%;padding:15px;border-radius:15px;border:none;background:var(--secondary);color:white;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;margin-top:15px;}
+    </style>
+</head>
+<body>
+    <a href="/intep/cursoingles/cursoinglespreescolar/dashboard.php" class="back-btn">← Volver al Mapa</a>
+    <div class="lesson-container">
+
+        <div class="lesson-hero">
+            <div class="lesson-hero-icon">🎨</div>
+            <div>
+                <span class="lesson-badge">Módulo 2 · Colors</span>
+                <h1>Fiesta de Colores</h1>
+                <p>¡El mundo está lleno de colores y tú vas a aprender todos en inglés!</p>
+            </div>
+        </div>
+
+        <!-- Vocabulario -->
+        <div class="section-card">
+            <h2 class="section-title">🌈 1. The Colors!</h2>
+            <p style="color:var(--text-light);margin-bottom:1.5rem;">Pasa el cursor sobre cada color para aprender su nombre.</p>
+            <div class="colors-grid">
+                <div class="color-card"><div class="color-circle" style="background:#ef4444;"></div><h3>Red</h3><div class="es">Rojo</div></div>
+                <div class="color-card"><div class="color-circle" style="background:#3b82f6;"></div><h3>Blue</h3><div class="es">Azul</div></div>
+                <div class="color-card"><div class="color-circle" style="background:#22c55e;"></div><h3>Green</h3><div class="es">Verde</div></div>
+                <div class="color-card"><div class="color-circle" style="background:#facc15;"></div><h3>Yellow</h3><div class="es">Amarillo</div></div>
+                <div class="color-card"><div class="color-circle" style="background:#ec4899;"></div><h3>Pink</h3><div class="es">Rosado</div></div>
+                <div class="color-card"><div class="color-circle" style="background:#a855f7;"></div><h3>Purple</h3><div class="es">Morado</div></div>
+            </div>
+        </div>
+
+        <!-- Historia -->
+        <div class="section-card">
+            <h2 class="section-title">📖 2. A Colorful Day!</h2>
+            <div class="story-box">
+                Look at this apple! <span class="highlight" style="background:rgba(239,68,68,0.1);color:#ef4444;">The apple is red.</span> 🍎<br>
+                Look at the sky! <span class="highlight" style="background:rgba(59,130,246,0.1);color:#3b82f6;">The sky is blue.</span> ☁️<br>
+                Look at the grass! <span class="highlight" style="background:rgba(34,197,94,0.1);color:#22c55e;">The grass is green.</span> 🌿<br>
+                Look at the sun! <span class="highlight" style="background:rgba(250,204,21,0.1);color:#ca8a04;">The sun is yellow.</span> ☀️
+            </div>
+        </div>
+
+        <!-- Gramática -->
+        <div class="section-card">
+            <h2 class="section-title">💡 3. La Fórmula: It is [color]</h2>
+            <div class="grammar-box">
+                <div class="grammar-rule">
+                    <div class="dot" style="background:#ef4444;"></div>
+                    <div><div class="en">The apple is red.</div><div class="es">La manzana es roja.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <div class="dot" style="background:#3b82f6;"></div>
+                    <div><div class="en">The sky is blue.</div><div class="es">El cielo es azul.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <div class="dot" style="background:#22c55e;"></div>
+                    <div><div class="en">The frog is green.</div><div class="es">La rana es verde.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <div class="dot" style="background:#facc15;"></div>
+                    <div><div class="en">The banana is yellow.</div><div class="es">El banano es amarillo.</div></div>
+                </div>
+                <div class="grammar-rule">
+                    <div class="dot" style="background:#ec4899;"></div>
+                    <div><div class="en">The flower is pink.</div><div class="es">La flor es rosada.</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Misión -->
+        <div class="section-card" style="border:3px solid var(--accent);">
+            <h2 class="section-title" style="color:#f59e0b;">🎯 4. ¡Dilo con tu voz!</h2>
+            <p style="color:var(--text-light);margin-bottom:1.5rem;">Busca cosas en el salón y describe su color en inglés.</p>
+            <div class="mission-grid">
+                <div class="mission-card teal">
+                    <h3>🔍 Paso 1</h3>
+                    <p style="opacity:0.9;font-size:0.95rem;">Señala un objeto y di:</p>
+                    <ul>
+                        <li>"<strong>Look! The [object]..."</strong></li>
+                        <li>"<strong>Look! The pen..."</strong></li>
+                        <li>"<strong>Look! The bag..."</strong></li>
+                    </ul>
+                </div>
+                <div class="mission-card gold">
+                    <h3>🌈 Paso 2</h3>
+                    <p style="opacity:0.9;font-size:0.95rem;">¡Completa la frase con el color!</p>
+                    <ul>
+                        <li>"<strong>...is blue!</strong>"</li>
+                        <li>"<strong>...is red!</strong>"</li>
+                        <li>"<strong>...is yellow!</strong>"</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn-complete" onclick="completarModulo()">🎨 ¡Terminé la Fiesta de Colores! +30 XP</button>
+        </div>
+    </div>
+
+    <div id="victoryModal" class="victory-overlay">
+        <div class="victory-box">
+            <div style="font-size:5rem;">🌈</div>
+            <h2>¡Colores aprendidos!</h2>
+            <p style="color:var(--text-light);">Ya sabes 6 colores en inglés. ¡Eso es increíble!</p>
+            <div class="xp-badge">+ 30 XP 🌟</div>
+            <button class="btn-continue" onclick="window.location.href='dashboard.php'">¡Seguir la aventura! 🗺️</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="/intep/cursoingles/cursos_api.js"></script>
+    <script>
+        function completarModulo() {
+            document.getElementById('victoryModal').style.display='flex';
+            confetti({particleCount:120,spread:70,origin:{y:0.6},colors:['#ef4444','#3b82f6','#22c55e','#facc15','#ec4899','#a855f7']});
+            window.INTEP_guardarProgreso({nivel:'kids',num:2,porcentaje:100,completado:true,xp_ganado:30});
+        }
+    </script>
+</body>
+</html>

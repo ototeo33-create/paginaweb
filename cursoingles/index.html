@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de Inglés Premium | Domina el Idioma</title>
+    <meta name="description" content="Aprende inglés de forma rápida y efectiva con nuestro curso inmersivo. Niveles desde principiante hasta avanzado.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo"><img src="https://institutointep.edu.co/logointep.png" alt="INTEP" style="height: 45px; vertical-align: middle; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));"></div>
+        <ul class="nav-links">
+            <li><a href="#home">Inicio</a></li>
+            <li><a href="#features">Metodología</a></li>
+            <li><a href="#courses">Cursos</a></li>
+        </ul>
+        <button class="btn-primary" id="login-btn">Iniciar Sesión</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero">
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+        <div class="hero-content">
+            <div class="badge">🚀 Nuevo Curso 2026</div>
+            <h1>Domina el Inglés y <span class="text-gradient">Conquista el Mundo</span></h1>
+            <p>Atraviesa la barrera del idioma con una metodología inmersiva, clases en vivo y profesores nativos. Tu futuro bilingüe empieza hoy.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary pulse-animation">Empieza Gratis</button>
+                <button class="btn-secondary">Ver Planes</button>
+            </div>
+        </div>
+        <div class="hero-graphic">
+            <div class="glass-card floating-card-1">
+                <div class="icon">🗣️</div>
+                <div>
+                    <h4>Conversación</h4>
+                    <p>Práctica 100% real</p>
+                </div>
+            </div>
+            <div class="glass-card floating-card-2">
+                <div class="icon">📈</div>
+                <div>
+                    <h4>Fluidez</h4>
+                    <p>Sube de nivel rápido</p>
+                </div>
+            </div>
+            <div class="hero-circle"></div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2>¿Por qué elegir <span class="text-gradient">INTEP</span>?</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3>Aprendizaje Acelerado</h3>
+                <p>Nuestra inteligencia artificial adapta el contenido a tu ritmo de aprendizaje para resultados más rápidos.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎙️</div>
+                <h3>Reconocimiento de Voz</h3>
+                <p>Mejora tu pronunciación al instante con nuestro sistema de feedback en tiempo real.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏆</div>
+                <h3>Certificación Oficial</h3>
+                <p>Al terminar, obtén un certificado válido internacionalmente para impulsar tu carrera.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section id="courses" class="cta">
+        <div class="cta-content">
+            <h2>¿Listo para hablar sin miedo?</h2>
+            <p>Únete a más de 10,000 estudiantes que ya han transformado su vida profesional.</p>
+            <button class="btn-primary large-btn">Comenzar mi Prueba de 7 Días</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="logo"><img src="https://institutointep.edu.co/logointep.png" alt="INTEP" style="height: 45px; vertical-align: middle; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));"></div>
+            <p>© 2026 INTEP Inc. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+<script src="ufo.js"></script><script src="universe_bg.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>window.__CURSO={nivel:'A1',num:2};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 2: My World | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }</style>
+</head>
+<body>
+    <div class="app-container">
+        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
+
+        <!-- Header -->
+        <header class="lesson-header">
+    <script>window.__CURSO={nivel:'A1',num:2};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+            <div>
+                <span class="lesson-badge">Módulo 2 • A1 Principiante</span>
+                <h1>My <span class="text-gradient">World</span></h1>
+                <p>Habla sobre tu familia, tus amigos y las cosas que tienes usando Have/Has.</p>
+            </div>
+        </header>
+
+        <!-- Section 1 -->
+        <section class="learning-section">
+            <h2 class="section-title">🖼️ 1. Family & Possessions</h2>
+            <div class="flashcards-grid">
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">👨‍👩‍👧</div><h3>Padres</h3></div><div class="flashcard-back"><h3>Parents</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">👦</div><h3>Hermano</h3></div><div class="flashcard-back"><h3>Brother</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🚗</div><h3>Carro / Coche</h3></div><div class="flashcard-back"><h3>Car</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">💻</div><h3>Computadora</h3></div><div class="flashcard-back"><h3>Laptop</h3></div></div></div>
+            </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="learning-section">
+            <h2 class="section-title">📖 2. Read & Discover</h2>
+            <div class="story-box">
+                "I <span class="highlight-verb">have</span> a big family. I <span class="highlight-verb">have</span> two brothers. But my sister, Emily, is different. She <span class="highlight-verb">has</span> a new car and she <span class="highlight-verb">has</span> a dog."
+            </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="learning-section">
+            <h2 class="section-title">💡 3. The Grammar Secret: Have vs Has</h2>
+            <div class="grammar-container">
+                <div class="grammar-card normal">
+                    <h3>Grupo 1 (Normales): HAVE</h3>
+                    <ul class="grammar-list">
+                        <li><strong>I / You / We / They</strong> <span>have</span> a dog.</li>
+                    </ul>
+                </div>
+                <div class="grammar-card vip">
+                    <h3>Grupo 2 (VIP): HAS</h3>
+                    <ul class="grammar-list">
+                        <li><strong>He / She / It</strong> <span>has</span> a dog.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="learning-section" style="border: 2px solid var(--primary);">
+            <h2 class="section-title text-gradient">🎯 4. Mission: Photo Tour</h2>
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">📸</span>
+                    <h3>Paso 1: Muestra una Foto</h3>
+                    <p>Saca tu teléfono y busca una foto de tu familia o de tu habitación.</p>
+                </div>
+                <div class="rp-card" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+                    <span style="font-size: 2rem;">🗣️</span>
+                    <h3>Paso 2: Describe tus posesiones</h3>
+                    <p>Usa They have... / He has... / She has... para describir qué tienen las personas en tu foto.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+<script src="ufo.js"></script><script src="universe_bg.js"></script>
+<script src="/intep/cursoingles/cursos_api.js"></script>
+</body>
+</html>

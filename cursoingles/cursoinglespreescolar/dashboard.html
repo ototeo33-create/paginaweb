@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INTEP Kids | Mi Mapa de Aventuras</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🧸</span>
+            <span class="logo-text">INTEP <span class="text-highlight">Kids</span></span>
+        </div>
+        <div class="user-profile">
+            <span class="user-name">¡Hola, Amiguito! 🌟</span>
+            <div class="avatar">👦</div>
+        </div>
+        <button class="btn-secondary" onclick="window.location.href='index.html'">Salir 🚪</button>
+    </nav>
+
+    <!-- Map Area -->
+    <main class="adventure-map">
+        <h1 class="map-title">Tu Mapa de <span class="text-gradient">Aventuras</span> 🗺️</h1>
+        
+        <div class="path-container">
+            <!-- Nivel 1 -->
+            <div class="level-node active" onclick="window.location.href='modulo1.html'">
+                <div class="node-icon bg-pink wobble-hover">🦁</div>
+                <div class="node-info">
+                    <h3>Safari de Animales</h3>
+                    <div class="stars">⭐⭐⭐</div>
+                </div>
+            </div>
+
+            <!-- Nivel 2 -->
+            <div class="level-node locked">
+                <div class="node-icon bg-yellow">🎨</div>
+                <div class="node-info">
+                    <h3>Fiesta de Colores</h3>
+                    <div class="stars">🔒 Bloqueado</div>
+                </div>
+            </div>
+
+            <!-- Nivel 3 -->
+            <div class="level-node locked">
+                <div class="node-icon bg-blue">🔢</div>
+                <div class="node-info">
+                    <h3>Números Mágicos</h3>
+                    <div class="stars">🔒 Bloqueado</div>
+                </div>
+            </div>
+            
+            <!-- Nivel 4 -->
+            <div class="level-node locked">
+                <div class="node-icon" style="background: #dcfce7;">🍎</div>
+                <div class="node-info">
+                    <h3>Comida Deliciosa</h3>
+                    <div class="stars">🔒 Bloqueado</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>window.__CURSO={nivel:'A2',num:1};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2: Module 1 - Last Year | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } 
+        .back-nav:hover { color: var(--secondary); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <a href="dashboard_a2.html" class="back-nav">← Volver al Menú Principal A2</a>
+
+        <!-- Header -->
+        <header class="lesson-header">
+    <script>window.__CURSO={nivel:'A2',num:1};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+            <div>
+                <span class="lesson-badge" style="background: rgba(236, 72, 153, 0.1); color: var(--secondary);">Módulo 1 • A2 Elementary</span>
+                <h1>Last <span class="text-gradient">Year</span></h1>
+                <p>Domina el arte de contar historias usando el Pasado Simple.</p>
+            </div>
+            <div class="progress-container">
+                <div class="progress-circle" style="background: conic-gradient(var(--secondary) 15%, #e2e8f0 0); border-color: white;">
+                    <span>15%</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Section 1 -->
+        <section class="learning-section">
+            <h2 class="section-title">🖼️ 1. Action Verbs in the Past</h2>
+            <p style="margin-bottom: 2rem;">Pasa el mouse para descubrir cómo cambia la acción cuando ya ha terminado.</p>
+            <div class="flashcards-grid">
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🚶</div><h3>Caminar</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Walked</h3><p>[ wok-t ]</p></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">✈️</div><h3>Ir / Viajar</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Went</h3><p>[ uent ]</p></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🍽️</div><h3>Comer</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Ate</h3><p>[ eit ]</p></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">👀</div><h3>Ver</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Saw</h3><p>[ saa ]</p></div></div></div>
+            </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="learning-section">
+            <h2 class="section-title">📖 2. Real Context (The Terrible Trip)</h2>
+            <p style="margin-bottom: 1.5rem;">Lee la historia de las peores vacaciones de Marco. Fíjate en los verbos.</p>
+            <div class="story-box" style="border-left-color: var(--secondary);">
+                "Last year, I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">went</span> to Paris. I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">wanted</span> a perfect trip. But it <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">rained</span> every single day! I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">lost</span> my passport and I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">ate</span> a terrible sandwich. I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">cried</span> a little."
+            </div>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(236, 72, 153, 0.1); border-radius: 12px; border-left: 4px solid var(--secondary);">
+                <strong>💡 Aha Moment!</strong> En inglés, decir cosas en pasado es igual para todas las personas (I, You, She, They...). ¡No hay reglas VIP! El único problema es que algunos verbos siguen una regla y otros son rebeldes.
+            </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="learning-section">
+            <h2 class="section-title">💡 3. The Grammar Secret: The 2 Groups</h2>
+            <div class="grammar-container">
+                <div class="grammar-card normal" style="border-top: 6px solid var(--primary);">
+                    <h3 style="color: var(--primary);">Los Obedientes (Regulares)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Se portan bien. Solo piden que les agregues "ED" al final.</p>
+                    <ul class="grammar-list">
+                        <li>Want ➡️ <strong>Wanted</strong></li>
+                        <li>Rain ➡️ <strong>Rained</strong></li>
+                        <li>Walk ➡️ <strong>Walked</strong></li>
+                        <li>Play ➡️ <strong>Played</strong></li>
+                    </ul>
+                </div>
+                <div class="grammar-card vip" style="border-top: 6px solid var(--secondary);">
+                    <h3 style="color: var(--secondary);">Los Rebeldes (Irregulares)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Rompen las reglas y cambian por completo de forma. Hay que memorizarlos.</p>
+                    <ul class="grammar-list">
+                        <li>Go ➡️ <strong>Went</strong></li>
+                        <li>Eat ➡️ <strong>Ate</strong></li>
+                        <li>See ➡️ <strong>Saw</strong></li>
+                        <li>Lose ➡️ <strong>Lost</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="learning-section" style="border: 2px solid var(--secondary);">
+            <h2 class="section-title text-gradient">🎯 4. Mission: The Worst Vacation Ever</h2>
+            <p style="margin-bottom: 2rem;">Todo adulto necesita saber cómo quejarse de un mal viaje. Usa el Pasado Simple para superar la historia de tu compañero.</p>
+            
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">🧳</span>
+                    <h3>Jugador 1: Viaje a la Playa</h3>
+                    <p>Cuéntale a tu compañero por qué tu viaje fue horrible usando Pasado Simple.</p>
+                    <ul>
+                        <li><strong style="color: var(--secondary);">Go:</strong> I went to Miami.</li>
+                        <li><strong style="color: var(--secondary);">Rain:</strong> But it rained...</li>
+                        <li><strong style="color: var(--secondary);">Lose:</strong> I lost my...</li>
+                    </ul>
+                </div>
+                <div class="rp-card" style="background: linear-gradient(135deg, var(--secondary), #be185d);">
+                    <span style="font-size: 2rem;">🏔️</span>
+                    <h3>Jugador 2: Viaje a la Montaña</h3>
+                    <p>Interrumpe. Tu viaje fue peor. Cuéntale por qué.</p>
+                    <ul>
+                        <li><strong style="color: #fce7f3;">Go:</strong> I went to the mountains.</li>
+                        <li><strong style="color: #fce7f3;">See:</strong> I saw a bear...</li>
+                        <li><strong style="color: #fce7f3;">Run:</strong> I ran very fast...</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                <button style="background: var(--text-dark); color: white; padding: 16px 32px; border-radius: 12px; font-weight: bold; border: none; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">Desbloquear Siguiente Módulo 🏆</button>
+            </div>
+        </section>
+
+    </div>
+<script src="ufo.js"></script><script src="universe_bg.js"></script>
+<script src="/intep/cursoingles/cursos_api.js"></script>
+</body>
+</html>

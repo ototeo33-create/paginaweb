@@ -1,0 +1,435 @@
+:root {
+    --primary: #6366f1;
+    --primary-light: #818cf8;
+    --primary-dark: #e2e8f0;
+    --secondary: #ec4899;
+    --success: #10b981;
+    --bg-main: #050810;
+    --bg-card: rgba(255,255,255,0.05);
+    --text-dark: #ffffff;
+    --text-main: #e2e8f0;
+    --text-muted: #cbd5e1;
+    --border-color: rgba(255,255,255,0.15);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+    background-size: cover;
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-dark);
+}
+
+.text-gradient {
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* App Container */
+.app-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 2rem;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* Header */
+.lesson-header {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border-color);
+}
+
+.lesson-badge {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-dark);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.progress-container {
+    text-align: right;
+}
+
+.progress-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: conic-gradient(var(--success) 35%, #e2e8f0 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 4px solid white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.progress-circle span {
+    background: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+/* Section Containers */
+.learning-section {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.section-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Flashcards Grid */
+.flashcards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Flip Flashcard Animation */
+.flashcard {
+    background-color: transparent;
+    height: 250px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.flashcard:hover .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+}
+
+.flashcard-front {
+    background-color: var(--bg-card);
+    backdrop-filter: blur(5px);
+}
+
+.card-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    transition: transform 0.3s;
+}
+
+.flashcard:hover .card-icon {
+    transform: scale(1.1);
+}
+
+.flashcard-back {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    transform: rotateY(180deg);
+}
+
+.flashcard-back h3 {
+    color: #fff;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.flashcard-back p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Reading Context Area */
+.story-box {
+    background: var(--bg-card);
+    backdrop-filter: blur(5px);
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 6px solid var(--primary);
+    font-size: 1.2rem;
+}
+
+.story-box .highlight-verb {
+    background: rgba(236, 72, 153, 0.15);
+    color: var(--secondary);
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px dashed var(--secondary);
+}
+
+/* Grammar Tables / Cards */
+.grammar-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.grammar-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(5px);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.grammar-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+}
+
+.grammar-card.normal::before {
+    background: var(--primary);
+}
+
+.grammar-card.vip::before {
+    background: var(--secondary);
+}
+
+.grammar-list {
+    list-style: none;
+    margin-top: 1.5rem;
+}
+
+.grammar-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1.1rem;
+}
+
+.grammar-list li:last-child {
+    border-bottom: none;
+}
+
+.grammar-list span {
+    font-weight: 700;
+}
+
+.grammar-card.vip .grammar-list span {
+    color: var(--secondary);
+}
+
+.grammar-card.normal .grammar-list span {
+    color: var(--primary);
+}
+
+/* Roleplay Cards */
+.roleplay-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.rp-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(5px);
+    color: #fff;
+    padding: 2rem;
+    border-radius: 20px;
+    position: relative;
+}
+
+.rp-card h3 {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.rp-card ul {
+    list-style: none;
+    margin-top: 1rem;
+}
+
+.rp-card li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.rp-card li strong {
+    color: var(--primary-light);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .grammar-container, .roleplay-grid {
+        grid-template-columns: 1fr;
+    }
+    .lesson-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+}
+
+/* Victory Modal */
+.victory-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.victory-box {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--primary);
+    padding: 3rem;
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    max-width: 400px;
+    transform: scale(0.8);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+    to { transform: scale(1); }
+}
+
+.victory-box h2 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: var(--primary-dark);
+}
+
+.victory-box .pts-badge {
+    background: #f59e0b;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.5rem;
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: inline-block;
+    margin: 20px 0;
+}
+
+/* Mascot SVG Animation */
+.mascot-container { margin: 0 auto 15px auto; width: 150px; height: 150px; }
+
+.mascot-body-wrapper {
+    animation: jump 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite alternate;
+    transform-origin: center bottom;
+}
+
+.mascot-shadow {
+    animation: shadowPulse 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite alternate;
+    transform-origin: center;
+}
+
+.mascot-arm-left {
+    animation: waveLeft 0.5s infinite alternate;
+    transform-origin: 50px 120px;
+}
+
+.mascot-arm-right {
+    animation: waveRight 0.5s infinite alternate;
+    transform-origin: 150px 120px;
+}
+
+@keyframes jump {
+    0% { transform: translateY(0) scaleY(0.9); }
+    100% { transform: translateY(-40px) scaleY(1.05); }
+}
+
+@keyframes shadowPulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.5); opacity: 0.3; }
+}
+
+@keyframes waveLeft {
+    0% { transform: rotate(20deg); }
+    100% { transform: rotate(80deg); }
+}
+
+@keyframes waveRight {
+    0% { transform: rotate(-20deg); }
+    100% { transform: rotate(-80deg); }
+}
+
+/* Hard Overrides to fix black text from inline styles in old dark mode */
+[style*="color: #0f172a"], [style*="color:#0f172a"] {
+    color: #e2e8f0 !important;
+}
+[style*="border-color:#0f172a"], [style*="border-color: #0f172a"] {
+    border-color: #e2e8f0 !important;
+}
+[style*="border-top: 6px solid #0f172a"] {
+    border-top: 6px solid #e2e8f0 !important;
+}
+

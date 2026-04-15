@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>window.__CURSO={nivel:'B1',num:5};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B1: Module 5 - Relative Clauses | INTEP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="lesson.css">
+    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: #eab308; }</style>
+</head>
+<body>
+    <div class="app-container">
+        <a href="dashboard_b1.html" class="back-nav">← Volver al Menú Principal B1</a>
+
+        <header class="lesson-header">
+    <script>window.__CURSO={nivel:'B1',num:5};</script>
+    <!-- INTEP: Session guard -->
+    <script>
+    (function(){
+      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+            <div>
+                <span class="lesson-badge" style="background: rgba(234, 179, 8, 0.1); color: #ca8a04;">Módulo 5 • B1 Intermediate</span>
+                <h1>The person <span class="text-gradient" style="background: linear-gradient(to right, #eab308, #ca8a04); -webkit-background-clip: text;">who...</span></h1>
+                <p>Combina oraciones y describe sin saber la palabra exacta (Who, Which, That, Where).</p>
+            </div>
+        </header>
+
+        <section class="learning-section">
+            <h2 class="section-title">🖼️ 1. Connecting Ideas</h2>
+            <div class="flashcards-grid">
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🧑</div><h3>Personas</h3></div><div class="flashcard-back" style="background: #eab308;"><h3>Who / That</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">📦</div><h3>Cosas / Animales</h3></div><div class="flashcard-back" style="background: #eab308;"><h3>Which / That</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🗺️</div><h3>Lugares</h3></div><div class="flashcard-back" style="background: #eab308;"><h3>Where</h3></div></div></div>
+                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">⏰</div><h3>Tiempos</h3></div><div class="flashcard-back" style="background: #eab308;"><h3>When</h3></div></div></div>
+            </div>
+        </section>
+
+        <section class="learning-section">
+            <h2 class="section-title">📖 2. Read & Discover</h2>
+            <div class="story-box" style="border-left-color: #eab308;">
+                "This is the man <span class="highlight-verb" style="color:#ca8a04; border-color:#eab308;">who</span> stole my car! And here is the camera <span class="highlight-verb" style="color:#ca8a04; border-color:#eab308;">which</span> recorded everything."
+            </div>
+        </section>
+
+        <section class="learning-section">
+            <h2 class="section-title">💡 3. Grammar Secret: The Connector</h2>
+            <div class="grammar-container">
+                <div class="grammar-card normal" style="border-top: 6px solid #eab308;">
+                    <h3 style="color: #ca8a04;">Uniendo oraciones</h3>
+                    <p>Usa la Cláusula Relativa en lugar de repetir el sujeto de nuevo.</p>
+                    <ul class="grammar-list">
+                        <li>A pilot is a person <span>who</span> flies planes.</li>
+                        <li>A hospital is a place <span>where</span> doctors work.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="learning-section" style="border: 2px solid #eab308;">
+            <h2 class="section-title text-gradient" style="background: linear-gradient(to right, #eab308, #ca8a04); -webkit-background-clip: text;">🎯 4. Mission: The Guessing Game (Taboo)</h2>
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">🎭</span>
+                    <h3>Paso 1: Describe </h3>
+                    <p>Elige un objeto o profesión y descríbelo SIN decir su nombre: "It is a thing which you use to cut paper..."</p>
+                </div>
+                <div class="rp-card" style="background: linear-gradient(135deg, #eab308, #a16207);">
+                    <span style="font-size: 2rem;">🧠</span>
+                    <h3>Paso 2: Adivina</h3>
+                    <p>Escucha la descripción y adivina la palabra.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+<script src="ufo.js"></script><script src="universe_bg.js"></script>
+<script src="/intep/cursoingles/cursos_api.js"></script>
+</body>
+</html>
