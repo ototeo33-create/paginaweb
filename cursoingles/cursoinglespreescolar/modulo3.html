@@ -6,12 +6,17 @@
     <title>Números Mágicos 🔢 | INTEP Kids</title>
     <script>window.__CURSO={nivel:'kids',num:3};</script>
     <script>
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('demo') === '1') {
+        window.__INTEP = {ok: true, nombre: 'Demo'};
+    } else {
     (function(){
       fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
         .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
+    }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/intep/cursoingles/cursoinglespreescolar/index.css">
@@ -20,45 +25,75 @@
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family:'Nunito',sans-serif;background:var(--bg-color);color:var(--text-dark);}
         h1,h2,h3,h4{font-family:'Fredoka',sans-serif;}
+
         .back-btn{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:2px solid var(--primary);color:var(--primary);padding:10px 20px;border-radius:30px;font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;margin:20px 5%;transition:all 0.3s;}
         .back-btn:hover{background:var(--primary);color:white;}
-        .lesson-container{max-width:900px;margin:0 auto;padding:0 5% 4rem;}
+        .lesson-container{max-width:1000px;margin:0 auto;padding:0 5% 4rem;}
+
         .lesson-hero{background:linear-gradient(135deg,#f0e6ff,#e6f0ff);border-radius:30px;padding:2.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:2rem;border:3px solid #a855f7;box-shadow:0 8px 25px rgba(168,85,247,0.15);}
         .lesson-hero-icon{font-size:5rem;animation:float 3s ease-in-out infinite;}
         @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
         .lesson-badge{background:#a855f7;color:white;padding:5px 15px;border-radius:20px;font-size:0.85rem;font-weight:700;display:inline-block;margin-bottom:10px;}
+        .lesson-hero h1{font-size:2.5rem;color:var(--text-dark);}
+        .lesson-hero p{color:var(--text-light);margin-top:8px;font-size:1.1rem;}
+
         .section-card{background:white;border-radius:25px;padding:2rem;margin-bottom:2rem;box-shadow:0 5px 20px rgba(0,0,0,0.06);}
         .section-title{font-family:'Fredoka',sans-serif;font-size:1.8rem;color:var(--text-dark);margin-bottom:1.5rem;display:flex;align-items:center;gap:12px;}
-        /* Numbers grid */
-        .numbers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:15px;}
-        .num-card{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:3px solid #a855f7;border-radius:20px;padding:1.2rem;text-align:center;cursor:pointer;transition:transform 0.3s;user-select:none;}
-        .num-card:hover{transform:scale(1.08);}
-        .num-card:active{transform:scale(0.95);}
+
+        /* Carousel */
+        .carousel-section{background:linear-gradient(135deg,#f3e8ff,#ede9fe);border-radius:25px;padding:2rem;margin-bottom:2rem;border:3px solid #a855f7;}
+        .carousel-container{overflow-x:auto;display:flex;gap:15px;padding:15px 5px;scroll-behavior:smooth;}
+        .carousel-container::-webkit-scrollbar{height:8px;}
+        .carousel-container::-webkit-scrollbar-track{background:#ede9fe;border-radius:10px;}
+        .num-card{min-width:120px;background:white;border-radius:20px;padding:1.2rem;text-align:center;border:3px solid #a855f7;cursor:pointer;transition:all 0.3s;}
+        .num-card:hover{transform:scale(1.08);box-shadow:0 10px 25px rgba(168,85,247,0.3);}
         .num-big{font-family:'Fredoka',sans-serif;font-size:2.5rem;color:#7c3aed;}
-        .num-word{font-family:'Fredoka',sans-serif;font-size:1.1rem;color:var(--primary);}
-        .num-emoji{font-size:1.3rem;margin-top:5px;}
-        /* Counting game */
-        .count-game{background:linear-gradient(135deg,#fff9e6,#fffbf0);border:3px solid var(--accent);border-radius:20px;padding:2rem;text-align:center;}
-        .count-display{font-size:3.5rem;letter-spacing:5px;margin:20px 0;}
-        .count-question{font-family:'Fredoka',sans-serif;font-size:1.5rem;color:var(--text-dark);margin-bottom:20px;}
-        .options-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:350px;margin:0 auto;}
-        .option-btn{padding:15px;border-radius:15px;border:3px solid #e5e7eb;background:white;font-family:'Fredoka',sans-serif;font-size:1.4rem;cursor:pointer;transition:all 0.2s;}
-        .option-btn:hover{border-color:#a855f7;background:#f5f3ff;}
-        .option-btn.correct{border-color:#22c55e;background:#f0fdf4;color:#15803d;}
-        .option-btn.wrong{border-color:#ef4444;background:#fef2f2;color:#dc2626;animation:shake 0.3s;}
+        .num-word{font-family:'Fredoka',sans-serif;font-size:1.1rem;color:#a855f7;font-weight:700;}
+        .num-emoji{font-size:1.5rem;margin-top:5px;}
+        .carousel-instruction{text-align:center;font-size:1rem;color:var(--text-light);margin-bottom:10px;}
+        .nav-btn{background:#a855f7;border:none;padding:10px 20px;border-radius:20px;font-family:'Fredoka',sans-serif;font-weight:700;cursor:pointer;color:white;margin:10px 5px;}
+
+        /* Exercise 1: Counting */
+        .count-exercise{background:linear-gradient(135deg,#fff7ed,#ffedd5);border-radius:20px;padding:1.5rem;border:3px solid #f97316;}
+        .count-display{font-size:3rem;letter-spacing:10px;margin:20px 0;text-align:center;}
+        .count-question{font-family:'Fredoka',sans-serif;font-size:1.4rem;text-align:center;margin-bottom:15px;}
+        .count-options{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:350px;margin:0 auto;}
+        .count-btn{padding:15px;border-radius:15px;border:3px solid #e5e7eb;background:white;font-family:'Fredoka',sans-serif;font-size:1.3rem;cursor:pointer;transition:all 0.2s;}
+        .count-btn:hover{border-color:#f97316;background:#fff7ed;}
+        .count-btn.correct{border-color:#22c55e;background:#dcfce7;color:#15803d;}
+        .count-btn.wrong{border-color:#ef4444;background:#fef2f2;color:#dc2626;animation:shake 0.3s;}
         @keyframes shake{0%,100%{transform:translateX(0);}25%,75%{transform:translateX(-5px);}50%{transform:translateX(5px);}}
-        .feedback{font-family:'Fredoka',sans-serif;font-size:1.3rem;min-height:35px;margin-top:15px;}
-        .story-box{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-left:6px solid #a855f7;border-radius:15px;padding:1.5rem;font-size:1.15rem;line-height:1.9;}
-        .highlight{font-family:'Fredoka',sans-serif;font-weight:700;color:#7c3aed;background:rgba(168,85,247,0.1);padding:2px 8px;border-radius:8px;}
-        .mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-        @media(max-width:600px){.mission-grid{grid-template-columns:1fr;}}
-        .mission-card{border-radius:20px;padding:1.5rem;color:white;}
-        .mission-card h3{font-family:'Fredoka',sans-serif;font-size:1.4rem;margin-bottom:10px;}
-        .mission-card.purple{background:linear-gradient(135deg,#7c3aed,#a855f7);}
-        .mission-card.pink{background:linear-gradient(135deg,#FF5A5F,#ff8a8e);}
-        .mission-card ul{list-style:none;padding:0;}
-        .mission-card li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.2);}
-        .mission-card li:last-child{border-bottom:none;}
+
+        /* Exercise 2: Order */
+        .order-exercise{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:20px;padding:1.5rem;border:3px solid #10b981;}
+        .order-title{font-family:'Fredoka',sans-serif;font-size:1.3rem;color:#059669;margin-bottom:1rem;}
+        .order-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:15px 0;}
+        @media(max-width:600px){.order-grid{grid-template-columns:repeat(3,1fr);}}
+        .order-num{background:white;border-radius:15px;padding:15px;text-align:center;font-family:'Fredoka',sans-serif;font-size:1.5rem;border:3px solid #e5e7eb;cursor:pointer;transition:all 0.2s;}
+        .order-num:hover{border-color:#10b981;background:#ecfdf5;}
+        .order-num.selected{border-color:#10b981;background:#d1fae5;}
+        .feedback-msg{font-family:'Fredoka',sans-serif;font-size:1.1rem;text-align:center;margin-top:15px;min-height:30px;}
+        .feedback-msg.correct{color:#15803d;}
+        .feedback-msg.wrong{color:#dc2626;}
+
+        /* Grammar */
+        .grammar-interact{background:linear-gradient(135deg,#f3e8ff,#ede9fe);border:3px solid #a855f7;border-radius:20px;padding:2rem;}
+        .formula-box{background:white;border-radius:15px;padding:1.5rem;text-align:center;margin-bottom:1.5rem;box-shadow:0 5px 15px rgba(0,0,0,0.05);}
+        .formula-title{font-family:'Fredoka',sans-serif;font-size:1.4rem;color:#7c3aed;margin-bottom:10px;}
+        .formula-example{font-family:'Fredoka',sans-serif;font-size:1.6rem;}
+        .formula-example .num{color:#a855f7;font-weight:700;}
+        .grammar-step{display:flex;align-items:center;gap:15px;padding:15px;background:white;border-radius:15px;margin-bottom:15px;border:2px solid #e5e7eb;}
+        .step-num{background:#a855f7;color:white;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-weight:700;flex-shrink:0;}
+        .step-text{font-size:1rem;}
+        .step-text strong{color:#7c3aed;}
+
+        /* Mission */
+        .mission-interact{background:linear-gradient(135deg,#fff7ed,#ffedd5);border-radius:20px;padding:2rem;border:3px solid #f97316;}
+        .mission-instruct{font-size:1.1rem;line-height:1.7;margin-bottom:1.5rem;}
+        .phrase-btn{display:block;width:100%;padding:15px;margin-bottom:10px;background:white;border:2px solid #fed7aa;border-radius:15px;font-family:'Fredoka',sans-serif;font-size:1.1rem;cursor:pointer;text-align:left;transition:all 0.2s;}
+        .phrase-btn:hover{background:#f97316;color:white;border-color:#f97316;}
+        .phrase-btn span{color:#9ca3af;font-size:0.9rem;}
+
         .btn-complete{display:block;width:100%;padding:18px;margin-top:2rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(124,58,237,0.4);transition:all 0.3s;}
         .btn-complete:hover{transform:translateY(-3px);}
         .victory-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(45,49,66,0.85);backdrop-filter:blur(8px);z-index:1000;justify-content:center;align-items:center;}
@@ -67,10 +102,13 @@
         .victory-box h2{font-family:'Fredoka',sans-serif;font-size:2.5rem;color:var(--text-dark);margin:15px 0 10px;}
         .xp-badge{background:var(--accent);color:var(--text-dark);font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;padding:10px 25px;border-radius:15px;display:inline-block;margin:15px 0;}
         .btn-continue{width:100%;padding:15px;border-radius:15px;border:none;background:#7c3aed;color:white;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;margin-top:15px;}
+        .btn-exam{display:block;width:100%;padding:15px;margin-top:1rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:15px;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;box-shadow:0 5px 15px rgba(124,58,237,0.3);}
     </style>
 </head>
 <body>
+
     <a href="/intep/cursoingles/cursoinglespreescolar/dashboard.php" class="back-btn">← Volver al Mapa</a>
+
     <div class="lesson-container">
 
         <div class="lesson-hero">
@@ -78,83 +116,156 @@
             <div>
                 <span class="lesson-badge">Módulo 3 · Numbers</span>
                 <h1>Números Mágicos</h1>
-                <p>¡Cuenta del 1 al 10 en inglés y gana el reto de números!</p>
+                <p>¡Aprende a contar del 1 al 20 en inglés! ¡Conviértete en un mago de los números!</p>
             </div>
         </div>
 
-        <!-- Vocabulario -->
-        <div class="section-card">
-            <h2 class="section-title">🔢 1. One to Ten!</h2>
-            <p style="color:var(--text-light);margin-bottom:1.5rem;">Haz clic en cada número para escuchar cómo suena.</p>
-            <div class="numbers-grid">
-                <div class="num-card" onclick="sayNumber('one')"><div class="num-big">1</div><div class="num-word">One</div><div class="num-emoji">☝️</div></div>
-                <div class="num-card" onclick="sayNumber('two')"><div class="num-big">2</div><div class="num-word">Two</div><div class="num-emoji">✌️</div></div>
-                <div class="num-card" onclick="sayNumber('three')"><div class="num-big">3</div><div class="num-word">Three</div><div class="num-emoji">🤟</div></div>
-                <div class="num-card" onclick="sayNumber('four')"><div class="num-big">4</div><div class="num-word">Four</div><div class="num-emoji">🖐️</div></div>
-                <div class="num-card" onclick="sayNumber('five')"><div class="num-big">5</div><div class="num-word">Five</div><div class="num-emoji">⭐⭐⭐⭐⭐</div></div>
-                <div class="num-card" onclick="sayNumber('six')"><div class="num-big">6</div><div class="num-word">Six</div><div class="num-emoji">🎲</div></div>
-                <div class="num-card" onclick="sayNumber('seven')"><div class="num-big">7</div><div class="num-word">Seven</div><div class="num-emoji">🌈</div></div>
-                <div class="num-card" onclick="sayNumber('eight')"><div class="num-big">8</div><div class="num-word">Eight</div><div class="num-emoji">🐙</div></div>
-                <div class="num-card" onclick="sayNumber('nine')"><div class="num-big">9</div><div class="num-word">Nine</div><div class="num-emoji">🎯</div></div>
-                <div class="num-card" onclick="sayNumber('ten')"><div class="num-big">10</div><div class="num-word">Ten</div><div class="num-emoji">🎉</div></div>
+        <!-- Sección 1: Carrusel de Números -->
+        <div class="carousel-section">
+            <h2 class="section-title">🔢 1. Safari de Números - ¡Del 1 al 20!</h2>
+            <p class="carousel-instruction">👉 Desliza a la derecha para ver más números. Haz clic en cada uno para escuchar cómo se pronuncia.</p>
+            
+            <div class="carousel-container" id="numCarousel">
+                <div class="num-card" onclick="playSound('one')"><div class="num-big">1</div><div class="num-word">One</div><div class="num-emoji">☝️</div></div>
+                <div class="num-card" onclick="playSound('two')"><div class="num-big">2</div><div class="num-word">Two</div><div class="num-emoji">✌️</div></div>
+                <div class="num-card" onclick="playSound('three')"><div class="num-big">3</div><div class="num-word">Three</div><div class="num-emoji">🤟</div></div>
+                <div class="num-card" onclick="playSound('four')"><div class="num-big">4</div><div class="num-word">Four</div><div class="num-emoji">🖐️</div></div>
+                <div class="num-card" onclick="playSound('five')"><div class="num-big">5</div><div class="num-word">Five</div><div class="num-emoji">⭐⭐⭐⭐⭐</div></div>
+                <div class="num-card" onclick="playSound('six')"><div class="num-big">6</div><div class="num-word">Six</div><div class="num-emoji">🎲</div></div>
+                <div class="num-card" onclick="playSound('seven')"><div class="num-big">7</div><div class="num-word">Seven</div><div class="num-emoji">🌈</div></div>
+                <div class="num-card" onclick="playSound('eight')"><div class="num-big">8</div><div class="num-word">Eight</div><div class="num-emoji">🐙</div></div>
+                <div class="num-card" onclick="playSound('nine')"><div class="num-big">9</div><div class="num-word">Nine</div><div class="num-emoji">🎯</div></div>
+                <div class="num-card" onclick="playSound('ten')"><div class="num-big">10</div><div class="num-word">Ten</div><div class="num-emoji">🎉</div></div>
+                <div class="num-card" onclick="playSound('eleven')"><div class="num-big">11</div><div class="num-word">Eleven</div><div class="num-emoji">⚽⚽</div></div>
+                <div class="num-card" onclick="playSound('twelve')"><div class="num-big">12</div><div class="num-word">Twelve</div><div class="num-emoji">🕛</div></div>
+                <div class="num-card" onclick="playSound('thirteen')"><div class="num-big">13</div><div class="num-word">Thirteen</div><div class="num-emoji">🍀</div></div>
+                <div class="num-card" onclick="playSound('fourteen')"><div class="num-big">14</div><div class="num-word">Fourteen</div><div class="num-emoji">🔔</div></div>
+                <div class="num-card" onclick="playSound('fifteen')"><div class="num-big">15</div><div class="num-word">Fifteen</div><div class="num-emoji">🌙</div></div>
+                <div class="num-card" onclick="playSound('sixteen')"><div class="num-big">16</div><div class="num-word">Sixteen</div><div class="num-emoji">🎸</div></div>
+                <div class="num-card" onclick="playSound('seventeen')"><div class="num-big">17</div><div class="num-word">Seventeen</div><div class="num-emoji">🎻</div></div>
+                <div class="num-card" onclick="playSound('eighteen')"><div class="num-big">18</div><div class="num-word">Eighteen</div><div class="num-emoji">🎪</div></div>
+                <div class="num-card" onclick="playSound('nineteen')"><div class="num-big">19</div><div class="num-word">Nineteen</div><div class="num-emoji">🎆</div></div>
+                <div class="num-card" onclick="playSound('twenty')"><div class="num-big">20</div><div class="num-word">Twenty</div><div class="num-emoji">👑</div></div>
+            </div>
+            <div style="text-align:center;">
+                <button class="nav-btn" onclick="document.getElementById('numCarousel').scrollBy({left:-300,behavior:'smooth'})">⬅️ Izquierda</button>
+                <button class="nav-btn" onclick="document.getElementById('numCarousel').scrollBy({left:300,behavior:'smooth'})">Derecha ➡️</button>
             </div>
         </div>
 
-        <!-- Juego de Conteo -->
+        <!-- Ejercicio 1: Contar objetos -->
         <div class="section-card">
-            <h2 class="section-title">🎮 2. Count the Emojis!</h2>
-            <div class="count-game">
-                <div class="count-question" id="countQ">¿Cuántos hay?</div>
-                <div class="count-display" id="countDisplay">🌟🌟🌟</div>
-                <div class="options-grid" id="optionsGrid"></div>
-                <div class="feedback" id="feedback"></div>
+            <h2 class="section-title">🎮 2. ¡Cuenta los Emojis!</h2>
+            <div class="count-exercise">
+                <div class="count-question" id="countQuestion">¿Cuántos emojis ves?</div>
+                <div class="count-display" id="countDisplay">⭐⭐⭐</div>
+                
+                <div class="count-options" id="countOptions"></div>
+                
+                <div class="feedback-msg" id="countFeedback"></div>
             </div>
         </div>
 
-        <!-- Historia -->
+        <!-- Ejercicio 2: Ordenar -->
         <div class="section-card">
-            <h2 class="section-title">📖 3. Counting Story</h2>
-            <div class="story-box">
-                I see <span class="highlight">one</span> big lion. 🦁<br>
-                I see <span class="highlight">two</span> funny monkeys. 🐒🐒<br>
-                I see <span class="highlight">three</span> little birds. 🐦🐦🐦<br>
-                I see <span class="highlight">ten</span> colorful stars! ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+            <h2 class="section-title">🎯 3. ¡Ordena los Números!</h2>
+            <div class="order-exercise">
+                <p style="color:var(--text-light);margin-bottom:10px;">Toca los números en orden del 1 al 5:</p>
+                
+                <div class="order-grid" id="orderGrid"></div>
+                
+                <div class="feedback-msg" id="orderFeedback"></div>
+            </div>
+        </div>
+
+        <!-- Gramática -->
+        <div class="section-card">
+            <h2 class="section-title">💡 4. La Fórmula Mágica - Contar Cosas</h2>
+            
+            <div class="grammar-interact">
+                <p style="font-size:1.1rem;margin-bottom:20px;">Para decir cuántos objetos hay, usa esta fórmula:</p>
+                
+                <div class="formula-box">
+                    <div class="formula-title">✨ La Fórmula Mágica</div>
+                    <div class="formula-example">
+                        <span class="num">I see</span> + <span class="num">[número]</span> + <span class="num">[objeto]</span>
+                </div>
+                <p style="color:var(--text-light);margin-top:10px;">(Yo veo + número + objeto)</p>
+                </div>
+                
+                <div class="grammar-step">
+                    <div class="step-num">1</div>
+                    <div class="step-text"><strong>"I see"</strong> significa "Yo veo". Es la forma de empezar a contar.</div>
+                </div>
+                <div class="grammar-step">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Dice el <strong>número</strong> en inglés (one, two, three, four, five...).</div>
+                </div>
+                <div class="grammar-step">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Termina con el <strong>objeto</strong> en inglés (cats, dogs, stars, apples...).</div>
+                </div>
+                
+                <p style="margin-top:20px;padding:15px;background:#fff; border-radius:15px; border-left:4px solid #a855f7;">
+                    <strong>📝 Ejemplos:</strong><br>
+                    ⭐ <em>I see ONE star.</em> (Yo veo una estrella)<br>
+                    🐱 <em>I see THREE cats.</em> (Yo veo tres gatos)<br>
+                    🍎 <em>I see FIVE apples.</em> (Yo veo cinco manzanas)<br>
+                    🦁 <em>I see TEN lions.</em> (Yo veo diez leones)
+                </p>
             </div>
         </div>
 
         <!-- Misión -->
-        <div class="section-card" style="border:3px solid #a855f7;">
-            <h2 class="section-title" style="color:#7c3aed;">🎯 4. ¡Cuenta en Voz Alta!</h2>
-            <p style="color:var(--text-light);margin-bottom:1.5rem;">¡Muestra tus manos y cuenta con tus compañeros!</p>
-            <div class="mission-grid">
-                <div class="mission-card purple">
-                    <h3>👐 Paso 1</h3>
-                    <p style="opacity:0.9;font-size:0.95rem;">Levanta dedos y di:</p>
-                    <ul>
-                        <li>"<strong>One, two, three...</strong>"</li>
-                        <li>"<strong>I have five fingers!</strong>"</li>
-                        <li>"<strong>I see ten toes!</strong>"</li>
-                    </ul>
+        <div class="section-card">
+            <h2 class="section-title">🎯 5. ¡El Contador del Aula!</h2>
+            
+            <div class="mission-interact">
+                <p class="mission-instruct">
+                    <strong>¡Hola, pequeño matemático!</strong> 🔢<br><br>
+                    Tu misión es contar objetos en tu salon de clases y decir cuántos hay en inglés.<br><br>
+                    <strong>¿Cómo hacerlo?</strong> Sigue estos ejemplos:
+                </p>
+                
+                <div style="background:white;border-radius:20px;padding:1.5rem;border:3px solid #f97316;">
+                    <h4 style="font-family:'Fredoka',sans-serif;color:#f97316;margin-bottom:15px;">🎤 Practica estas frases:</h4>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('I see one chair')">
+                        "I see <strong>one</strong> <strong>chair</strong>!"<br>
+                        <span>👉 Yo veo una silla</span>
+                    </button>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('I see two windows')">
+                        "I see <strong>two</strong> <strong>windows</strong>!"<br>
+                        <span>👉 Yo veo dos ventanas</span>
+                    </button>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('I see three friends')">
+                        "I see <strong>three</strong> <strong>friends</strong>!"<br>
+                        <span>👉 Yo veo tres amigos</span>
+                    </button>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('I see five books')">
+                        "I see <strong>five</strong> <strong>books</strong>!"<br>
+                        <span>👉 Yo veo cinco libros</span>
+                    </button>
+                    
+                    <p style="margin-top:15px;color:var(--text-light);font-size:0.95rem;">
+                        💡 <strong>Consejo:</strong> ¡Cuenta todo lo que ves! ventanas, puertas, compañeros, lápices...
+                    </p>
                 </div>
-                <div class="mission-card pink">
-                    <h3>🎲 Paso 2</h3>
-                    <p style="opacity:0.9;font-size:0.95rem;">Cuenta objetos del salón:</p>
-                    <ul>
-                        <li>"<strong>I see [num] chairs.</strong>"</li>
-                        <li>"<strong>I see [num] windows.</strong>"</li>
-                        <li>"<strong>I see [num] books.</strong>"</li>
-                    </ul>
-                </div>
+                
+                <button class="btn-complete" onclick="completarModulo()">🔢 ¡Dominé los Números! +30 XP</button>
             </div>
-            <button class="btn-complete" onclick="completarModulo()">🔢 ¡Dominé los Números! +30 XP</button>
         </div>
+
     </div>
 
     <div id="victoryModal" class="victory-overlay">
         <div class="victory-box">
             <div style="font-size:5rem;">🔢</div>
             <h2>¡Números dominados!</h2>
-            <p style="color:var(--text-light);">¡Sabes contar del 1 al 10 en inglés! ¡Genial!</p>
+            <p style="color:var(--text-light);">¡Sabes contar del 1 al 20 en inglés! ¡Eres un mago de los números!</p>
             <div class="xp-badge">+ 30 XP 🌟</div>
             <button class="btn-continue" onclick="window.location.href='dashboard.php'">¡Seguir la aventura! 🗺️</button>
         </div>
@@ -163,57 +274,124 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="/intep/cursoingles/cursos_api.js"></script>
     <script>
-        // Juego de conteo
-        var rounds = [
-            {emoji:'🌟',count:3,opts:[2,3,5]},{emoji:'🐦',count:5,opts:[4,5,7]},
-            {emoji:'🍎',count:4,opts:[3,4,6]},{emoji:'⭐',count:7,opts:[6,7,8]},
-            {emoji:'🎈',count:2,opts:[1,2,4]},{emoji:'🦁',count:6,opts:[5,6,9]},
+        var numWords = ['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'];
+        
+        // Exercise 1: Counting
+        var countRounds = [
+            {emoji:'⭐',count:3,opts:[2,3,4]},
+            {emoji:'🐱',count:5,opts:[4,5,6]},
+            {emoji:'🍎',count:2,opts:[1,2,3]},
+            {emoji:'🦁',count:7,opts:[5,6,7]},
+            {emoji:'🎈',count:4,opts:[3,4,5]}
         ];
-        var ri=0,score=0;
-        var nums=['','one','two','three','four','five','six','seven','eight','nine','ten'];
-        function loadRound(){
-            if(ri>=rounds.length){document.querySelector('.count-question').innerText='¡Completaste el juego! 🎉';document.querySelector('.count-display').innerText='';document.getElementById('optionsGrid').innerHTML='';document.getElementById('feedback').innerText='Score: '+score+'/'+rounds.length;return;}
-            var r=rounds[ri];
-            document.getElementById('countQ').innerText='¿Cuántos hay?';
-            document.getElementById('countDisplay').innerText=r.emoji.repeat(r.count);
-            document.getElementById('feedback').innerText='';
-            var grid=document.getElementById('optionsGrid');
-            grid.innerHTML='';
-            var opts=[...r.opts].sort(()=>Math.random()-0.5);
-            opts.forEach(function(n){
-                var btn=document.createElement('button');
-                btn.className='option-btn';
-                btn.innerText=nums[n]+'  ('+n+')';
-                btn.onclick=function(){checkAnswer(n,r.count,btn);};
+        var countIdx = 0;
+        
+        function loadCountRound() {
+            if(countIdx >= countRounds.length) {
+                document.getElementById('countQuestion').innerText = '¡Juego completado! 🎉';
+                document.getElementById('countDisplay').innerText = '⭐⭐⭐⭐⭐';
+                document.getElementById('countOptions').innerHTML = '';
+                return;
+            }
+            var r = countRounds[countIdx];
+            document.getElementById('countQuestion').innerText = '¿Cuántos emojis ves?';
+            document.getElementById('countDisplay').innerText = r.emoji.repeat(r.count);
+            document.getElementById('countFeedback').innerHTML = '';
+            
+            var opts = [...r.opts].sort(function() { return Math.random() - 0.5; });
+            var grid = document.getElementById('countOptions');
+            grid.innerHTML = '';
+            opts.forEach(function(n) {
+                var btn = document.createElement('button');
+                btn.className = 'count-btn';
+                btn.innerText = numWords[n] + ' (' + n + ')';
+                btn.onclick = function() { checkCount(n, r.count, btn); };
                 grid.appendChild(btn);
             });
         }
-        function checkAnswer(n,correct,btn){
-            document.querySelectorAll('.option-btn').forEach(function(b){b.onclick=null;});
-            if(n===correct){
+        
+        function checkCount(selected, correct, btn) {
+            var btns = document.querySelectorAll('.count-btn');
+            btns.forEach(function(b) { b.disabled = true; });
+            
+            if(selected === correct) {
                 btn.classList.add('correct');
-                document.getElementById('feedback').innerHTML='<span style="color:#15803d;">✅ ¡Correcto! It is '+nums[correct]+'!</span>';
-                score++;
-                ri++;
-                setTimeout(loadRound,1500);
+                document.getElementById('countFeedback').innerHTML = '✅ ¡Correcto! ' + numWords[correct] + ' = ' + correct;
+                document.getElementById('countFeedback').className = 'feedback-msg correct';
+                countIdx++;
+                setTimeout(loadCountRound,1500);
             } else {
                 btn.classList.add('wrong');
-                document.getElementById('feedback').innerHTML='<span style="color:#dc2626;">❌ Try again! There are '+correct+' ('+nums[correct]+')</span>';
-                ri++;
-                setTimeout(loadRound,2000);
+                document.getElementById('countFeedback').innerHTML = '❌ Era ' + numWords[correct] + '. Intenta de nuevo';
+                document.getElementById('countFeedback').className = 'feedback-msg wrong';
+                setTimeout(function() {
+                    btns.forEach(function(b) { b.disabled = false; });
+                    btn.classList.remove('wrong');
+                },1500);
             }
         }
-        function sayNumber(word){
-            if('speechSynthesis' in window){
-                var u=new SpeechSynthesisUtterance(word);u.lang='en-US';u.rate=0.8;window.speechSynthesis.speak(u);
+        
+        // Exercise 2: Order
+        var orderNums = [1,2,3,4,5];
+        var currentOrder = 1;
+        
+        function loadOrderGame() {
+            var grid = document.getElementById('orderGrid');
+            grid.innerHTML = '';
+            var shuffled = [...orderNums].sort(function() { return Math.random() - 0.5; });
+            shuffled.forEach(function(n) {
+                var btn = document.createElement('div');
+                btn.className = 'order-num';
+                btn.innerText = n;
+                btn.onclick = function() { checkOrder(n, btn); };
+                grid.appendChild(btn);
+            });
+        }
+        
+        function checkOrder(n, btn) {
+            if(n === currentOrder) {
+                btn.classList.add('selected');
+                btn.style.background = '#d1fae5';
+                btn.style.borderColor = '#10b981';
+                currentOrder++;
+                if(currentOrder > 5) {
+                    document.getElementById('orderFeedback').innerHTML = '✅ ¡Perfecto! Ordenaste los números del 1 al 5';
+                    document.getElementById('orderFeedback').className = 'feedback-msg correct';
+                }
+            } else {
+                btn.style.background = '#fef2f2';
+                btn.style.borderColor = '#ef4444';
+                document.getElementById('orderFeedback').innerHTML = '❌ Empieza desde el 1';
+                document.getElementById('orderFeedback').className = 'feedback-msg wrong';
             }
         }
-        function completarModulo(){
-            document.getElementById('victoryModal').style.display='flex';
-            confetti({particleCount:120,spread:70,origin:{y:0.6},colors:['#7c3aed','#a855f7','#FFD166','#FF5A5F']});
-            window.INTEP_guardarProgreso({nivel:'kids',num:3,porcentaje:100,completado:true,xp_ganado:30});
+        
+        function playSound(word) {
+            if('speechSynthesis' in window) {
+                var u = new SpeechSynthesisUtterance(word);
+                u.lang = 'en-US';
+                u.rate = 0.8;
+                window.speechSynthesis.speak(u);
+            }
         }
-        loadRound();
+        
+        function speakPhrase(phrase) {
+            if('speechSynthesis' in window) {
+                var u = new SpeechSynthesisUtterance(phrase);
+                u.lang = 'en-US';
+                u.rate = 0.7;
+                window.speechSynthesis.speak(u);
+            }
+        }
+        
+        function completarModulo() {
+            document.getElementById('victoryModal').style.display = 'flex';
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#a855f7','#7c3aed','#FFD166','#f97316'] });
+            window.INTEP_guardarProgreso({ nivel: 'kids', num: 3, porcentaje: 100, completado: true, xp_ganado: 30 });
+        }
+        
+        loadCountRound();
+        loadOrderGame();
     </script>
 </body>
 </html>

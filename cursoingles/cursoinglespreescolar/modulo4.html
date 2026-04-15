@@ -6,12 +6,17 @@
     <title>Comida Deliciosa 🍎 | INTEP Kids</title>
     <script>window.__CURSO={nivel:'kids',num:4};</script>
     <script>
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('demo') === '1') {
+        window.__INTEP = {ok: true, nombre: 'Demo'};
+    } else {
     (function(){
       fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
         .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
+    }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/intep/cursoingles/cursoinglespreescolar/index.css">
@@ -20,55 +25,77 @@
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family:'Nunito',sans-serif;background:var(--bg-color);color:var(--text-dark);}
         h1,h2,h3,h4{font-family:'Fredoka',sans-serif;}
+
         .back-btn{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:2px solid #f59e0b;color:#f59e0b;padding:10px 20px;border-radius:30px;font-family:'Fredoka',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;margin:20px 5%;transition:all 0.3s;}
         .back-btn:hover{background:#f59e0b;color:white;}
-        .lesson-container{max-width:900px;margin:0 auto;padding:0 5% 4rem;}
+        .lesson-container{max-width:1000px;margin:0 auto;padding:0 5% 4rem;}
+
         .lesson-hero{background:linear-gradient(135deg,#fff9e6,#fffbf0);border-radius:30px;padding:2.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:2rem;border:3px solid #f59e0b;box-shadow:0 8px 25px rgba(245,158,11,0.15);}
         .lesson-hero-icon{font-size:5rem;animation:float 3s ease-in-out infinite;}
         @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
         .lesson-badge{background:#f59e0b;color:white;padding:5px 15px;border-radius:20px;font-size:0.85rem;font-weight:700;display:inline-block;margin-bottom:10px;}
+        .lesson-hero h1{font-size:2.5rem;color:var(--text-dark);}
+        .lesson-hero p{color:var(--text-light);margin-top:8px;font-size:1.1rem;}
+
         .section-card{background:white;border-radius:25px;padding:2rem;margin-bottom:2rem;box-shadow:0 5px 20px rgba(0,0,0,0.06);}
         .section-title{font-family:'Fredoka',sans-serif;font-size:1.8rem;color:var(--text-dark);margin-bottom:1.5rem;display:flex;align-items:center;gap:12px;}
-        /* Food cards */
-        .food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px;}
-        .food-card{background:linear-gradient(135deg,#fffbf0,#fff9e6);border:3px solid var(--accent);border-radius:20px;padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:transform 0.3s;perspective:800px;}
-        .food-card:hover{transform:scale(1.06);}
-        .food-inner{transition:transform 0.5s;transform-style:preserve-3d;}
-        .food-card:hover .food-inner{transform:rotateY(180deg);}
-        .food-front,.food-back{backface-visibility:hidden;}
-        .food-back{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:17px;color:white;transform:rotateY(180deg);}
-        .food-emoji{font-size:3.5rem;margin-bottom:8px;}
-        .food-name{font-family:'Fredoka',sans-serif;font-size:1.1rem;color:var(--text-dark);}
-        .food-es{font-size:0.8rem;color:var(--text-light);margin-top:3px;}
-        /* Like/Dislike game */
-        .like-game{background:linear-gradient(135deg,#fff9e6,#fffbf0);border:3px solid var(--accent);border-radius:20px;padding:2rem;text-align:center;}
-        .lg-food{font-size:5rem;margin:15px 0;}
-        .lg-question{font-family:'Fredoka',sans-serif;font-size:1.6rem;color:var(--text-dark);margin-bottom:20px;}
-        .lg-btns{display:flex;gap:20px;justify-content:center;}
-        .like-btn{padding:15px 35px;border-radius:20px;border:none;font-family:'Fredoka',sans-serif;font-size:1.3rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
-        .like-btn.yes{background:linear-gradient(135deg,#22c55e,#4ade80);color:white;box-shadow:0 5px 15px rgba(34,197,94,0.4);}
-        .like-btn.no{background:linear-gradient(135deg,#ef4444,#f87171);color:white;box-shadow:0 5px 15px rgba(239,68,68,0.4);}
+
+        /* Carousel */
+        .carousel-section{background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:25px;padding:2rem;margin-bottom:2rem;border:3px solid #f59e0b;}
+        .carousel-container{overflow-x:auto;display:flex;gap:15px;padding:15px 5px;scroll-behavior:smooth;}
+        .carousel-container::-webkit-scrollbar{height:8px;}
+        .carousel-container::-webkit-scrollbar-track{background:#fef3c7;border-radius:10px;}
+        .carousel-container::-webkit-scrollbar-thumb{background:#f59e0b;border-radius:10px;}
+        .food-card{min-width:140px;background:white;border-radius:20px;padding:1.2rem;text-align:center;border:3px solid #f59e0b;cursor:pointer;transition:all 0.3s;}
+        .food-card:hover{transform:scale(1.08);box-shadow:0 10px 25px rgba(245,158,11,0.3);}
+        .food-emoji{font-size:3rem;margin-bottom:8px;}
+        .food-name-en{font-family:'Fredoka',sans-serif;font-size:1.1rem;color:#b45309;font-weight:700;}
+        .food-name-es{font-size:0.85rem;color:var(--text-light);}
+        .carousel-instruction{text-align:center;font-size:1rem;color:var(--text-light);margin-bottom:10px;}
+        .nav-btn{background:#f59e0b;border:none;padding:10px 20px;border-radius:20px;font-family:'Fredoka',sans-serif;font-weight:700;cursor:pointer;color:white;margin:10px 5px;}
+
+        /* Exercise 1: Like/Dislike */
+        .like-exercise{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:20px;padding:1.5rem;border:3px solid #10b981;}
+        .like-display{font-size:4rem;text-align:center;margin:15px 0;}
+        .like-question{font-family:'Fredoka',sans-serif;font-size:1.3rem;text-align:center;margin-bottom:15px;}
+        .like-btns{display:flex;gap:15px;justify-content:center;margin-top:15px;}
+        .like-btn{padding:15px 30px;border-radius:20px;border:none;font-family:'Fredoka',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+        .like-btn.yes{background:#10b981;color:white;box-shadow:0 5px 15px rgba(16,185,129,0.4);}
+        .like-btn.no{background:#ef4444;color:white;box-shadow:0 5px 15px rgba(239,68,68,0.4);}
         .like-btn:hover{transform:scale(1.05);}
-        .lg-feedback{font-family:'Fredoka',sans-serif;font-size:1.4rem;min-height:40px;margin-top:15px;}
-        .story-box{background:linear-gradient(135deg,#fff9e6,#fffbf0);border-left:6px solid #f59e0b;border-radius:15px;padding:1.5rem;font-size:1.15rem;line-height:1.9;}
-        .highlight{font-family:'Fredoka',sans-serif;font-weight:700;color:#b45309;background:rgba(245,158,11,0.1);padding:2px 8px;border-radius:8px;}
-        .grammar-box{border:3px solid var(--accent);border-radius:20px;padding:1.5rem;background:linear-gradient(135deg,#fffdf0,#fff9e6);}
-        .grammar-rule{display:flex;align-items:center;gap:15px;padding:12px 0;border-bottom:1px dashed rgba(255,209,102,0.5);font-size:1.1rem;}
-        .grammar-rule:last-child{border-bottom:none;}
-        .grammar-rule .emoji{font-size:1.8rem;min-width:40px;}
-        .grammar-rule .en{font-family:'Fredoka',sans-serif;font-size:1.2rem;}
-        .grammar-rule .en.like{color:#22c55e;}
-        .grammar-rule .en.dislike{color:#ef4444;}
-        .grammar-rule .es{color:var(--text-light);font-size:0.9rem;}
-        .mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-        @media(max-width:600px){.mission-grid{grid-template-columns:1fr;}}
-        .mission-card{border-radius:20px;padding:1.5rem;color:white;}
-        .mission-card h3{font-family:'Fredoka',sans-serif;font-size:1.4rem;margin-bottom:10px;}
-        .mission-card.orange{background:linear-gradient(135deg,#f59e0b,#fbbf24);}
-        .mission-card.green{background:linear-gradient(135deg,#22c55e,#4ade80);}
-        .mission-card ul{list-style:none;padding:0;}
-        .mission-card li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.2);}
-        .mission-card li:last-child{border-bottom:none;}
+
+        /* Exercise 2: Quiz */
+        .quiz-exercise{background:linear-gradient(135deg,#fdf4ff,#fce7f3);border-radius:20px;padding:1.5rem;border:3px solid #ec4899;}
+        .quiz-display{font-size:3.5rem;text-align:center;margin:15px 0;}
+        .quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:350px;margin:0 auto;}
+        @media(max-width:500px){.quiz-options{grid-template-columns:1fr;}}
+        .quiz-btn{padding:15px;border-radius:15px;border:3px solid #e5e7eb;background:white;font-family:'Fredoka',sans-serif;font-size:1.1rem;cursor:pointer;transition:all 0.2s;}
+        .quiz-btn:hover{border-color:#ec4899;background:#fdf4ff;}
+        .quiz-btn.correct{border-color:#22c55e;background:#dcfce7;color:#15803d;}
+        .quiz-btn.wrong{border-color:#ef4444;background:#fef2f2;color:#dc2626;}
+        .feedback-msg{font-family:'Fredoka',sans-serif;font-size:1.1rem;text-align:center;margin-top:15px;min-height:30px;}
+        .feedback-msg.correct{color:#15803d;}
+        .feedback-msg.wrong{color:#dc2626;}
+
+        /* Grammar */
+        .grammar-interact{background:linear-gradient(135deg,#fef3c7,#fde68a);border:3px solid #f59e0b;border-radius:20px;padding:2rem;}
+        .formula-box{background:white;border-radius:15px;padding:1.5rem;text-align:center;margin-bottom:1.5rem;box-shadow:0 5px 15px rgba(0,0,0,0.05);}
+        .formula-title{font-family:'Fredoka',sans-serif;font-size:1.4rem;color:#b45309;margin-bottom:10px;}
+        .formula-example{font-family:'Fredoka',sans-serif;font-size:1.5rem;}
+        .formula-example .like{color:#10b981;font-weight:700;}
+        .formula-example .dislike{color:#ef4444;font-weight:700;}
+        .grammar-step{display:flex;align-items:center;gap:15px;padding:15px;background:white;border-radius:15px;margin-bottom:15px;border:2px solid #e5e7eb;}
+        .step-num{background:#f59e0b;color:white;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-weight:700;flex-shrink:0;}
+        .step-text{font-size:1rem;}
+        .step-text strong{color:#b45309;}
+
+        /* Mission */
+        .mission-interact{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:20px;padding:2rem;border:3px solid #10b981;}
+        .mission-instruct{font-size:1.1rem;line-height:1.7;margin-bottom:1.5rem;}
+        .phrase-btn{display:block;width:100%;padding:15px;margin-bottom:10px;background:white;border:2px solid #a7f3d0;border-radius:15px;font-family:'Fredoka',sans-serif;font-size:1.1rem;cursor:pointer;text-align:left;transition:all 0.2s;}
+        .phrase-btn:hover{background:#10b981;color:white;border-color:#10b981;}
+        .phrase-btn span{color:#9ca3af;font-size:0.9rem;}
+
         .btn-complete{display:block;width:100%;padding:18px;margin-top:2rem;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:white;border:none;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:1.4rem;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(245,158,11,0.4);transition:all 0.3s;}
         .btn-complete:hover{transform:translateY(-3px);}
         .victory-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(45,49,66,0.85);backdrop-filter:blur(8px);z-index:1000;justify-content:center;align-items:center;}
@@ -77,109 +104,180 @@
         .victory-box h2{font-family:'Fredoka',sans-serif;font-size:2.5rem;color:var(--text-dark);margin:15px 0 10px;}
         .xp-badge{background:var(--accent);color:var(--text-dark);font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;padding:10px 25px;border-radius:15px;display:inline-block;margin:15px 0;}
         .btn-continue{width:100%;padding:15px;border-radius:15px;border:none;background:#f59e0b;color:white;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;margin-top:15px;}
+        .btn-exam{display:block;width:100%;padding:15px;margin-top:1rem;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:15px;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;box-shadow:0 5px 15px rgba(124,58,237,0.3);}
     </style>
 </head>
 <body>
+
     <a href="/intep/cursoingles/cursoinglespreescolar/dashboard.php" class="back-btn">← Volver al Mapa</a>
+
     <div class="lesson-container">
 
         <div class="lesson-hero">
-            <div class="lesson-hero-icon">🍎</div>
+            <div class="lesson-hero-icon">🍽️</div>
             <div>
                 <span class="lesson-badge">Módulo 4 · Food</span>
                 <h1>Comida Deliciosa</h1>
-                <p>¡Aprende a decir qué te gusta y qué no te gusta comer en inglés!</p>
+                <p>¡Aprende a nombrar comidas y decir qué te gusta o no en inglés!</p>
             </div>
         </div>
 
-        <!-- Vocabulario -->
-        <div class="section-card">
-            <h2 class="section-title">🍽️ 1. Yummy Food!</h2>
-            <p style="color:var(--text-light);margin-bottom:1.5rem;">Pasa el cursor por cada comida.</p>
-            <div class="food-grid">
-                <div class="food-card"><div class="food-emoji">🍎</div><div class="food-name">Apple</div><div class="food-es">Manzana</div></div>
-                <div class="food-card"><div class="food-emoji">🍌</div><div class="food-name">Banana</div><div class="food-es">Banano</div></div>
-                <div class="food-card"><div class="food-emoji">🍕</div><div class="food-name">Pizza</div><div class="food-es">Pizza</div></div>
-                <div class="food-card"><div class="food-emoji">🎂</div><div class="food-name">Cake</div><div class="food-es">Pastel</div></div>
-                <div class="food-card"><div class="food-emoji">🥛</div><div class="food-name">Milk</div><div class="food-es">Leche</div></div>
-                <div class="food-card"><div class="food-emoji">🍊</div><div class="food-name">Orange</div><div class="food-es">Naranja</div></div>
+        <!-- Sección 1: Carrusel de Comidas -->
+        <div class="carousel-section">
+            <h2 class="section-title">🍎 1. Safari de Comidas - ¡Delicioso!</h2>
+            <p class="carousel-instruction">👉 Desliza a la derecha para ver más comidas. Haz clic en cada una para escuchar su nombre.</p>
+            
+            <div class="carousel-container" id="foodCarousel">
+                <div class="food-card" onclick="playSound('apple')"><span class="food-emoji">🍎</span><div class="food-name-en">Apple</div><div class="food-name-es">Manzana</div></div>
+                <div class="food-card" onclick="playSound('banana')"><span class="food-emoji">🍌</span><div class="food-name-en">Banana</div><div class="food-name-es">Banano</div></div>
+                <div class="food-card" onclick="playSound('orange')"><span class="food-emoji">🍊</span><div class="food-name-en">Orange</div><div class="food-name-es">Naranja</div></div>
+                <div class="food-card" onclick="playSound('grape')"><span class="food-emoji">🍇</span><div class="food-name-en">Grape</div><div class="food-name-es">Uva</div></div>
+                <div class="food-card" onclick="playSound('strawberry')"><span class="food-emoji">🍓</span><div class="food-name-en">Strawberry</div><div class="food-name-es">Fresa</div></div>
+                <div class="food-card" onclick="playSound('watermelon')"><span class="food-emoji">🍉</span><div class="food-name-en">Watermelon</div><div class="food-name-es">Sandía</div></div>
+                <div class="food-card" onclick="playSound('pizza')"><span class="food-emoji">🍕</span><div class="food-name-en">Pizza</div><div class="food-name-es">Pizza</div></div>
+                <div class="food-card" onclick="playSound('hamburger')"><span class="food-emoji">🍔</span><div class="food-name-en">Hamburger</div><div class="food-name-es">Hamburguesa</div></div>
+                <div class="food-card" onclick="playSound('hotdog')"><span class="food-emoji">🌭</span><div class="food-name-en">Hotdog</div><div class="food-name-es">Hotdog</div></div>
+                <div class="food-card" onclick="playSound('sandwich')"><span class="food-emoji">🥪</span><div class="food-name-en">Sandwich</div><div class="food-name-es">Sándwich</div></div>
+                <div class="food-card" onclick="playSound('cake')"><span class="food-emoji">🎂</span><div class="food-name-en">Cake</div><div class="food-name-es">Pastel</div></div>
+                <div class="food-card" onclick="playSound('cookie')"><span class="food-emoji">🍪</span><div class="food-name-en">Cookie</div><div class="food-name-es">Galleta</div></div>
+                <div class="food-card" onclick="playSound('ice cream')"><span class="food-emoji">🍦</span><div class="food-name-en">Ice Cream</div><div class="food-name-es">Helado</div></div>
+                <div class="food-card" onclick="playSound('milk')"><span class="food-emoji">🥛</span><div class="food-name-en">Milk</div><div class="food-name-es">Leche</div></div>
+                <div class="food-card" onclick="playSound('juice')"><span class="food-emoji">🧃</span><div class="food-name-en">Juice</div><div class="food-name-es">Jugo</div></div>
+                <div class="food-card" onclick="playSound('water')"><span class="food-emoji">💧</span><div class="food-name-en">Water</div><div class="food-name-es">Agua</div></div>
+                <div class="food-card" onclick="playSound('egg')"><span class="food-emoji">🥚</span><div class="food-name-en">Egg</div><div class="food-name-es">Huevo</div></div>
+                <div class="food-card" onclick="playSound('bread')"><span class="food-emoji">🍞</span><div class="food-name-en">Bread</div><div class="food-name-es">Pan</div></div>
+            </div>
+            <div style="text-align:center;">
+                <button class="nav-btn" onclick="document.getElementById('foodCarousel').scrollBy({left:-300,behavior:'smooth'})">⬅️ Izquierda</button>
+                <button class="nav-btn" onclick="document.getElementById('foodCarousel').scrollBy({left:300,behavior:'smooth'})">Derecha ➡️</button>
             </div>
         </div>
 
-        <!-- Juego I Like / I Don't Like -->
+        <!-- Ejercicio 1: I Like / I Don't Like -->
         <div class="section-card">
-            <h2 class="section-title">🎮 2. Do You Like It?</h2>
-            <div class="like-game">
-                <div class="lg-question">Do you like this food?</div>
-                <div class="lg-food" id="lgFood">🍎</div>
-                <div class="lg-btns">
-                    <button class="like-btn yes" onclick="answer(true)">✅ I like it!</button>
-                    <button class="like-btn no" onclick="answer(false)">❌ I don't like it!</button>
+            <h2 class="section-title">🎮 2. ¿Te gusta o no?</h2>
+            <div class="like-exercise">
+                <div class="like-question" id="likeQuestion">¿Te gusta esta comida?</div>
+                <div class="like-display" id="likeDisplay">🍕</div>
+                
+                <div class="like-btns">
+                    <button class="like-btn yes" onclick="answerLike(true)">✅ I like it!</button>
+                    <button class="like-btn no" onclick="answerLike(false)">❌ I don't like it!</button>
                 </div>
-                <div class="lg-feedback" id="lgFeedback"></div>
+                
+                <div class="feedback-msg" id="likeFeedback"></div>
             </div>
         </div>
 
-        <!-- Historia -->
+        <!-- Ejercicio 2: Quiz -->
         <div class="section-card">
-            <h2 class="section-title">📖 3. Lunchtime!</h2>
-            <div class="story-box">
-                Maria says: "<span class="highlight">I like pizza!</span>" 🍕<br>
-                Tom says: "<span class="highlight">I like cake!</span>" 🎂<br>
-                Anna says: "<span class="highlight">I don't like milk.</span>" 🥛<br>
-                Ben says: "<span class="highlight">I like apples and bananas!</span>" 🍎🍌
+            <h2 class="section-title">🎯 3. ¿Cómo se dice?</h2>
+            <div class="quiz-exercise">
+                <p style="color:var(--text-light);margin-bottom:10px;">Selecciona la traducción correcta:</p>
+                
+                <div class="quiz-display" id="quizDisplay">🍎</div>
+                
+                <div class="quiz-options" id="quizOptions"></div>
+                
+                <div class="feedback-msg" id="quizFeedback"></div>
             </div>
         </div>
 
         <!-- Gramática -->
         <div class="section-card">
-            <h2 class="section-title">💡 4. I Like / I Don't Like</h2>
-            <div class="grammar-box">
-                <div class="grammar-rule">
-                    <span class="emoji">✅</span>
-                    <div><div class="en like">I like pizza.</div><div class="es">Me gusta la pizza.</div></div>
+            <h2 class="section-title">💡 4. La Fórmula Mágica - Gustos y No Gustos</h2>
+            
+            <div class="grammar-interact">
+                <p style="font-size:1.1rem;margin-bottom:20px;">Para decir si te gusta o no algo, usa estas fórmulas:</p>
+                
+                <div class="formula-box">
+                    <div class="formula-title">✨ Fórmulas Mágicas</div>
+                    <div class="formula-example">
+                        <span class="like">I like</span> + [comida] = Me gusta<br>
+                        <span class="dislike">I don't like</span> + [comida] = No me gusta
+                    </div>
                 </div>
-                <div class="grammar-rule">
-                    <span class="emoji">✅</span>
-                    <div><div class="en like">I like cake.</div><div class="es">Me gusta el pastel.</div></div>
+                
+                <div class="grammar-step">
+                    <div class="step-num">1</div>
+                    <div class="step-text"><strong>"I like"</strong> significa "Me gusta". Se usa para cosas que te agradan.</div>
                 </div>
-                <div class="grammar-rule">
-                    <span class="emoji">❌</span>
-                    <div><div class="en dislike">I don't like milk.</div><div class="es">No me gusta la leche.</div></div>
+                <div class="grammar-step">
+                    <div class="step-num">2</div>
+                    <div class="step-text"><strong>"I don't like"</strong> significa "No me gusta". Se usa para cosas que no te gustan.</div>
                 </div>
-                <div class="grammar-rule">
-                    <span class="emoji">❌</span>
-                    <div><div class="en dislike">I don't like orange.</div><div class="es">No me gustan las naranjas.</div></div>
+                <div class="grammar-step">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Nota: <strong>"don't"</strong> se usa siempre, sin importar la comida. ¡No cambia!</div>
                 </div>
+                
+                <p style="margin-top:20px;padding:15px;background:#fff; border-radius:15px; border-left:4px solid #f59e0b;">
+                    <strong>📝 Ejemplos:</strong><br>
+                    🍕 <em>I like PIZZA!</em> (¡Me gusta la pizza!)<br>
+                    🍌 <em>I like BANANAS!</em> (¡Me gustan los bananos!)<br>
+                    🥛 <em>I don't like MILK.</em> (No me gusta la leche)<br>
+                    🥦 <em>I don't like BROCCOLI.</em> (No me gusta el brócoli)
+                </p>
             </div>
         </div>
 
-        <!-- Misión Final -->
-        <div class="section-card" style="border:3px solid #f59e0b;">
-            <h2 class="section-title" style="color:#b45309;">🎯 5. ¡La Encuesta de Comidas!</h2>
-            <p style="color:var(--text-light);margin-bottom:1.5rem;">Pregúntale a 3 compañeros qué les gusta comer.</p>
-            <div class="mission-grid">
-                <div class="mission-card orange">
-                    <h3>🙋 Pregunta</h3>
-                    <p style="opacity:0.9;font-size:0.95rem;">Dile a un compañero:</p>
-                    <ul>
-                        <li>"<strong>Do you like pizza?</strong>"</li>
-                        <li>"<strong>Do you like cake?</strong>"</li>
-                        <li>"<strong>Do you like milk?</strong>"</li>
-                    </ul>
+        <!-- Misión -->
+        <div class="section-card">
+            <h2 class="section-title">🎯 5. ¡El Encuestador de Comidas!</h2>
+            
+            <div class="mission-interact">
+                <p class="mission-instruct">
+                    <strong>¡Hola, pequeño chef!</strong> 🍳<br><br>
+                    Tu misión es preguntar a tus compañeros sobre sus comidas favoritas y responder.<br><br>
+                    <strong>¿Cómo hacerlo?</strong> Practica estas frases:
+                </p>
+                
+                <div style="background:white;border-radius:20px;padding:1.5rem;border:3px solid #10b981;">
+                    <h4 style="font-family:'Fredoka',sans-serif;color:#10b981;margin-bottom:15px;">🎤 Preguntar:</h4>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('Do you like pizza')">
+                        "Do you like <strong>pizza</strong>?"<br>
+                        <span>👉 ¿Te gusta la pizza?</span>
+                    </button>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('Do you like apples')">
+                        "Do you like <strong>apples</strong>?"<br>
+                        <span>👉 ¿Te gustan las manzanas?</span>
+                    </button>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('Do you like ice cream')">
+                        "Do you like <strong>ice cream</strong>?"<br>
+                        <span>👉 ¿Te gusta el helado?</span>
+                    </button>
                 </div>
-                <div class="mission-card green">
-                    <h3>💬 Responde</h3>
-                    <p style="opacity:0.9;font-size:0.95rem;">Tu compañero responde:</p>
-                    <ul>
-                        <li>"<strong>Yes! I like pizza!</strong>"</li>
-                        <li>"<strong>No, I don't like milk.</strong>"</li>
-                        <li>"<strong>I like cake a lot!</strong>"</li>
-                    </ul>
+                
+                <div style="background:white;border-radius:20px;padding:1.5rem;border:3px solid #10b981;margin-top:15px;">
+                    <h4 style="font-family:'Fredoka',sans-serif;color:#10b981;margin-bottom:15px;">🎤 Responder:</h4>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('Yes, I like it')">
+                        "Yes, I like it!"<br>
+                        <span>👉 ¡Sí, me gusta!</span>
+                    </button>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('No, I do not like it')">
+                        "No, I don't like it."<br>
+                        <span>👉 No, no me gusta.</span>
+                    </button>
+                    
+                    <button class="phrase-btn" onclick="speakPhrase('I like pizza a lot')">
+                        "I like it a lot!"<br>
+                        <span>👉 ¡Me gusta mucho!</span>
+                    </button>
                 </div>
+                
+                <p style="margin-top:15px;color:var(--text-light);font-size:0.95rem;">
+                    💡 <strong>Consejo:</strong> Pregunta a 3 compañeros y recuerda sus respuestas para contar después.
+                </p>
+                
+                <button class="btn-complete" onclick="completarModulo()">🍽️ ¡Terminé el Curso! +30 XP</button>
             </div>
-            <button class="btn-complete" onclick="completarModulo()">🍽️ ¡Terminé el Curso! +30 XP</button>
         </div>
+
     </div>
 
     <div id="victoryModal" class="victory-overlay">
@@ -195,30 +293,129 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="/intep/cursoingles/cursos_api.js"></script>
     <script>
-        var foods=[{e:'🍎',n:'apple'},{e:'🍌',n:'banana'},{e:'🍕',n:'pizza'},{e:'🎂',n:'cake'},{e:'🥛',n:'milk'},{e:'🍊',n:'orange'}];
-        var fi=0;
-        function showFood(){
-            if(fi>=foods.length){document.querySelector('.like-game').innerHTML='<h3 style="font-family:Fredoka,sans-serif;font-size:1.6rem;color:#22c55e;padding:2rem;">¡Excelente! ¡Conoces todas las comidas! 🎉</h3>';return;}
-            document.getElementById('lgFood').innerText=foods[fi].e;
-            document.getElementById('lgFeedback').innerText='';
-            document.querySelectorAll('.like-btn').forEach(function(b){b.style.pointerEvents='auto';b.style.opacity='1';});
+        // Exercise 1: Like/Dislike
+        var foods = [
+            {e:'🍕',n:'pizza',like:true},
+            {e:'🥦',n:'broccoli',like:false},
+            {e:'🍦',n:'ice cream',like:true},
+            {e:'🍌',n:'banana',like:true},
+            {e:'🥛',n:'milk',like:false},
+            {e:'🍪',n:'cookie',like:true}
+        ];
+        var foodIdx = 0;
+        
+        function loadFoodRound() {
+            if(foodIdx >= foods.length) {
+                document.getElementById('likeQuestion').innerText = '¡Juego completado! 🎉';
+                document.getElementById('likeDisplay').innerText = '🌟';
+                document.querySelector('.like-btns').style.display = 'none';
+                return;
+            }
+            var f = foods[foodIdx];
+            document.getElementById('likeQuestion').innerText = '¿Te gusta esta comida?';
+            document.getElementById('likeDisplay').innerText = f.e;
+            document.getElementById('likeFeedback').innerHTML = '';
+            document.querySelectorAll('.like-btn').forEach(function(b) { b.disabled = false; b.style.opacity = '1'; });
         }
-        function answer(like){
-            var food=foods[fi];
-            var phrase=like?'I like '+food.n+'! 😊':'I don\'t like '+food.n+'. 😅';
-            document.getElementById('lgFeedback').innerHTML='<strong style="color:'+(like?'#15803d':'#dc2626')+';">'+phrase+'</strong>';
-            document.querySelectorAll('.like-btn').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='0.6';});
-            fi++;
-            setTimeout(showFood,1500);
+        
+        function answerLike(like) {
+            var f = foods[foodIdx];
+            var btns = document.querySelectorAll('.like-btn');
+            btns.forEach(function(b) { b.disabled = true; });
+            
+            var isCorrect = like === f.like;
+            var feedback = document.getElementById('likeFeedback');
+            
+            if(isCorrect) {
+                var phrase = like ? 'I like ' + f.n + '!' : 'I don\'t like ' + f.n + '!';
+                feedback.innerHTML = '✅ ¡Correcto! ' + phrase;
+                feedback.className = 'feedback-msg correct';
+                speakPhrase(like ? 'I like ' + f.n : 'I do not like ' + f.n);
+                foodIdx++;
+                setTimeout(loadFoodRound,1500);
+            } else {
+                feedback.innerHTML = '❌ Intenta de nuevo';
+                feedback.className = 'feedback-msg wrong';
+                setTimeout(function() { btns.forEach(function(b) { b.disabled = false; }); },1500);
+            }
         }
-        function completarModulo(){
-            document.getElementById('victoryModal').style.display='flex';
-            confetti({particleCount:200,spread:100,origin:{y:0.5},colors:['#f59e0b','#fbbf24','#FF5A5F','#08C2A8','#FFD166']});
-            setTimeout(function(){confetti({particleCount:100,angle:60,spread:55,origin:{x:0}});},300);
-            setTimeout(function(){confetti({particleCount:100,angle:120,spread:55,origin:{x:1}});},600);
-            window.INTEP_guardarProgreso({nivel:'kids',num:4,porcentaje:100,completado:true,xp_ganado:30});
+        
+        // Exercise 2: Quiz
+        var quizzes = [
+            {e:'🍎',q:'Manzana',correct:'apple',opts:['apple','banana','grape','orange']},
+            {e:'🍕',q:'Pizza',correct:'pizza',opts:['pizza','cake','bread','cookie']},
+            {e:'🥛',q:'Leche',correct:'milk',opts:['water','juice','milk','coffee']},
+            {e:'🍦',q:'Helado',correct:'ice cream',opts:['ice cream','cookie','cake','candy']},
+            {e:'🍌',q:'Banano',correct:'banana',opts:['grape','banana','apple','orange']}
+        ];
+        var quizIdx = 0;
+        
+        function loadQuiz() {
+            if(quizIdx >= quizzes.length) {
+                quizIdx = 0;
+            }
+            var q = quizzes[quizIdx];
+            document.getElementById('quizDisplay').innerText = q.e;
+            document.getElementById('quizFeedback').innerHTML = '';
+            
+            var opts = [...q.opts].sort(function() { return Math.random() - 0.5; });
+            var grid = document.getElementById('quizOptions');
+            grid.innerHTML = '';
+            opts.forEach(function(o) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-btn';
+                btn.innerText = o;
+                btn.onclick = function() { checkQuiz(o, q.correct, btn); };
+                grid.appendChild(btn);
+            });
         }
-        showFood();
+        
+        function checkQuiz(selected, correct, btn) {
+            var btns = document.querySelectorAll('.quiz-btn');
+            btns.forEach(function(b) { b.disabled = true; });
+            
+            if(selected === correct) {
+                btn.classList.add('correct');
+                document.getElementById('quizFeedback').innerHTML = '✅ ¡Correcto! ' + correct;
+                document.getElementById('quizFeedback').className = 'feedback-msg correct';
+                quizIdx++;
+                setTimeout(loadQuiz,1500);
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('quizFeedback').innerHTML = '❌ Era ' + correct;
+                document.getElementById('quizFeedback').className = 'feedback-msg wrong';
+                setTimeout(function() { btns.forEach(function(b) { b.disabled = false; }); btn.classList.remove('wrong'); },1500);
+            }
+        }
+        
+        function playSound(word) {
+            if('speechSynthesis' in window) {
+                var u = new SpeechSynthesisUtterance(word);
+                u.lang = 'en-US';
+                u.rate = 0.8;
+                window.speechSynthesis.speak(u);
+            }
+        }
+        
+        function speakPhrase(phrase) {
+            if('speechSynthesis' in window) {
+                var u = new SpeechSynthesisUtterance(phrase);
+                u.lang = 'en-US';
+                u.rate = 0.7;
+                window.speechSynthesis.speak(u);
+            }
+        }
+        
+        function completarModulo() {
+            document.getElementById('victoryModal').style.display = 'flex';
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 }, colors: ['#f59e0b','#fbbf24','#FF5A5F','#08C2A8','#FFD166'] });
+            setTimeout(function(){ confetti({ particleCount: 100, angle: 60, spread: 55, origin: { x: 0 } }); },300);
+            setTimeout(function(){ confetti({ particleCount: 100, angle: 120, spread: 55, origin: { x: 1 } }); },600);
+            window.INTEP_guardarProgreso({ nivel: 'kids', num: 4, porcentaje: 100, completado: true, xp_ganado: 30 });
+        }
+        
+        loadFoodRound();
+        loadQuiz();
     </script>
 </body>
 </html>

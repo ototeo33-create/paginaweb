@@ -31,28 +31,47 @@ if (!$es_pi) {
 
 // Progreso de módulos kids
 $progreso = [];
+$examenes = [];
 $st2 = mysqli_prepare($conexion,
-    "SELECT modulo_num, completado FROM ingles_cursos_progreso
+    "SELECT modulo_num, completado, examen_aprobado FROM ingles_cursos_progreso
      WHERE estudiante_id = ? AND nivel = 'kids'");
 if ($st2) {
     mysqli_stmt_bind_param($st2, 'i', $est_id);
     mysqli_stmt_execute($st2);
     foreach (mysqli_fetch_all(mysqli_stmt_get_result($st2), MYSQLI_ASSOC) as $r) {
-        $progreso[(int)$r['modulo_num']] = (bool)$r['completado'];
+        $modulo = (int)$r['modulo_num'];
+        if ($modulo >= 1 && $modulo <= 4) {
+            $progreso[$modulo] = (bool)$r['completado'];
+            $examenes[$modulo] = isset($r['examen_aprobado']) ? (bool)$r['examen_aprobado'] : false;
+        }
     }
+}
+
+// Verificar examen final
+$examen_final_aprobado = false;
+$st3 = mysqli_prepare($conexion,
+    "SELECT COUNT(*) as total FROM ingles_cursos_progreso
+     WHERE estudiante_id = ? AND nivel = 'kids' AND modulo_num = 99 AND completado = 1");
+if ($st3) {
+    mysqli_stmt_bind_param($st3, 'i', $est_id);
+    mysqli_stmt_execute($st3);
+    $result = mysqli_fetch_assoc(mysqli_stmt_get_result($st3));
+    $examen_final_aprobado = $result['total'] > 0;
 }
 
 // Definición de los 4 módulos
 $modulos = [
-    ['num'=>1,'titulo'=>'Safari de Animales','icono'=>'🦁','bg'=>'bg-pink', 'url'=>'modulo1.html','activo'=>true],
-    ['num'=>2,'titulo'=>'Fiesta de Colores',  'icono'=>'🎨','bg'=>'bg-yellow','url'=>'modulo2.html','activo'=>false],
-    ['num'=>3,'titulo'=>'Números Mágicos',    'icono'=>'🔢','bg'=>'bg-blue', 'url'=>'modulo3.html','activo'=>false],
-    ['num'=>4,'titulo'=>'Comida Deliciosa',   'icono'=>'🍎','bg'=>'bg-green','url'=>'modulo4.html','activo'=>false],
+    ['num'=>1,'titulo'=>'Safari de Animales','icono'=>'🦁','bg'=>'bg-pink', 'url'=>'modulo1.html','examen'=>'examen1.html'],
+    ['num'=>2,'titulo'=>'Fiesta de Colores',  'icono'=>'🎨','bg'=>'bg-yellow','url'=>'modulo2.html','examen'=>'examen2.html'],
+    ['num'=>3,'titulo'=>'Números Mágicos',    'icono'=>'🔢','bg'=>'bg-blue', 'url'=>'modulo3.html','examen'=>'examen3.html'],
+    ['num'=>4,'titulo'=>'Comida Deliciosa',   'icono'=>'🍎','bg'=>'bg-green','url'=>'modulo4.html','examen'=>'examen_final.html'],
 ];
+
 // Un módulo se desbloquea cuando el anterior está completo
-$modulos[0]['activo'] = true; // el primero siempre activo
+$modulos[0]['activo'] = true;
 for ($i = 1; $i < count($modulos); $i++) {
-    $modulos[$i]['activo'] = !empty($progreso[$modulos[$i-1]['num']]);
+    $prevMod = $modulos[$i-1]['num'];
+    $modulos[$i]['activo'] = !empty($progreso[$prevMod]);
 }
 ?>
 <!DOCTYPE html>
@@ -65,6 +84,21 @@ for ($i = 1; $i < count($modulos); $i++) {
     <link rel="stylesheet" href="/intep/cursoingles/cursoinglespreescolar/index.css">
     <link rel="stylesheet" href="/intep/cursoingles/cursoinglespreescolar/dashboard.css">
     <link rel="icon" href="/intep/favicon/favicon.svg" type="image/svg+xml">
+    <style>
+        .section-title { font-family: 'Fredoka', sans-serif; font-size: 1.5rem; color: var(--text-dark); margin: 2rem 0 1rem; display: flex; align-items: center; gap: 10px; }
+        .exam-section { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px; }
+        .exam-node { background: white; border-radius: 20px; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.3s; border: 2px solid #e5e7eb; }
+        .exam-node:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .exam-node.locked { opacity: 0.5; cursor: not-allowed; }
+        .exam-node.locked:hover { transform: none; }
+        .exam-icon { font-size: 1.8rem; }
+        .exam-info h4 { font-family: 'Fredoka', sans-serif; font-size: 1rem; margin: 0; color: var(--text-dark); }
+        .exam-info p { font-size: 0.8rem; color: var(--text-light); margin: 0; }
+        .exam-node.approved { border-color: #22c55e; background: #f0fdf4; }
+        .cert-section { margin-top: 2rem; text-align: center; }
+        .cert-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #FFD166, #fbbf24); color: var(--text-dark); padding: 15px 30px; border-radius: 20px; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; text-decoration: none; box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4); transition: all 0.3s; }
+        .cert-btn:hover { transform: translateY(-3px); }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -82,6 +116,8 @@ for ($i = 1; $i < count($modulos); $i++) {
     <main class="adventure-map">
         <h1 class="map-title">Tu Mapa de <span class="text-gradient">Aventuras</span> 🗺️</h1>
 
+        <!-- Módulos -->
+        <h2 class="section-title">📚 Los Módulos</h2>
         <div class="path-container">
             <?php foreach ($modulos as $m):
                 $activo   = $m['activo'];
@@ -104,6 +140,65 @@ for ($i = 1; $i < count($modulos); $i++) {
             </div>
             <?php endforeach; ?>
         </div>
+
+        <!-- Exámenes - Solo aparecen después de completar el módulo -->
+        <h2 class="section-title">📝 Exámenes</h2>
+        <div class="exam-section">
+            <?php foreach ($modulos as $m):
+                $modulo_completado = !empty($progreso[$m['num']]);
+                $examen_aprobado = isset($examenes[$m['num']]) && $examenes[$m['num']];
+                $clases = 'exam-node';
+                if (!$modulo_completado) {
+                    $clases .= ' locked';
+                } elseif ($examen_aprobado) {
+                    $clases .= ' approved';
+                }
+                $onclick = $modulo_completado ? "onclick=\"window.location.href='{$m['examen']}'\"" : '';
+                $icon = $examen_aprobado ? '✅' : '📝';
+                $text = $examen_aprobado ? 'Aprobado' : 'Presentar';
+            ?>
+            <div class="<?= $clases ?>" <?= $onclick ?>>
+                <span class="exam-icon"><?= $icon ?></span>
+                <div class="exam-info">
+                    <h4>Examen Módulo <?= $m['num'] ?></h4>
+                    <p><?= $text ?></p>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Examen Final - Solo aparece después de aprobar los 4 exámenes -->
+        <?php 
+        $todos_examenes_aprobados = true;
+        for ($i = 1; $i <= 4; $i++) {
+            if (!isset($examenes[$i]) || !$examenes[$i]) {
+                $todos_examenes_aprobados = false;
+                break;
+            }
+        }
+        if ($todos_examenes_aprobados && !$examen_final_aprobado): 
+        ?>
+        <h2 class="section-title">🎓 Examen Final</h2>
+        <div class="exam-section">
+            <div class="exam-node" onclick="window.location.href='examen_final.html'">
+                <span class="exam-icon">🎓</span>
+                <div class="exam-info">
+                    <h4>Examen Final</h4>
+                    <p>¡Presentar ahora!</p>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Certificado - Solo aparece después de aprobar el examen final -->
+        <?php if ($examen_final_aprobado): ?>
+        <div class="cert-section">
+            <a href="/intep/cursoingles/certificado.php?nivel=kids&modulo=final" class="cert-btn" target="_blank">
+                🎓 Ver Mi Certificado
+            </a>
+        </div>
+        <?php endif; ?>
+
     </main>
 </body>
 </html>
