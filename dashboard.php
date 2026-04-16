@@ -1057,7 +1057,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                 </a>
                 <?php endif; ?>
                 <?php if (!empty($tiene_almacenamiento)): ?>
-                <a href="/intep/cursodealmacenamiento/curso.html" class="menu-card-v2">
+                <a href="/intep/cursodealmacenamiento/entrada_curso.php" class="menu-card-v2">
                     <div class="card-icon naranja">📦</div>
                     <h3>Curso de Almacenamiento</h3>
                     <p>Técnicas de almacenamiento, recibo y despacho de mercancías · 6 módulos</p>

@@ -618,9 +618,32 @@ function showCertificado() {
 // INICIALIZACIÓN
 // ============================================
 
+function loadStudentHeader() {
+    try {
+        const raw = localStorage.getItem('intep_student');
+        if (!raw) return;
+        const student = JSON.parse(raw);
+
+        // Nombre
+        const nameEl = document.getElementById('headerStudentName');
+        if (nameEl && student.nombre) {
+            // Mostrar solo el primer nombre + primer apellido
+            const parts = student.nombre.trim().split(/\s+/);
+            const short = parts.length >= 2 ? parts[0] + ' ' + parts[1] : parts[0];
+            nameEl.textContent = short;
+        }
+
+        // Foto
+        const photoEl = document.getElementById('headerStudentPhoto');
+        if (photoEl && student.foto) {
+            photoEl.innerHTML = `<img src="${student.foto}" alt="Foto" onerror="this.parentElement.innerHTML='<span class=\\'user-icon-fallback\\'>👤</span>'">`;
+        }
+    } catch(e) {}
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Curso cargado');
-    
+
     // Cargar progreso guardado
     try {
         const guardado = localStorage.getItem(STORAGE_KEY);
@@ -629,7 +652,10 @@ document.addEventListener('DOMContentLoaded', function() {
             for (let k in parsed) courseState[k] = parsed[k];
         }
     } catch(e) {}
-    
+
+    // Datos del estudiante en el header
+    loadStudentHeader();
+
     // Actualizar estado inicial de botones
     updateSidebarButtons();
     updateSimulatorBadges();

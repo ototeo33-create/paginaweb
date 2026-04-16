@@ -25,8 +25,12 @@
                 <span class="course-name">Almacenamiento y Aprovisionamiento</span>
             </div>
             <div class="header-user">
-                <span class="user-icon">👤</span>
-                <span class="user-name">Estudiante</span>
+                <div class="header-student-info">
+                    <div id="headerStudentPhoto" class="header-student-photo">
+                        <span class="user-icon-fallback">👤</span>
+                    </div>
+                    <span class="user-name" id="headerStudentName">Estudiante</span>
+                </div>
                 <div class="progress-mini">
                     <span class="progress-label">Progreso</span>
                     <div class="progress-bar-mini">
@@ -35,6 +39,9 @@
                     <span class="progress-percent" id="globalPercent">0%</span>
                 </div>
                 <div class="header-badges" id="headerBadges"></div>
+                <a href="/intep/dashboard.php" class="btn-portal-back" title="Volver al Portal">
+                    ← Portal
+                </a>
             </div>
         </div>
     </header>
