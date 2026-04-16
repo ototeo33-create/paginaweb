@@ -17,7 +17,30 @@ header('Access-Control-Allow-Origin: ' . ($_SERVER['HTTP_ORIGIN'] ?? '*'));
 header('Access-Control-Allow-Credentials: true');
 
 // Sin sesión activa → 401
-if (empty($_SESSION['usuario_id']) || empty($_SESSION['estudiante_id'])) {
+if (empty($_SESSION['usuario_id'])) {
+    http_response_code(401);
+    echo json_encode(['ok' => false]);
+    exit;
+}
+
+// Admin en modo preview: devolver datos simulados sin requerir estudiante_id
+$es_admin_preview = !empty($_SESSION['admin_preview']) && ($_SESSION['usuario_rol'] ?? '') === 'admin';
+if ($es_admin_preview) {
+    echo json_encode([
+        'ok'                  => true,
+        'estudiante_id'       => 0,
+        'nombre'              => 'Admin Preview',
+        'inicial'             => 'A',
+        'programa'            => 'Vista previa de administrador',
+        'nivel'               => 'A1',
+        'xp'                  => 0,
+        'racha'               => 0,
+        'es_primera_infancia' => false,
+    ]);
+    exit;
+}
+
+if (empty($_SESSION['estudiante_id'])) {
     http_response_code(401);
     echo json_encode(['ok' => false]);
     exit;
