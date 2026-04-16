@@ -1216,6 +1216,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Gestiona los pagos, cuotas y estado de cuenta de los estudiantes</p>
                     <span class="card-arrow">→</span>
                 </a>
+                <a href="admin/cursos_admin.php" class="menu-card-v2">
+                    <div class="card-icon azul">🎓</div>
+                    <h3>Cursos Admin</h3>
+                    <p>Accede a todos los cursos de la plataforma para verificar su funcionamiento</p>
+                    <span class="card-arrow">→</span>
+                </a>
                 <a href="admin/limpiar_datos.php" class="menu-card-v2 danger">
                     <div class="card-icon gris">🗑️</div>
                     <h3>Limpiar Datos de Prueba</h3>

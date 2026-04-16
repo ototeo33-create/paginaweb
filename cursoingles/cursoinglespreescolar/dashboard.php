@@ -5,10 +5,11 @@
 // ============================================================
 require_once __DIR__ . '/../../config.php';
 
-if (empty($_SESSION['usuario_id']) || empty($_SESSION['estudiante_id'])) {
+$es_admin_preview = !empty($_SESSION['admin_preview']) && ($_SESSION['usuario_rol'] ?? '') === 'admin';
+if (empty($_SESSION['usuario_id']) || (empty($_SESSION['estudiante_id']) && !$es_admin_preview)) {
     header('Location: /intep/login.php'); exit;
 }
-$est_id = (int)$_SESSION['estudiante_id'];
+$est_id = $es_admin_preview ? 0 : (int)$_SESSION['estudiante_id'];
 
 // Datos del estudiante + programa
 $st = mysqli_prepare($conexion,
@@ -24,8 +25,8 @@ $programa_nombre  = $est['programa'] ?? '';
 $es_pi = stripos($programa_nombre, 'primera infancia') !== false
       || stripos($programa_nombre, 'preescolar') !== false;
 
-// Si no es primera infancia, redirigir al portal
-if (!$es_pi) {
+// Si no es primera infancia, redirigir al portal (excepto admin en modo preview)
+if (!$es_pi && !$es_admin_preview) {
     header('Location: /intep/dashboard.php'); exit;
 }
 

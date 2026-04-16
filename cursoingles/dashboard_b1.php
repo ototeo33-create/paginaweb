@@ -1,9 +1,10 @@
 <?php
 require_once __DIR__ . '/../config.php';
-if (empty($_SESSION['usuario_id']) || empty($_SESSION['estudiante_id'])) {
+$es_admin_preview = !empty($_SESSION['admin_preview']) && ($_SESSION['usuario_rol'] ?? '') === 'admin';
+if (empty($_SESSION['usuario_id']) || (empty($_SESSION['estudiante_id']) && !$es_admin_preview)) {
     header('Location: /intep/login.php'); exit;
 }
-$est_id = (int)$_SESSION['estudiante_id'];
+$est_id = $es_admin_preview ? 0 : (int)$_SESSION['estudiante_id'];
 
 $st = mysqli_prepare($conexion, "SELECT e.nombre, e.foto FROM estudiantes e WHERE e.id = ? LIMIT 1");
 mysqli_stmt_bind_param($st, 'i', $est_id);
