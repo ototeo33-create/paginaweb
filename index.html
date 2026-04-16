@@ -146,20 +146,29 @@ body::before{
 
 /* ═══ HERO ═══ */
 .hero{
-  min-height:100vh;display:grid;
-  grid-template-columns:.85fr 1.15fr;
+  min-height:100vh;display:flex;align-items:center;
   position:relative;overflow:hidden;
-  background:linear-gradient(160deg,#033d2e 0%,var(--green-dark) 40%,#0a5c3f 100%);
+  background:#033d2e;
 }
+/* Hero background slider */
+.hero-bg-slider{position:absolute;inset:0;z-index:0;}
+.hero-bg-slider img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;opacity:0;
+  transition:opacity 1.8s ease-in-out;
+}
+.hero-bg-slider img.active{opacity:1;}
 .hero::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
   background:
-    radial-gradient(circle at 20% 60%,rgba(16,185,129,.15),transparent 50%),
-    radial-gradient(circle at 80% 30%,rgba(4,120,87,.2),transparent 50%);
+    linear-gradient(160deg,rgba(3,61,46,.70) 0%,rgba(4,120,87,.62) 50%,rgba(10,92,63,.70) 100%),
+    radial-gradient(circle at 20% 60%,rgba(16,185,129,.08),transparent 50%),
+    radial-gradient(circle at 80% 30%,rgba(4,120,87,.10),transparent 50%);
 }
 .hero-left{
   display:flex;flex-direction:column;justify-content:center;
   padding:8rem 2rem 4rem 4rem;position:relative;z-index:2;
+  max-width:700px;
 }
 /* Hero Tag - Badge elegante */
 .hero-tag{
@@ -304,7 +313,7 @@ body::before{
 }
 .btn-ghost:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.12);transform:translateY(-3px)}
 .hero-right{
-  position:relative;overflow:hidden;
+  position:relative;overflow:hidden;z-index:2;
 }
 .hero-visual{
   position:absolute;inset:0;
@@ -1091,14 +1100,11 @@ body::before{
   .hero-float .fl-number{font-size:3rem}
 }
 @media(max-width:1024px){
-  .hero{grid-template-columns:1fr}
   .hero-left{padding:8rem 2rem 4rem;text-align:center;align-items:center}
   .hero-desc{margin-left:auto;margin-right:auto}
   .hero-subtitle{letter-spacing:3px}
   .hero-accent{margin-left:auto;margin-right:auto}
   .hero-btns{justify-content:center}
-  .hero-right{display:none}
-  .hero-slideshow{display:none}
   .about-grid{grid-template-columns:1fr;gap:3rem}
   .about-card{transform:rotate(0)}
   .contact-grid{grid-template-columns:1fr}
@@ -1271,6 +1277,27 @@ body::before{
 
 <!-- HERO -->
 <section class="hero" id="inicio">
+  <!-- Background photo carousel -->
+  <div class="hero-bg-slider" id="heroBgSlider">
+    <img src="hero-carousel/1.jpg" alt="" class="active">
+    <img src="hero-carousel/2.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/3.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/4.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/5.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/6.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/7.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/8.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/9.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/10.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/11.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/12.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/13.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/14.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/15.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/16.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/17.jpg" alt="" loading="lazy">
+    <img src="hero-carousel/18.jpg" alt="" loading="lazy">
+  </div>
   <div class="hero-left">
     <h1><em>INTEP</em></h1>
     <div class="hero-subtitle">Instituto Técnico Pedagógico</div>
@@ -1279,20 +1306,6 @@ body::before{
     <div class="hero-btns">
       <a href="#programas" class="btn btn-fill"><i class="fas fa-book-open"></i> Ver programas</a>
       <a href="https://wa.me/573166307633?text=Hola%2C%20quiero%20información%20sobre%20INTEP" class="btn btn-ghost" target="_blank"><i class="fab fa-whatsapp"></i> Escríbenos</a>
-    </div>
-  </div>
-  <div class="hero-right">
-    <div class="hero-visual"></div>
-    <div class="hero-slideshow" id="heroSlideshow">
-      <img src="presentacion/1.jpg" alt="INTEP" class="active">
-      <img src="presentacion/2.jpg" alt="INTEP">
-      <img src="presentacion/3.jpg" alt="INTEP">
-      <img src="presentacion/4.jpg" alt="INTEP">
-      <img src="presentacion/5.jpg" alt="INTEP">
-      <img src="presentacion/6.jpg" alt="INTEP">
-      <img src="presentacion/7.jpg" alt="INTEP">
-      <img src="presentacion/8.jpg" alt="INTEP">
-      <div class="hero-dots" id="heroDots"></div>
     </div>
   </div>
   <div class="hero-stripe"></div>
@@ -1533,10 +1546,10 @@ body::before{
     <a href="https://wa.me/573166307633" target="_blank"><i class="fab fa-whatsapp"></i></a>
   </div>
 </div>
-<div class="footer-collpein" style="display:flex;align-items:center;gap:.8rem;padding:1.5rem 0 0;margin-top:1.5rem;border-top:1px solid rgba(255,255,255,.06)">
-  <a href="https://colegiopedagogicoingles.edu.co/web/" target="_blank" style="display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;transition:opacity .3s;opacity:.7" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">
-    <img src="logo-collpein.png" alt="Colegio Pedagógico Inglés — Colpein" style="height:40px;border-radius:6px;object-fit:contain">
-    <span style="font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.3">Parte del <strong style="color:rgba(255,255,255,.7)">Grupo Educativo Colpein</strong></span>
+<div class="footer-collpein" style="display:flex;justify-content:center;align-items:center;padding:2rem 0 0;margin-top:1.5rem;border-top:1px solid rgba(255,255,255,.06)">
+  <a href="https://colegiopedagogicoingles.edu.co/web/" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.7rem;transition:opacity .3s;opacity:.85" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.85'">
+    <img src="logo-collpein.png" alt="Colegio Pedagógico Inglés — Colpein" style="height:100px;object-fit:contain">
+    <span style="font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.4;text-align:center">Parte del <strong style="color:rgba(255,255,255,.85)">Grupo Educativo Colpein</strong></span>
   </a>
 </div>
 <div class="footer-bottom">© 2026 Instituto Técnico Pedagógico INTEP — Madrid, Cundinamarca, Colombia</div>
@@ -1604,33 +1617,20 @@ const counterObs=new IntersectionObserver(entries=>{
 },{threshold:.5});
 document.querySelectorAll('.counter').forEach(el=>counterObs.observe(el));
 
-// Hero slideshow
+// Hero background slider
 (function(){
-  const ss=document.getElementById('heroSlideshow');
-  if(!ss)return;
-  const imgs=ss.querySelectorAll('img');
-  const dotsC=document.getElementById('heroDots');
+  const slider=document.getElementById('heroBgSlider');
+  if(!slider)return;
+  const imgs=slider.querySelectorAll('img');
   let cur=0;
-  // Create dots
-  imgs.forEach((_,i)=>{
-    const d=document.createElement('span');
-    if(i===0)d.classList.add('active');
-    d.addEventListener('click',()=>goTo(i));
-    dotsC.appendChild(d);
-  });
-  const dots=dotsC.querySelectorAll('span');
-  function goTo(n){
+  function nextBg(){
     imgs[cur].classList.remove('active');
-    imgs[cur].classList.add('prev');
-    dots[cur].classList.remove('active');
-    const old=cur;
-    cur=n;
+    cur=(cur+1)%imgs.length;
     imgs[cur].classList.add('active');
-    dots[cur].classList.add('active');
-    setTimeout(()=>imgs[old].classList.remove('prev'),800);
   }
-  setInterval(()=>goTo((cur+1)%imgs.length),5000);
+  setInterval(nextBg,4500);
 })();
+
 
 // Program modal — datos incrustados para compatibilidad file:// y producción
 const programasData=[
