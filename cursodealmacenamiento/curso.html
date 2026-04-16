@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso: Almacenamiento y Aprovisionamiento | INTEP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="estilos_curso.css">
+</head>
+<body>
+    <!-- HEADER INSTITUCIONAL -->
+    <header class="header-institucional">
+        <div class="header-content">
+            <div class="logo-inst">
+                <div class="logo-text">
+                    <span class="inst-name">INTEP</span>
+                    <span class="inst-sub">Instituto Técnico Pedagógico</span>
+                </div>
+            </div>
+            <div class="header-info">
+                <span class="course-badge">Técnico Laboral</span>
+                <span class="course-name">Almacenamiento y Aprovisionamiento</span>
+            </div>
+            <div class="header-user">
+                <span class="user-icon">👤</span>
+                <span class="user-name">Estudiante</span>
+                <div class="progress-mini">
+                    <span class="progress-label">Progreso</span>
+                    <div class="progress-bar-mini">
+                        <div class="progress-fill-mini" id="globalProgress"></div>
+                    </div>
+                    <span class="progress-percent" id="globalPercent">0%</span>
+                </div>
+                <div class="header-badges" id="headerBadges"></div>
+            </div>
+        </div>
+    </header>
+
+            <!-- BARRA DE PROGRESO GENERAL -->
+    <div class="progress-bar-global">
+        <div class="progress-fill-global" id="mainProgress"></div>
+        <div class="progress-modules">
+            <span class="module-progress active" data-module="1">M1</span>
+            <span class="module-progress" data-module="2">M2</span>
+            <span class="module-progress" data-module="3">M3</span>
+            <span class="module-progress" data-module="4">M4</span>
+            <span class="module-progress" data-module="5">M5</span>
+            <span class="module-progress" data-module="6">M6</span>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="main-container">
+        
+        <!-- SIDEBAR: Navegación de módulos -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Módulos del Curso</h3>
+                <p>Haz clic en cada módulo para comenzar</p>
+            </div>
+            
+            <nav class="modules-nav">
+                <!-- Módulo 1 -->
+                <button class="module-btn active" data-module="1" onclick="showModule(1)">
+                    <span class="module-num">M1</span>
+                    <span class="module-title">Procesos CD</span>
+                    <span class="module-status" id="status-1">✓</span>
+                </button>
+                
+                <!-- Módulo 2 -->
+                <button class="module-btn" data-module="2" onclick="showModule(2)">
+                    <span class="module-num">M2</span>
+                    <span class="module-title">Recepción</span>
+                    <span class="module-status" id="status-2">○</span>
+                </button>
+                
+                <!-- Módulo 3 -->
+                <button class="module-btn" data-module="3" onclick="showModule(3)">
+                    <span class="module-num">M3</span>
+                    <span class="module-title">Cubicaje</span>
+                    <span class="module-status" id="status-3">○</span>
+                </button>
+                
+                <!-- Módulo 4 -->
+                <button class="module-btn" data-module="4" onclick="showModule(4)">
+                    <span class="module-num">M4</span>
+                    <span class="module-title">Contenedores</span>
+                    <span class="module-status" id="status-4">○</span>
+                </button>
+                
+                <!-- Módulo 5 -->
+                <button class="module-btn" data-module="5" onclick="showModule(5)">
+                    <span class="module-num">M5</span>
+                    <span class="module-title">Almacenamiento</span>
+                    <span class="module-status" id="status-5">○</span>
+                </button>
+                
+                <!-- Módulo 6 -->
+                <button class="module-btn" data-module="6" onclick="showModule(6)">
+                    <span class="module-num">M6</span>
+                    <span class="module-title">Reabastecimiento</span>
+                    <span class="module-status" id="status-6">○</span>
+                </button>
+            </nav>
+            
+            <!-- ENLACE AL SIMULADOR -->
+            <div class="simulator-link">
+                <button onclick="openSimulator()" class="btn-simulator">
+                    Ir al Simulador 3D
+                </button>
+                <p class="simulator-hint">Practica lo aprendido</p>
+            </div>
+        </aside>
+
+        <!-- CONTENIDO DEL MÓDULO -->
+        <main class="content-area">
+            
+            <!-- MÓDULO 1: Procesos Operativos en Centros de Distribución -->
+            <section class="module-content active" id="module-1">
+                <div class="module-header">
+                    <span class="module-tag">MÓDULO 1</span>
+                    <h1>Procesos Operativos en Centros de Distribución</h1>
+                    <p class="module-desc">Aprende las generalidades, funciones y evolución de los Centros de Distribución.</p>
+                </div>
+                
+                <div class="content-tabs">
+                    <button class="tab-btn active" onclick="showTab(1, 'teoria')">Teoría</button>
+                    <button class="tab-btn" onclick="showTab(1, 'practica')">Práctica</button>
+                    <button class="tab-btn" onclick="showTab(1, 'eval')">Evaluación</button>
+                </div>
+                
+                <!-- CONTENIDO TEÓRICO -->
+                <div class="tab-content active" id="M1-teoria">
+                    <div class="theory-content">
+                        <h2>📋 Introducción y Generalidades</h2>
+                        <p>El Centro de Distribución (CD) es una instalación logísticauy especializada cuyo objetivo principal es optimizar el flujo de mercancías desde los proveedores hasta los clientes, añadiendo valor a través de servicios de almacenamiento, manipulación y distribución.</p>
+                        
+                        <div class="info-box">
+                            <h3>🎯 Propósito del Programa</h3>
+                            <p>Dar los lineamientos generales de la asignatura para definir evaluaciones y metodología. Conocer los aspectos generales sobre inventarios básica y aprender técnicas para desarrollo de la temática.</p>
+                        </div>
+                        
+                        <h2>🏭 Funciones y Objetivos del Centro de Distribución</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Funciones Principales</h3>
+                            <ul>
+                                <li><strong>Recepción:</strong> Recepción y verificación de mercancías entrantes</li>
+                                <li><strong>Almacenamiento:</strong> guarda temporal de productos</li>
+                                <li><strong>Despacho:</strong> Preparación y envío de pedidos</li>
+                                <li><strong>Valor agregado:</strong> Empaque, etiquetado, ensamblaje</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Objetivos del CD</h3>
+                            <ul>
+                                <li>Optimizar el flujo de mercancías</li>
+                                <li>Reducir costos de almacenamiento</li>
+                                <li>Mejorar tiempos de entrega</li>
+                                <li>Mantener la calidad de los productos</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>📈 Evolución de Bodegas a Centros de Distribución</h2>
+                        <p>Las tradicionales bodegas han evolucionado hacia Centros de Distribución más complejos y tecnificados:</p>
+                        
+                        <div class="evolution-diagram">
+                            <div class="evo-step">
+                                <span class="evo-icon">🏚️</span>
+                                <h4>Bodega Tradicional</h4>
+                                <p>Almacenamiento básico</p>
+                            </div>
+                            <span class="evo-arrow">→</span>
+                            <div class="evo-step">
+                                <span class="evo-icon">🏭</span>
+                                <h4>Almacén Logístico</h4>
+                                <p>Procesos organizados</p>
+                            </div>
+                            <span class="evo-arrow">→</span>
+                            <div class="evo-step">
+                                <span class="evo-icon">🏢</span>
+                                <h4>Centro de Distribución</h4>
+                                <p>Alta tecnología y optimización</p>
+                            </div>
+                        </div>
+                        
+                        <h2>⚙️ Principios Macros para la Operación de un CD</h2>
+                        
+                        <div class="principles-grid">
+                            <div class="principle-item">
+                                <span class="principle-icon">📦</span>
+                                <h4>Recibir</h4>
+                                <p>Proceso eficiente de recepción de mercancías</p>
+                            </div>
+                            <div class="principle-item">
+                                <span class="principle-icon">🗂️</span>
+                                <h4>Almacenar</h4>
+                                <p>Ubicación óptima de productos</p>
+                            </div>
+                            <div class="principle-item">
+                                <span class="principle-icon">📋</span>
+                                <h4>Controlar</h4>
+                                <p>Sistema de gestión de inventarios</p>
+                            </div>
+                            <div class="principle-item">
+                                <span class="principle-icon">🚚</span>
+                                <h4>Despachar</h4>
+                                <p>Preparación y envío de pedidos</p>
+                            </div>
+                        </div>
+                        
+                        <h2>🏗️ Factores Claves en un Centro de Distribución</h2>
+                        
+                        <div class="topic-card">
+                            <h3>1. Infraestructura</h3>
+                            <ul>
+                                <li>Diseño de instalaciones</li>
+                                <li>Equipos de manejo de materiales</li>
+                                <li>Sistemas de almacenamiento</li>
+                                <li>Zonas de recibo y despacho</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>2. Procesos</h3>
+                            <ul>
+                                <li>Procedimientos operativos estándar</li>
+                                <li>Sistemas de información</li>
+                                <li>Control de calidad</li>
+                                <li>Gestión de devoluciones</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>3. Organización</h3>
+                            <ul>
+                                <li>Estructura del personal</li>
+                                <li>Capacitación del talento humano</li>
+                                <li>Normas de seguridad</li>
+                                <li>Comunicación interna</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>📚 Guías Básicas para el Almacenamiento</h2>
+                        <p>Para un correcto almacenamiento de productos en centros de distribución se debe considerar:</p>
+                        <ul>
+                            <li>Clasificación de productos por características</li>
+                            <li>Sistema de ubicación (rack, pasillo, nivel)</li>
+                            <li>Condiciones de temperatura y humedad</li>
+                            <li>Rotación de inventario (FIFO/FEFO)</li>
+                            <li>Capacidad máxima de almacenamiento</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- CONTENIDO PRÁCTICO -->
+                <div class="tab-content" id="M1-practica">
+                    <div class="practice-content" id="practice-M1">
+                    </div>
+                </div>
+                
+                <!-- EVALUACIÓN -->
+                <div class="tab-content" id="M1-eval">
+                    <div class="eval-content" id="eval-M1">
+                    </div>
+                </div>
+                
+                <button class="btn-next-module" onclick="completeModule(1)">
+                    Completar Módulo 1 y Continuar →
+                </button>
+            </section>
+
+            <!-- MÓDULO 2: Sistemas de Recepción de Mercancías -->
+            <section class="module-content" id="module-2">
+                <div class="module-header">
+                    <span class="module-tag">MÓDULO 2</span>
+                    <h1>Sistemas de Recepción de Mercancías</h1>
+                    <p class="module-desc">Aprende los métodos de recibo, paletizado, etiquetado y uso de equipos.</p>
+                </div>
+                
+                <div class="content-tabs">
+                    <button class="tab-btn active" onclick="showTab(2, 'teoria')">Teoría</button>
+                    <button class="tab-btn" onclick="showTab(2, 'practica')">Práctica</button>
+                    <button class="tab-btn" onclick="showTab(2, 'eval')">Evaluación</button>
+                </div>
+                
+                <div class="tab-content active" id="M2-teoria">
+                    <div class="theory-content">
+                        <h2>📋 Principios y Conceptos de Recepción</h2>
+                        <p>La recepción es el proceso crítico donde se verifica que las mercancías recibidas coincidan con lo solicitado. Es la primera línea de control de calidad.</p>
+                        
+                        <div class="info-box highlight">
+                            <h3>⚠️ Importancia</h3>
+                            <p>Una correcta recepción evita devoluciones costosas, faltantes en inventario y problemas con clientes.</p>
+                        </div>
+                        
+                        <h2>📦 Métodos de Recibo</h2>
+                        
+                        <div class="methods-grid">
+                            <div class="method-card">
+                                <h4>🗃️ Paletizado</h4>
+                                <p>Los productos se reciben sobre pallets estándar que facilitan su manejo con equipos especializados.</p>
+                                <ul>
+                                    <li>Reduce daño físico</li>
+                                    <li>Facilita transporte interno</li>
+                                    <li>Estándar de industria</li>
+                                </ul>
+                            </div>
+                            <div class="method-card">
+                                <h4>🏐 A Granel</h4>
+                                <p>Productos sin empaque individual, recibidos directamente en contenedores o tolvas.</p>
+                                <ul>
+                                    <li>Para commodities</li>
+                                    <li>Mayores volúmenes</li>
+                                    <li>Requiere pesaje</li>
+                                </ul>
+                            </div>
+                            <div class="method-card">
+                                <h4>📚 En Arrume</h4>
+                                <p>Productos apilados directamente sin uso de pallets, organizados en filas.</p>
+                                <ul>
+                                    <li>Cajas y bultos</li>
+                                    <li>Manual o semiautomático</li>
+                                    <li>Espacio requerido</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <h2> 🏷️ Etiquetado y Marcado</h2>
+                        <p>Sistemas de identificación para el control de mercancías:</p>
+                        
+                        <div class="tech-grid">
+                            <div class="tech-card">
+                                <span class="tech-icon">📊</span>
+                                <h4>Código de Barras</h4>
+                                <p>Representación visual de datos leídos por escáner. Estándar EAN-13.</p>
+                            </div>
+                            <div class="tech-card">
+                                <span class="tech-icon">📡</span>
+                                <h4>RFID</h4>
+                                <p>Identificación por frecuencia radio. Lectura sin línea de vista.</p>
+                            </div>
+                            <div class="tech-card">
+                                <span class="tech-icon">🏷️</span>
+                                <h4>Etiquetas</h4>
+                                <p>Identificadores con código, descripción, lote y fecha.</p>
+                            </div>
+                        </div>
+                        
+                        <h2>🚚 Áreas de Recibo y Equipos</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Muelles y Plataformas</h3>
+                            <ul>
+                                <li><strong>Muelles de carga:</strong> Nivel de acceso para vehículos de transporte</li>
+                                <li><strong>Plataformas:</strong> Superficie nivelada para operaciones de carga/descarga</li>
+                                <li><strong>Rampas:</strong> Elementos para equilibrar diferencias de altura</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Equipos de Manejo</h3>
+                            <div class="equipment-list">
+                                <div class="equip-item">🚜 <strong>Montacargas:</strong> Para cargas pesadas y pallets</div>
+                                <div class="equip-item">🛒 <strong>Transpaleta:</strong> Movimiento horizontal de pallets</div>
+                                <div class="equip-item">🏃 <strong>Carretilla:</strong> Cargas manuales menores</div>
+                                <div class="equip-item">📦 <strong>Carros de picking:</strong> Transporte de pedidos</div>
+                            </div>
+                        </div>
+                        
+                        <h2>📍 Zonas del Área de Recibo</h2>
+                        
+                        <div class="zones-diagram">
+                            <div class="zone-item">
+                                <span class="zone-num">1</span>
+                                <h4>Zona de Recibo Físico</h4>
+                                <p>Área donde se descargan los productos del vehículo</p>
+                            </div>
+                            <div class="zone-item">
+                                <span class="zone-num">2</span>
+                                <h4>Zona de Inspección</h4>
+                                <p>Verificación de cantidades y estados</p>
+                            </div>
+                            <div class="zone-item">
+                                <span class="zone-num">3</span>
+                                <h4>Zona de Acumulación</h4>
+                                <p>Mercancías pendientes de validación</p>
+                            </div>
+                            <div class="zone-item">
+                                <span class="zone-num">4</span>
+                                <h4>Zona de Codificación</h4>
+                                <p>Asignación de códigos y etiquetas</p>
+                            </div>
+                        </div>
+                        
+                        <h2>📱 Tecnologías en la Recepción</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Terminales Portátiles</h3>
+                            <p>Dispositivos móviles para registrar mercancía en el punto de recibo:</p>
+                            <ul>
+                                <li>Escaneo de códigos de barras</li>
+                                <li>Captura de cantidades</li>
+                                <li>Verificación en tiempo real</li>
+                                <li>Comunicación con sistema WMS</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Sistemas WMS</h3>
+                            <p>Sistema de Administración de Bodegas (WMS) para:</p>
+                            <ul>
+                                <li>Control de inventario en tiempo real</li>
+                                <li>Asignación automática de ubicaciones</li>
+                                <li>Gestión de receipts y discrepancias</li>
+                                <li>Integración con sistemas ERP</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Documentos EDI</h3>
+                            <p>Intercambio Electrónico de Datos para:</p>
+                            <ul>
+                                <li>Recepción anticipada de información</li>
+                                <li>Comparación automática de datos</li>
+                                <li>Reducción de errores de captura</li>
+                                <li>Documentos: ASN,invoice,orden de compra</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="M2-practica">
+                    <div class="practice-content" id="practice-M2">
+                    </div>
+                </div>
+
+                <div class="tab-content" id="M2-eval">
+                    <div class="eval-content" id="eval-M2">
+                    </div>
+                </div>
+                
+                <button class="btn-next-module" onclick="completeModule(2)">
+                    Completar Módulo 2 y Continuar →
+                </button>
+            </section>
+
+            <!-- MÓDULO 3: Cubicaje -->
+            <section class="module-content" id="module-3">
+                <div class="module-header">
+                    <span class="module-tag">MÓDULO 3</span>
+                    <h1>Cubicaje y Código de Barras</h1>
+                    <p class="module-desc">Aprende a calcular espacios, optimizar cargas y utilizar sistemas de codificación.</p>
+                </div>
+                
+                <div class="content-tabs">
+                    <button class="tab-btn active" onclick="showTab(3, 'teoria')">Teoría</button>
+                    <button class="tab-btn" onclick="showTab(3, 'practica')">Práctica</button>
+                    <button class="tab-btn" onclick="showTab(3, 'eval')">Evaluación</button>
+                </div>
+                
+                <div class="tab-content active" id="M3-teoria">
+                    <div class="theory-content">
+                        <h2>📐 Concepto de Cubicaje</h2>
+                        <p>El cubicaje es el proceso de calcular el volumen de un espacio o carga para optimizar el transporte y almacenamiento de mercancías.</p>
+                        
+                        <div class="info-box">
+                            <h3>🎯 Objetivo</h3>
+                            <p>Maximizar el uso del espacio disponible en contenedores, camiones y áreas de almacenamiento, minimizando costos de transporte.</p>
+                        </div>
+                        
+                        <h2>📊 Cómo Cubicar un Contenedor</h2>
+                        
+                        <div class="formula-box">
+                            <h4>📐 Fórmula de Volumen</h4>
+                            <code>Volumen = Largo × Ancho × Alto</code>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Dimensiones de Contenedores Estándar</h3>
+                            <table class="data-table">
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Largo</th>
+                                    <th>Ancho</th>
+                                    <th>Alto</th>
+                                    <th>Capacidad</th>
+                                </tr>
+                                <tr>
+                                    <td>20 pies</td>
+                                    <td>5.9 m</td>
+                                    <td>2.35 m</td>
+                                    <td>2.39 m</td>
+                                    <td>33 m³</td>
+                                </tr>
+                                <tr>
+                                    <td>40 pies</td>
+                                    <td>12.03 m</td>
+                                    <td>2.35 m</td>
+                                    <td>2.39 m</td>
+                                    <td>67 m³</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <h2>🚜 Equipos de Manejo y Movimiento de Materiales</h2>
+                        
+                        <div class="equipment-grid">
+                            <div class="equip-card">
+                                <span class="equip-icon">🚜</span>
+                                <h4>Montacargas</h4>
+                                <p>Equipo motorizado para levantar y mover cargas pesadas. Capacidad de 1 a 5 toneladas.</p>
+                            </div>
+                            <div class="equip-card">
+                                <span class="equip-icon">🛒</span>
+                                <h4>Transpaleta</h4>
+                                <p>Equipo manual o eléctrico para mover pallets en horizontal. No levanta.</p>
+                            </div>
+                            <div class="equip-card">
+                                <span class="equip-icon">🏗️</span>
+                                <h4>Grúa Apiladora</h4>
+                                <p>Para cargas elevadas en almacenes con altura media.</p>
+                            </div>
+                            <div class="equip-card">
+                                <span class="equip-icon">📦</span>
+                                <h4>Carros de Mano</h4>
+                                <p>Para transporte manual de cajas y bultos pequeños.</p>
+                            </div>
+                        </div>
+                        
+                        <h2>📊 Uso de Código de Barras, EDI y RFID</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Código de Barras</h3>
+                            <p>Representación visual de datos que se lee mediante escáner:</p>
+                            <ul>
+                                <li><strong>EAN-13:</strong> Estándar internacional para productos comerciales</li>
+                                <li><strong>Code 128:</strong> Para códigos internos y logística</li>
+                                <li><strong>QR Code:</strong> Para mayor capacidad de información</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>RFID (Identificación por Radiofrecuencia)</h3>
+                            <p>Tecnología que permite lectura sin línea de vista:</p>
+                            <ul>
+                                <li>Lectura múltiple simultánea</li>
+                                <li>No requiere exposición visual</li>
+                                <li>Mayor distancia de lectura</li>
+                                <li>Reutilizable</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>EDI (Intercambio Electrónico de Datos)</h3>
+                            <p>Transmisión estructurada de documentos entre sistemas:</p>
+                            <ul>
+                                <li>Orden de Compra (EDIFACT ORDERS)</li>
+                                <li>Aviso de Envío (EDIFACT DESADV)</li>
+                                <li>Factura (EDIFACT INVOIC)</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>🏷️ Codificación de Inventarios</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Clases de Codificación</h3>
+                            <div class="code-types">
+                                <div class="code-type">
+                                    <h4>📊 Numérica</h4>
+                                    <p>Solo números (0-9). Ej: 1234567890123</p>
+                                </div>
+                                <div class="code-type">
+                                    <h4>🔤 Alfanumérica</h4>
+                                    <p>Letras y números. Ej: PROD-001-A</p>
+                                </div>
+                                <div class="code-type">
+                                    <h4>📱 QR</h4>
+                                    <p>Matriz de dos dimensiones. Alta capacidad.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Beneficios de la Codificación</h3>
+                            <ul>
+                                <li>Identificación única de cada producto</li>
+                                <li>Trazabilidad completa</li>
+                                <li>Control de inventario preciso</li>
+                                <li>Velocidad en operaciones de picking</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="M3-practica">
+                    <div class="practice-content" id="practice-M3">
+                    </div>
+                </div>
+
+                <div class="tab-content" id="M3-eval">
+                    <div class="eval-content" id="eval-M3">
+                    </div>
+                </div>
+                
+                <button class="btn-next-module" onclick="completeModule(3)">
+                    Completar Módulo 3 y Continuar →
+                </button>
+            </section>
+
+            <!-- MÓDULO 4: Contenedores -->
+            <section class="module-content" id="module-4">
+                <div class="module-header">
+                    <span class="module-tag">MÓDULO 4</span>
+                    <h1>Contenedores y Medidas de Seguridad</h1>
+                    <p class="module-desc">Aprende los tipos de contenedores, identificación y medidas de seguridad.</p>
+                </div>
+                <div class="content-tabs">
+                    <button class="tab-btn active" onclick="showTab(4, 'teoria')">Teoría</button>
+                    <button class="tab-btn" onclick="showTab(4, 'practica')">Práctica</button>
+                    <button class="tab-btn" onclick="showTab(4, 'eval')">Evaluación</button>
+                </div>
+                <div class="tab-content active" id="M4-teoria">
+                    <div class="theory-content">
+                        <h2>📦 Tipos de Contenedores</h2>
+                        <p>Los contenedores son estructuras metálicas diseñadas para el transporte de mercancías por vía marítima, terrestre o aérea.</p>
+                        
+                        <div class="container-types">
+                            <div class="container-card">
+                                <h4>📦 Contenedor 20 pies</h4>
+                                <ul>
+                                    <li>Largo: 5.9 m</li>
+                                    <li>Capacidad: 33 m³</li>
+                                    <li>Carga máx: 28,200 kg</li>
+                                </ul>
+                            </div>
+                            <div class="container-card">
+                                <h4>📦 Contenedor 40 pies</h4>
+                                <ul>
+                                    <li>Largo: 12.03 m</li>
+                                    <li>Capacidad: 67 m³</li>
+                                    <li>Carga máx: 26,680 kg</li>
+                                </ul>
+                            </div>
+                            <div class="container-card">
+                                <h4>📦 Contenedor High Cube</h4>
+                                <ul>
+                                    <li>Largo: 12.03 m</li>
+                                    <li>Capacidad: 76 m³</li>
+                                    <li>Mayor altura</li>
+                                </ul>
+                            </div>
+                            <div class="container-card">
+                                <h4>❄️ Refrigerado (Reefer)</h4>
+                                <ul>
+                                    <li>Control de temperatura</li>
+                                    <li>Para perecederos</li>
+                                    <li>Rango: -25°C a +25°C</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <h2>🔒 Medidas de Seguridad</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Inspección de Seguridad</h3>
+                            <p>Antes de usar un contenedor debe verificar:</p>
+                            <ul>
+                                <li>Estado de paredes, piso y techo</li>
+                                <li>Condición de puertas y bisagras</li>
+                                <li>Ausencia de óxido o daños estructurales</li>
+                                <li>Limpieza interior</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Control Previo al Uso</h3>
+                            <ul>
+                                <li>Verificaraptitud para carga</li>
+                                <li>Confirmar certificación CSC</li>
+                                <li>Revisar fecha de última inspección</li>
+                                <li>Check-list de funcionamiento</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Control del Contenedor en Uso</h3>
+                            <ul>
+                                <li>Monitorear condiciones</li>
+                                <li>Verificar precintos intactos</li>
+                                <li>Documentar incidentes</li>
+                                <li>Registro de movimientos</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>🏷️ Identificación de Contenedores</h2>
+                        
+                        <div class="id-diagram">
+                            <div class="id-code">
+                                <h4>Código de Identificación</h4>
+                                <p>Dueño (3 letras) + Tipo (3 letras) + Número (6 dígitos) + Dígito verificación</p>
+                                <code>MSCU 123456 7</code>
+                            </div>
+                        </div>
+                        
+                        <h2>🔏 Precintos de Seguridad</h2>
+                        <p>Elementos de sellado que garantizan la integridad de la carga:</p>
+                        <ul>
+                            <li><strong>Precintos de plástico:</strong> Uso único, bajo costo</li>
+                            <li><strong>Precintos de acero:</strong> Alta seguridad</li>
+                            <li><strong>Precintos electrónicos:</strong> Con sensor GPS</li>
+                        </ul>
+                        
+                        <h2>⚠️ Símbolos de Seguridad</h2>
+                        
+                        <div class="safety-symbols">
+                            <div class="symbol-item">☣️ Tóxico</div>
+                            <div class="symbol-item">🔥 Inflamable</div>
+                            <div class="symbol-item">⚡ Eléctrico</div>
+                            <div class="symbol-item">☢️ Radiactivo</div>
+                            <div class="symbol-item">⚓ Mercancía Pesada</div>
+                            <div class="symbol-item">📤 Este lado arriba</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="M4-practica">
+                    <div class="practice-content" id="practice-M4">
+                    </div>
+                </div>
+                <div class="tab-content" id="M4-eval">
+                    <div class="eval-content" id="eval-M4">
+                    </div>
+                </div>
+                <button class="btn-next-module" onclick="completeModule(4)">Completar y Continuar →</button>
+            </section>
+
+            <!-- MÓDULO 5: Sistemas de Almacenamiento -->
+            <section class="module-content" id="module-5">
+                <div class="module-header">
+                    <span class="module-tag">MÓDULO 5</span>
+                    <h1>Sistemas de Almacenamiento</h1>
+                    <p class="module-desc">Aprende los principios, métodos y sistemas de almacenamiento de mercancías.</p>
+                </div>
+                <div class="content-tabs">
+                    <button class="tab-btn active" onclick="showTab(5, 'teoria')">Teoría</button>
+                    <button class="tab-btn" onclick="showTab(5, 'practica')">Práctica</button>
+                    <button class="tab-btn" onclick="showTab(5, 'eval')">Evaluación</button>
+                </div>
+                <div class="tab-content active" id="M5-teoria">
+                    <div class="theory-content">
+                        <h2>📋 Principios y Conceptos de Almacenamiento</h2>
+                        <p>El almacenamiento es la función de guarda temporal de mercancías con el objetivo de mantener su calidad y disponibilidad para cuando se requieran.</p>
+                        
+                        <div class="topic-card">
+                            <h3>Función y Objetivos del Almacenamiento</h3>
+                            <ul>
+                                <li>Mantener la integridad de los productos</li>
+                                <li>Facilitar el acceso rápido a las mercancías</li>
+                                <li>Optimizar el uso del espacio</li>
+                                <li>Permitir la trazabilidad de productos</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>📈 Evolución del Almacenamiento</h2>
+                        <p>Los procesos de almacenamiento han evolucionado con la tecnología:</p>
+                        <ul>
+                            <li><strong>Manual:</strong> Registro en papel, ubicación fija</li>
+                            <li><strong>Semiautomático:</strong> Códigos de barras, sistemas básicos</li>
+                            <li><strong>Automatizado:</strong> WMS, RFID, robots</li>
+                            <li><strong>Inteligente:</strong> IA, análisis de datos en tiempo real</li>
+                        </ul>
+                        
+                        <h2>🏗️ Necesidades de un Sistema de Almacenamiento</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Requisitos Fundamentales</h3>
+                            <ul>
+                                <li>Control de inventario en tiempo real</li>
+                                <li>Asignación automática de ubicaciones</li>
+                                <li>Gestión de entradas y salidas</li>
+                                <li>Reportes y análisis de datos</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Responsabilidad de los Inventarios</h3>
+                            <ul>
+                                <li>Mantener registros precisos</li>
+                                <li>Verificar existencias físicas</li>
+                                <li>Reportar discrepancias</li>
+                                <li>Asegurar rotación correcta</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>⚠️ Principios de Almacenamiento</h2>
+                        
+                        <div class="principles-grid">
+                            <div class="principle-item">
+                                <span class="principle-icon">📦</span>
+                                <h4>Orden</h4>
+                                <p>Cada producto en su lugar designado</p>
+                            </div>
+                            <div class="principle-item">
+                                <span class="principle-icon">🔍</span>
+                                <h4>Identificación</h4>
+                                <p>Códigos claros y ubicaciones visibles</p>
+                            </div>
+                            <div class="principle-item">
+                                <span class="principle-icon">⚖️</span>
+                                <h4>Equilibrio</h4>
+                                <p>Optimizar espacio y acceso</p>
+                            </div>
+                            <div class="principle-item">
+                                <span class="principle-icon">🔄</span>
+                                <h4>Rotación</h4>
+                                <p>FIFO/FEFO para productos perecederos</p>
+                            </div>
+                        </div>
+                        
+                        <h2>🦺 La Seguridad en el Almacenamiento</h2>
+                        <ul>
+                            <li>Uso de equipos de protección personal</li>
+                            <li>Respetar límites de carga de estanterías</li>
+                            <li>Mantener pasillos libres de obstáculos</li>
+                            <li>Protocolos para manejo de cargas</li>
+                            <li>Planes de emergencia y evacuación</li>
+                        </ul>
+                        
+                        <h2>📐 Métodos de Almacenamiento</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Por Configuración Física</h3>
+                            <ul>
+                                <li><strong>Convencional:</strong> Estanterías con acceso por pasillo</li>
+                                <li><strong>Drive-In:</strong> Alta densidad, acceso lateral</li>
+                                <li><strong>Push-Back:</strong> Múltiples profundidades</li>
+                                <li><strong>Cantilever:</strong> Para productos largos</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Por Gestión</h3>
+                            <ul>
+                                <li><strong>Fija:</strong> Cada SKU tiene ubicación asignada</li>
+                                <li><strong>Aleatoria:</strong> cualquier espacio disponible</li>
+                                <li><strong>Mixta:</strong> Combinación de ambas</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>📍 Gestión de Ubicación</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Factores que Condicionan el Funcionamiento</h3>
+                            <ul>
+                                <li>Características físicas del producto</li>
+                                <li>Peso y dimensiones</li>
+                                <li>Rotación del SKU</li>
+                                <li>Condiciones especiales (temperatura, humedad)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Identificación de Ubicaciones</h3>
+                            <p>Sistema de codificación típico:</p>
+                            <code>PASILLO-RACK-NIVEL-POSICIÓN</code>
+                            <p>Ejemplo: A-01-02-03 (Pasillo A, Rack 01, Nivel 02, Posición 03)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="M5-practica">
+                    <div class="practice-content" id="practice-M5">
+                    </div>
+                </div>
+                <div class="tab-content" id="M5-eval">
+                    <div class="eval-content" id="eval-M5">
+                    </div>
+                </div>
+                <button class="btn-next-module" onclick="completeModule(5)">Completar y Continuar →</button>
+            </section>
+
+            <!-- MÓDULO 6: Reabastecimiento -->
+            <section class="module-content" id="module-6">
+                <div class="module-header">
+                    <span class="module-tag">MÓDULO 6</span>
+                    <h1>Reabastecimiento y Control de Inventarios</h1>
+                    <p class="module-desc">Aprende a gestionar ubicaciones, método ABC y reabastecimiento.</p>
+                </div>
+                <div class="content-tabs">
+                    <button class="tab-btn active" onclick="showTab(6, 'teoria')">Teoría</button>
+                    <button class="tab-btn" onclick="showTab(6, 'practica')">Práctica</button>
+                    <button class="tab-btn" onclick="showTab(6, 'eval')">Evaluación</button>
+                </div>
+                <div class="tab-content active" id="M6-teoria">
+                    <div class="theory-content">
+                        <h2>🏷️ Identificación y Trazabilidad de Mercancías</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Sistemas de Identificación</h3>
+                            <ul>
+                                <li>Código único por producto (SKU)</li>
+                                <li>Código de barras o RFID</li>
+                                <li>Lote y fecha de fabricación</li>
+                                <li>Fecha de vencimiento</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Trazabilidad</h3>
+                            <p>Capacidad de seguir el recorrido de un producto:</p>
+                            <ul>
+                                <li>Desde su origen (proveedor)</li>
+                                <li>Durante el almacenamiento</li>
+                                <li>En los procesos de picking</li>
+                                <li>Hasta la entrega al cliente</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>📊 Método ABC (Ley de Pareto)</h2>
+                        <p>Clasificación de productos según su importancia relativa:</p>
+                        
+                        <div class="abc-diagram">
+                            <div class="abc-zone zone-a">
+                                <span class="zone-label">ZONA A</span>
+                                <span class="zone-percent">20%</span>
+                                <span class="zone-desc">80% valor</span>
+                                <span class="zone-items">Alta rotación</span>
+                                <span class="zone-access">Ubicación preferencial</span>
+                            </div>
+                            <div class="abc-zone zone-b">
+                                <span class="zone-label">ZONA B</span>
+                                <span class="zone-percent">30%</span>
+                                <span class="zone-desc">15% valor</span>
+                                <span class="zone-items">Rotación media</span>
+                                <span class="zone-access">Ubicación intermedia</span>
+                            </div>
+                            <div class="abc-zone zone-c">
+                                <span class="zone-label">ZONA C</span>
+                                <span class="zone-percent">50%</span>
+                                <span class="zone-desc">5% valor</span>
+                                <span class="zone-items">Baja rotación</span>
+                                <span class="zone-access">Zonas alejadas</span>
+                            </div>
+                        </div>
+                        
+                        <h2>📦 Reabastecimiento</h2>
+                        
+                        <div class="topic-card">
+                            <h3>Concepto</h3>
+                            <p>Proceso de renovar el inventario en las ubicaciones de picking para garantizar disponibilidad.</p>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Sistemas de Reabastecimiento</h3>
+                            <ul>
+                                <li><strong>Por punto de reorden:</strong> Cuando llega a nivel mínimo</li>
+                                <li><strong>Por tiempo fijo:</strong> Intervalos regulares</li>
+                                <li><strong>Justo a tiempo (JIT):</strong> Entregas según demanda</li>
+                                <li><strong>Kanban:</strong> Sistema visual de señales</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Punto de Reorden</h3>
+                            <div class="formula-box">
+                                <h4>📐 Fórmula</h4>
+                                <code>PR = (Demanda × Lead Time) + Stock de Seguridad</code>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-card">
+                            <h3>Stock de Seguridad</h3>
+                            <p>Inventario extra para prevenir faltantes por:</p>
+                            <ul>
+                                <li>Demanda inesperada</li>
+                                <li>Retrasos del proveedor</li>
+                                <li>Variaciones en producción</li>
+                            </ul>
+                            <div class="formula-box">
+                                <h4>📐 Cálculo Básico</h4>
+                                <code>SS = Demanda × Lead Time × Factor de servicio</code>
+                            </div>
+                        </div>
+                        
+                        <h2>📈 Indicadores de Gestión</h2>
+                        
+                        <div class="kpi-cards">
+                            <div class="kpi-card">
+                                <span class="kpi-icon">🔄</span>
+                                <h4>Rotación</h4>
+                                <code>RI = Ventas / Inventario</code>
+                            </div>
+                            <div class="kpi-card">
+                                <span class="kpi-icon">📅</span>
+                                <h4>Cobertura</h4>
+                                <code>Días = Inv / Demanda diaria</code>
+                            </div>
+                            <div class="kpi-card">
+                                <span class="kpi-icon">⚠️</span>
+                                <h4>Rotura de Stock</h4>
+                                <code>% Faltantes</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="M6-practica">
+                    <div class="practice-content" id="practice-M6">
+                    </div>
+                </div>
+                <div class="tab-content" id="M6-eval">
+                    <div class="eval-content" id="eval-M6">
+                    </div>
+                </div>
+                <button class="btn-next-module" onclick="completeModule(6)">Completar Curso →</button>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL DE CERTIFICADO -->
+    <div id="certificadoModal" class="modal">
+        <div class="modal-content certificado">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="certificado">
+                <div class="cert-header">
+                    <span class="cert-logo-icon">🎓</span>
+                    <h2>INTEP</h2>
+                    <h3>Instituto Técnico Pedagógico</h3>
+                </div>
+                <div class="cert-body">
+                    <h1>🎓 CERTIFICADO DE FINALIZACIÓN</h1>
+                    <p>El estudiante ha completado satisfactoriamente el programa de:</p>
+                    <h2>Técnico Laboral en Almacenamiento y Aprovisionamiento</h2>
+                    <p class="cert-date">Fecha de certificación: <span id="certDate"></span></p>
+                    <div class="cert-stats">
+                        <div class="cert-stat">
+                            <span class="stat-value" id="certModules">6</span>
+                            <span class="stat-label">Módulos Completados</span>
+                        </div>
+                        <div class="cert-stat">
+                            <span class="stat-value" id="certScore">0%</span>
+                            <span class="stat-label">Calificación Final</span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="goToSimulator()" class="btn-simulator-cert">🎮 Ir al Simulador 3D</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="curso.js"></script>
+</body>
+</html>

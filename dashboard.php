@@ -54,6 +54,12 @@ if ($rol === 'estudiante') {
     // Detectar si es estudiante de un programa de inglés (por nombre del programa)
     $tiene_ingles = stripos($programa_nombre_est, 'inglés') !== false
                  || stripos($programa_nombre_est, 'ingles') !== false;
+
+    // Detectar si es estudiante de Almacenamiento
+    $tiene_almacenamiento = stripos($programa_nombre_est, 'almacen') !== false
+                         || stripos($programa_nombre_est, 'recibo') !== false
+                         || stripos($programa_nombre_est, 'despacho') !== false
+                         || stripos($programa_nombre_est, 'bodega') !== false;
 }
 
 if ($rol === 'docente') {
@@ -1047,6 +1053,14 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <div class="card-icon amarillo">🧸</div>
                     <h3>INTEP Kids</h3>
                     <p>Practica inglés con juegos, canciones y actividades para tu seminario</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <?php endif; ?>
+                <?php if (!empty($tiene_almacenamiento)): ?>
+                <a href="/intep/cursodealmacenamiento/curso.html" class="menu-card-v2">
+                    <div class="card-icon naranja">📦</div>
+                    <h3>Curso de Almacenamiento</h3>
+                    <p>Técnicas de almacenamiento, recibo y despacho de mercancías · 6 módulos</p>
                     <span class="card-arrow">→</span>
                 </a>
                 <?php endif; ?>

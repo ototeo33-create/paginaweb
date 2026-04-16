@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Virtual - Almacén Completo | INTEP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <!-- BOTÓN DE MÚSICA (flotante) -->
+    <button id="musicToggle" class="music-btn" title="Activar/Desactivar música">
+        <span id="musicIcon">🔇</span>
+    </button>
+    
+    <!-- PANTALLA DE INICIO -->
+    <div id="startScreen">
+        <div class="logo-container">
+            <h1>INTEP</h1>
+            <h2>Laboratorio Virtual</h2>
+            <h3>Instituto Técnico Pedagógico</h3>
+        </div>
+        
+        <div class="start-content">
+            <div class="info-box">
+                <h3>🎯 Objetivo de la Práctica</h3>
+                <ul>
+                    <li>Recibir productos en área de recepción</li>
+                    <li>Almacenar en estanterías</li>
+                    <li>Preparar pedidos en zona de picking</li>
+                    <li>Despachar mercadería</li>
+                    <li>Completar tareas en el menor tiempo</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h3>🏢 Zonas del Almacén</h3>
+                <ul>
+                    <li>📥 <strong>Recepción</strong> - Entrada de productos</li>
+                    <li>🚚 <strong>Carga/Descarga</strong> - Dock de trucks</li>
+                    <li>📦 <strong>Almacenamiento</strong> - Estanterías</li>
+                    <li>✂️ <strong>Picking</strong> - Preparación de pedidos</li>
+                    <li>🚛 <strong>Despacho</strong> - Embarque</li>
+                    <li>❄️ <strong>Refrigeración</strong> - Zona fría</li>
+                    <li>📥 <strong>Devoluciones</strong> - RMA</li>
+                    <li>🛡️ <strong>Seguridad</strong> - Área protegida</li>
+                    <li>🏢 <strong>Control</strong> - Oficina</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h3>⌨️ Controles</h3>
+                <ul>
+                    <li><strong>W/↑</strong> Avanzar | <strong>S/↓</strong> Retroceder</li>
+                    <li><strong>A/←</strong> Girar izq | <strong>D/→</strong> Girar der</li>
+                    <li><strong>ESPACIO</strong> Cargar/Descargar</li>
+                    <li><strong>V</strong> Cambiar vista | <strong>1/2/3</strong> Modos</li>
+                    <li><strong>+/-</strong> Zoom</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h3>🏆 Sistema de Puntuación</h3>
+                <ul>
+                    <li>✓ Tarea completada: <strong>+100 pts</strong></li>
+                    <li>⚡ Bonus velocidad: <strong>+50 pts</strong></li>
+                    <li>⚠️ Colisión: <strong>-25 pts</strong></li>
+                    <li>🛑 Sin batería: <strong>-10 pts/min</strong></li>
+                </ul>
+            </div>
+        </div>
+        
+        <button id="startBtn" class="pulse">▶ INICIAR PRÁCTICA</button>
+        <button id="viewRankingBtn" class="secondary-btn">🏆 VER RANKING</button>
+        <button onclick="goToCourse()" class="secondary-btn" style="margin-top:10px;">📚 IR AL CURSO TEÓRICO</button>
+    </div>
+    
+    <!-- HUD PRINCIPAL -->
+    <div id="hud">
+        <div class="hud-section left">
+            <div class="hud-item time">
+                <span class="icon">⏱️</span>
+                <div class="hud-content">
+                    <span class="label">TIEMPO</span>
+                    <span class="value" id="timer">05:00</span>
+                </div>
+            </div>
+            <div class="hud-item fuel">
+                <span class="icon">⚡</span>
+                <div class="hud-content">
+                    <span class="label">BATERÍA</span>
+                    <div class="fuel-bar"><div id="fuelFill" class="fuel-fill"></div></div>
+                    <span class="value" id="fuelPercent">100%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hud-section center">
+            <div id="mission" class="mission-panel">
+                <span class="mission-label">📋 MISIÓN ACTUAL</span>
+                <span id="missionText" class="mission-text">Carga el pallet de la zona de recepción</span>
+            </div>
+        </div>
+        
+        <div class="hud-section right">
+            <div class="hud-item score">
+                <span class="icon">💰</span>
+                <div class="hud-content">
+                    <span class="label">PUNTOS</span>
+                    <span class="value" id="score">0</span>
+                </div>
+            </div>
+            <div class="hud-item tasks">
+                <span class="icon">📋</span>
+                <div class="hud-content">
+                    <span class="label">TAREAS</span>
+                    <span class="value"><span id="tasks">0</span>/<span id="totalTasks">6</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BARRA DE PROGRESO -->
+    <div id="progressBar">
+        <div id="progressFill"></div>
+        <span id="progressText">0%</span>
+    </div>
+    
+    <!-- PANEL DE CÁMARA -->
+    <div id="cameraPanel">
+        <h4>📷 Vista</h4>
+        <div class="camera-buttons">
+            <button class="camera-mode-btn active" id="btnFollow" onclick="setCameraMode('follow')">👁️ SEGUIR</button>
+            <button class="camera-mode-btn" id="btnFree" onclick="setCameraMode('free')">📷 LIBRE</button>
+            <button class="camera-mode-btn" id="btnFirst" onclick="setCameraMode('first')">🎥 1RA PERSONA</button>
+        </div>
+        <div class="zoom-control"><span>🔍 Zoom:</span><span id="zoomText">100%</span></div>
+    </div>
+    
+    <div id="cameraMode">👁️ Presiona V para cambiar vista</div>
+    
+    <!-- MINIMAPA -->
+    <div id="minimap">
+        <div class="minimap-header"><span>🗺️ MAPA COMPLETO</span></div>
+        <canvas id="minimapCanvas" width="150" height="150"></canvas>
+        <div class="minimap-legend">
+            <span><span class="dot yellow"></span>Recep</span>
+            <span><span class="dot orange"></span>Carga</span>
+            <span><span class="dot blue"></span>Almacén</span>
+        </div>
+    </div>
+    
+    <!-- PANEL DE INVENTARIO -->
+    <div id="inventoryPanel">
+        <h4>📦 INVENTARIO</h4>
+        <div id="inventoryList">
+            <div class="inv-item" data-zone="A">
+                <span class="inv-color blue"></span>
+                <span class="inv-name">Almacenamiento</span>
+                <span class="inv-count" id="invA">0</span>/<span class="inv-total">6</span>
+            </div>
+            <div class="inv-item" data-zone="B">
+                <span class="inv-color purple"></span>
+                <span class="inv-name">Picking</span>
+                <span class="inv-count" id="invB">0</span>/<span class="inv-total">6</span>
+            </div>
+            <div class="inv-item" data-zone="C">
+                <span class="inv-color green"></span>
+                <span class="inv-name">Despacho</span>
+                <span class="inv-count" id="invC">0</span>/<span class="inv-total">6</span>
+            </div>
+        </div>
+        <div class="inv-progress"><span>Total:</span><span id="invTotal">0</span>/<span id="invTotalMax">6</span></div>
+    </div>
+    
+    <!-- PANEL DE ESTADÍSTICAS -->
+    <div id="statsPanel">
+        <h4>📊 ESTADÍSTICAS</h4>
+        <div class="stat-row"><span>⏱️ Tiempo usado:</span><span id="statTime">00:00</span></div>
+        <div class="stat-row"><span>📦 Cargas:</span><span id="statLoads">0</span></div>
+        <div class="stat-row"><span>⚠️ Colisiones:</span><span id="statCollisions">0</span></div>
+        <div class="stat-row"><span>⚡ Eficiencia:</span><span id="statEfficiency">100%</span></div>
+    </div>
+    
+    <!-- CRUZ DE TIRO -->
+    <div id="crosshair"><div class="dot"></div></div>
+    
+    <!-- NOTIFICACIONES -->
+    <div id="notification"></div>
+    
+    <!-- INDICADOR DE ZOOM -->
+    <div id="zoomIndicator">🔍 Zoom: 100%</div>
+    
+    <!-- POPUP DE LOGROS -->
+    <div id="achievementPopup" class="achievement">
+        <span class="achievement-icon">🏆</span>
+        <div class="achievement-content">
+            <span class="achievement-title">¡LOGRO!</span>
+            <span class="achievement-name" id="achievementName"></span>
+        </div>
+    </div>
+    
+    <!-- PANTALLA DE RESULTADOS -->
+    <div id="resultsScreen">
+        <div class="results-header">
+            <h1>🏆 PRÁCTICA COMPLETADA</h1>
+            <div id="grade" class="grade-a">A+</div>
+        </div>
+        
+        <div class="results-stats">
+            <div class="stat-card"><span class="stat-icon">⏱️</span><span class="stat-value" id="finalTime">00:00</span><span class="stat-label">Tiempo Total</span></div>
+            <div class="stat-card"><span class="stat-icon">💰</span><span class="stat-value" id="finalScore">0</span><span class="stat-label">Puntuación</span></div>
+            <div class="stat-card"><span class="stat-icon">⚠️</span><span class="stat-value" id="finalCollisions">0</span><span class="stat-label">Colisiones</span></div>
+            <div class="stat-card"><span class="stat-icon">⭐</span><span class="stat-value" id="finalEfficiency">100%</span><span class="stat-label">Eficiencia</span></div>
+        </div>
+        
+        <div class="achievements-section">
+            <h3>🏅 Logros Obtenidos</h3>
+            <div id="achievementsList" class="achievements-grid"></div>
+        </div>
+        
+        <div class="inventory-summary" id="inventorySummary"></div>
+        
+        <div class="feedback-section"><p id="feedback"></p></div>
+        
+        <div class="results-actions">
+            <button id="restartBtn" class="primary-btn">🔄 REPETIR</button>
+            <button id="menuBtn" class="secondary-btn">📋 MENÚ</button>
+            <button onclick="goToCourse()" class="secondary-btn">📚 IR AL CURSO</button>
+        </div>
+    </div>
+    
+    <!-- PANTALLA DE RANKING -->
+    <div id="rankingScreen">
+        <div class="ranking-header"><h1>🏆 RANKING</h1><h3>Mejores Puntuaciones</h3></div>
+        <div class="ranking-table">
+            <div class="ranking-header-row"><span>#</span><span>Puntos</span><span>Tiempo</span><span>Fecha</span></div>
+            <div id="rankingList"></div>
+        </div>
+        <button id="backToMenuBtn" class="primary-btn">⬅️ VOLVER</button>
+    </div>
+    
+    <!-- CONTENEDOR DEL JUEGO -->
+    <div id="gameContainer"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script></script>
+    <script src="juego.js"></script>
+</body>
+</html>
