@@ -15,67 +15,43 @@
     <button id="musicToggle" class="music-btn" title="Activar/Desactivar música">
         <span id="musicIcon">🔇</span>
     </button>
+
+    <!-- BOTÓN GUÍA DE ESTUDIO (flotante inferior derecho) -->
+    <a href="INTEP_Warehouse_Simulator.pptx" download="Guia_Simulador_INTEP.pptx"
+       class="guide-btn" title="Descargar Guía de Estudio del Simulador">
+        <span class="guide-icon">📖</span>
+        <span class="guide-label">Guía</span>
+    </a>
     
-    <!-- PANTALLA DE INICIO -->
+    <!-- PANTALLA DE INICIO / SELECCIÓN DE MISIÓN -->
     <div id="startScreen">
         <div class="logo-container">
             <h1>INTEP</h1>
-            <h2>Laboratorio Virtual</h2>
+            <h2>Laboratorio Virtual de Almacén</h2>
             <h3>Instituto Técnico Pedagógico</h3>
         </div>
-        
-        <div class="start-content">
-            <div class="info-box">
-                <h3>🎯 Objetivo de la Práctica</h3>
-                <ul>
-                    <li>Recibir productos en área de recepción</li>
-                    <li>Almacenar en estanterías</li>
-                    <li>Preparar pedidos en zona de picking</li>
-                    <li>Despachar mercadería</li>
-                    <li>Completar tareas en el menor tiempo</li>
-                </ul>
-            </div>
-            
-            <div class="info-box">
-                <h3>🏢 Zonas del Almacén</h3>
-                <ul>
-                    <li>📥 <strong>Recepción</strong> - Entrada de productos</li>
-                    <li>🚚 <strong>Carga/Descarga</strong> - Dock de trucks</li>
-                    <li>📦 <strong>Almacenamiento</strong> - Estanterías</li>
-                    <li>✂️ <strong>Picking</strong> - Preparación de pedidos</li>
-                    <li>🚛 <strong>Despacho</strong> - Embarque</li>
-                    <li>❄️ <strong>Refrigeración</strong> - Zona fría</li>
-                    <li>📥 <strong>Devoluciones</strong> - RMA</li>
-                    <li>🛡️ <strong>Seguridad</strong> - Área protegida</li>
-                    <li>🏢 <strong>Control</strong> - Oficina</li>
-                </ul>
-            </div>
-            
-            <div class="info-box">
-                <h3>⌨️ Controles</h3>
-                <ul>
-                    <li><strong>W/↑</strong> Avanzar | <strong>S/↓</strong> Retroceder</li>
-                    <li><strong>A/←</strong> Girar izq | <strong>D/→</strong> Girar der</li>
-                    <li><strong>ESPACIO</strong> Cargar/Descargar</li>
-                    <li><strong>V</strong> Cambiar vista | <strong>1/2/3</strong> Modos</li>
-                    <li><strong>+/-</strong> Zoom</li>
-                </ul>
-            </div>
-            
-            <div class="info-box">
-                <h3>🏆 Sistema de Puntuación</h3>
-                <ul>
-                    <li>✓ Tarea completada: <strong>+100 pts</strong></li>
-                    <li>⚡ Bonus velocidad: <strong>+50 pts</strong></li>
-                    <li>⚠️ Colisión: <strong>-25 pts</strong></li>
-                    <li>🛑 Sin batería: <strong>-10 pts/min</strong></li>
-                </ul>
-            </div>
+
+        <div class="mission-select-header">
+            <h2>📋 Selecciona tu Misión</h2>
+            <p>Cada misión corresponde a un módulo del curso. Completa los módulos teóricos para desbloquear más misiones.</p>
+            <div class="course-sync-status" id="courseSyncStatus"></div>
         </div>
-        
-        <button id="startBtn" class="pulse">▶ INICIAR PRÁCTICA</button>
-        <button id="viewRankingBtn" class="secondary-btn">🏆 VER RANKING</button>
-        <button onclick="goToCourse()" class="secondary-btn" style="margin-top:10px;">📚 IR AL CURSO TEÓRICO</button>
+
+        <div class="mission-grid" id="missionGrid">
+            <!-- Populated dynamically by renderMissionSelect() -->
+        </div>
+
+        <div class="start-footer">
+            <button onclick="goToCourse()" class="secondary-btn">📚 IR AL CURSO TEÓRICO</button>
+            <button id="viewRankingBtn" class="secondary-btn">🏆 VER RANKING</button>
+        </div>
+
+        <div class="controls-hint">
+            <span>⌨️ W/A/S/D o Flechas: Mover</span>
+            <span>ESPACIO: Cargar/Descargar</span>
+            <span>V: Cambiar cámara</span>
+            <span>+/-: Zoom</span>
+        </div>
     </div>
     
     <!-- HUD PRINCIPAL -->
@@ -94,6 +70,20 @@
                     <span class="label">BATERÍA</span>
                     <div class="fuel-bar"><div id="fuelFill" class="fuel-fill"></div></div>
                     <span class="value" id="fuelPercent">100%</span>
+                </div>
+            </div>
+            <div class="hud-item fork">
+                <span class="icon">↕️</span>
+                <div class="hud-content">
+                    <span class="label">HORQUILLAS</span>
+                    <span class="value" id="forkHeight">0%</span>
+                </div>
+            </div>
+            <div class="hud-item load" id="loadIndicator" style="display: none;">
+                <span class="icon">📦</span>
+                <div class="hud-content">
+                    <span class="label">CARGA</span>
+                    <span class="value" id="loadStatus">NO</span>
                 </div>
             </div>
         </div>
@@ -173,7 +163,19 @@
                 <span class="inv-count" id="invC">0</span>/<span class="inv-total">6</span>
             </div>
         </div>
+        <div id="inventoryDetail" style="margin-top: 10px; font-size: 12px; color: #ccc;"></div>
         <div class="inv-progress"><span>Total:</span><span id="invTotal">0</span>/<span id="invTotalMax">6</span></div>
+    </div>
+    
+    <!-- PANEL DE TURNOS Y PRIORIDADES -->
+    <div id="shiftPanel">
+        <h4>🕐 TURNO ACTIVO</h4>
+        <div class="shift-row"><span>⏱️ Tiempo restante:</span><span id="shiftTime">08:00</span></div>
+        <div class="shift-row"><span>📦 Items recogidos:</span><span id="shiftItemsPicked">0</span></div>
+        <div class="shift-row"><span>🎯 Tasa de picking:</span><span id="shiftPickingRate">0/h</span></div>
+        <div class="shift-row"><span>⚠️ Errores:</span><span id="shiftErrors">0</span></div>
+        <div class="shift-row"><span>🚨 Prioridad:</span><span id="shiftPriority" class="priority-normal">NORMAL</span></div>
+        <div class="shift-row"><span>📋 Órdenes pendientes:</span><span id="shiftPendingOrders">0</span></div>
     </div>
     
     <!-- PANEL DE ESTADÍSTICAS -->
@@ -190,6 +192,60 @@
     
     <!-- NOTIFICACIONES -->
     <div id="notification"></div>
+
+    <!-- QUIZ OVERLAY -->
+    <div id="quizOverlay">
+        <div class="quiz-panel">
+            <div class="quiz-header">
+                <span class="quiz-icon">📝</span>
+                <h3 id="quizQuestion">Pregunta</h3>
+            </div>
+            <div id="quizOptions" class="quiz-options"></div>
+            <div id="quizFeedback" class="quiz-feedback"></div>
+        </div>
+    </div>
+
+    <!-- TARJETA DE CONCEPTO -->
+    <div id="conceptCard">
+        <div class="concept-panel">
+            <div class="concept-header">
+                <span class="concept-badge">📚 CONCEPTO APRENDIDO</span>
+            </div>
+            <h2 id="conceptTitle"></h2>
+            <pre id="conceptText" class="concept-body"></pre>
+            <p id="conceptModuleRef" class="concept-module-ref"></p>
+            <div class="concept-actions">
+                <button onclick="closeConceptCard()" class="primary-btn">✅ CONTINUAR A RESULTADOS</button>
+                <button id="conceptCourseBtn" class="secondary-btn">📖 VER EN CURSO TEÓRICO</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TERMINAL PORTÁTIL (EDI) -->
+    <div id="terminalOverlay" style="display: none;">
+        <div class="quiz-panel">
+            <div class="quiz-header">
+                <span class="quiz-icon">📟</span>
+                <h3>TERMINAL PORTÁTIL - EDI</h3>
+                <button id="closeTerminal" class="quiz-close-btn" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; font-size: 24px; color: #fff; cursor: pointer;">×</button>
+            </div>
+            <div class="quiz-options" style="text-align: left; font-family: monospace; padding: 20px;">
+                <pre id="terminalOutput" style="background: #1a1a2e; color: #00ffcc; padding: 15px; border-radius: 5px; max-height: 200px; overflow-y: auto; white-space: pre-wrap;">INTEP ALMACÉN CD - SISTEMA EDI v2.1
+========================================
+Conexión establecida con servidor central.
+Esperando órdenes de picking...</pre>
+                <div style="display: flex; align-items: center; margin-top: 15px;">
+                    <span style="color: #00ffcc; margin-right: 10px;">&gt;</span>
+                    <input type="text" id="terminalInput" placeholder="Escribe un comando (help para ayuda)" autocomplete="off" style="flex: 1; padding: 10px; background: #2c3e50; border: 1px solid #00ffcc; color: #fff; border-radius: 4px; font-family: monospace;">
+                </div>
+            </div>
+            <div class="quiz-actions" style="display: flex; justify-content: center; gap: 10px; padding: 20px;">
+                <button id="terminalSend" class="primary-btn small">Enviar</button>
+                <button id="terminalClear" class="secondary-btn small">Limpiar</button>
+                <button id="terminalHelp" class="secondary-btn small">Ayuda</button>
+            </div>
+        </div>
+    </div>
     
     <!-- INDICADOR DE ZOOM -->
     <div id="zoomIndicator">🔍 Zoom: 100%</div>
@@ -207,6 +263,7 @@
     <div id="resultsScreen">
         <div class="results-header">
             <h1>🏆 PRÁCTICA COMPLETADA</h1>
+            <h3 id="resultMissionTitle" class="result-mission-title"></h3>
             <div id="grade" class="grade-a">A+</div>
         </div>
         
@@ -215,6 +272,7 @@
             <div class="stat-card"><span class="stat-icon">💰</span><span class="stat-value" id="finalScore">0</span><span class="stat-label">Puntuación</span></div>
             <div class="stat-card"><span class="stat-icon">⚠️</span><span class="stat-value" id="finalCollisions">0</span><span class="stat-label">Colisiones</span></div>
             <div class="stat-card"><span class="stat-icon">⭐</span><span class="stat-value" id="finalEfficiency">100%</span><span class="stat-label">Eficiencia</span></div>
+            <div class="stat-card"><span class="stat-icon">📝</span><span class="stat-value" id="finalQuizAccuracy">0%</span><span class="stat-label">Quiz</span></div>
         </div>
         
         <div class="achievements-section">
@@ -246,7 +304,7 @@
     <!-- CONTENEDOR DEL JUEGO -->
     <div id="gameContainer"></div>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="juego.js"></script>
 </body>
 </html>

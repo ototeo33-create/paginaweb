@@ -37,3 +37,10 @@ uploads/fotos/
 
 # Caché de audio TTS (generado por Kokoro en el servidor)
 tts_cache/
+
+# Archivos binarios grandes del simulador (subir por SCP)
+cursodealmacenamiento/*.pptx
+cursodealmacenamiento/*.xlsx
+
+# Archivos de Claude Code
+.claude/

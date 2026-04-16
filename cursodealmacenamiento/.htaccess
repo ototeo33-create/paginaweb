@@ -1,0 +1,13 @@
+# Allow access to this directory
+Require all granted
+
+# Set index file
+DirectoryIndex index.html index.php
+
+# Prevent directory listing
+Options -Indexes
+
+# Enable CORS for fonts and resources
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>

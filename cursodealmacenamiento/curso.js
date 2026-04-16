@@ -218,6 +218,35 @@ function updateSidebarButtons() {
     }
 }
 
+// ============================================
+// BADGES DEL SIMULADOR
+// ============================================
+function updateSimulatorBadges() {
+    try {
+        const simData = localStorage.getItem('intep_simulador_progress');
+        if (!simData) return;
+
+        const progress = JSON.parse(simData);
+        if (!progress.missions) return;
+
+        for (let i = 1; i <= 6; i++) {
+            if (progress.missions[i]?.completed) {
+                const btn = document.querySelector('.module-btn[data-module="' + i + '"]');
+                if (btn && !btn.querySelector('.sim-badge')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'sim-badge';
+                    badge.textContent = '🎮';
+                    badge.title = 'Practicado en simulador — Score: ' + (progress.missions[i].score || 0);
+                    badge.style.cssText = 'margin-left:5px;font-size:0.85em;';
+                    btn.appendChild(badge);
+                }
+            }
+        }
+    } catch(e) {
+        // Silent fail
+    }
+}
+
 function showTab(num,tab) {
     courseState.currentModule = num;
     
@@ -603,7 +632,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Actualizar estado inicial de botones
     updateSidebarButtons();
-    
+    updateSimulatorBadges();
+
     showModule(1);
 });
 
