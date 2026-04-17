@@ -1,0 +1,2930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguridad Ocupacional I | INTEP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --green: #059669;
+            --green-light: #10B981;
+            --green-dark: #047857;
+            --green-pale: #ECFDF5;
+            --cream: #F5F2EC;
+            --warm-white: #F0EDE6;
+            --sand: #EBE7DF;
+            --text: #1a4d3e;
+            --text-mid: #2d5a4e;
+            --text-light: #5a7a72;
+            --purple: #4A1942;
+            --purple-mid: #6B3FA0;
+            --purple-light: #9B6FCF;
+            --purple-pale: #f3ecf8;
+            --danger: #dc2626;
+            --warning: #d69e2e;
+            --bg-light: var(--cream);
+            --shadow: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Exo 2', 'Segoe UI', system-ui, sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* HEADER */
+        .header-institucional {
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logo-inst { display: flex; align-items: center; gap: 1rem; }
+        .logo-icon { font-size: 2.5rem; }
+        .inst-name { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; }
+        .inst-sub { font-size: 0.85rem; opacity: 0.9; }
+        .header-info { display: flex; gap: 1rem; align-items: center; }
+        .course-badge { background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; }
+        .instructor { font-size: 0.9rem; opacity: 0.9; }
+        .schedule { font-size: 0.9rem; background: rgba(255,255,255,0.15); padding: 0.5rem 1rem; border-radius: 8px; }
+
+        /* PROGRESS BAR */
+        .progress-bar-global {
+            background: white;
+            padding: 0.75rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 76px;
+            z-index: 99;
+            overflow-x: auto;
+        }
+        .progress-modules {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.4rem;
+        }
+        .module-progress {
+            flex: 1;
+            min-width: 50px;
+            text-align: center;
+            padding: 0.5rem 0.25rem;
+            background: var(--sand);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .module-progress.active { background: var(--purple); color: white; }
+        .module-progress.completed { background: var(--green); color: white; }
+        .module-progress.exam { background: var(--warning); color: white; }
+        .module-progress.exam-progress { display: none; background: var(--purple); color: white; }
+        .module-progress.exam-progress.unlocked { display: block; }
+        .module-progress.final-locked { opacity: 0.5; cursor: not-allowed; }
+        .module-progress.final-locked.unlocked { opacity: 1; cursor: pointer; background: var(--danger); }
+        .module-progress:hover { transform: translateY(-2px); }
+
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        }
+        .modal-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .modal-content h2 { font-size: 1.75rem; margin-bottom: 0.75rem; }
+        .modal-content p { color: var(--text-mid); margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .modal-content.success h2 { color: var(--green); }
+        .modal-content.fail h2 { color: var(--purple); }
+        .modal-content button {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 99px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            margin: 0.25rem;
+            transition: all 0.3s;
+        }
+        .modal-content.success button {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+            color: white;
+        }
+        .modal-content.fail button {
+            background: var(--purple);
+            color: white;
+        }
+        .modal-content button:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+
+        /* MAIN LAYOUT */
+        .main-container {
+            max-width: 1400px;
+            margin: 1rem auto;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 1.5rem;
+            padding: 0 1rem;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 160px;
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--sand);
+        }
+        .sidebar-header h3 { color: var(--purple); font-size: 1.1rem; }
+        .sidebar-header p { font-size: 0.85rem; color: var(--text-mid); }
+        .lessons-nav { display: flex; flex-direction: column; gap: 0.4rem; }
+        .lesson-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-family: inherit;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        .lesson-btn:hover { background: white; border-color: var(--green-light); transform: translateX(5px); }
+        .lesson-btn.active { background: linear-gradient(135deg, var(--green-dark), var(--green)); color: white; border-color: transparent; }
+        .lesson-btn.locked { opacity: 0.5; cursor: not-allowed; }
+        .lesson-btn.locked:hover { background: var(--bg-light); border-color: transparent; transform: none; }
+        .lesson-btn.exam-btn { background: var(--purple-pale); border-color: var(--purple-light); }
+        .lesson-btn.exam-btn:hover { background: var(--purple); color: white; }
+        .lesson-btn.exam-btn.active { background: var(--purple); color: white; }
+        .lesson-num {
+            font-weight: 700;
+            font-size: 0.75rem;
+            background: rgba(0,0,0,0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            min-width: 28px;
+            text-align: center;
+        }
+        .lesson-btn.active .lesson-num { background: rgba(255,255,255,0.2); }
+        .lesson-title { flex: 1; font-weight: 500; font-size: 0.85rem; }
+        .lesson-status { font-size: 1rem; }
+
+        /* CONTENT AREA */
+        .content-area {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            min-height: 600px;
+        }
+        .lesson-content { display: none; }
+        .lesson-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .lesson-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 3px solid var(--sand);
+        }
+        .lesson-tag {
+            display: inline-block;
+            background: var(--green);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+        }
+        .lesson-tag.exam { background: var(--purple); }
+        .lesson-header h1 { color: var(--green-dark); font-size: 1.75rem; margin-bottom: 0.5rem; }
+        .lesson-header h1.exam-title { color: var(--purple); }
+        .lesson-desc { color: var(--text-mid); font-size: 1.05rem; }
+
+        /* TABS */
+        .content-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--sand); padding-bottom: 0.5rem; }
+        .tab-btn { padding: 0.75rem 1.5rem; background: transparent; border: none; font-size: 0.95rem; font-weight: 600; color: var(--text-light); cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.3s; font-family: inherit; }
+        .tab-btn:hover { color: var(--primary); background: var(--bg-light); }
+        .tab-btn.active { color: var(--green); background: var(--green-pale); border-bottom: 3px solid var(--green); margin-bottom: -2px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* THEORY STYLES */
+        .theory-content h2 { color: var(--green-dark); font-size: 1.4rem; margin: 1.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--sand); }
+        .theory-content h3 { color: var(--purple); font-size: 1.2rem; margin: 1.5rem 0 0.75rem; }
+        .theory-content p { color: var(--text-mid); margin-bottom: 1rem; line-height: 1.8; }
+        .theory-content ul, .theory-content ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        .theory-content li { margin: 0.5rem 0; color: var(--text-mid); }
+
+        .info-box { background: linear-gradient(135deg, #033d2e 0%, var(--green-dark) 100%); border-left: 4px solid var(--green-light); padding: 1.25rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.5rem 0; color: white; }
+        .info-box.highlight { background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%); }
+        .info-box h3 { color: white; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .info-box.purple { background: linear-gradient(135deg, var(--purple) 0%, var(--purple-mid) 100%); border-color: var(--purple-light); }
+
+        .topic-card { background: var(--bg-light); padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0; }
+        .topic-card h3 { color: var(--text); margin-bottom: 0.75rem; }
+
+        .highlight-box { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); padding: 1.25rem; border-radius: 12px; border-left: 4px solid #f39c12; margin: 1.5rem 0; }
+
+        .formula-box { background: var(--green-dark); color: #a0aec0; padding: 1rem 1.5rem; border-radius: 8px; margin-top: 1rem; font-family: 'Consolas', monospace; }
+        .formula-box h4 { color: var(--green-light); margin-bottom: 0.5rem; }
+
+        /* TABLES */
+        .theory-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; box-shadow: var(--shadow); border-radius: 12px; overflow: hidden; }
+        .theory-table th { background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%); color: white; padding: 1rem; text-align: left; font-weight: 600; }
+        .theory-table td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--sand); }
+        .theory-table tr:nth-child(even) { background: var(--warm-white); }
+        .theory-table tr:last-child td { border-bottom: none; }
+        .theory-table tr.exam-row { background: var(--purple-pale); }
+        .theory-table tr.exam-row td { font-weight: 600; color: var(--purple); }
+
+        /* DIAGRAMS */
+        .diagram-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+        .diagram-item { background: var(--bg-light); padding: 1.5rem; border-radius: 12px; text-align: center; border: 3px solid var(--green); }
+        .diagram-item.highlight { background: var(--green); color: white; }
+        .diagram-item h4 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .diagram-item p { font-size: 0.9rem; color: var(--text-mid); margin: 0; }
+        .diagram-item.highlight p { color: rgba(255,255,255,0.9); }
+
+        /* FLOWCHART */
+        .flowchart { background: var(--bg-light); padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0; text-align: center; }
+        .flow-box { display: inline-block; background: linear-gradient(135deg, var(--purple) 0%, var(--purple-mid) 100%); color: white; padding: 0.75rem 1.25rem; border-radius: 10px; margin: 0.25rem; font-weight: 600; font-size: 0.95rem; }
+        .flow-box.green { background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%); }
+        .flow-arrow { display: block; color: var(--green); font-size: 1.5rem; margin: 0.25rem 0; }
+
+        /* PYRAMID */
+        .pyramid-container { max-width: 500px; margin: 1.5rem auto; }
+        .pyramid-level { padding: 14px; text-align: center; color: white; font-weight: 700; margin: 2px auto; border-radius: 8px; font-size: 0.95rem; transition: transform 0.3s; cursor: pointer; }
+        .pyramid-level:hover { transform: scale(1.02); }
+        .pyramid-level:nth-child(1) { width: 35%; background: var(--purple); }
+        .pyramid-level:nth-child(2) { width: 50%; background: var(--purple-mid); }
+        .pyramid-level:nth-child(3) { width: 65%; background: var(--purple-light); color: var(--text); }
+        .pyramid-level:nth-child(4) { width: 80%; background: var(--green); }
+        .pyramid-level:nth-child(5) { width: 95%; background: var(--green-light); color: var(--text); }
+
+        /* CHECKLIST */
+        .checklist-container { background: var(--bg-light); padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0; }
+        .check-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: white; margin: 0.5rem 0; border-radius: 8px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        .check-item:hover { background: var(--purple-pale); border-color: var(--purple-light); }
+        .check-item.checked { background: var(--green-pale); border-color: var(--green); }
+        .check-box { width: 28px; height: 28px; border: 3px solid var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--green); font-weight: 700; }
+        .check-item.checked .check-box { background: var(--green); color: white; }
+
+        /* QUIZ */
+        .eval-content h2 { color: var(--purple); margin-bottom: 1rem; }
+        .quiz-container { display: flex; flex-direction: column; gap: 1.5rem; }
+        .question { background: var(--bg-light); padding: 1.5rem; border-radius: 12px; }
+        .question-text { margin-bottom: 1rem; color: var(--text); font-weight: 600; }
+        .options { display: flex; flex-direction: column; gap: 0.5rem; }
+        .option { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: white; border-radius: var(--radius); cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        .option:hover { border-color: var(--purple-mid); background: var(--purple-pale); }
+        .option.selected { background: var(--green); color: white; border-color: var(--green-dark); }
+        .option.correct { background: var(--green); color: white; border-color: var(--green-light); }
+        .option.incorrect { background: var(--purple); color: white; border-color: var(--purple-mid); }
+        .option input[type="radio"] { width: 20px; height: 20px; accent-color: var(--green); }
+        .btn-submit { background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%); color: white; border: none; padding: 1rem 2rem; border-radius: 99px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: inherit; margin-top: 1rem; box-shadow: 0 4px 20px rgba(5,150,105,0.3); }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(5,150,105,0.4); }
+        .quiz-result { margin-top: 1rem; padding: 1rem; border-radius: var(--radius); font-weight: 600; text-align: center; display: none; }
+        .quiz-result.success { display: block; background: var(--green-pale); color: var(--green-dark); border: 2px solid var(--green-light); }
+        .quiz-result.fail { display: block; background: #fff3e0; color: #e65100; border: 2px solid #ff9800; }
+
+        /* NEXT BUTTON */
+        .btn-next { display: block; width: 100%; margin-top: 2rem; padding: 1.25rem; background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%); color: white; border: none; border-radius: 99px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: inherit; box-shadow: 0 4px 20px rgba(5,150,105,0.3); }
+        .btn-next:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(5,150,105,0.4); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .main-container { grid-template-columns: 1fr; }
+            .sidebar { position: relative; top: 0; max-height: none; }
+            .lessons-nav { flex-direction: row; flex-wrap: wrap; }
+            .lesson-btn { flex: 1 1 calc(50% - 0.25rem); }
+            .diagram-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .lesson-btn { flex: 1 1 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header-institucional">
+    <div class="header-content">
+        <div class="logo-inst">
+            <span class="logo-icon">🏢</span>
+            <div class="logo-text">
+                <span class="inst-name">INTEP</span>
+                <span class="inst-sub">Instituto Técnico Pedagógico</span>
+            </div>
+        </div>
+        <div class="header-info">
+            <span class="course-badge">📚 Técnico Laboral en SST</span>
+            <span class="instructor">Formadora: Adriana Milena Silva</span>
+        </div>
+        <div class="schedule">
+            <i class="fas fa-calendar-alt"></i> Lun y Mar 6:30 - 9:30 PM
+        </div>
+        <a href="/intep/dashboard.php" class="btn-portal-back" title="Volver al Portal"
+           style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(255,255,255,0.15);color:white;text-decoration:none;padding:0.5rem 1rem;border-radius:8px;font-size:0.9rem;font-weight:600;transition:background 0.2s;"
+           onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+           onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+            ← Portal
+        </a>
+    </div>
+</header>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-global">
+    <div class="progress-modules">
+        <span class="module-progress" data-lesson="1">1</span>
+        <span class="module-progress" data-lesson="2">2</span>
+        <span class="module-progress" data-lesson="3">3</span>
+        <span class="module-progress" data-lesson="4">4</span>
+        <span class="module-progress" data-lesson="5">5</span>
+        <span class="module-progress" data-lesson="6">6</span>
+        <span class="module-progress" data-lesson="7">7</span>
+        <span class="module-progress exam" data-lesson="8">P1</span>
+        <span class="module-progress" data-lesson="9">9</span>
+        <span class="module-progress" data-lesson="10">10</span>
+        <span class="module-progress" data-lesson="11">11</span>
+        <span class="module-progress" data-lesson="12">12</span>
+        <span class="module-progress" data-lesson="13">13</span>
+        <span class="module-progress" data-lesson="14">14</span>
+        <span class="module-progress exam" data-lesson="15">PF</span>
+        <span class="module-progress" data-lesson="16">16</span>
+        <span class="module-progress exam-progress final-locked" id="finalExamProgress" onclick="if(!this.classList.contains('final-locked')) showLesson('final')">QF</span>
+    </div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="main-container">
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>📚 Contenido del Curso</h3>
+            <p>Seguridad Ocupacional I - 16 sesiones</p>
+        </div>
+        
+        <nav class="lessons-nav">
+            <button class="lesson-btn active" data-lesson="1" onclick="showLesson(1)">
+                <span class="lesson-num">1</span>
+                <span class="lesson-title">Introducción a la Seguridad Ocupacional</span>
+                <span class="lesson-status" id="status-1">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="2" onclick="showLesson(2)">
+                <span class="lesson-num">2</span>
+                <span class="lesson-title">Marco Legal - Decreto 1072/2015</span>
+                <span class="lesson-status" id="status-2">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="3" onclick="showLesson(3)">
+                <span class="lesson-num">3</span>
+                <span class="lesson-title">Sistema de Gestión SG-SST</span>
+                <span class="lesson-status" id="status-3">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="4" onclick="showLesson(4)">
+                <span class="lesson-num">4</span>
+                <span class="lesson-title">Ciclo PHVA</span>
+                <span class="lesson-status" id="status-4">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="5" onclick="showLesson(5)">
+                <span class="lesson-num">5</span>
+                <span class="lesson-title">Sistema General de Riesgos Laborales</span>
+                <span class="lesson-status" id="status-5">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="6" onclick="showLesson(6)">
+                <span class="lesson-num">6</span>
+                <span class="lesson-title">Identificación de Peligros</span>
+                <span class="lesson-status" id="status-6">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="7" onclick="showLesson(7)">
+                <span class="lesson-num">7</span>
+                <span class="lesson-title">Clasificación de Riesgos Laborales</span>
+                <span class="lesson-status" id="status-7">○</span>
+            </button>
+            <button class="lesson-btn exam-btn" data-lesson="8" onclick="showLesson(8)">
+                <span class="lesson-num">P1</span>
+                <span class="lesson-title">PARCIAL I</span>
+                <span class="lesson-status" id="status-8">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="9" onclick="showLesson(9)">
+                <span class="lesson-num">9</span>
+                <span class="lesson-title">Matriz de Riesgos - GTC 45</span>
+                <span class="lesson-status" id="status-9">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="10" onclick="showLesson(10)">
+                <span class="lesson-num">10</span>
+                <span class="lesson-title">Prevención y Control</span>
+                <span class="lesson-status" id="status-10">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="11" onclick="showLesson(11)">
+                <span class="lesson-num">11</span>
+                <span class="lesson-title">EPP - Protección Personal</span>
+                <span class="lesson-status" id="status-11">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="12" onclick="showLesson(12)">
+                <span class="lesson-num">12</span>
+                <span class="lesson-title">Señalización y Colores</span>
+                <span class="lesson-status" id="status-12">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="13" onclick="showLesson(13)">
+                <span class="lesson-num">13</span>
+                <span class="lesson-title">Accidente Laboral</span>
+                <span class="lesson-status" id="status-13">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="14" onclick="showLesson(14)">
+                <span class="lesson-num">14</span>
+                <span class="lesson-title">Enfermedad Laboral</span>
+                <span class="lesson-status" id="status-14">○</span>
+            </button>
+            <button class="lesson-btn exam-btn" data-lesson="15" onclick="showLesson(15)">
+                <span class="lesson-num">PF</span>
+                <span class="lesson-title">PARCIAL FINAL</span>
+                <span class="lesson-status" id="status-15">○</span>
+            </button>
+            <button class="lesson-btn" data-lesson="16" onclick="showLesson(16)">
+                <span class="lesson-num">16</span>
+                <span class="lesson-title">Retroalimentación y Nivelación</span>
+                <span class="lesson-status" id="status-16">○</span>
+            </button>
+            <button id="finalLessonBtn" class="lesson-btn exam-btn locked" onclick="if(!this.classList.contains('locked')) showLesson('final')">
+                <span class="lesson-num">🏆</span>
+                <span class="lesson-title">EXAMEN FINAL</span>
+                <span class="lesson-status" id="status-final">🔒</span>
+            </button>
+        </nav>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area">
+
+        <!-- LESSON 1: INTRODUCCIÓN A LA SEGURIDAD OCUPACIONAL -->
+        <section class="lesson-content active" id="lesson-1">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 1</span>
+                <h1>Introducción a la Seguridad Ocupacional</h1>
+                <p class="lesson-desc">Conocer los fundamentos de Seguridad y Salud en el Trabajo según normatividad vigente.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(1, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(1, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(1, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L1-teoria">
+                <div class="theory-content">
+                    <h2>¿Qué es la Seguridad y Salud en el Trabajo?</h2>
+                    
+                    <div class="info-box highlight">
+                        <h3>📌 Definición</h3>
+                        <p>La Seguridad y Salud en el Trabajo (SST) es la disciplina que se encarga de promover y mantener el más alto grado de bienestar físico, mental y social de los trabajadores en todas las ocupaciones.</p>
+                    </div>
+
+                    <h2>Conceptos Fundamentales</h2>
+                    
+                    <div class="info-box">
+                        <h3>⚡ PELIGRO</h3>
+                        <p>Fuente, situación o acto con potencial de causar daño en términos de lesión o enfermedad, o una combinación de estos.</p>
+                    </div>
+
+                    <p><strong>Ejemplos de peligros:</strong></p>
+                    <ul>
+                        <li>🔌 Cableado eléctrico expuesto</li>
+                        <li>💧 Piso mojado o resbaloso</li>
+                        <li>🧪 Sustancias químicas tóxicas</li>
+                        <li>🔊 Ruido excesivo (superior a 85 dB)</li>
+                        <li>🔥 Materiales inflamables</li>
+                        <li>🏗️ Trabajo en alturas sin protección</li>
+                    </ul>
+
+                    <div class="info-box highlight">
+                        <h3>📊 RIESGO</h3>
+                        <p>Combinación de la probabilidad de que ocurra un evento peligroso y la severidad del daño que puede causar.</p>
+                    </div>
+
+                    <div class="formula-box">
+                        <h4>📐 Fórmula del Riesgo</h4>
+                        <p><strong>Riesgo = Probabilidad × Severidad</strong></p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>🔑 Diferencia clave:</strong><br><br>
+                        <strong>PELIGRO</strong> = La fuente/causa del daño (es inherente)<br>
+                        <strong>RIESGO</strong> = La posibilidad de que ocurra un daño (depende de exposición)
+                    </div>
+
+                    <h2>Incidente vs Accidente</h2>
+                    
+                    <div class="diagram-grid">
+                        <div class="diagram-item">
+                            <h4>⚠️ INCIDENTE</h4>
+                            <p>Evento que tiene el potencial de causar lesión o enfermedad, pero <strong>NO causa daño efectivo</strong>.</p>
+                            <p style="margin-top:0.5rem;"><em>Ej: Una persona casi se resbala pero se sostiene a tiempo.</em></p>
+                        </div>
+                        <div class="diagram-item highlight">
+                            <h4>💥 ACCIDENTE</h4>
+                            <p>Suceso inesperado que interrumpe el trabajo y <strong>SI produce consecuencias negativas</strong> (lesión, muerte, daño material).</p>
+                        </div>
+                    </div>
+
+                    <h2>Importancia de la SST</h2>
+                    
+                    <table class="theory-table">
+                        <tr><th>Para el TRABAJADOR</th><th>Para el EMPLEADOR</th><th>Para la SOCIEDAD</th></tr>
+                        <tr>
+                            <td>Protección de su vida y salud</td>
+                            <td>Menos costos por ausentismo</td>
+                            <td>Menor carga al sistema de salud</td>
+                        </tr>
+                        <tr>
+                            <td>Ambiente laboral seguro</td>
+                            <td>Evita sanciones legales</td>
+                            <td>Productividad nacional</td>
+                        </tr>
+                        <tr>
+                            <td>Mayor bienestar y motivación</td>
+                            <td>Mejor imagen institucional</td>
+                            <td>Calidad de vida general</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-content" id="L1-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Identifica Peligros y Riesgos</h2>
+                    <p>Observa la siguiente imagen mental de una oficina y marca qué elementos son peligros y cuáles son riesgos.</p>
+                    
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>PELIGRO:</strong> Escritorio con cables desordenados en el piso</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>RIESGO:</strong> Una persona tropieza con los cables y se cae</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>PELIGRO:</strong> Extintor bloqueado por una caja</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>RIESGO:</strong> En caso de incendio, no se puede acceder al extintor rápidamente</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>PELIGRO:</strong> Ventana con el cristal roto</span>
+                        </div>
+                    </div>
+                    
+                    <h3>Ahora tú: Menciona 3 peligros en tu lugar de trabajo o estudio</h3>
+                    <div class="topic-card">
+                        <textarea style="width:100%;padding:1rem;border:2px solid var(--sand);border-radius:8px;font-family:inherit;resize:vertical;min-height:100px;" placeholder="Escribe tus respuestas aquí..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L1-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 1</h2>
+                    <p>Demuestra tu conocimiento.</p>
+                    
+                    <div class="quiz-container" id="quiz-L1">
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>1.</strong> ¿Cuál es la diferencia entre peligro y riesgo?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Son exactamente lo mismo</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Peligro es la fuente de daño; riesgo es la probabilidad de que ocurra</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Riesgo es la fuente; peligro es la consecuencia</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Solo existen en factories</label>
+                            </div>
+                        </div>
+                        
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>2.</strong> Un incidente es:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q2" value="a"> a) Un accidente que causa incapacidad</label>
+                                <label class="option"><input type="radio" name="q2" value="b"> b) Un peligro identificado</label>
+                                <label class="option"><input type="radio" name="q2" value="c"> c) Un evento que pudo causar daño pero no lo causó</label>
+                                <label class="option"><input type="radio" name="q2" value="d"> d) Una enfermedad profesional</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>3.</strong> ¿Qué significa SST?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q3" value="a"> a) Seguridad y Salud en el Trabajo</label>
+                                <label class="option"><input type="radio" name="q3" value="b"> b) Sistema de Salud Total</label>
+                                <label class="option"><input type="radio" name="q3" value="c"> c) Supervisión de Seguridad Técnica</label>
+                                <label class="option"><input type="radio" name="q3" value="d"> d) Servicio de Salud Transitorio</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>4.</strong> ¿Cuál de los siguientes es un ejemplo de peligro?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q4" value="a"> a) Una persona tropieza</label>
+                                <label class="option"><input type="radio" name="q4" value="b"> b) Un piso mojado</label>
+                                <label class="option"><input type="radio" name="q4" value="c"> c) Una fractura</label>
+                                <label class="option"><input type="radio" name="q4" value="d"> d) Una incapacidad médica</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>5.</strong> ¿Qué nivel de ruido se considera peligroso sin protección?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q5" value="a"> a) 50 dB</label>
+                                <label class="option"><input type="radio" name="q5" value="b"> b) 65 dB</label>
+                                <label class="option"><input type="radio" name="q5" value="c"> c) 85 dB o más</label>
+                                <label class="option"><input type="radio" name="q5" value="d"> d) 100 dB</label>
+                            </div>
+                        </div>
+
+                        <button onclick="validarQuiz(1)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L1"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(1)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 2: MARCO LEGAL DECRETO 1072 DEL 2015 -->
+        <section class="lesson-content" id="lesson-2">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 2</span>
+                <h1>Marco Legal - Decreto 1072 de 2015</h1>
+                <p class="lesson-desc">Desarrollar e identificar los fundamentos de SST según normatividad vigente.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(2, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(2, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(2, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L2-teoria">
+                <div class="theory-content">
+                    <h2>Normativa Colombiana de SST</h2>
+                    
+                    <div class="info-box purple">
+                        <h3>📜 Decreto Único Reglamentario 1072 de 2015</h3>
+                        <p>Es el decreto que regula el Sector Trabajo. El Libro 2, Parte 2, Título 4, Capítulo 6 establece las disposiciones sobre Seguridad y Salud en el Trabajo.</p>
+                    </div>
+
+                    <h2>Leyes y Decretos Clave</h2>
+                    
+                    <table class="theory-table">
+                        <tr><th>Norma</th><th>Tema</th><th>Descripción</th></tr>
+                        <tr><td><strong>Ley 1562/2012</strong></td><td>Sistema General de Riesgos Laborales</td><td>Modifica el sistema de riesgos laborales</td></tr>
+                        <tr><td><strong>Decreto 1072/2015</strong></td><td>Decreto Único del Trabajo</td><td>Reglamenta el SG-SST</td></tr>
+                        <tr><td><strong>Resolución 0312/2019</strong></td><td>Estándares Mínimos</td><td>Criterios para evaluar SG-SST</td></tr>
+                        <tr><td><strong>Ley 776/2002</strong></td><td>Prestaciones</td><td>Prestaciones económicas por AT y EL</td></tr>
+                        <tr><td><strong>Decreto 1477/2014</strong></td><td>Enfermedades Laborales</td><td>Tabla de enfermedades profesionales</td></tr>
+                    </table>
+
+                    <h2>Principales Obligaciones del Empleador</h2>
+                    
+                    <div class="checklist-container">
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span>Garantizar condiciones de trabajo seguras y saludables</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span>Implementar el Sistema de Gestión de Seguridad y Salud en el Trabajo (SG-SST)</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span>Identificar peligros, evaluar y valorar riesgos</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span>Proporcionar EPP sin costo para el trabajador</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span>Capacitar a los trabajadores en SST</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span>Reportar accidentes de trabajo a la ARL</span>
+                        </div>
+                    </div>
+
+                    <h2>Derechos del Trabajador</h2>
+                    
+                    <div class="diagram-grid">
+                        <div class="diagram-item highlight">
+                            <h4>✅ Derecho a:</h4>
+                            <p>Condiciones de trabajo seguras y saludables</p>
+                        </div>
+                        <div class="diagram-item">
+                            <h4>✅ Derecho a:</h4>
+                            <p>Protección y EPP adecuados</p>
+                        </div>
+                        <div class="diagram-item">
+                            <h4>✅ Derecho a:</h4>
+                            <p>Capacitación en SST</p>
+                        </div>
+                        <div class="diagram-item highlight">
+                            <h4>✅ Derecho a:</h4>
+                            <p>Participar en el SG-SST</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L2-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Identifica las Normas</h2>
+                    <p>Relaciona cada norma con su descripción:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Decreto 1072/2015:</strong> Reglamento del Sector Trabajo (Libro 2 - SST)</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Ley 1562/2012:</strong> Modifica el Sistema General de Riesgos Laborales</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Resolución 0312/2019:</strong> Define los estándares mínimos del SG-SST</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Decreto 1477/2014:</strong> Tabla de enfermedades laborales</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L2-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 2</h2>
+                    <div class="quiz-container" id="quiz-L2">
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>1.</strong> El Decreto 1072 de 2015 es:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Una ley del Congreso</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Un decreto que reglamenta el Sector Trabajo</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Una resolución del Ministerio de Salud</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Un código penal</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>2.</strong> ¿Quién debe proporcionar los EPP?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q2" value="a"> a) El empleador</label>
+                                <label class="option"><input type="radio" name="q2" value="b"> b) El trabajador</label>
+                                <label class="option"><input type="radio" name="q2" value="c"> c) La ARL</label>
+                                <label class="option"><input type="radio" name="q2" value="d"> d) El Ministerio del Trabajo</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>3.</strong> ¿Qué norma establece la tabla de enfermedades laborales?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q3" value="a"> a) Ley 1562</label>
+                                <label class="option"><input type="radio" name="q3" value="b"> b) Decreto 1072</label>
+                                <label class="option"><input type="radio" name="q3" value="c"> c) Decreto 1477</label>
+                                <label class="option"><input type="radio" name="q3" value="d"> d) Resolución 0312</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>4.</strong> ¿Qué establece la Resolución 0312 de 2019?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q4" value="a"> a) Tabla de enfermedades laborales</label>
+                                <label class="option"><input type="radio" name="q4" value="b"> b) Estándares mínimos del SG-SST</label>
+                                <label class="option"><input type="radio" name="q4" value="c"> c) Prestaciones económicas</label>
+                                <label class="option"><input type="radio" name="q4" value="d"> d) Sistema de riesgos laborales</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>5.</strong> ¿A quién se deben reportar los accidentes de trabajo?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q5" value="a"> a) A la ARL</label>
+                                <label class="option"><input type="radio" name="q5" value="b"> b) Al Ministerio de Salud</label>
+                                <label class="option"><input type="radio" name="q5" value="c"> c) A la Fiscalía</label>
+                                <label class="option"><input type="radio" name="q5" value="d"> d) Al ICBF</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(2)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(2)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 3: SISTEMA DE GESTIÓN SG-SST -->
+        <section class="lesson-content" id="lesson-3">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 3</span>
+                <h1>Sistema de Gestión SG-SST</h1>
+                <p class="lesson-desc">Aplicar los fundamentos de SST según normatividad vigente.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(3, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(3, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(3, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L3-teoria">
+                <div class="theory-content">
+                    <h2>¿Qué es el SG-SST?</h2>
+                    
+                    <div class="info-box highlight">
+                        <h3>📋 Definición</h3>
+                        <p>El Sistema de Gestión de Seguridad y Salud en el Trabajo es un proceso lógico y por etapas, basado en la mejora continua, que incluye la estructura organizacional, la planificación de actividades, las responsabilidades, las prácticas, los procedimientos, los procesos y los recursos para identificar, evaluar y controlar los riesgos.</p>
+                    </div>
+
+                    <h2>Principios Fundamentales</h2>
+                    
+                    <div class="diagram-grid">
+                        <div class="diagram-item highlight">
+                            <h4>🔄 MEJORA CONTINUA</h4>
+                            <p>El sistema debe evolucionar constantemente para ser más efectivo</p>
+                        </div>
+                        <div class="diagram-item">
+                            <h4>👥 PARTICIPACIÓN</h4>
+                            <p>Todos los trabajadores deben estar involucrados</p>
+                        </div>
+                        <div class="diagram-item">
+                            <h4>⚖️ LEGALIDAD</h4>
+                            <p>Cumplimiento de la normatividad vigente</p>
+                        </div>
+                        <div class="diagram-item highlight">
+                            <h4>📊 PREVENCIÓN</h4>
+                            <p>Identificar y controlar riesgos antes de que ocurran</p>
+                        </div>
+                    </div>
+
+                    <h2>Actores del SG-SST</h2>
+                    
+                    <table class="theory-table">
+                        <tr><th>Actor</th><th>Función</th></tr>
+                        <tr><td><strong>Empleador</strong></td><td>Garantizar la implementación y recursos del SG-SST</td></tr>
+                        <tr><td><strong>Trabajadores</strong></td><td>Participar y cumplir las normas de SST</td></tr>
+                        <tr><td><strong>COPASST</strong></td><td>Comité paritario de SST (mínimo 4 personas)</td></tr>
+                        <tr><td><strong>Brigada de Emergencias</strong></td><td>Respuesta ante emergencias</td></tr>
+                        <tr><td><strong>ARL</strong></td><td>Asesoría, capacitación y afiliación</td></tr>
+                    </table>
+
+                    <h2>COPASST - Comité Paritario</h2>
+                    
+                    <div class="info-box">
+                        <h3>📌 Características</h3>
+                        <ul>
+                            <li>Conformado por representantes del empleador y trabajadores</li>
+                            <li>Mínimo 4 miembros (2 del empleador, 2 de los trabajadores)</li>
+                            <li>Vigencia: 2 años</li>
+                            <li>Reuniones mensuales obligatorias</li>
+                            <li>Funciones: inspecciones, investigación de accidentes, seguimiento</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L3-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Los Actores del SG-SST</h2>
+                    <p>Marca cuáles son responsabilidades del COPASST:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span>Realizar inspecciones de seguridad</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span>Investigar accidentes de trabajo</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span>Diseñar el sistema de gestión completo</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span>Participar en el comité de salud ocupacional</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L3-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 3</h2>
+                    <div class="quiz-container" id="quiz-L3">
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>1.</strong> ¿Qué significa COPASST?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Comité de Operación y Protección Ambiental</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Consejo de Prevención de Accidentes de Salud</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Comité Paritario de Seguridad y Salud en el Trabajo</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Centro de Operaciones de Seguridad del Sistema de Trabajo</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>2.</strong> ¿Cuántos miembros mínimo debe tener el COPASST?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q2" value="a"> a) 4 miembros</label>
+                                <label class="option"><input type="radio" name="q2" value="b"> b) 6 miembros</label>
+                                <label class="option"><input type="radio" name="q2" value="c"> c) 8 miembros</label>
+                                <label class="option"><input type="radio" name="q2" value="d"> d) 2 miembros</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>3.</strong> ¿Cuánto dura el COPASST?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q3" value="a"> a) 1 año</label>
+                                <label class="option"><input type="radio" name="q3" value="b"> b) 2 años</label>
+                                <label class="option"><input type="radio" name="q3" value="c"> c) 3 años</label>
+                                <label class="option"><input type="radio" name="q3" value="d"> d) 5 años</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>4.</strong> El SG-SST se basa en:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q4" value="a"> a) Acciones correctivas únicamente</label>
+                                <label class="option"><input type="radio" name="q4" value="b"> b) Sanciones a trabajadores</label>
+                                <label class="option"><input type="radio" name="q4" value="c"> c) Mejora continua</label>
+                                <label class="option"><input type="radio" name="q4" value="d"> d) Contratación de seguros</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="d">
+                            <p class="question-text"><strong>5.</strong> ¿Quiénes conforman el COPASST?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q5" value="a"> a) Solo trabajadores</label>
+                                <label class="option"><input type="radio" name="q5" value="b"> b) Solo el empleador</label>
+                                <label class="option"><input type="radio" name="q5" value="c"> c) Solo la ARL</label>
+                                <label class="option"><input type="radio" name="q5" value="d"> d) Representantes del empleador y trabajadores</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(3)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L3"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(3)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 4: CICLO PHVA -->
+        <section class="lesson-content" id="lesson-4">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 4</span>
+                <h1>Ciclo PHVA</h1>
+                <p class="lesson-desc">Taller práctico aplicación PHVA.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(4, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(4, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(4, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L4-teoria">
+                <div class="theory-content">
+                    <h2>El Ciclo PHVA (Deming)</h2>
+                    
+                    <div class="info-box highlight">
+                        <h3>🔄 PHVA = Planificar, Hacer, Verificar, Actuar</h3>
+                        <p>También conocido como Ciclo de Deming, es la base del Sistema de Gestión SG-SST.</p>
+                    </div>
+
+                    <div class="flowchart">
+                        <span class="flow-box">PLANEAR</span>
+                        <span class="flow-arrow">↓</span>
+                        <span class="flow-box green">HACER</span>
+                        <span class="flow-arrow">↓</span>
+                        <span class="flow-box">VERIFICAR</span>
+                        <span class="flow-arrow">↓</span>
+                        <span class="flow-box green">ACTUAR</span>
+                    </div>
+
+                    <h2>Desglose del Ciclo</h2>
+                    
+                    <div class="topic-card">
+                        <h3>1️⃣ PLANEAR (P)</h3>
+                        <p>Identificar peligros, evaluar riesgos, establecer objetivos de SST, planificar controles.</p>
+                    </div>
+                    
+                    <div class="topic-card">
+                        <h3>2️⃣ HACER (H)</h3>
+                        <p>Implementar los planes, capacitar al personal, ejecutar controles, documentar actividades.</p>
+                    </div>
+                    
+                    <div class="topic-card">
+                        <h3>3️⃣ VERIFICAR (V)</h3>
+                        <p>Auditorias, inspecciones, análisis de indicadores, investigación de incidentes.</p>
+                    </div>
+                    
+                    <div class="topic-card">
+                        <h3>4️⃣ ACTUAR (A)</h3>
+                        <p>Acciones correctivas, preventivas, mejora del sistema, actualización de planes.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L4-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad Práctica: Aplica el PHVA</h2>
+                    <p>Identifica un riesgo en tu entorno y completa el ciclo PHVA.</p>
+                    
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>PLANEAR:</strong> ¿Qué riesgo identificas? ¿Cómo lo evaluarás?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>HACER:</strong> ¿Qué controles implementarás? ¿Quiénes participarán?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>VERIFICAR:</strong> ¿Cómo sabrás si funciona? ¿Qué indicadores usarás?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>ACTUAR:</strong> ¿Qué ajustes harás si no funciona?</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L4-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Aplica el PHVA</h2>
+                    <p>Identifica un riesgo en tu entorno y completa el ciclo PHVA:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>PLANEAR:</strong> ¿Qué riesgo identificas? ¿Cómo lo evaluarás?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>HACER:</strong> ¿Qué controles implementarás? ¿Quiénes participarán?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>VERIFICAR:</strong> ¿Cómo sabrás si funciona? ¿Qué indicadores usarás?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>ACTUAR:</strong> ¿Qué ajustes harás si no funciona?</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L4-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 4</h2>
+                    <div class="quiz-container" id="quiz-L4">
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>1.</strong> ¿Qué significa PHVA?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Preparar, Hacer, Verificar, Actualizar</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Planificar, Hacer, Verificar, Actuar</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Proceso, Hábito, Verificación, Ajuste</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Planear, HTML, Verificar, Actualizar</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>2.</strong> ¿En qué fase se identifican los peligros?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q2" value="a"> a) Planear</label>
+                                <label class="option"><input type="radio" name="q2" value="b"> b) Hacer</label>
+                                <label class="option"><input type="radio" name="q2" value="c"> c) Verificar</label>
+                                <label class="option"><input type="radio" name="q2" value="d"> d) Actuar</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>3.</strong> Las auditorías se realizan en la fase:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q3" value="a"> a) Planear</label>
+                                <label class="option"><input type="radio" name="q3" value="b"> b) Hacer</label>
+                                <label class="option"><input type="radio" name="q3" value="c"> c) Verificar</label>
+                                <label class="option"><input type="radio" name="q3" value="d"> d) Actuar</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>4.</strong> ¿En qué fase se implementan los planes?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q4" value="a"> a) Planear</label>
+                                <label class="option"><input type="radio" name="q4" value="b"> b) Hacer</label>
+                                <label class="option"><input type="radio" name="q4" value="c"> c) Verificar</label>
+                                <label class="option"><input type="radio" name="q4" value="d"> d) Actuar</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="d">
+                            <p class="question-text"><strong>5.</strong> Las acciones correctivas se toman en la fase:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q5" value="a"> a) Planear</label>
+                                <label class="option"><input type="radio" name="q5" value="b"> b) Hacer</label>
+                                <label class="option"><input type="radio" name="q5" value="c"> c) Verificar</label>
+                                <label class="option"><input type="radio" name="q5" value="d"> d) Actuar</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(4)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L4"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(4)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 5: SISTEMA GENERAL DE RIESGOS LABORALES -->
+        <section class="lesson-content" id="lesson-5">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 5</span>
+                <h1>Sistema General de Riesgos Laborales</h1>
+                <p class="lesson-desc">Identificar la ARL y responsabilidades con el empleador.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(5, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(5, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(5, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L5-teoria">
+                <div class="theory-content">
+                    <h2>El Sistema General de Riesgos Laborales (SGRL)</h2>
+                    
+                    <div class="info-box purple">
+                        <h3>📋 Definición</h3>
+                        <p>Conjunto de entidades públicas y privadas, normas y procedimientos, destinados a prevenir, proteger y atender a los trabajadores de los efectos de las enfermedades y accidentes que puedan ocurrirles con ocasión o como consecuencia del trabajo.</p>
+                    </div>
+
+                    <h2>Actores del SGRL</h2>
+                    
+                    <table class="theory-table">
+                        <tr><th>Actor</th><th>Función Principal</th></tr>
+                        <tr><td><strong>Ministerio del Trabajo</strong></td><td>Vigilar y controlar el sistema</td></tr>
+                        <tr><td><strong>ARL</strong></td><td>Administradora de Riesgos Laborales (afiliar, prevenir, atender)</td></tr>
+                        <tr><td><strong>EPS</strong></td><td>Prestaciones de salud por enfermedad general</td></tr>
+                        <tr><td><strong>AFPs</strong></td><td>Administradoras de fondos de pensiones</td></tr>
+                        <tr><td><strong>ICBF / SENA / COLPENSIONES</strong></td><td>Protección social integral</td></tr>
+                    </table>
+
+                    <h2>Clases de Riesgo</h2>
+                    
+                    <table class="theory-table">
+                        <tr><th>Clase</th><th>Ejemplos de Actividades</th><th>Tasa Mínima</th></tr>
+                        <tr><td><strong>Clase I</strong></td><td>Oficinas, bancos, comercio</td><td>0.52%</td></tr>
+                        <tr><td><strong>Clase II</strong></td><td>Hoteles, restaurantes, farms</td><td>1.04%</td></tr>
+                        <tr><td><strong>Clase III</strong></td><td>Construcción, transporte</td><td>2.44%</td></tr>
+                        <tr><td><strong>Clase IV</strong></td><td>Mineria, metalurgia</td><td>4.35%</td></tr>
+                        <tr><td><strong>Clase V</strong></td><td>Manipulación de explosivos</td><td>6.96%</td></tr>
+                    </table>
+
+                    <h2>Prestaciones del SGRL</h2>
+                    
+                    <div class="diagram-grid">
+                        <div class="diagram-item highlight">
+                            <h4>🏥 PRESTACIONES SALUD</h4>
+                            <p>Atención médica, medicamentos, rehabilitación</p>
+                        </div>
+                        <div class="diagram-item">
+                            <h4>💰 PRESTACIONES ECONÓMICAS</h4>
+                            <p>Pensión de invalidez, sobrevivencia,死后死亡抚恤金</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L5-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Clasifica el Riesgo</h2>
+                    <p>Identifica a qué clase de riesgo pertenece cada actividad:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Clase I:</strong> Trabajador de banco (oficina)</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Clase III:</strong> Albañil en construcción</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Clase IV:</strong> Minero en extracción</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Clase II:</strong> Mesero en restaurante</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L5-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 5</h2>
+                    <div class="quiz-container" id="quiz-L5">
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>1.</strong> ¿Qué es una ARL?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Administradora de Riesgos Laborales</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Asociación de Riesgos Laborales</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Agencia Reguladora del Trabajo</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Autoridad de Riesgos Laborales</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>2.</strong> ¿Cuántas clases de riesgo existen?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q2" value="a"> a) 3 clases</label>
+                                <label class="option"><input type="radio" name="q2" value="b"> b) 4 clases</label>
+                                <label class="option"><input type="radio" name="q2" value="c"> c) 5 clases</label>
+                                <label class="option"><input type="radio" name="q2" value="d"> d) 6 clases</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>3.</strong> ¿En qué clase de riesgo está la minería?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q3" value="a"> a) Clase II</label>
+                                <label class="option"><input type="radio" name="q3" value="b"> b) Clase IV</label>
+                                <label class="option"><input type="radio" name="q3" value="c"> c) Clase III</label>
+                                <label class="option"><input type="radio" name="q3" value="d"> d) Clase V</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="d">
+                            <p class="question-text"><strong>4.</strong> Las oficinas pertenece a la clase:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q4" value="a"> a) Clase III</label>
+                                <label class="option"><input type="radio" name="q4" value="b"> b) Clase II</label>
+                                <label class="option"><input type="radio" name="q4" value="c"> c) Clase IV</label>
+                                <label class="option"><input type="radio" name="q4" value="d"> d) Clase I</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>5.</strong> ¿Qué entidad vigila el sistema de riesgos laborales?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q5" value="a"> a) Ministerio del Trabajo</label>
+                                <label class="option"><input type="radio" name="q5" value="b"> b) Ministerio de Salud</label>
+                                <label class="option"><input type="radio" name="q5" value="c"> c) ARL</label>
+                                <label class="option"><input type="radio" name="q5" value="d"> d) EPS</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(5)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L5"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(5)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 6: IDENTIFICACIÓN DE PELIGROS -->
+        <section class="lesson-content" id="lesson-6">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 6</span>
+                <h1>Identificación de Peligros</h1>
+                <p class="lesson-desc">Conocer e identificar los conceptos de peligro y riesgo.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(6, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(6, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(6, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L6-teoria">
+                <div class="theory-content">
+                    <h2>Tipos de Peligros</h2>
+                    
+                    <table class="theory-table">
+                        <tr><th>Tipo de Peligro</th><th>Descripción</th><th>Ejemplos</th></tr>
+                        <tr><td><strong>FÍSICO</strong></td><td>Energía que puede causar daño</td><td>Ruido, vibraciones, radiación, temperatura</td></tr>
+                        <tr><td><strong>QUÍMICO</strong></td><td>Sustancias peligrosas</td><td>Polvos, humos, vapores, gases, líquidos</td></tr>
+                        <tr><td><strong>BIOLÓGICO</strong></td><td>Seres vivos patógenos</td><td>Virus, bacterias, hongos, parásitos</td></tr>
+                        <tr><td><strong>BIOMECÁNICO</strong></td><td>Relacionado con el cuerpo</td><td>Posturas, manipulación de cargas, movimientos</td></tr>
+                        <tr><td><strong>PSICOSOCIAL</strong></td><td>Factores mentales y sociales</td><td>Estrés, acoso, carga mental, violencia</td></tr>
+                        <tr><td><strong>CONDICIONES DE SEGURIDAD</strong></td><td>Estado del entorno</td><td>Pisos, escaleras, maquinaria, electricidad</td></tr>
+                        <tr><td><strong>NATURALES</strong></td><td>Fenómenos naturales</td><td>Sismos, inundaciones, vendavales</td></tr>
+                    </table>
+
+                    <h2>Métodos de Identificación</h2>
+                    
+                    <div class="checklist-container">
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>Inspecciones planeadas:</strong> Recorridos sistemáticos por el área de trabajo</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>Observación del trabajo:</strong> Análisis de tareas y procedimientos</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>Análisis de incidentes:</strong> Revisión de accidentes y casi-accidentes</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>Consultas a trabajadores:</strong> Entrevistas y encuestas</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>Revisión documental:</strong> Manuales, procedimientos,-normas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L6-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Clasifica los Peligros</h2>
+                    <p>Clasifica cada peligro según su tipo:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>FÍSICO:</strong> Exposición a ruido de maquinaria</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>QUÍMICO:</strong> Manipulación de solventes orgánicos</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>BIOLÓGICO:</strong> Contacto con residuos hospitalarios</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>PSICOSOCIAL:</strong> Exceso de carga mental</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L6-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 6</h2>
+                    <div class="quiz-container" id="quiz-L6">
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>1.</strong> El ruido excesivo es un peligro:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Químico</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Biológico</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Físico</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Psicosocial</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>2.</strong> Los virus y bacterias son peligros:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q2" value="a"> a) Químicos</label>
+                                <label class="option"><input type="radio" name="q2" value="b"> b) Biológicos</label>
+                                <label class="option"><input type="radio" name="q2" value="c"> c) Físicos</label>
+                                <label class="option"><input type="radio" name="q2" value="d"> d) De seguridad</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>3.</strong> El estrés laboral es un peligro:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q3" value="a"> a) Psicosocial</label>
+                                <label class="option"><input type="radio" name="q3" value="b"> b) Físico</label>
+                                <label class="option"><input type="radio" name="q3" value="c"> c) Biológico</label>
+                                <label class="option"><input type="radio" name="q3" value="d"> d) Químico</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="d">
+                            <p class="question-text"><strong>4.</strong> La manipulación manual de cargas es un peligro:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q4" value="a"> a) De seguridad</label>
+                                <label class="option"><input type="radio" name="q4" value="b"> b) Químico</label>
+                                <label class="option"><input type="radio" name="q4" value="c"> c) Físico</label>
+                                <label class="option"><input type="radio" name="q4" value="d"> d) Biomecánico</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>5.</strong> Un piso mojado es un peligro:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q5" value="a"> a) Químico</label>
+                                <label class="option"><input type="radio" name="q5" value="b"> b) Físico</label>
+                                <label class="option"><input type="radio" name="q5" value="c"> c) De seguridad</label>
+                                <label class="option"><input type="radio" name="q5" value="d"> d) Biológico</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(6)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L6"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(6)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 7: CLASIFICACIÓN DE RIESGOS LABORALES -->
+        <section class="lesson-content" id="lesson-7">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 7</span>
+                <h1>Clasificación de Riesgos Laborales</h1>
+                <p class="lesson-desc">Identificar los tipos de riesgos laborales.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(7, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(7, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(7, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L7-teoria">
+                <div class="theory-content">
+                    <h2>Clasificación de Riesgos según GTC 45</h2>
+                    
+                    <div class="info-box highlight">
+                        <h3>📊 Guía Técnica Colombiana GTC 45</h3>
+                        <p>Esta guía proporciona metodologías para la identificación y evaluación de riesgos laborales en empresas colombianas.</p>
+                    </div>
+
+                    <h2>Riesgos por Tipo de Peligro</h2>
+                    
+                    <table class="theory-table">
+                        <tr><th>Tipo</th><th>Principales Riesgos</th></tr>
+                        <tr><td><strong>Seguridad</strong></td><td>Caídas, golpes, atrapamientos, contacto con electricidad, incendios</td></tr>
+                        <tr><td><strong>Higiene Industrial</strong></td><td>Exposición a químicos, ruido, temperatura, iluminación</td></tr>
+                        <tr><td><strong>Ergonomía</strong></td><td>Posturas forzadas, manejo manual de cargas, movimientos repetitivos</td></tr>
+                        <tr><td><strong>Psicosocial</strong></td><td>Estrés laboral, acoso, Violencia</td></tr>
+                        <tr><td><strong>Biológico</strong></td><td>Contagios, infecciones, alergias</td></tr>
+                    </table>
+
+                    <h2>Factores que Aumentan el Riesgo</h2>
+                    
+                    <ul>
+                        <li>⏰ Exposición prolongada al peligro</li>
+                        <li>👥 Falta de capacitación</li>
+                        <li>⚠️ Ausencia de señalización</li>
+                        <li>🔧 Maquinaria sin mantenimiento</li>
+                        <li>👷 Personal sin supervisión</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L7-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Tipos de Riesgos</h2>
+                    <p>Relaciona el tipo de riesgo con su ejemplo:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>ERgonomía:</strong> Dolor lumbar por postura sedentaria</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Higiene Industrial:</strong> Exposición a sílice en cantera</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Seguridad:</strong> Caída desde altura</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Psicosocial:</strong> Acoso laboral</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L7-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 7</h2>
+                    <div class="quiz-container" id="quiz-L7">
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>1.</strong> ¿Qué tipo de riesgo es una postura forzada?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Seguridad</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Ergonomía</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Psicosocial</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Biológico</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>2.</strong> La GTC 45 es una guía para:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q2" value="a"> a) Evaluación de riesgos laborales</label>
+                                <label class="option"><input type="radio" name="q2" value="b"> b) Primeros auxilios</label>
+                                <label class="option"><input type="radio" name="q2" value="c"> c) Instalaciones eléctricas</label>
+                                <label class="option"><input type="radio" name="q2" value="d"> d) Manejo de residuos</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>3.</strong> Los movimientos repetitivos son riesgos de:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q3" value="a"> a) Seguridad</label>
+                                <label class="option"><input type="radio" name="q3" value="b"> b) Higiene Industrial</label>
+                                <label class="option"><input type="radio" name="q3" value="c"> c) Ergonomía</label>
+                                <label class="option"><input type="radio" name="q3" value="d"> d) Psicosocial</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="d">
+                            <p class="question-text"><strong>4.</strong> Un incendio es un riesgo de:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q4" value="a"> a) Higiene Industrial</label>
+                                <label class="option"><input type="radio" name="q4" value="b"> b) Ergonomía</label>
+                                <label class="option"><input type="radio" name="q4" value="c"> c) Psicosocial</label>
+                                <label class="option"><input type="radio" name="q4" value="d"> d) Seguridad</label>
+                            </div>
+                        </div>
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>5.</strong> La exposición a químicos pertenece a:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q5" value="a"> a) Higiene Industrial</label>
+                                <label class="option"><input type="radio" name="q5" value="b"> b) Ergonomía</label>
+                                <label class="option"><input type="radio" name="q5" value="c"> c) Seguridad</label>
+                                <label class="option"><input type="radio" name="q5" value="d"> d) Biológico</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(7)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L7"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(7)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 8: PARCIAL I -->
+        <section class="lesson-content" id="lesson-8">
+            <div class="lesson-header">
+                <span class="lesson-tag exam">📋 PARCIAL I</span>
+                <h1 class="exam-title">Evaluación Parcial 1</h1>
+                <p class="lesson-desc">Evaluar y reflexionar sobre el aprendizaje y la práctica de seguridad ocupacional.</p>
+            </div>
+            
+            <div class="tab-content active">
+                <div class="eval-content">
+                    <div class="info-box purple">
+                        <h3>⚠️ Instrucciones del Parcial</h3>
+                        <p>Este examen cubre las lecciones 1-7. Responde todas las preguntas. Necesitas 70% para aprobar.</p>
+                    </div>
+                    
+                    <div class="quiz-container" id="quiz-P1">
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>1.</strong> ¿Cuál es la diferencia entre peligro y riesgo?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Son lo mismo</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Peligro es la fuente; riesgo es la probabilidad de daño</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Riesgo es la fuente; peligro es la consecuencia</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Solo existen en factories</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>2.</strong> ¿Qué norma establece los estándares mínimos del SG-SST?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q2" value="a"> a) Resolución 0312 de 2019</label>
+                                <label class="option"><input type="radio" name="q2" value="b"> b) Ley 1562</label>
+                                <label class="option"><input type="radio" name="q2" value="c"> c) Decreto 1477</label>
+                                <label class="option"><input type="radio" name="q2" value="d"> d) Ley 776</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>3.</strong> ¿Qué significa el ciclo PHVA?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q3" value="a"> a) Preparar, Hacer, Verificar, Actualizar</label>
+                                <label class="option"><input type="radio" name="q3" value="b"> b) Planear, Hacer, Verificar, Aprender</label>
+                                <label class="option"><input type="radio" name="q3" value="c"> c) Planificar, Hacer, Verificar, Actuar</label>
+                                <label class="option"><input type="radio" name="q3" value="d"> d) Proceso, Hábito, Verificación, Ajuste</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>4.</strong> ¿Cuántos miembros mínimo debe tener el COPASST?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q4" value="a"> a) 4 miembros</label>
+                                <label class="option"><input type="radio" name="q4" value="b"> b) 6 miembros</label>
+                                <label class="option"><input type="radio" name="q4" value="c"> c) 8 miembros</label>
+                                <label class="option"><input type="radio" name="q4" value="d"> d) 2 miembros</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>5.</strong> ¿Cuál de los siguientes es un peligro químico?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q5" value="a"> a) Ruido excesivo</label>
+                                <label class="option"><input type="radio" name="q5" value="b"> b) Vibraciones</label>
+                                <label class="option"><input type="radio" name="q5" value="c"> c) Polvo de sílice</label>
+                                <label class="option"><input type="radio" name="q5" value="d"> d) Temperatura extrema</label>
+                            </div>
+                        </div>
+
+                        <button onclick="validarQuiz('P1')" class="btn-submit">Enviar Parcial</button>
+                        <div class="quiz-result" id="result-P1"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(8)">Finalizar Parcial y Continuar →</button>
+        </section>
+
+        <!-- LESSON 9: MATRIZ DE RIESGOS - GTC 45 -->
+        <section class="lesson-content" id="lesson-9">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 9</span>
+                <h1>Matriz de Riesgos - GTC 45</h1>
+                <p class="lesson-desc">Conocer y diferenciar la evaluación de riesgos.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(9, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(9, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(9, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L9-teoria">
+                <div class="theory-content">
+                    <h2>Metodología de la GTC 45</h2>
+                    
+                    <div class="checklist-container">
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>Paso 1:</strong> IDENTIFICAR EL PELIGRO</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>Paso 2:</strong> DETERMINAR CONSECUENCIAS</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>Paso 3:</strong> EVALUAR PROBABILIDAD</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>Paso 4:</strong> CALCULAR NIVEL DE RIESGO</span>
+                        </div>
+                    </div>
+
+                    <h2>Niveles de Consecuencia</h2>
+                    <table class="theory-table">
+                        <tr><th>Nivel</th><th>Consecuencia</th><th>Ejemplo</th></tr>
+                        <tr><td>1</td><td>Lesión menor (sin incapacidad)</td><td>Rasguño</td></tr>
+                        <tr><td>2</td><td>Lesión con incapacidad temporal</td><td>Fractura</td></tr>
+                        <tr><td>3</td><td>Lesión con incapacidad permanente</td><td>Amputación</td></tr>
+                        <tr><td>4</td><td>Muerte</td><td>Fatalidad</td></tr>
+                    </table>
+
+                    <h2>Niveles de Probabilidad</h2>
+                    <table class="theory-table">
+                        <tr><th>Nivel</th><th>Probabilidad</th></tr>
+                        <tr><td>1</td><td>Muy baja - Solo en circunstancias excepcionales</td></tr>
+                        <tr><td>2</td><td>Baja - Rara vez sucede</td></tr>
+                        <tr><td>3</td><td>Media - Ocurre algunas veces</td></tr>
+                        <tr><td>4</td><td>Alta - Ocurre frecuentemente</td></tr>
+                        <tr><td>5</td><td>Muy alta - Es esperado que ocurra</td></tr>
+                    </table>
+
+                    <h2>Cálculo del Nivel de Riesgo</h2>
+                    <div class="formula-box">
+                        <h4>📐 NR = Probabilidad × Consecuencia</h4>
+                    </div>
+
+                    <table class="theory-table">
+                        <tr><th>NR</th><th>Clasificación</th><th>Acción Requerida</th></tr>
+                        <tr><td>1-4</td><td>Aceptable</td><td>Mantener controles existentes</td></tr>
+                        <tr><td>5-9</td><td>Bajo</td><td>Mantener y mejorar controles</td></tr>
+                        <tr><td>10-16</td><td>Medio</td><td>Implementar controles pronto</td></tr>
+                        <tr><td>17-24</td><td>Alto</td><td>Acción inmediata</td></tr>
+                        <tr><td>25</td><td>Crítico</td><td>Suspender actividad hasta control</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L9-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Calcula el Nivel de Riesgo</h2>
+                    <p>Calcula el NR y clasifica el riesgo:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>NR=12:</strong> Probabilidad 4 × Consecuencia 3 = MEDIO</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>NR=20:</strong> Probabilidad 5 × Consecuencia 4 = ALTO</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>NR=25:</strong> Probabilidad 5 × Consecuencia 5 = CRÍTICO</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>NR=4:</strong> Probabilidad 2 × Consecuencia 2 = ACEPTABLE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L9-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 9</h2>
+                    <div class="quiz-container" id="quiz-L9">
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>1.</strong> Si P=4 y C=3, el NR es:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) 7 (Bajo)</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) 12 (Medio)</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) 43 (Crítico)</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) 4 (Aceptable)</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(9)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L9"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(9)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 10: PREVENCIÓN Y CONTROL -->
+        <section class="lesson-content" id="lesson-10">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 10</span>
+                <h1>Prevención y Control</h1>
+                <p class="lesson-desc">Identificar la jerarquía de controles.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(10, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(10, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(10, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L10-teoria">
+                <div class="theory-content">
+                    <h2>Jerarquía de Controles</h2>
+                    <p>Los controles se clasifican de más a menos efectivos:</p>
+
+                    <div class="pyramid-container">
+                        <div class="pyramid-level">1. ELIMINACIÓN (100% efectivo)</div>
+                        <div class="pyramid-level">2. SUSTITUCIÓN</div>
+                        <div class="pyramid-level">3. CONTROLES DE INGENIERÍA</div>
+                        <div class="pyramid-level">4. CONTROLES ADMINISTRATIVOS</div>
+                        <div class="pyramid-level">5. EPP (Último recurso)</div>
+                    </div>
+
+                    <h2>Ejemplos de Cada Control</h2>
+                    <div class="topic-card">
+                        <h3>🔴 ELIMINACIÓN</h3>
+                        <p>Quitar el peligro por completo. Ej: Eliminar el proceso de pintura con solventes tóxicos.</p>
+                    </div>
+                    <div class="topic-card">
+                        <h3>🟠 SUSTITUCIÓN</h3>
+                        <p>Reemplazar por algo menos peligroso. Ej: Usar pintura base agua en lugar de solventes.</p>
+                    </div>
+                    <div class="topic-card">
+                        <h3>🟡 INGENIERÍA</h3>
+                        <p>Aislar el peligro físicamente. Ej: Instalar cabina de extracción de humos.</p>
+                    </div>
+                    <div class="topic-card">
+                        <h3>🔵 ADMINISTRATIVOS</h3>
+                        <p>Cambiar cómo trabaja la gente. Ej: Rotación de trabajadores para limitar exposición.</p>
+                    </div>
+                    <div class="topic-card">
+                        <h3>⚪ EPP</h3>
+                        <p>Proteger a la persona. Ej: Respirador, guantes, gafas. SIEMPRE como último recurso.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L10-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Jerarquía de Controles</h2>
+                    <p>Ordena los controles del más al menos efectivo:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>1.</strong> Eliminación (quitar el peligro)</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>2.</strong> Sustitución (reemplazar por algo menos peligroso)</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>3.</strong> Controles de ingeniería (aislar el peligro)</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>4.</strong> Controles administrativos (cambiar procedimientos)</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>5.</strong> EPP (proteger a la persona)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L10-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 10</h2>
+                    <div class="quiz-container" id="quiz-L10">
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>1.</strong> ¿Cuál es el control MÁS efectivo?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) EPP</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Controles administrativos</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Eliminación del peligro</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Controles de ingeniería</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(10)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L10"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(10)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 11: EPP -->
+        <section class="lesson-content" id="lesson-11">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 11</span>
+                <h1>EPP - Elementos de Protección Personal</h1>
+                <p class="lesson-desc">Conocer los tipos y uso adecuado de protección personal.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(11, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(11, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(11, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L11-teoria">
+                <div class="theory-content">
+                    <h2>¿Qué es el EPP?</h2>
+                    
+                    <div class="info-box highlight">
+                        <h3>🦺 Definición</h3>
+                        <p>Equipo o dispositivo diseñado para proteger al trabajador de riesgos de seguridad y salud en el trabajo. Es el ÚLTIMO recurso en la jerarquía de controles.</p>
+                    </div>
+
+                    <h2>Tipos de EPP según el Riesgo</h2>
+                    
+                    <table class="theory-table">
+                        <tr><th>Riesgo</th><th>EPP Recomendado</th></tr>
+                        <tr><td>Caída de objetos</td><td>Casco, calzado con punta de acero</td></tr>
+                        <tr><td>Polvo/Partículas</td><td>Gafas de seguridad, tapabocas</td></tr>
+                        <tr><td>Ruido</td><td>Tapones auditivos, orejeras</td></tr>
+                        <tr><td>Productos químicos</td><td>Guantes químicos, gafas, bata</td></tr>
+                        <tr><td>Electricidad</td><td>Guantes dieléctricos, calzado aislante</td></tr>
+                        <tr><td>Trabajo en alturas</td><td>Arnés, línea de vida, casco</td></tr>
+                        <tr><td>Calor/Fuego</td><td>Ropa ignífuga, pantalla facial</td></tr>
+                    </table>
+
+                    <h2>Requisitos del EPP</h2>
+                    <ul>
+                        <li>✅ Proporcionado SIN COSTO por el empleador</li>
+                        <li>✅ En buen estado y mantenimiento</li>
+                        <li>✅ Ajustado al tamaño del trabajador</li>
+                        <li>✅ Reemplazado cuando esté dañado</li>
+                        <li>✅ Capacitación para su uso correcto</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L11-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Relaciona EPP con Riesgos</h2>
+                    <p>¿Qué EPP usarías para cada riesgo?</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Ruido excesivo:</strong> Tapones auditivos u orejeras</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Productos químicos:</strong> Guantes, gafas y bata</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Caída de objetos:</strong> Casco y calzado con punta de acero</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>Trabajo en alturas:</strong> Arnés y línea de vida</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L11-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 11</h2>
+                    <div class="quiz-container" id="quiz-L11">
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>1.</strong> ¿Quién debe proporcionar el EPP?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) El empleador</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) El trabajador</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) La ARL</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) El gobierno</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(11)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L11"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(11)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 12: SEÑALIZACIÓN -->
+        <section class="lesson-content" id="lesson-12">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 12</span>
+                <h1>Señalización y Colores de Seguridad</h1>
+                <p class="lesson-desc">Conocer los colores y símbolos de seguridad.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(12, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(12, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(12, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L12-teoria">
+                <div class="theory-content">
+                    <h2>Colores de Seguridad según NTC</h2>
+                    
+                    <table class="theory-table">
+                        <tr><th>Color</th><th>Significado</th><th>Uso</th></tr>
+                        <tr style="background:#dc2626; color:white;"><td><strong>🔴 ROJO</strong></td><td>Peligro - Prohibición</td><td>Paredes de salidas, extintores, PARE</td></tr>
+                        <tr style="background:#d69e2e; color:white;"><td><strong>🟡 AMARILLO</strong></td><td>Advertencia - Precaución</td><td>Peligros físicos, obstáculos, escalones</td></tr>
+                        <tr style="background:#059669; color:white;"><td><strong>🟢 VERDE</strong></td><td>Seguridad - Salida</td><td>Rutas de evacuación, botiquines</td></tr>
+                        <tr style="background:#2563eb; color:white;"><td><strong>🔵 AZUL</strong></td><td>Información - Obligación</td><td>Señales informativas, equipos contra incendio</td></tr>
+                    </table>
+
+                    <h2>Formas de las Señales</h2>
+                    <div class="diagram-grid">
+                        <div class="diagram-item" style="border-color:#dc2626;">
+                            <h4>⛔ PROHIBICIÓN</h4>
+                            <p>Círculo con diagonal - NO hacer algo</p>
+                        </div>
+                        <div class="diagram-item" style="border-color:#d69e2e;">
+                            <h4>⚠️ ADVERTENCIA</h4>
+                            <p>Triángulo amarillo - Peligro</p>
+                        </div>
+                        <div class="diagram-item" style="border-color:#059669;">
+                            <h4>🚪 SALIDA</h4>
+                            <p>Rectángulo verde - Ruta de escape</p>
+                        </div>
+                        <div class="diagram-item" style="border-color:#2563eb;">
+                            <h4>ℹ️ INFORMACIÓN</h4>
+                            <p>Rectángulo azul - Obligación</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L12-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Colores de Seguridad</h2>
+                    <p>Asociar cada color con su significado:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>ROJO:</strong> Peligro, prohibición, extintores</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>AMARILLO:</strong> Advertencia, precaución</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>VERDE:</strong> Seguridad, salidas de emergencia</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>AZUL:</strong> Información, obligación</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L12-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 12</h2>
+                    <div class="quiz-container" id="quiz-L12">
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>1.</strong> ¿Qué color indica prohibición?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Rojo</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Amarillo</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Verde</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Azul</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(12)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L12"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(12)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 13: ACCIDENTE LABORAL -->
+        <section class="lesson-content" id="lesson-13">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 13</span>
+                <h1>Accidente Laboral</h1>
+                <p class="lesson-desc">Conocer e identificar los conceptos y reporte de los accidentes laborales.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(13, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(13, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(13, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L13-teoria">
+                <div class="theory-content">
+                    <h2>Definición Legal</h2>
+                    
+                    <div class="info-box purple">
+                        <h3>📜 Ley 1562/2012</h3>
+                        <p>"Accidente de trabajo es todo hecho repentino que sobreviene por causa o con ocasión del trabajo y que produce en el trabajador una lesión orgánica, una perturbación funcional, una invalidez o la muerte."</p>
+                    </div>
+
+                    <h2>¿Accidente de Trabajo o No?</h2>
+                    <div class="diagram-grid">
+                        <div class="diagram-item highlight">
+                            <h4>✅ ES ACCIDENTE DE TRABAJO</h4>
+                            <p>Durante jornada laboral, en lugar de trabajo, por órdenes del empleador</p>
+                        </div>
+                        <div class="diagram-item">
+                            <h4>❌ NO ES ACCIDENTE</h4>
+                            <p>Por dolo, mala fe, estado de ebriedad, deportes extremos</p>
+                        </div>
+                    </div>
+
+                    <h2>Investigación de Accidentes</h2>
+                    <div class="checklist-container">
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>1.</strong> Asegurar el área y atender al lesionado</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>2.</strong> Preservar la escena del accidente</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>3.</strong> Entrevistar testigos</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>4.</strong> Identificar causas (inmediatas y básicas)</span>
+                        </div>
+                        <div class="check-item checked">
+                            <span class="check-box">✓</span>
+                            <span><strong>5.</strong> Determinar acciones correctivas</span>
+                        </div>
+                    </div>
+
+                    <h2>Reporte a la ARL</h2>
+                    <ul>
+                        <li>⏰ Reporte INMEDIATO a la EPS/ARL</li>
+                        <li>📋 Formato de reporte de accidente de trabajo</li>
+                        <li>📝 Investigación documentada</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L13-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Pasos de Investigación</h2>
+                    <p>Ordena los pasos para investigar un accidente:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>1.</strong> Asegurar el área y atender al lesionado</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>2.</strong> Preservar la escena del accidente</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>3.</strong> Entrevistar testigos</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>4.</strong> Identificar causas inmediatas y básicas</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>5.</strong> Determinar acciones correctivas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L13-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 13</h2>
+                    <div class="quiz-container" id="quiz-L13">
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>1.</strong> ¿Cuándo se debe reportar un accidente laboral?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) En 30 días</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Inmediatamente</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Cuando el trabajador lo solicite</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Al final del mes</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(13)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L13"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(13)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 14: ENFERMEDAD LABORAL -->
+        <section class="lesson-content" id="lesson-14">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 14</span>
+                <h1>Enfermedad Laboral</h1>
+                <p class="lesson-desc">Identificar y clasificar las causas y consecuencias de las enfermedades laborales.</p>
+            </div>
+            
+            <div class="content-tabs">
+                <button class="tab-btn active" onclick="showTab(14, 'teoria')">📖 Teoría</button>
+                <button class="tab-btn" onclick="showTab(14, 'actividad')">✏️ Actividad</button>
+                <button class="tab-btn" onclick="showTab(14, 'eval')">📝 Quiz</button>
+            </div>
+            
+            <div class="tab-content active" id="L14-teoria">
+                <div class="theory-content">
+                    <h2>Definición Legal</h2>
+                    
+                    <div class="info-box highlight">
+                        <h3>📜 Ley 1562/2012</h3>
+                        <p>"Enfermedad laboral es la contracción o aggravación de una enfermedad profesional, catalogada por el Gobierno Nacional, como consecuencia de la exposición a factores de riesgo inherentes a la actividad laboral."</p>
+                    </div>
+
+                    <h2>Tabla de Enfermedades Laborales</h2>
+                    <p>El Decreto 1477 de 2014 establece la tabla de enfermedades laborales.</p>
+
+                    <h3>Ejemplos de Enfermedades Laborales</h3>
+                    <table class="theory-table">
+                        <tr><th>Factor de Riesgo</th><th>Enfermedad</th></tr>
+                        <tr><td>Ruido</td><td>Hipoacusia neurosensorial</td></tr>
+                        <tr><td>Sílice cristalina</td><td>Silicosis</td></tr>
+                        <tr><td>Movimientos repetitivos</td><td>Tendinitis, síndrome del túnel carpiano</td></tr>
+                        <tr><td>Posturas forzadas</td><td>Lumbalgia crónica</td></tr>
+                        <tr><td>Estrés laboral</td><td>Burnout, depresión</td></tr>
+                        <tr><td>Exposición a químicos</td><td>Asma ocupacional, dermatitis</td></tr>
+                    </table>
+
+                    <h2>Diferencias Clave</h2>
+                    <div class="diagram-grid">
+                        <div class="diagram-item highlight">
+                            <h4>💥 ACCIDENTE</h4>
+                            <p>Evento súbito e inesperado</p>
+                            <p>Se puede fechar con precisión</p>
+                        </div>
+                        <div class="diagram-item">
+                            <h4>🤒 ENFERMEDAD</h4>
+                            <p>Desarrollo gradual</p>
+                            <p>Difícil determinar cuándo inició</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L14-actividad">
+                <div class="theory-content">
+                    <h2>✏️ Actividad: Diferencia Accidente vs Enfermedad</h2>
+                    <p>Clasifica cada caso:</p>
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>ACCIDENTE:</strong> Un trabajador cae de una escalera (evento súbito)</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>ENFERMEDAD:</strong> Silicosis por exposición prolongada a sílice</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>ACCIDENTE:</strong> Corte con maquinaria (evento repentino)</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span><strong>ENFERMEDAD:</strong> Hipoacusia por años trabajando sin protección auditiva</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="L14-eval">
+                <div class="eval-content">
+                    <h2>📝 Quiz - Lección 14</h2>
+                    <div class="quiz-container" id="quiz-L14">
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>1.</strong> ¿Qué norma establece la tabla de enfermedades laborales?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Decreto 1477/2014</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Decreto 1072/2015</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Ley 1562/2012</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Resolución 0312/2019</label>
+                            </div>
+                        </div>
+                        <button onclick="validarQuiz(14)" class="btn-submit">Enviar Respuestas</button>
+                        <div class="quiz-result" id="result-L14"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(14)">Marcar como completada y continuar →</button>
+        </section>
+
+        <!-- LESSON 15: PARCIAL FINAL -->
+        <section class="lesson-content" id="lesson-15">
+            <div class="lesson-header">
+                <span class="lesson-tag exam">📋 PARCIAL FINAL</span>
+                <h1 class="exam-title">Evaluación Final</h1>
+                <p class="lesson-desc">Evaluar y reflexionar sobre los conocimientos vistos en clase.</p>
+            </div>
+            
+            <div class="tab-content active">
+                <div class="eval-content">
+                    <div class="info-box purple">
+                        <h3>⚠️ Instrucciones del Parcial Final</h3>
+                        <p>Este examen cubre las lecciones 9-14. Responde todas las preguntas. Necesitas 70% para aprobar.</p>
+                    </div>
+                    
+                    <div class="quiz-container" id="quiz-PF">
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>1.</strong> ¿Qué nivel de riesgo es NR=20?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Medio</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Alto</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Crítico</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Bajo</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>2.</strong> ¿Cuál es el control MENOS efectivo?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Eliminación</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Sustitución</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) EPP</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Ingeniería</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>3.</strong> ¿Qué color indica precaución?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Amarillo</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Rojo</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Azul</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Verde</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>4.</strong> ¿Qué es una enfermedad laboral?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Un resfrío común</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Una enfermedad causada por factores de riesgo laborales</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Una alergia alimentaria</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Un accidente leve</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>5.</strong> La hipoacusia neurosensorial es causada por:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) Exposición al ruido</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Exposición a químicos</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Posturas forzadas</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Vibraciones</label>
+                            </div>
+                        </div>
+
+                        <button onclick="validarQuiz('PF')" class="btn-submit">Enviar Parcial Final</button>
+                        <div class="quiz-result" id="result-PF"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(15)">Finalizar y Ver Resultados →</button>
+        </section>
+
+        <!-- LESSON 16: RETROALIMENTACIÓN -->
+        <section class="lesson-content" id="lesson-16">
+            <div class="lesson-header">
+                <span class="lesson-tag">SESIÓN 16</span>
+                <h1>Retroalimentación y Nivelación</h1>
+                <p class="lesson-desc">Retroalimentación de la asignatura, reflexión y exposición de nivelaciones.</p>
+            </div>
+            
+            <div class="tab-content active">
+                <div class="theory-content">
+                    <h2>📊 Resumen del Curso</h2>
+                    
+                    <div class="info-box highlight">
+                        <h3>✅ Temas Cubiertos</h3>
+                        <p>Has completado las 16 sesiones del curso de Seguridad Ocupacional I.</p>
+                    </div>
+
+                    <h2>Conceptos Clave Revisados</h2>
+                    <ul>
+                        <li>⚡ <strong>Peligro</strong> vs <strong>Riesgo</strong></li>
+                        <li>📜 <strong>Marco Legal</strong>: Decreto 1072, Ley 1562, Resolución 0312</li>
+                        <li>🔄 <strong>Ciclo PHVA</strong></li>
+                        <li>🛡️ <strong>SG-SST</strong> y sus actores</li>
+                        <li>📋 <strong>Matriz de Riesgos</strong> (GTC 45)</li>
+                        <li>🔒 <strong>Jerarquía de Controles</strong></li>
+                        <li>🦺 <strong>EPP</strong></li>
+                        <li>🚦 <strong>Señalización</strong></li>
+                        <li>💥 <strong>Accidente</strong> vs <strong>Enfermedad</strong> Laboral</li>
+                    </ul>
+
+                    <h2>📝 Autoevaluación Final</h2>
+                    <p>Reflexiona sobre tu aprendizaje:</p>
+                    
+                    <div class="checklist-container">
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span>¿Puedo explicar la diferencia entre peligro y riesgo?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span>¿Conozco las principales normas de SST en Colombia?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span>¿Puedo aplicar la metodología de la GTC 45?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span>¿Entiendo la jerarquía de controles?</span>
+                        </div>
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <span class="check-box">✓</span>
+                            <span>¿Sé cómo reportar un accidente laboral?</span>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>🎓 ¡Felicitaciones!</strong><br>
+                        Has completado el curso de Seguridad Ocupacional I. Ahora tienes las herramientas para identificar peligros, evaluar riesgos y aplicar controles para crear ambientes de trabajo más seguros.
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-next" onclick="completeLesson(16)">Finalizar Curso ✓</button>
+        </section>
+
+        <!-- QUIZ FINAL EXAM -->
+        <section class="lesson-content" id="lesson-final">
+            <div class="exam-header">
+                <span class="lesson-tag exam">🏆 QUIZ FINAL</span>
+                <h1>Evaluación Final del Curso</h1>
+                <p>15 preguntas sobre todos los temas | 70% para aprobar</p>
+            </div>
+            
+            <div class="tab-content active">
+                <div class="eval-content">
+                    <div class="info-box purple">
+                        <h3>📝 Instrucciones del Quiz Final</h3>
+                        <p>Este examen cubre todos los temas del curso. Responde las 15 preguntas. Necesitas 70% para aprobar.</p>
+                    </div>
+                    
+                    <div class="quiz-container" id="quiz-final">
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>1.</strong> ¿Qué es un peligro en el trabajo?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q1" value="a"> a) La probabilidad de que ocurra un daño</label>
+                                <label class="option"><input type="radio" name="q1" value="b"> b) Una fuente o situación con potencial de daño</label>
+                                <label class="option"><input type="radio" name="q1" value="c"> c) Un accidente que ya ocurrió</label>
+                                <label class="option"><input type="radio" name="q1" value="d"> d) Un documento de seguridad</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>2.</strong> ¿Qué significa la sigla SG-SST?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q2" value="a"> a) Sistema General de Seguridad y Salud</label>
+                                <label class="option"><input type="radio" name="q2" value="b"> b) Sistema de Gestión de Seguridad del Trabajo</label>
+                                <label class="option"><input type="radio" name="q2" value="c"> c) Sistema de Gestión de Seguridad y Salud en el Trabajo</label>
+                                <label class="option"><input type="radio" name="q2" value="d"> d) Servicio General de Seguridad y Salud</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>3.</strong> ¿Qué significa PHVA?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q3" value="a"> a) Planificar, Hacer, Verificar, Actuar</label>
+                                <label class="option"><input type="radio" name="q3" value="b"> b) Prevenir, Hornear, Vigilar, Asistir</label>
+                                <label class="option"><input type="radio" name="q3" value="c"> c) Procedimiento, Higiene, Valor, Acción</label>
+                                <label class="option"><input type="radio" name="q3" value="d"> d) Principios, Herramientas, Vigilancia, Apoyo</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>4.</strong> ¿Cuál es el método para evaluar riesgos según GTC 45?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q4" value="a"> a) Solo probabilidad</label>
+                                <label class="option"><input type="radio" name="q4" value="b"> b) Severidad x Probabilidad</label>
+                                <label class="option"><input type="radio" name="q4" value="c"> c) Suma de riesgos</label>
+                                <label class="option"><input type="radio" name="q4" value="d"> d) División simple</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>5.</strong> ¿Qué nivel de riesgo es NR=20 según la tabla?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q5" value="a"> a) Bajo</label>
+                                <label class="option"><input type="radio" name="q5" value="b"> b) Alto</label>
+                                <label class="option"><input type="radio" name="q5" value="c"> c) Crítico</label>
+                                <label class="option"><input type="radio" name="q5" value="d"> d) Medio</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>6.</strong> ¿Cuál es el control MÁS efectivo en la jerarquía?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q6" value="a"> a) Eliminación</label>
+                                <label class="option"><input type="radio" name="q6" value="b"> b) EPP</label>
+                                <label class="option"><input type="radio" name="q6" value="c"> c) Administración</label>
+                                <label class="option"><input type="radio" name="q6" value="d"> d) Señalización</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="d">
+                            <p class="question-text"><strong>7.</strong> ¿Qué color indica obligación/información?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q7" value="a"> a) Rojo</label>
+                                <label class="option"><input type="radio" name="q7" value="b"> b) Amarillo</label>
+                                <label class="option"><input type="radio" name="q7" value="c"> c) Verde</label>
+                                <label class="option"><input type="radio" name="q7" value="d"> d) Azul</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>8.</strong> ¿Qué color indica precaución?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q8" value="a"> a) Amarillo</label>
+                                <label class="option"><input type="radio" name="q8" value="b"> b) Rojo</label>
+                                <label class="option"><input type="radio" name="q8" value="c"> c) Azul</label>
+                                <label class="option"><input type="radio" name="q8" value="d"> d) Verde</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>9.</strong> Un NR de 25 es:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q9" value="a"> a) Bajo</label>
+                                <label class="option"><input type="radio" name="q9" value="b"> b) Medio</label>
+                                <label class="option"><input type="radio" name="q9" value="c"> c) Crítico</label>
+                                <label class="option"><input type="radio" name="q9" value="d"> d) Aceptable</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>10.</strong> La hipoacusia neurosensorial es causada por:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q10" value="a"> a) Exposición a químicos</label>
+                                <label class="option"><input type="radio" name="q10" value="b"> b) Exposición al ruido</label>
+                                <label class="option"><input type="radio" name="q10" value="c"> c) Posturas forzadas</label>
+                                <label class="option"><input type="radio" name="q10" value="d"> d) Vibraciones</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>11.</strong> ¿Cuándo se reporta un accidente?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q11" value="a"> a) Al día siguiente</label>
+                                <label class="option"><input type="radio" name="q11" value="b"> b) Inmediatamente</label>
+                                <label class="option"><input type="radio" name="q11" value="c"> c) Cuando el jefe lo solicite</label>
+                                <label class="option"><input type="radio" name="q11" value="d"> d) Solo si es grave</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="a">
+                            <p class="question-text"><strong>12.</strong> ¿Qué norma establece la tabla de enfermedades laborales?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q12" value="a"> a) Decreto 1477/2014</label>
+                                <label class="option"><input type="radio" name="q12" value="b"> b) Ley 1562/2012</label>
+                                <label class="option"><input type="radio" name="q12" value="c"> c) Decreto 1072/2015</label>
+                                <label class="option"><input type="radio" name="q12" value="d"> d) Resolución 0312</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="d">
+                            <p class="question-text"><strong>13.</strong> El EPP es siempre:</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q13" value="a"> a) El control más efectivo</label>
+                                <label class="option"><input type="radio" name="q13" value="b"> b) La primera opción</label>
+                                <label class="option"><input type="radio" name="q13" value="c"> c) Obligatorio siempre</label>
+                                <label class="option"><input type="radio" name="q13" value="d"> d) El último recurso en la jerarquía</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="b">
+                            <p class="question-text"><strong>14.</strong> ¿Qué organización da la certificación en SG-SST?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q14" value="a"> a) La empresa misma</label>
+                                <label class="option"><input type="radio" name="q14" value="b"> b) Una entidad certificadora autorizada</label>
+                                <label class="option"><input type="radio" name="q14" value="c"> c) El Ministerio de Salud</label>
+                                <label class="option"><input type="radio" name="q14" value="d"> d) Los trabajadores</label>
+                            </div>
+                        </div>
+
+                        <div class="question" data-correct="c">
+                            <p class="question-text"><strong>15.</strong> ¿Qué es unNR (Número de Riesgo)?</p>
+                            <div class="options">
+                                <label class="option"><input type="radio" name="q15" value="a"> a) El número de accidentes</label>
+                                <label class="option"><input type="radio" name="q15" value="b"> b) El número de trabajadores</label>
+                                <label class="option"><input type="radio" name="q15" value="c"> c) Un valor que resulta de severidad x probabilidad</label>
+                                <label class="option"><input type="radio" name="q15" value="d"> d) El número de peligros</label>
+                            </div>
+                        </div>
+
+                        <button onclick="validarQuiz('final')" class="btn-submit">Enviar Quiz Final</button>
+                        <div class="quiz-result" id="result-final"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- MODALES -->
+<div id="modalSuccess" class="modal">
+    <div class="modal-content success">
+        <div class="modal-icon">🎉</div>
+        <h2>¡Felicitaciones!</h2>
+        <p>Has aprobado el quiz. ¡Excelente trabajo!</p>
+        <button onclick="closeModalSuccess()">Continuar a siguiente lección →</button>
+    </div>
+</div>
+
+<div id="modalFail" class="modal">
+    <div class="modal-content fail">
+        <div class="modal-icon">💪</div>
+        <h2>¡No te rindas!</h2>
+        <p>El aprendizaje es un proceso. Revisa la teoría e intenta de nuevo, ¡tú puedes!</p>
+        <button onclick="closeModalFail()">Volver a intentar</button>
+    </div>
+</div>
+
+<div id="modalFinal" class="modal">
+    <div class="modal-content success">
+        <div class="modal-icon">🏆</div>
+        <h2>¡Curso Completado!</h2>
+        <p>Has aprobado todas las lecciones. ¡Es hora del Quiz Final!</p>
+        <button onclick="goToFinalQuiz()">Ir al Quiz Final 📝</button>
+    </div>
+</div>
+
+<div id="modalCourseComplete" class="modal">
+    <div class="modal-content success">
+        <div class="modal-icon">🎓</div>
+        <h2>¡Felicidades!</h2>
+        <p>¡Has completado el curso de Seguridad Ocupacional I con éxito!</p>
+        <button onclick="closeModalCourseComplete()">Cerrar</button>
+    </div>
+</div>
+
+<script>
+// Navigation
+function showLesson(lessonNum) {
+    // Check if lesson is locked
+    if(lessonNum !== 'final' && lessonNum !== 1) {
+        const progress = JSON.parse(localStorage.getItem('sstProgress') || '{}');
+        const prevLesson = lessonNum - 1;
+        const examLessons = [8, 15];
+        const isExamLesson = examLessons.includes(lessonNum);
+        
+        if(isExamLesson) {
+            // For exams, check if previous lessons are done
+            const requiredLessons = lessonNum === 8 ? 7 : 14;
+            if(!progress[requiredLessons]) {
+                alert('Debes completar las lecciones anteriores primero');
+                return;
+            }
+        } else if(!progress[prevLesson]) {
+            alert('Debes completar el quiz de la lección anterior primero');
+            return;
+        }
+    }
+    
+    document.querySelectorAll('.lesson-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.lesson-btn').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.module-progress').forEach(el => el.classList.remove('active'));
+    
+    if(lessonNum === 'final') {
+        document.getElementById('lesson-final').classList.add('active');
+        document.getElementById('finalExamProgress').classList.add('active');
+    } else {
+        document.getElementById('lesson-' + lessonNum).classList.add('active');
+        const btn = document.querySelector('.lesson-btn[data-lesson="' + lessonNum + '"]');
+        if(btn) btn.classList.add('active');
+        const progress = document.querySelector('.module-progress[data-lesson="' + lessonNum + '"]');
+        if(progress) progress.classList.add('active');
+    }
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        if(btn.closest('.lesson-content.active')) {
+            btn.classList.remove('active');
+        }
+    });
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    
+    const firstTab = document.querySelector('#lesson-' + lessonNum + ' .tab-btn');
+    const firstContent = document.querySelector('#lesson-' + lessonNum + ' .tab-content');
+    if(lessonNum !== 'final' && firstTab) firstTab.classList.add('active');
+    if(firstContent) firstContent.classList.add('active');
+    
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function showTab(lessonNum, tabName) {
+    const lesson = document.getElementById('lesson-' + lessonNum);
+    lesson.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    lesson.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    
+    lesson.querySelector('.tab-btn[onclick*="' + tabName + '"]').classList.add('active');
+    lesson.querySelector('#L' + lessonNum + '-' + tabName).classList.add('active');
+}
+
+function toggleCheck(el) {
+    el.classList.toggle('checked');
+}
+
+// Maps quiz IDs to their lesson numbers for progress tracking
+const QUIZ_TO_LESSON = { 'P1': 8, 'PF': 15 };
+
+function validarQuiz(lessonId) {
+    const quizId = typeof lessonId === 'string' ? lessonId : 'L' + lessonId;
+    const quiz = document.getElementById('quiz-' + quizId);
+    const questions = quiz.querySelectorAll('.question');
+    let correctas = 0;
+
+    questions.forEach(question => {
+        const correctAnswer = question.dataset.correct;
+        const options = question.querySelectorAll('.option');
+        options.forEach(opt => {
+            opt.classList.remove('correct', 'incorrect');
+            const input = opt.querySelector('input');
+            if(input.checked) {
+                if(input.value === correctAnswer) {
+                    opt.classList.add('correct');
+                } else {
+                    opt.classList.add('incorrect');
+                }
+            }
+        });
+        const selected = question.querySelector('input:checked');
+        if(selected && selected.value === correctAnswer) {
+            correctas++;
+        }
+    });
+
+    const total = questions.length;
+    const porcentaje = Math.round((correctas / total) * 100);
+
+    if(porcentaje >= 70) {
+        if(quizId === 'final') {
+            document.getElementById('modalCourseComplete').classList.add('show');
+            const progress = JSON.parse(localStorage.getItem('sstProgress') || '{}');
+            progress['final'] = true;
+            localStorage.setItem('sstProgress', JSON.stringify(progress));
+        } else {
+            document.getElementById('modalSuccess').classList.add('show');
+            // Resolve quiz ID to actual lesson number (P1→8, PF→15, or numeric)
+            const lessonNum = QUIZ_TO_LESSON[lessonId] !== undefined ? QUIZ_TO_LESSON[lessonId] : lessonId;
+            markLessonComplete(lessonNum);
+        }
+    } else {
+        document.getElementById('modalFail').classList.add('show');
+    }
+}
+
+function markLessonComplete(lessonNum) {
+    document.getElementById('status-' + lessonNum).textContent = '✓';
+    document.getElementById('status-' + lessonNum).style.color = 'var(--green)';
+    
+    const progress = JSON.parse(localStorage.getItem('sstProgress') || '{}');
+    progress[lessonNum] = true;
+    localStorage.setItem('sstProgress', JSON.stringify(progress));
+    
+    document.querySelector('.module-progress[data-lesson="' + lessonNum + '"]').classList.add('completed');
+    
+    // Unlock next lesson
+    const nextLessonNum = parseInt(lessonNum) + 1;
+    if(nextLessonNum <= 16) {
+        const nextBtn = document.querySelector('.lesson-btn[data-lesson="' + nextLessonNum + '"]');
+        if(nextBtn) {
+            nextBtn.classList.remove('locked');
+        }
+    }
+    
+    // Check if all 16 lessons done
+    let completedCount = 0;
+    for(let i = 1; i <= 16; i++) {
+        if(progress[i]) completedCount++;
+    }
+    if(completedCount === 16) {
+        const finalBtn = document.getElementById('finalLessonBtn');
+        finalBtn.classList.remove('locked');
+        finalBtn.classList.add('unlocked');
+        document.getElementById('status-final').textContent = '📝';
+        document.getElementById('finalExamProgress').classList.remove('final-locked');
+        document.getElementById('finalExamProgress').classList.add('unlocked');
+        document.getElementById('modalFinal').classList.add('show');
+    }
+}
+
+function completeLesson(lessonNum) {
+    const progress = JSON.parse(localStorage.getItem('sstProgress') || '{}');
+
+    // Lesson 16 (retroalimentación) has no quiz — mark directly
+    if(lessonNum === 16) {
+        markLessonComplete(16);
+        return;
+    }
+
+    // Exams: must pass the parcial first
+    if(lessonNum === 8 || lessonNum === 15) {
+        if(progress[lessonNum]) {
+            const next = lessonNum + 1;
+            if(next <= 16) showLesson(next);
+        } else {
+            alert('Debes aprobar el parcial (mínimo 70%) para continuar.');
+        }
+        return;
+    }
+
+    // Regular lesson: must pass the quiz
+    if(progress[lessonNum]) {
+        const next = lessonNum + 1;
+        if(next <= 16) showLesson(next);
+    } else {
+        showTab(lessonNum, 'eval');
+        document.querySelector('#lesson-' + lessonNum + ' .eval-content')
+            ?.scrollIntoView({behavior: 'smooth'});
+        alert('Primero aprueba el quiz de esta lección (mínimo 70%) para continuar.');
+    }
+}
+
+function closeModalSuccess() {
+    document.querySelectorAll('.modal').forEach(m => m.classList.remove('show'));
+    document.querySelectorAll('.quiz-container input').forEach(input => input.checked = false);
+    document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('correct', 'incorrect');
+    });
+
+    const currentLesson = document.querySelector('.lesson-content.active');
+    if(currentLesson) {
+        const lessonId = currentLesson.id.replace('lesson-', '');
+        const nextLesson = parseInt(lessonId) + 1;
+        if(nextLesson <= 16) {
+            showLesson(nextLesson);
+        }
+    }
+}
+
+function closeModalFail() {
+    document.querySelectorAll('.modal').forEach(m => m.classList.remove('show'));
+    document.querySelectorAll('.quiz-container input').forEach(input => input.checked = false);
+    document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('correct', 'incorrect');
+    });
+}
+
+function goToFinalQuiz() {
+    document.querySelectorAll('.modal').forEach(m => m.classList.remove('show'));
+    document.querySelectorAll('.lesson-content').forEach(el => el.classList.remove('active'));
+    document.getElementById('lesson-final').classList.add('active');
+    document.getElementById('finalExamProgress').classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function closeModalCourseComplete() {
+    document.querySelectorAll('.modal').forEach(m => m.classList.remove('show'));
+}
+
+// Load progress from localStorage
+document.addEventListener('DOMContentLoaded', function() {
+    // Namespace radio button names per quiz to avoid cross-quiz interference
+    document.querySelectorAll('.quiz-container').forEach(quiz => {
+        const prefix = quiz.id; // e.g. quiz-L1, quiz-P1, quiz-PF, quiz-final
+        quiz.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.name = prefix + '_' + input.name;
+        });
+    });
+
+    // Lock all lessons except 1
+    for(let i = 2; i <= 16; i++) {
+        const btn = document.querySelector('.lesson-btn[data-lesson="' + i + '"]');
+        if(btn) btn.classList.add('locked');
+    }
+    
+    const saved = localStorage.getItem('sstProgress');
+    if(saved) {
+        const progress = JSON.parse(saved);
+        let completedCount = 0;
+        Object.keys(progress).forEach(lesson => {
+            if(progress[lesson]) {
+                document.getElementById('status-' + lesson).textContent = '✓';
+                document.getElementById('status-' + lesson).style.color = 'var(--green)';
+                document.querySelector('.module-progress[data-lesson="' + lesson + '"]').classList.add('completed');
+                
+                // Unlock next lesson
+                const nextNum = parseInt(lesson) + 1;
+                if(nextNum <= 16) {
+                    const nextBtn = document.querySelector('.lesson-btn[data-lesson="' + nextNum + '"]');
+                    if(nextBtn) nextBtn.classList.remove('locked');
+                }
+                completedCount++;
+            }
+        });
+        if(completedCount === 16) {
+            const finalBtn = document.getElementById('finalLessonBtn');
+            finalBtn.classList.remove('locked');
+            finalBtn.classList.add('unlocked');
+            document.getElementById('status-final').textContent = '📝';
+            document.getElementById('finalExamProgress').classList.remove('final-locked');
+            document.getElementById('finalExamProgress').classList.add('unlocked');
+        }
+    }
+});
+</script>
+
+</body>
+</html>

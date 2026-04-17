@@ -127,6 +127,7 @@ $_SESSION['admin_preview'] = true;
         .curso-card.ingles::before    { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
         .curso-card.kids::before      { background: linear-gradient(90deg, #f59e0b, #ef4444); }
         .curso-card.almacen::before   { background: linear-gradient(90deg, #10b981, #059669); }
+        .curso-card.sst::before       { background: linear-gradient(90deg, #059669, #047857); }
 
         .curso-icon {
             width: 52px;
@@ -140,6 +141,7 @@ $_SESSION['admin_preview'] = true;
         .ingles .curso-icon    { background: #eef2ff; }
         .kids .curso-icon      { background: #fff7ed; }
         .almacen .curso-icon   { background: #ecfdf5; }
+        .sst .curso-icon       { background: #ecfdf5; }
 
         .curso-card h3 {
             font-size: 1rem;
@@ -177,6 +179,7 @@ $_SESSION['admin_preview'] = true;
         }
         .kids .btn-ver   { color: #d97706; }
         .almacen .btn-ver { color: #059669; }
+        .sst .btn-ver     { color: #047857; }
 
         .info-box {
             background: #eff6ff;
@@ -256,6 +259,20 @@ $_SESSION['admin_preview'] = true;
             </div>
             <h3>INTEP Kids</h3>
             <p>Plataforma interactiva de inglés para niños. Incluye mapa de aventuras, módulos gamificados y actividades lúdicas.</p>
+            <div class="btn-ver">Ver curso <span>→</span></div>
+        </a>
+    </div>
+
+    <!-- SEGURIDAD Y SALUD EN EL TRABAJO -->
+    <div class="section-title">Técnico Laboral — Seguridad y Salud en el Trabajo</div>
+    <div class="cursos-grid">
+        <a href="../cursoseguridad ocupacional/CURSO_SST_INTERACTIVO.html" class="curso-card sst">
+            <div class="curso-icon">🦺</div>
+            <div>
+                <span class="curso-nivel nivel-tec">Técnico Laboral</span>
+            </div>
+            <h3>Seguridad Ocupacional I</h3>
+            <p>16 sesiones sobre SST, marco legal colombiano, SG-SST, ciclo PHVA, identificación de peligros, EPP, señalización y enfermedades laborales.</p>
             <div class="btn-ver">Ver curso <span>→</span></div>
         </a>
     </div>
