@@ -1,4 +1,4 @@
-?php
+<?php
 require_once __DIR__ . '/../config.php';
 $es_admin_preview = !empty($_SESSION['admin_preview']) && ($_SESSION['usuario_rol'] ?? '') === 'admin';
 if (empty($_SESSION['usuario_id']) || (empty($_SESSION['estudiante_id']) && !$es_admin_preview)) {
