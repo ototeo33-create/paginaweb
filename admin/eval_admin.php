@@ -157,30 +157,44 @@ function badgeTexto($pct) {
         .card-title i { color:var(--green); }
 
         /* Control section */
-        .control-row { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+        .control-row { display:flex; align-items:flex-end; gap:20px; flex-wrap:wrap; }
         .control-row input[type=text] {
             padding:10px 15px; border:2px solid #e0e0e0; border-radius:10px; font-family:'Exo 2',sans-serif;
             font-size:0.95em; width:250px;
         }
         .control-row input:focus { outline:none; border-color:var(--green); }
 
-        .toggle-switch { position:relative; width:56px; height:30px; }
-        .toggle-switch input { opacity:0; width:0; height:0; }
-        .toggle-slider {
-            position:absolute; cursor:pointer; inset:0; background:#ccc; border-radius:30px; transition:0.3s;
+        /* Big enable/disable button */
+        .eval-toggle-btn {
+            display:inline-flex; align-items:center; gap:10px;
+            padding:12px 28px; border:none; border-radius:12px; font-family:'Exo 2',sans-serif;
+            font-size:1em; font-weight:700; cursor:pointer; transition:all 0.25s;
+            box-shadow:0 4px 14px rgba(0,0,0,0.12);
         }
-        .toggle-slider:before {
-            content:''; position:absolute; height:24px; width:24px; left:3px; bottom:3px;
-            background:white; border-radius:50%; transition:0.3s;
+        .eval-toggle-btn.activar {
+            background:linear-gradient(135deg,var(--green) 0%,var(--green-dark) 100%);
+            color:white;
         }
-        .toggle-switch input:checked + .toggle-slider { background:var(--green); }
-        .toggle-switch input:checked + .toggle-slider:before { transform:translateX(26px); }
+        .eval-toggle-btn.activar:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(5,150,105,0.35); }
+        .eval-toggle-btn.desactivar {
+            background:linear-gradient(135deg,#ef4444 0%,#b91c1c 100%);
+            color:white;
+        }
+        .eval-toggle-btn.desactivar:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(239,68,68,0.35); }
 
+        /* Status pill */
         .status-badge {
-            display:inline-block; padding:5px 15px; border-radius:20px; font-weight:600; font-size:0.85em;
+            display:inline-flex; align-items:center; gap:6px;
+            padding:6px 16px; border-radius:20px; font-weight:700; font-size:0.9em;
         }
+        .status-badge::before { content:''; width:8px; height:8px; border-radius:50%; display:inline-block; }
         .status-badge.active { background:var(--green-pale); color:var(--green-dark); }
+        .status-badge.active::before { background:var(--green); animation:pulse 1.5s infinite; }
         .status-badge.inactive { background:#fef2f2; color:#dc2626; }
+        .status-badge.inactive::before { background:#dc2626; }
+        @keyframes pulse {
+            0%,100% { opacity:1; } 50% { opacity:0.3; }
+        }
 
         .btn {
             padding:10px 25px; border:none; border-radius:10px; font-size:0.9em; font-weight:600;
@@ -259,46 +273,63 @@ function badgeTexto($pct) {
         <!-- Control de evaluacion -->
         <div class="card">
             <div class="card-title"><i class="fas fa-power-off"></i> Control de Evaluacion</div>
-            <form method="POST">
+
+            <form method="POST" id="formControl">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
                 <input type="hidden" name="accion" value="toggle">
+                <input type="hidden" name="activa" id="inputActiva" value="<?php echo $eval_activa ? '0' : '1'; ?>">
+
                 <div class="control-row">
+                    <!-- Periodo -->
                     <div>
-                        <label style="font-weight:600;font-size:0.9em;display:block;margin-bottom:6px;">Periodo</label>
+                        <label style="font-weight:600;font-size:0.9em;display:block;margin-bottom:6px;">Periodo academico</label>
                         <input type="text" name="periodo" value="<?php echo sanitizeInput($periodo_actual); ?>" placeholder="Ej: 2025-2026 II" required>
                     </div>
-                    <div style="text-align:center;">
-                        <label style="font-weight:600;font-size:0.9em;display:block;margin-bottom:6px;">Estado</label>
-                        <label class="toggle-switch">
-                            <input type="checkbox" name="activa" value="1" <?php echo $eval_activa ? 'checked' : ''; ?>>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
+
+                    <!-- Estado pill -->
                     <div>
-                        <label style="font-weight:600;font-size:0.9em;display:block;margin-bottom:6px;">&nbsp;</label>
+                        <label style="font-weight:600;font-size:0.9em;display:block;margin-bottom:6px;">Estado actual</label>
                         <span class="status-badge <?php echo $eval_activa ? 'active' : 'inactive'; ?>">
-                            <?php echo $eval_activa ? 'Activa' : 'Inactiva'; ?>
+                            <?php echo $eval_activa ? 'Evaluacion activa' : 'Evaluacion inactiva'; ?>
                         </span>
                     </div>
+
+                    <!-- Boton grande -->
                     <div>
                         <label style="font-weight:600;font-size:0.9em;display:block;margin-bottom:6px;">&nbsp;</label>
-                        <button type="submit" class="btn btn-green"><i class="fas fa-save"></i> Guardar</button>
+                        <?php if ($eval_activa): ?>
+                            <button type="button" class="eval-toggle-btn desactivar" onclick="confirmarToggle(false)">
+                                <i class="fas fa-stop-circle"></i> Desactivar evaluacion
+                            </button>
+                        <?php else: ?>
+                            <button type="submit" class="eval-toggle-btn activar">
+                                <i class="fas fa-play-circle"></i> Activar evaluacion
+                            </button>
+                        <?php endif; ?>
                     </div>
+
+                    <?php if ($eval_activa): ?>
+                    <!-- Ver formulario -->
+                    <div>
+                        <label style="font-weight:600;font-size:0.9em;display:block;margin-bottom:6px;">&nbsp;</label>
+                        <a href="../evaluar_docente.php" target="_blank" class="btn btn-purple" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                            <i class="fas fa-external-link-alt"></i> Ver formulario
+                        </a>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </form>
-            <?php if ($eval_activa): ?>
-            <div style="margin-top:15px;">
-                <a href="../evaluar_docente.php" target="_blank" class="btn btn-purple" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-                    <i class="fas fa-external-link-alt"></i> Ver formulario
-                </a>
-                <form method="POST" style="display:inline;">
-                    <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
-                    <input type="hidden" name="accion" value="desactivar">
-                    <button type="submit" class="btn btn-red" style="margin-left:10px;" onclick="return confirm('Desactivar la evaluacion?')">
-                        <i class="fas fa-stop"></i> Desactivar ahora
-                    </button>
-                </form>
-            </div>
+
+            <?php if ($ctrl && $ctrl['fecha_inicio']): ?>
+            <p style="margin-top:14px;font-size:0.82em;color:var(--text-light);">
+                <i class="fas fa-clock"></i>
+                <?php if ($eval_activa): ?>
+                    Activa desde <?php echo date('d/m/Y H:i', strtotime($ctrl['fecha_inicio'])); ?>
+                <?php else: ?>
+                    Ultimo periodo: <strong><?php echo sanitizeInput($ctrl['periodo']); ?></strong>
+                    <?php if ($ctrl['fecha_fin']): ?> &middot; Cerrada el <?php echo date('d/m/Y H:i', strtotime($ctrl['fecha_fin'])); ?><?php endif; ?>
+                <?php endif; ?>
+            </p>
             <?php endif; ?>
         </div>
 
@@ -391,5 +422,15 @@ function badgeTexto($pct) {
     </div>
 
 <script src="/intep/sesion.js"></script>
+<script>
+function confirmarToggle(activar) {
+    const msg = activar
+        ? '¿Activar la evaluacion docente para este periodo?'
+        : '¿Desactivar la evaluacion? Los estudiantes ya no podran enviar respuestas.';
+    if (!confirm(msg)) return;
+    document.getElementById('inputActiva').value = activar ? '1' : '0';
+    document.getElementById('formControl').submit();
+}
+</script>
 </body>
 </html>
