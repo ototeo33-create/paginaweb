@@ -583,12 +583,16 @@ const FORK_MAX = 3.0;
 let forkMoving = false; // si las horquillas están en movimiento
 
 // ==================== FÍSICAS E INERCIA ====================
-let playerVelocityX = 0;
+// playerSpeed: velocidad escalar en el eje local (adelante/atrás). Sin deslizamiento lateral.
+let playerSpeed = 0;
+let playerVelocityX = 0;  // derivada de playerSpeed, mantenida para animación de ruedas
 let playerVelocityZ = 0;
-const BASE_SPEED = 0.15;
-const ACCELERATION = 0.03;
-const DECELERATION = 0.05;
-const MAX_SPEED = 0.25;
+const BASE_SPEED   = 0.18;  // velocidad de crucero
+const MAX_SPEED    = 0.28;  // tope absoluto
+const REVERSE_RATIO = 0.55; // reversa es 55% de la velocidad de frente
+const ACCELERATION = 0.09;  // qué tan rápido alcanza la velocidad objetivo (antes 0.03)
+const DECELERATION = 0.14;  // fricción al soltar W/S (antes 0.05)
+const BRAKE_FORCE  = 0.25;  // freno al presionar dirección opuesta al movimiento
 const TURN_SPEED = 0.05;
 let flickerTime = 0;
 
@@ -3747,6 +3751,9 @@ function startGame(missionNum) {
     playerGroup.position.set(0, 0, 20);
     playerGroup.rotation.y = 0;
     playerRotation = 0;
+    playerSpeed = 0;
+    playerVelocityX = 0;
+    playerVelocityZ = 0;
     if (playerGroup.userData.forkGroup) {
         playerGroup.userData.forkGroup.position.y = forkHeight;
     }
@@ -3939,53 +3946,67 @@ function animate() {
     requestAnimationFrame(animate);
 
     if (gameStarted && !gameEnded && !gamePaused) {
-        // Calculate acceleration based on input
-        let targetSpeedX = 0;
-        let targetSpeedZ = 0;
-        
-        if (keys['w'] || keys['arrowup']) {
-            targetSpeedX = Math.sin(playerRotation) * BASE_SPEED;
-            targetSpeedZ = Math.cos(playerRotation) * BASE_SPEED;
+        // ===== FÍSICA ESCALAR: velocidad bloqueada al eje del chasis (no hay deslizamiento lateral) =====
+        const forwardKey = keys['w'] || keys['arrowup'];
+        const reverseKey = keys['s'] || keys['arrowdown'];
+
+        // Límite de velocidad según carga
+        const maxFwd = MAX_SPEED * (hasLoad ? 0.65 : 1.0);
+        const maxRev = MAX_SPEED * REVERSE_RATIO * (hasLoad ? 0.65 : 1.0);
+
+        // Velocidad objetivo (escalar: + = adelante, - = reversa)
+        let targetSpeed = 0;
+        if (forwardKey && !reverseKey) targetSpeed = BASE_SPEED;
+        else if (reverseKey && !forwardKey) targetSpeed = -BASE_SPEED * REVERSE_RATIO;
+
+        // Si la entrada es opuesta al movimiento → freno (más fuerte que aceleración)
+        const brakingInput = (forwardKey && playerSpeed < -0.01) || (reverseKey && playerSpeed > 0.01);
+        if (brakingInput) {
+            playerSpeed *= (1 - BRAKE_FORCE);
+        } else if (targetSpeed !== 0) {
+            // Aceleración progresiva hacia el objetivo
+            playerSpeed += (targetSpeed - playerSpeed) * ACCELERATION;
+        } else {
+            // Sin entrada → fricción de rodadura
+            playerSpeed *= (1 - DECELERATION);
+            if (Math.abs(playerSpeed) < 0.001) playerSpeed = 0;
         }
-        if (keys['s'] || keys['arrowdown']) {
-            targetSpeedX = -Math.sin(playerRotation) * BASE_SPEED;
-            targetSpeedZ = -Math.cos(playerRotation) * BASE_SPEED;
+
+        // Clamp a velocidad máxima
+        if (playerSpeed > maxFwd) playerSpeed = maxFwd;
+        if (playerSpeed < -maxRev) playerSpeed = -maxRev;
+
+        // ===== ROTACIÓN con steering realista =====
+        // El montacargas (dirección por ruedas traseras) puede pivotar en reposo pero más lento.
+        const speedMag = Math.abs(playerSpeed);
+        const speedFactor = Math.min(speedMag / BASE_SPEED, 1);
+        const rotateMul = 0.35 + 0.65 * speedFactor;           // 35% parado, 100% a velocidad crucero
+        const effectiveRotate = rotateSpeed * rotateMul;
+
+        // Dirección invertida en reversa (como un carro real)
+        const rotSign = playerSpeed < -0.005 ? -1 : 1;
+        let turningSharp = false;
+        if (keys['a'] || keys['arrowleft'])  { playerRotation += effectiveRotate * rotSign; playerGroup.rotation.y = playerRotation; turningSharp = true; }
+        if (keys['d'] || keys['arrowright']) { playerRotation -= effectiveRotate * rotSign; playerGroup.rotation.y = playerRotation; turningSharp = true; }
+
+        // Pérdida leve de velocidad al girar a alta velocidad (simula agarre)
+        if (turningSharp && speedMag > BASE_SPEED * 0.6) {
+            playerSpeed *= 0.985;
         }
-        
-        // Apply acceleration towards target speed
-        const acc = ACCELERATION;
-        playerVelocityX += (targetSpeedX - playerVelocityX) * acc;
-        playerVelocityZ += (targetSpeedZ - playerVelocityZ) * acc;
-        
-        // Apply deceleration when no input
-        if (!(keys['w'] || keys['arrowup'] || keys['s'] || keys['arrowdown'])) {
-            playerVelocityX *= (1 - DECELERATION);
-            playerVelocityZ *= (1 - DECELERATION);
-            // Stop when very slow
-            if (Math.abs(playerVelocityX) < 0.001) playerVelocityX = 0;
-            if (Math.abs(playerVelocityZ) < 0.001) playerVelocityZ = 0;
-        }
-        
-        // Limit maximum speed (reduce when carrying load)
-        let maxSpeed = MAX_SPEED;
-        if (hasLoad) maxSpeed *= 0.7; // 30% slower with load
-        
-        const currentSpeed = Math.sqrt(playerVelocityX * playerVelocityX + playerVelocityZ * playerVelocityZ);
-        if (currentSpeed > maxSpeed) {
-            const scale = maxSpeed / currentSpeed;
-            playerVelocityX *= scale;
-            playerVelocityZ *= scale;
-        }
-        
-        // Apply movement with collision detection
-        if (playerVelocityX !== 0 || playerVelocityZ !== 0) {
+
+        // ===== TRASLACIÓN: velocidad siempre alineada con el chasis (sin patinaje) =====
+        playerVelocityX = Math.sin(playerRotation) * playerSpeed;
+        playerVelocityZ = Math.cos(playerRotation) * playerSpeed;
+
+        if (playerSpeed !== 0) {
             const newX = playerGroup.position.x + playerVelocityX;
             const newZ = playerGroup.position.z + playerVelocityZ;
             if (!checkCollision(newX, newZ)) {
                 playerGroup.position.x = newX;
                 playerGroup.position.z = newZ;
             } else {
-                // Collision: stop velocity in that direction
+                // Colisión: detener totalmente (impacto)
+                playerSpeed = 0;
                 playerVelocityX = 0;
                 playerVelocityZ = 0;
                 if (!collisionsHit) {
@@ -3997,10 +4018,6 @@ function animate() {
                 }
             }
         }
-        
-        // Rotation (unchanged)
-        if (keys['a'] || keys['arrowleft']) { playerRotation += rotateSpeed; playerGroup.rotation.y = playerRotation; }
-        if (keys['d'] || keys['arrowright']) { playerRotation -= rotateSpeed; playerGroup.rotation.y = playerRotation; }
         if (hasLoad && currentLoad) { 
             currentLoad.position.x = playerGroup.position.x + Math.sin(playerRotation) * 2.5; 
             currentLoad.position.z = playerGroup.position.z + Math.cos(playerRotation) * 2.5; 
