@@ -1120,6 +1120,7 @@ body::before{
   .hero-float .fl-number{font-size:3rem}
 }
 @media(max-width:1024px){
+  .hero{min-height:50vw}
   .hero-left{padding:8rem 2rem 4rem;text-align:center;align-items:center}
   .hero-desc{margin-left:auto;margin-right:auto}
   .hero-subtitle{letter-spacing:3px}
@@ -1132,7 +1133,11 @@ body::before{
 @media(max-width:768px){
   .nav-menu{display:none}
   .burger{display:flex}
+  .hero{min-height:56vw;max-height:70vw}
+  .hero-stripe{height:40px}
   .hero-left{padding:7rem 1.5rem 3rem}
+  .text-marquee{padding:.5rem 0}
+  .text-marquee-track span{font-size:.82rem}
   .about,.programs,.contact{padding:4rem 1.5rem}
   .programs-grid{grid-template-columns:1fr 1fr}
   .contact-cards{grid-template-columns:1fr}
