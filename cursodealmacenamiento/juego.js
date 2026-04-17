@@ -2355,118 +2355,511 @@ function createPallet(x, z, color, taskIndex) {
 function createPlayer() {
     playerGroup = new THREE.Group();
 
-    // Chasis
-    const chassisGeo = new THREE.BoxGeometry(1.4, 0.4, 2.4);
-    const chassisMat = new THREE.MeshStandardMaterial({ color: 0xe94560, metalness: 0.3 });
-    const chassis = new THREE.Mesh(chassisGeo, chassisMat);
-    chassis.position.y = 0.5;
-    chassis.castShadow = true;
+    // ===== Textura de placa INTEP =====
+    function createTextTexture(text, textColor = '#FFFFFF', bgColor = '#1f7a1f') {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 512; canvas.height = 256;
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 8;
+        ctx.strokeRect(12, 12, canvas.width - 24, canvas.height - 24);
+        ctx.font = 'bold 120px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.fillText(text, canvas.width / 2 + 4, canvas.height / 2 - 18);
+        ctx.fillStyle = textColor;
+        ctx.fillText(text, canvas.width / 2, canvas.height / 2 - 22);
+        ctx.font = 'bold 26px Arial';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText('INSTITUTO TECNICO PEDAGOGICO', canvas.width / 2, canvas.height - 34);
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.needsUpdate = true;
+        return texture;
+    }
+
+    // ===== Materiales PBR =====
+    const matBody       = new THREE.MeshStandardMaterial({ color: 0x1f7a1f, metalness: 0.55, roughness: 0.35 });
+    const matBodyDark   = new THREE.MeshStandardMaterial({ color: 0x155215, metalness: 0.55, roughness: 0.40 });
+    const matChassis    = new THREE.MeshStandardMaterial({ color: 0x222831, metalness: 0.70, roughness: 0.50 });
+    const matSteel      = new THREE.MeshStandardMaterial({ color: 0x6a7176, metalness: 0.90, roughness: 0.30 });
+    const matChrome     = new THREE.MeshStandardMaterial({ color: 0xc8c8c8, metalness: 0.95, roughness: 0.15 });
+    const matRubber     = new THREE.MeshStandardMaterial({ color: 0x141414, metalness: 0.10, roughness: 0.95 });
+    const matRim        = new THREE.MeshStandardMaterial({ color: 0xb5b5b5, metalness: 0.85, roughness: 0.25 });
+    const matBlack      = new THREE.MeshStandardMaterial({ color: 0x141414, metalness: 0.50, roughness: 0.50 });
+    const matSeat       = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.10, roughness: 0.90 });
+    const matYellow     = new THREE.MeshStandardMaterial({ color: 0xf4c20d, metalness: 0.40, roughness: 0.50, emissive: 0x8a6a00, emissiveIntensity: 0.4 });
+    const matFork       = new THREE.MeshStandardMaterial({ color: 0x3d4348, metalness: 0.85, roughness: 0.35 });
+    const matHydraulic  = new THREE.MeshStandardMaterial({ color: 0xe0e0e0, metalness: 0.95, roughness: 0.10 });
+    const matHeadlight  = new THREE.MeshBasicMaterial({ color: 0xfffbe6 });
+    const matTaillight  = new THREE.MeshBasicMaterial({ color: 0xff2020 });
+
+    // ============================================================
+    // 1. CHASIS INFERIOR (placa biselada con esquinas redondeadas)
+    // ============================================================
+    const chassisShape = new THREE.Shape();
+    (function () {
+        const w = 1.45, l = 2.55, r = 0.22;
+        chassisShape.moveTo(-w/2 + r, -l/2);
+        chassisShape.lineTo(w/2 - r, -l/2);
+        chassisShape.quadraticCurveTo(w/2, -l/2, w/2, -l/2 + r);
+        chassisShape.lineTo(w/2, l/2 - r);
+        chassisShape.quadraticCurveTo(w/2, l/2, w/2 - r, l/2);
+        chassisShape.lineTo(-w/2 + r, l/2);
+        chassisShape.quadraticCurveTo(-w/2, l/2, -w/2, l/2 - r);
+        chassisShape.lineTo(-w/2, -l/2 + r);
+        chassisShape.quadraticCurveTo(-w/2, -l/2, -w/2 + r, -l/2);
+    })();
+    const chassisGeo = new THREE.ExtrudeGeometry(chassisShape, {
+        depth: 0.42, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.05, bevelSegments: 2, curveSegments: 6
+    });
+    chassisGeo.rotateX(-Math.PI / 2);
+    chassisGeo.translate(0, 0.48, 0);
+    const chassis = new THREE.Mesh(chassisGeo, matChassis);
+    chassis.castShadow = true; chassis.receiveShadow = true;
     playerGroup.add(chassis);
 
-    // Cuerpo
-    const bodyGeo = new THREE.BoxGeometry(1.2, 1.2, 1.6);
-    const body = new THREE.Mesh(bodyGeo, chassisMat);
-    body.position.y = 1.25;
-    body.castShadow = true;
-    playerGroup.add(body);
-
-    // Cabina
-    const cabinGeo = new THREE.BoxGeometry(1.1, 1, 0.9);
-    const cabinMat = new THREE.MeshStandardMaterial({ color: 0x2c3e50, metalness: 0.5 });
-    const cabin = new THREE.Mesh(cabinGeo, cabinMat);
-    cabin.position.set(0, 2.1, -0.2);
-    playerGroup.add(cabin);
-
-    // Ventanas
-    const windowMat = new THREE.MeshStandardMaterial({ color: 0x87ceeb, transparent: true, opacity: 0.6, metalness: 0.9 });
-    const windowFront = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.5, 0.05), windowMat);
-    windowFront.position.set(0, 2.15, 0.26);
-    playerGroup.add(windowFront);
-
-    [-0.5, 0.5].forEach(x => {
-        const w = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.4, 0.5), windowMat);
-        w.position.set(x, 2.15, -0.2);
-        playerGroup.add(w);
+    // Estribos laterales (negros, antideslizantes)
+    [-0.72, 0.72].forEach(x => {
+        const step = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.55), matBlack);
+        step.position.set(x, 0.55, 0.1);
+        playerGroup.add(step);
     });
 
-    // Techo
-    const roofGeo = new THREE.BoxGeometry(1.3, 0.1, 1.4);
-    const roofMat = new THREE.MeshStandardMaterial({ color: 0xf1c40f });
-    const roof = new THREE.Mesh(roofGeo, roofMat);
-    roof.position.y = 2.65;
-    roof.castShadow = true;
-    playerGroup.add(roof);
+    // ============================================================
+    // 2. CONTRAPESO TRASERO (masa redondeada que incluye motor)
+    // ============================================================
+    const cwShape = new THREE.Shape();
+    (function () {
+        const w = 1.5, h = 1.2, r = 0.32;
+        cwShape.moveTo(-w/2, 0);
+        cwShape.lineTo(w/2, 0);
+        cwShape.lineTo(w/2, h - r);
+        cwShape.quadraticCurveTo(w/2, h, w/2 - r, h);
+        cwShape.lineTo(-w/2 + r, h);
+        cwShape.quadraticCurveTo(-w/2, h, -w/2, h - r);
+        cwShape.closePath();
+    })();
+    const cwGeo = new THREE.ExtrudeGeometry(cwShape, {
+        depth: 1.1, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.1, bevelSegments: 4, curveSegments: 8
+    });
+    cwGeo.translate(0, 0, -1.1); // extrusión hacia -Z (atrás)
+    const counterweight = new THREE.Mesh(cwGeo, matBodyDark);
+    counterweight.position.set(0, 0.5, -0.35);
+    counterweight.castShadow = true;
+    playerGroup.add(counterweight);
 
-    // Mastil
-    const mastGeo = new THREE.BoxGeometry(0.15, 2.2, 0.15);
-    const mastMat = new THREE.MeshStandardMaterial({ color: 0x7f8c8d, metalness: 0.8 });
-    [-0.4, 0.4].forEach(x => {
-        const mast = new THREE.Mesh(mastGeo, mastMat);
-        mast.position.set(x, 1.4, 1);
-        playerGroup.add(mast);
+    // Rejillas de ventilación en los laterales del contrapeso
+    [-0.76, 0.76].forEach(x => {
+        for (let i = 0; i < 4; i++) {
+            const louver = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.04, 0.5), matBlack);
+            louver.position.set(x, 0.95 + i * 0.08, -0.85);
+            playerGroup.add(louver);
+        }
     });
 
-    // Horquillas (grupo móvil)
+    // Placa INTEP en la parte trasera del contrapeso
+    const textTexture = createTextTexture('INTEP');
+    const plaqueMat = new THREE.MeshBasicMaterial({ map: textTexture, side: THREE.DoubleSide });
+    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.5), plaqueMat);
+    plaque.position.set(0, 1.0, -1.47);
+    plaque.rotation.y = Math.PI;
+    playerGroup.add(plaque);
+    playerGroup.userData.intepText = plaque;
+
+    // Tapa superior del motor (pequeño panel sobre el contrapeso)
+    const engineTop = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.06, 0.7), matBodyDark);
+    engineTop.position.set(0, 1.73, -0.85);
+    playerGroup.add(engineTop);
+    for (let i = 0; i < 5; i++) {
+        const vent = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.02, 0.04), matBlack);
+        vent.position.set(0, 1.77, -1.05 + i * 0.1);
+        playerGroup.add(vent);
+    }
+
+    // ============================================================
+    // 3. ZONA DEL OPERADOR (piso, asiento, dashboard)
+    // ============================================================
+    // Piso antideslizante
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.04, 0.8), matBlack);
+    floor.position.set(0, 0.93, 0.35);
+    playerGroup.add(floor);
+    // Franjas amarillas del piso
+    for (let i = -1; i <= 1; i += 2) {
+        const stripe = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.045, 0.06), matYellow);
+        stripe.position.set(0, 0.933, 0.35 + i * 0.3);
+        playerGroup.add(stripe);
+    }
+
+    // Base del asiento
+    const seatBase = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.12, 0.48), matSeat);
+    seatBase.position.set(0, 1.2, 0.1);
+    playerGroup.add(seatBase);
+    // Cojín redondeado
+    const seatCushion = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.26, 0.26, 0.48, 16, 1, false, 0, Math.PI),
+        matSeat
+    );
+    seatCushion.rotation.x = -Math.PI / 2;
+    seatCushion.rotation.z = Math.PI;
+    seatCushion.position.set(0, 1.3, 0.1);
+    playerGroup.add(seatCushion);
+
+    // Respaldo inclinado
+    const backrest = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.7, 0.1), matSeat);
+    backrest.position.set(0, 1.62, -0.15);
+    backrest.rotation.x = -0.12;
+    playerGroup.add(backrest);
+    // Borde superior del respaldo
+    const backTop = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.52, 12), matSeat);
+    backTop.rotation.z = Math.PI / 2;
+    backTop.position.set(0, 1.96, -0.23);
+    playerGroup.add(backTop);
+
+    // Columna de dirección (angulada)
+    const column = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.85, 12), matChrome);
+    column.position.set(0, 1.32, 0.58);
+    column.rotation.x = -0.32;
+    playerGroup.add(column);
+
+    // Volante (corona + 3 radios + cubo)
+    const swGroup = new THREE.Group();
+    const swRing = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.022, 8, 24), matBlack);
+    swGroup.add(swRing);
+    for (let i = 0; i < 3; i++) {
+        const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.33, 6), matBlack);
+        spoke.rotation.z = (i * Math.PI) / 3;
+        swGroup.add(spoke);
+    }
+    const swHub = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.04, 12), matSteel);
+    swHub.rotation.x = Math.PI / 2;
+    swGroup.add(swHub);
+    swGroup.position.set(0, 1.65, 0.72);
+    swGroup.rotation.x = (Math.PI / 2) - 0.32;
+    playerGroup.add(swGroup);
+
+    // Tablero con 2 relojes (fuel + carga)
+    const dash = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.22, 0.12), matBlack);
+    dash.position.set(0, 1.4, 0.85);
+    dash.rotation.x = 0.35;
+    playerGroup.add(dash);
+    for (let side = -1; side <= 1; side += 2) {
+        const gRing = new THREE.Mesh(new THREE.TorusGeometry(0.065, 0.01, 8, 16), matChrome);
+        gRing.position.set(side * 0.18, 1.44, 0.92);
+        gRing.rotation.x = 0.35;
+        playerGroup.add(gRing);
+        const gFace = new THREE.Mesh(
+            new THREE.CircleGeometry(0.06, 16),
+            new THREE.MeshBasicMaterial({ color: side < 0 ? 0x00ff55 : 0x333333 })
+        );
+        gFace.position.set(side * 0.18, 1.44, 0.928);
+        gFace.rotation.x = 0.35;
+        playerGroup.add(gFace);
+        if (side < 0) playerGroup.userData.fuelIndicator = gFace;
+        else playerGroup.userData.loadIndicator = gFace;
+    }
+
+    // Palancas hidráulicas al lado derecho del asiento
+    for (let i = 0; i < 2; i++) {
+        const leverBar = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.42, 8), matChrome);
+        leverBar.position.set(0.38, 1.52, 0.1 + i * 0.12);
+        leverBar.rotation.x = 0.18;
+        playerGroup.add(leverBar);
+        const knob = new THREE.Mesh(
+            new THREE.SphereGeometry(0.045, 12, 12),
+            new THREE.MeshStandardMaterial({ color: i === 0 ? 0xcc0000 : 0x0055cc })
+        );
+        knob.position.set(0.38, 1.72, 0.13 + i * 0.12);
+        playerGroup.add(knob);
+    }
+
+    // ============================================================
+    // 4. JAULA DE SEGURIDAD ROPS (overhead guard, abierta)
+    // ============================================================
+    const postGeo = new THREE.CylinderGeometry(0.05, 0.05, 1.55, 10);
+    const postPositions = [[-0.6, 0.82], [0.6, 0.82], [-0.6, -0.45], [0.6, -0.45]];
+    postPositions.forEach(([x, z]) => {
+        const post = new THREE.Mesh(postGeo, matBodyDark);
+        post.position.set(x, 1.78, z);
+        playerGroup.add(post);
+    });
+    // Marco superior
+    [-0.45, 0.82].forEach(z => {
+        const bar = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.08, 0.08), matBodyDark);
+        bar.position.set(0, 2.53, z);
+        playerGroup.add(bar);
+    });
+    [-0.6, 0.6].forEach(x => {
+        const bar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 1.32), matBodyDark);
+        bar.position.set(x, 2.53, 0.185);
+        playerGroup.add(bar);
+    });
+    // Rejilla del techo (barrotes transversales + longitudinales)
+    for (let i = 1; i < 6; i++) {
+        const g = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.025, 0.03), matBlack);
+        g.position.set(0, 2.53, -0.45 + i * 0.22);
+        playerGroup.add(g);
+    }
+    for (let i = 1; i < 4; i++) {
+        const g = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.025, 1.24), matBlack);
+        g.position.set(-0.6 + i * 0.3, 2.53, 0.185);
+        playerGroup.add(g);
+    }
+
+    // ============================================================
+    // 5. MASTIL (columnas de viga I + cilindro hidráulico + cadenas)
+    // ============================================================
+    const mastGroup = new THREE.Group();
+    mastGroup.name = 'mast';
+
+    // Perfil viga I
+    const ibeam = new THREE.Shape();
+    (function () {
+        const bw = 0.14, bh = 0.16, tw = 0.035;
+        ibeam.moveTo(-bw/2, -bh/2);
+        ibeam.lineTo(bw/2, -bh/2);
+        ibeam.lineTo(bw/2, -bh/2 + tw);
+        ibeam.lineTo(tw/2, -bh/2 + tw);
+        ibeam.lineTo(tw/2, bh/2 - tw);
+        ibeam.lineTo(bw/2, bh/2 - tw);
+        ibeam.lineTo(bw/2, bh/2);
+        ibeam.lineTo(-bw/2, bh/2);
+        ibeam.lineTo(-bw/2, bh/2 - tw);
+        ibeam.lineTo(-tw/2, bh/2 - tw);
+        ibeam.lineTo(-tw/2, -bh/2 + tw);
+        ibeam.lineTo(-bw/2, -bh/2 + tw);
+        ibeam.closePath();
+    })();
+    const ibeamGeo = new THREE.ExtrudeGeometry(ibeam, { depth: 2.8, bevelEnabled: false });
+    ibeamGeo.rotateX(-Math.PI / 2);
+    [-0.42, 0.42].forEach(x => {
+        const col = new THREE.Mesh(ibeamGeo, matSteel);
+        col.position.set(x, 0.3, 1.15);
+        mastGroup.add(col);
+    });
+    // Cross-bar superior del mástil
+    const mastTop = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.1, 0.14), matSteel);
+    mastTop.position.set(0, 3.05, 1.15);
+    mastGroup.add(mastTop);
+
+    // Cilindro hidráulico principal (detrás del mástil, centrado)
+    const hydraCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 2.0, 14), matHydraulic);
+    hydraCyl.position.set(0, 1.4, 1.02);
+    mastGroup.add(hydraCyl);
+    const hydraPiston = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.4, 12), matChrome);
+    hydraPiston.position.set(0, 2.6, 1.02);
+    mastGroup.add(hydraPiston);
+    // Cadenas de elevación
+    [-0.1, 0.1].forEach(x => {
+        const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 2.4, 6), matBlack);
+        chain.position.set(x, 1.7, 1.02);
+        mastGroup.add(chain);
+    });
+
+    // ============================================================
+    // 6. CARRO + HORQUILLAS EN L (grupo móvil)
+    // ============================================================
     const forkGroup = new THREE.Group();
     forkGroup.name = 'forks';
-    const forkGeo = new THREE.BoxGeometry(0.1, 0.05, 2);
-    const forkMat = new THREE.MeshStandardMaterial({ color: 0x5d6d7e, metalness: 0.9 });
-    [-0.35, 0.35].forEach(x => {
-        const fork = new THREE.Mesh(forkGeo, forkMat);
-        fork.position.set(x, 0, 0); // posición relativa al grupo
-        forkGroup.add(fork);
+
+    // Plancha del carro
+    const carriage = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.6, 0.07), matSteel);
+    carriage.position.set(0, 0.3, 0);
+    forkGroup.add(carriage);
+    // Refuerzos del carro
+    [0.2, -0.2].forEach(y => {
+        const bar = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.04, 0.09), matSteel);
+        bar.position.set(0, 0.3 + y, -0.03);
+        forkGroup.add(bar);
     });
-    forkGroup.position.set(0, forkHeight, 1.8); // altura inicial
-    playerGroup.add(forkGroup);
+    // Horquillas en L (parte vertical + uña horizontal + punta biselada)
+    [-0.33, 0.33].forEach(x => {
+        const vert = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.6, 0.06), matFork);
+        vert.position.set(x, 0.3, 0.07);
+        forkGroup.add(vert);
+        const tine = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 1.3), matFork);
+        tine.position.set(x, 0.0, 0.75);
+        forkGroup.add(tine);
+        const tip = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.26, 4), matFork);
+        tip.rotation.x = Math.PI / 2;
+        tip.rotation.z = Math.PI / 4;
+        tip.scale.set(1, 1, 0.55);
+        tip.position.set(x, -0.005, 1.5);
+        forkGroup.add(tip);
+    });
+    forkGroup.position.set(0, forkHeight, 1.22);
+    mastGroup.add(forkGroup);
+
+    playerGroup.add(mastGroup);
     playerGroup.userData.forkGroup = forkGroup;
+    playerGroup.userData.mastGroup = mastGroup;
 
-    // Contrapeso
-    const counterGeo = new THREE.BoxGeometry(1.1, 0.9, 0.7);
-    const counterMat = new THREE.MeshStandardMaterial({ color: 0x34495e });
-    const counter = new THREE.Mesh(counterGeo, counterMat);
-    counter.position.set(0, 0.75, -1);
-    playerGroup.add(counter);
-
-    // Ruedas
-    const wheelGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.25, 16);
-    const wheelMat = new THREE.MeshStandardMaterial({ color: 0x2c3e50 });
-    [-0.7, 0.7].forEach(x => {
-        const wheel = new THREE.Mesh(wheelGeo, wheelMat);
-        wheel.rotation.z = Math.PI / 2;
-        wheel.position.set(x, 0.35, -0.8);
-        playerGroup.add(wheel);
+    // Cilindros de inclinación (chasis ↔ base del mástil)
+    [-0.4, 0.4].forEach(x => {
+        const tc = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.55, 10), matHydraulic);
+        tc.position.set(x, 0.95, 0.82);
+        tc.rotation.x = -0.7;
+        playerGroup.add(tc);
+        const tr = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.35, 8), matChrome);
+        tr.position.set(x, 1.12, 0.98);
+        tr.rotation.x = -0.7;
+        playerGroup.add(tr);
     });
 
-    const frontWheelGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.2, 16);
+    // ============================================================
+    // 7. RUEDAS DETALLADAS (neumático + llanta + cubo + pernos)
+    // ============================================================
+    function createWheel(radius, width) {
+        const g = new THREE.Group();
+        // Neumático
+        const tire = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, width, 24), matRubber);
+        g.add(tire);
+        // Labrado (taquitos alrededor)
+        for (let i = 0; i < 14; i++) {
+            const tread = new THREE.Mesh(new THREE.BoxGeometry(width * 0.85, 0.025, 0.06), matRubber);
+            const ang = (i / 14) * Math.PI * 2;
+            tread.position.set(0, Math.sin(ang) * (radius - 0.01), Math.cos(ang) * (radius - 0.01));
+            tread.rotation.x = ang;
+            g.add(tread);
+        }
+        // Rin
+        const rim = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.58, radius * 0.58, width + 0.012, 16), matRim);
+        g.add(rim);
+        // Cubo central
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.18, radius * 0.18, width + 0.04, 12), matChrome);
+        g.add(cap);
+        // Pernos
+        for (let i = 0; i < 5; i++) {
+            const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, width + 0.02, 6), matChrome);
+            const ang = (i / 5) * Math.PI * 2;
+            bolt.position.set(0, Math.sin(ang) * radius * 0.38, Math.cos(ang) * radius * 0.38);
+            g.add(bolt);
+        }
+        g.rotation.z = Math.PI / 2;
+        return g;
+    }
+
+    // Ruedas DELANTERAS (grandes, junto al mástil)
+    const frontWheelsGroup = new THREE.Group();
+    frontWheelsGroup.name = 'frontWheels';
+    [-0.78, 0.78].forEach(x => {
+        const wg = new THREE.Group();
+        const wheel = createWheel(0.4, 0.32);
+        wg.add(wheel);
+        wg.position.set(x, 0.4, 1.0);
+        wg.userData.wheel = wheel;
+        wg.userData.steeringAngle = 0;
+        frontWheelsGroup.add(wg);
+    });
+    playerGroup.add(frontWheelsGroup);
+    playerGroup.userData.frontWheels = frontWheelsGroup.children;
+    playerGroup.userData.frontWheelsGroup = frontWheelsGroup;
+
+    // Ruedas TRASERAS (pequeñas)
+    const rearWheelsGroup = new THREE.Group();
+    rearWheelsGroup.name = 'rearWheels';
+    [-0.6, 0.6].forEach(x => {
+        const wg = new THREE.Group();
+        const wheel = createWheel(0.3, 0.25);
+        wg.add(wheel);
+        wg.position.set(x, 0.3, -0.9);
+        wg.userData.wheel = wheel;
+        rearWheelsGroup.add(wg);
+    });
+    playerGroup.add(rearWheelsGroup);
+    playerGroup.userData.rearWheels = rearWheelsGroup.children;
+
+    // ============================================================
+    // 8. LUCES
+    // ============================================================
+    // Faros delanteros (carcasa cromada + lente)
+    [-0.48, 0.48].forEach(x => {
+        const housing = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.12, 12), matChrome);
+        housing.rotation.x = Math.PI / 2;
+        housing.position.set(x, 0.85, 1.3);
+        playerGroup.add(housing);
+        const lens = new THREE.Mesh(new THREE.CircleGeometry(0.09, 16), matHeadlight);
+        lens.position.set(x, 0.85, 1.37);
+        playerGroup.add(lens);
+    });
+    // Luces traseras
     [-0.55, 0.55].forEach(x => {
-        const wheel = new THREE.Mesh(frontWheelGeo, wheelMat);
-        wheel.rotation.z = Math.PI / 2;
-        wheel.position.set(x, 0.25, 0.9);
-        playerGroup.add(wheel);
+        const tl = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.1, 0.03), matTaillight);
+        tl.position.set(x, 0.75, -1.465);
+        playerGroup.add(tl);
+    });
+    // Baliza giratoria amarilla (sobre el techo de la jaula)
+    const beaconBase = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.09, 0.05, 12), matBlack);
+    beaconBase.position.set(0, 2.58, 0.18);
+    playerGroup.add(beaconBase);
+    const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.14, 12), matYellow);
+    beacon.position.set(0, 2.67, 0.18);
+    playerGroup.add(beacon);
+    playerGroup.userData.warningLight = beacon;
+
+    // ============================================================
+    // 9. DETALLES: espejos, agarraderas, escape
+    // ============================================================
+    // Espejos con brazo
+    [-1, 1].forEach(sign => {
+        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.24, 6), matBlack);
+        arm.position.set(sign * 0.64, 2.3, 0.75);
+        arm.rotation.z = sign * -0.55;
+        playerGroup.add(arm);
+        const mbody = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.12, 0.03), matBlack);
+        mbody.position.set(sign * 0.78, 2.33, 0.75);
+        playerGroup.add(mbody);
+        const mface = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.14, 0.1),
+            new THREE.MeshStandardMaterial({ color: 0xccddee, metalness: 1, roughness: 0.1 })
+        );
+        mface.position.set(sign * 0.78, 2.33, 0.766);
+        playerGroup.add(mface);
     });
 
-    // Luces
-    const lightGeo = new THREE.SphereGeometry(0.08, 16, 16);
-    const lightMat = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    [-0.35, 0.35].forEach(x => {
-        const light = new THREE.Mesh(lightGeo, lightMat);
-        light.position.set(x, 0.95, 1.2);
-        playerGroup.add(light);
-    });
+    // Agarradera amarilla de seguridad
+    const grab = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.42, 8), matYellow);
+    grab.position.set(-0.52, 2.0, -0.25);
+    grab.rotation.z = Math.PI / 2;
+    playerGroup.add(grab);
 
-    // Luz de advertencia
-    const warnLight = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), new THREE.MeshBasicMaterial({ color: 0x00ffcc }));
-    warnLight.position.set(0, 2.8, 0);
-    playerGroup.add(warnLight);
+    // Tubo de escape vertical
+    const stack = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.55, 10), matBlack);
+    stack.position.set(-0.55, 1.95, -0.4);
+    playerGroup.add(stack);
+    const stackCap = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.05, 10), matChrome);
+    stackCap.position.set(-0.55, 2.25, -0.4);
+    playerGroup.add(stackCap);
 
-    // Indicador de bateria
-    const batteryLight = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.12, 0.05), new THREE.MeshBasicMaterial({ color: 0x00ff00 }));
-    batteryLight.position.set(0, 1.95, 0.46);
+    // Interior de cabina (solo visible en primera persona)
+    const cabinInterior = new THREE.Group();
+    cabinInterior.visible = false;
+    const hud = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.6, 0.12),
+        new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.55 })
+    );
+    hud.position.set(0, 2.15, 0.72);
+    cabinInterior.add(hud);
+    playerGroup.add(cabinInterior);
+    playerGroup.userData.cabinInterior = cabinInterior;
+
+    // Indicador de batería (compatibilidad con código existente)
+    const batteryLight = new THREE.Mesh(
+        new THREE.BoxGeometry(0.25, 0.05, 0.03),
+        new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+    );
+    batteryLight.position.set(0, 1.36, 0.94);
+    batteryLight.rotation.x = 0.35;
     playerGroup.add(batteryLight);
     playerGroup.userData.batteryLight = batteryLight;
 
+    // ===== Posición inicial =====
     playerGroup.position.set(0, 0, 15);
     scene.add(playerGroup);
+
+    console.log('Montacargas INTEP rediseñado — modelo industrial con vigas I, contrapeso curvo y jaula ROPS');
 }
 
 // ==================== CONTROLES ====================
@@ -2603,17 +2996,18 @@ function updateCameraPosition() {
         const fc = document.getElementById('forkliftControls');
         if (fc) fc.style.display = 'none';
     } else if (cameraMode === 'first') {
-        // Camara dentro de la cabina
-        const cabinOffsetZ = -0.35;
+        // Camara en la cabeza del operador (nueva cabina ROPS)
+        const cabinOffsetZ = 0.05;  // justo delante del respaldo
+        const headHeight = 1.95;    // altura de la vista del operador
         camera.position.set(
             playerGroup.position.x + Math.sin(playerRotation) * cabinOffsetZ,
-            1.75,
+            headHeight,
             playerGroup.position.z + Math.cos(playerRotation) * cabinOffsetZ
         );
         camera.lookAt(
-            playerGroup.position.x + Math.sin(playerRotation) * 5,
-            1.2,
-            playerGroup.position.z + Math.cos(playerRotation) * 5
+            playerGroup.position.x + Math.sin(playerRotation) * 6,
+            headHeight - 0.35,  // mirada ligeramente hacia las horquillas
+            playerGroup.position.z + Math.cos(playerRotation) * 6
         );
         crosshair.style.display = 'block';
         if (cabinInterior) cabinInterior.visible = true;
@@ -3650,34 +4044,67 @@ function animate() {
         updateZoneLabels();
     }
 
-    // Animar ruedas traseras (motrices) - girar sobre su propio eje
-    if (playerGroup && playerGroup.userData.backWheels) {
-        if (keys['w'] || keys['arrowup']) {
-            playerGroup.userData.backWheels.forEach(function(wheel) {
-                wheel.rotation.x -= 0.2;
+    // ==================== ANIMACIÓN DE RUEDAS Y DIRECCIÓN ====================
+    if (playerGroup && playerGroup.userData.rearWheels && playerGroup.userData.frontWheels) {
+        const currentSpeed = Math.sqrt(playerVelocityX * playerVelocityX + playerVelocityZ * playerVelocityZ);
+        
+        // 1. ROTACIÓN DE RUEDAS TRASERAS (motrices, pequeñas) - proporcional a la velocidad
+        if (currentSpeed > 0.001) {
+            const wheelRotationSpeed = currentSpeed * 3.0; // factor de giro
+            const rotationDirection = (playerVelocityX * Math.sin(playerRotation) + playerVelocityZ * Math.cos(playerRotation)) > 0 ? 1 : -1;
+            
+            // Solo las ruedas TRASERAS (pequeñas) giran sobre su eje
+            playerGroup.userData.rearWheels.forEach(wheelGroup => {
+                if (wheelGroup.userData.wheel) {
+                    wheelGroup.userData.wheel.rotation.x += wheelRotationSpeed * rotationDirection;
+                }
             });
-            playerGroup.userData.frontWheels.forEach(function(wheel) {
-                wheel.rotation.x -= 0.2;
-            });
+            // Las ruedas DELANTERAS (grandes) NO giran sobre su eje, solo giran para dirección
         }
-        if (keys['s'] || keys['arrowdown']) {
-            playerGroup.userData.backWheels.forEach(function(wheel) {
-                wheel.rotation.x += 0.2;
-            });
-            playerGroup.userData.frontWheels.forEach(function(wheel) {
-                wheel.rotation.x += 0.2;
-            });
+        
+        // 2. DIRECCIÓN (giro de ruedas delanteras grandes)
+        let targetSteeringAngle = 0;
+        const maxSteeringAngle = Math.PI / 6; // 30 grados
+        
+        if (keys['a'] || keys['arrowleft']) {
+            targetSteeringAngle = maxSteeringAngle;
+        } else if (keys['d'] || keys['arrowright']) {
+            targetSteeringAngle = -maxSteeringAngle;
         }
+        
+        // Suavizar transición del ángulo de dirección
+        playerGroup.userData.steeringAngle = playerGroup.userData.steeringAngle || 0;
+        playerGroup.userData.steeringAngle += (targetSteeringAngle - playerGroup.userData.steeringAngle) * 0.2;
+        
+        // Aplicar ángulo de dirección a cada rueda delantera
+        playerGroup.userData.frontWheels.forEach(wheelGroup => {
+            wheelGroup.rotation.y = playerGroup.userData.steeringAngle;
+        });
+        
+        // 3. EFECTO DE SUSPENSIÓN (ligero movimiento vertical)
+        const time = Date.now() * 0.001;
+        // Ruedas TRASERAS (pequeñas) - altura inicial 0.3
+        playerGroup.userData.rearWheels.forEach((wheelGroup, idx) => {
+            const phase = idx * Math.PI;
+            const bounce = Math.sin(time * 2 + phase) * 0.02 * currentSpeed;
+            wheelGroup.position.y = 0.3 + bounce;
+        });
+        // Ruedas DELANTERAS (grandes) - altura inicial 0.4
+        playerGroup.userData.frontWheels.forEach((wheelGroup, idx) => {
+            const phase = idx * Math.PI;
+            const bounce = Math.sin(time * 2 + phase) * 0.02 * currentSpeed;
+            wheelGroup.position.y = 0.4 + bounce;
+        });
     }
 
-    // Animar baliza (parpadeo)
-    if (playerGroup && playerGroup.userData.beaconLight) {
+    // Animar luz de advertencia (parpadeo)
+    if (playerGroup && playerGroup.userData.warningLight) {
         beaconPulse += 0.1;
-        const beacon = playerGroup.userData.beaconLight;
+        const warningLight = playerGroup.userData.warningLight;
         const intensity = (Math.sin(beaconPulse) + 1) / 2;
         const baseColor = new THREE.Color(0xff8800);
         const brightColor = new THREE.Color(0xffdd00);
-        beacon.material.color.lerpColors(baseColor, brightColor, intensity);
+        warningLight.material.color.lerpColors(baseColor, brightColor, intensity);
     }
 
     // Parpadeo de luces fluorescentes del almacén
