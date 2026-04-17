@@ -148,7 +148,7 @@ body::before{
 .hero{
   min-height:100vh;display:flex;align-items:center;
   position:relative;overflow:hidden;
-  background:#033d2e;
+  background:#000;
 }
 /* Hero background slider */
 .hero-bg-slider{position:absolute;inset:0;z-index:0;}
@@ -158,13 +158,7 @@ body::before{
   transition:opacity 1.8s ease-in-out;
 }
 .hero-bg-slider img.active{opacity:1;}
-.hero::after{
-  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
-  background:
-    linear-gradient(160deg,rgba(3,61,46,.70) 0%,rgba(4,120,87,.62) 50%,rgba(10,92,63,.70) 100%),
-    radial-gradient(circle at 20% 60%,rgba(16,185,129,.08),transparent 50%),
-    radial-gradient(circle at 80% 30%,rgba(4,120,87,.10),transparent 50%);
-}
+.hero::after{display:none;}
 .hero-left{
   display:flex;flex-direction:column;justify-content:center;
   padding:8rem 2rem 4rem 4rem;position:relative;z-index:2;
@@ -367,6 +361,32 @@ body::before{
   background:var(--cream);
   clip-path:polygon(0 60%,100% 0,100% 100%,0% 100%);
 }
+
+/* Hero logo derecha */
+.hero-logo-right{
+  position:absolute;right:3rem;top:50%;transform:translateY(-50%);
+  z-index:2;
+}
+.hero-logo-right img{
+  height:clamp(100px,14vw,180px);object-fit:contain;
+  filter:drop-shadow(0 4px 24px rgba(0,0,0,.35));
+}
+
+/* Text marquee encima del marquee morado */
+.text-marquee{
+  background:var(--cream);padding:.75rem 0;overflow:hidden;
+  border-bottom:2px solid rgba(74,25,66,.08);
+}
+.text-marquee-track{
+  display:flex;align-items:center;gap:3rem;
+  animation:scroll 18s linear infinite;
+  white-space:nowrap;
+}
+.text-marquee-track span{
+  font-size:.95rem;font-weight:500;color:var(--text);flex-shrink:0;
+}
+.text-marquee-track strong{color:var(--green);}
+.tmq-sep{color:var(--green-light);font-size:.8rem;}
 
 /* ═══ MARQUEE ═══ */
 .marquee{
@@ -1288,28 +1308,31 @@ body::before{
     <img src="hero-carousel/7.jpg" alt="" loading="lazy">
     <img src="hero-carousel/8.jpg" alt="" loading="lazy">
     <img src="hero-carousel/9.jpg" alt="" loading="lazy">
-    <img src="hero-carousel/10.jpg" alt="" loading="lazy">
-    <img src="hero-carousel/11.jpg" alt="" loading="lazy">
-    <img src="hero-carousel/12.jpg" alt="" loading="lazy">
-    <img src="hero-carousel/13.jpg" alt="" loading="lazy">
-    <img src="hero-carousel/14.jpg" alt="" loading="lazy">
-    <img src="hero-carousel/15.jpg" alt="" loading="lazy">
-    <img src="hero-carousel/16.jpg" alt="" loading="lazy">
-    <img src="hero-carousel/17.jpg" alt="" loading="lazy">
-    <img src="hero-carousel/18.jpg" alt="" loading="lazy">
   </div>
   <div class="hero-left">
     <h1><em>INTEP</em></h1>
     <div class="hero-subtitle">Instituto Técnico Pedagógico</div>
     <div class="hero-accent"></div>
-    <p class="hero-desc">Comprometidos con tu <strong>formación</strong> y <strong>orientación</strong> al mundo laboral.</p>
-    <div class="hero-btns">
-      <a href="#programas" class="btn btn-fill"><i class="fas fa-book-open"></i> Ver programas</a>
-      <a href="https://wa.me/573166307633?text=Hola%2C%20quiero%20información%20sobre%20INTEP" class="btn btn-ghost" target="_blank"><i class="fab fa-whatsapp"></i> Escríbenos</a>
-    </div>
+  </div>
+  <div class="hero-logo-right">
+    <img src="logointep.png" alt="INTEP">
   </div>
   <div class="hero-stripe"></div>
 </section>
+
+<!-- TEXT MARQUEE -->
+<div class="text-marquee">
+  <div class="text-marquee-track">
+    <span>Comprometidos con tu <strong>formación</strong> y <strong>orientación</strong> al mundo laboral.</span>
+    <span class="tmq-sep">✦</span>
+    <span>Comprometidos con tu <strong>formación</strong> y <strong>orientación</strong> al mundo laboral.</span>
+    <span class="tmq-sep">✦</span>
+    <span>Comprometidos con tu <strong>formación</strong> y <strong>orientación</strong> al mundo laboral.</span>
+    <span class="tmq-sep">✦</span>
+    <span>Comprometidos con tu <strong>formación</strong> y <strong>orientación</strong> al mundo laboral.</span>
+    <span class="tmq-sep">✦</span>
+  </div>
+</div>
 
 <!-- MARQUEE -->
 <div class="marquee">
