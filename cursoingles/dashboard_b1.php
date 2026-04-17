@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../config.php';
 $es_admin_preview = !empty($_SESSION['admin_preview']) && ($_SESSION['usuario_rol'] ?? '') === 'admin';
 if (empty($_SESSION['usuario_id']) || (empty($_SESSION['estudiante_id']) && !$es_admin_preview)) {
@@ -122,7 +122,6 @@ $modulos = [
             </div>
             <a href="/intep/cursoingles/minijuego.html" class="nav-link">🎮 Constructor</a>
             <a href="/intep/cursoingles/musica.html" class="nav-link">🎧 Escucha y Aprende</a>
-            <a href="/intep/idiomas.php" class="nav-link">🤖 Ejercicios con IA</a>
             <a href="/intep/dashboard.php" class="nav-link" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">← Portal INTEP</a>
         </nav>
     </aside>

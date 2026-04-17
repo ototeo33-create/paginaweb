@@ -1,4 +1,4 @@
-/**
+﻿/**
  * INTEP Cursos API — Guardado de progreso, certificados y UI global
  * Requiere que la página defina window.__CURSO = {nivel:'A1', num:1}
  * antes de cargar este script.

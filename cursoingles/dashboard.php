@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // ============================================================
 // INTEP Inglés — Dashboard A1 Beginner (PHP con sesión real)
 // ============================================================
@@ -200,7 +200,6 @@ $modulos = [
             </div>
             <a href="/intep/cursoingles/musica.html" class="nav-link" style="font-weight:bold;">🎧 Escucha y Aprende <span style="background:#8b5cf6;color:white;font-size:0.6rem;padding:2px 6px;border-radius:10px;font-weight:bold;margin-left:4px;">NUEVO</span></a>
             <a href="/intep/cursoingles/logros.html" class="nav-link">🏆 Logros</a>
-            <a href="/intep/idiomas.php" class="nav-link">🤖 Ejercicios con IA</a>
             <a href="/intep/dashboard.php" class="nav-link" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">← Portal INTEP</a>
         </nav>
     </aside>
