@@ -205,21 +205,49 @@ $eval_activa = mysqli_fetch_assoc($res_ctrl);
         .thanks-buttons { display:flex; gap:15px; justify-content:center; margin-top:30px; flex-wrap:wrap; }
         .thanks-buttons .btn { flex:1; min-width:150px; justify-content:center; }
 
-        /* Docente card selector */
-        .docente-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:15px; }
-        .docente-card {
-            border:2px solid #e0e0e0; border-radius:12px; padding:18px; cursor:pointer;
-            transition:all 0.3s ease; background:white; position:relative;
+        /* Selector docente */
+        .docente-selector-wrap { position:relative; }
+        .docente-search-input {
+            width:100%; padding:14px 20px 14px 48px; border:2px solid #e0e0e0; border-radius:12px;
+            font-family:'Exo 2',sans-serif; font-size:1em; transition:all 0.3s;
+            background:white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%23059669' viewBox='0 0 24 24'%3E%3Cpath d='M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z'/%3E%3C/svg%3E") no-repeat 14px center;
         }
-        .docente-card:hover { border-color:var(--green); box-shadow:0 4px 15px rgba(5,150,105,0.1); }
-        .docente-card.selected { border-color:var(--green); background:var(--green-pale); }
-        .docente-card.disabled { opacity:0.5; cursor:not-allowed; pointer-events:none; }
-        .docente-card .name { font-weight:700; color:var(--text); font-size:1em; margin-bottom:4px; }
-        .docente-card .module { font-size:0.85em; color:var(--text-mid); }
-        .docente-card .badge-done {
-            position:absolute; top:10px; right:10px; background:var(--green); color:white;
-            font-size:0.7em; padding:3px 8px; border-radius:20px; font-weight:600;
+        .docente-search-input:focus { outline:none; border-color:var(--green); box-shadow:0 0 0 4px rgba(5,150,105,0.1); }
+        .docente-dropdown {
+            position:absolute; top:calc(100% + 6px); left:0; right:0; background:white;
+            border:2px solid var(--green); border-radius:12px; max-height:280px; overflow-y:auto;
+            z-index:50; box-shadow:0 8px 30px rgba(74,25,66,0.15); display:none;
         }
+        .docente-dropdown.open { display:block; }
+        .docente-option {
+            padding:14px 18px; cursor:pointer; border-bottom:1px solid #f0f0f0;
+            display:flex; align-items:center; justify-content:space-between; gap:12px;
+            transition:background 0.15s;
+        }
+        .docente-option:last-child { border-bottom:none; }
+        .docente-option:hover { background:var(--green-pale); }
+        .docente-option.ya-evaluado { opacity:0.5; cursor:not-allowed; }
+        .docente-option .opt-name { font-weight:700; color:var(--text); font-size:0.95em; }
+        .docente-option .opt-modulo { font-size:0.78em; color:var(--text-light); margin-top:2px; }
+        .docente-option .opt-badge { background:var(--green); color:white; font-size:0.7em; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+
+        .selected-docente-info {
+            display:none; background:var(--green-pale); border:2px solid var(--green);
+            border-radius:12px; padding:16px 20px; margin-top:12px;
+            display:flex; align-items:center; gap:14px;
+        }
+        .selected-docente-info .avatar {
+            width:48px; height:48px; background:var(--green); border-radius:50%;
+            display:flex; align-items:center; justify-content:center; color:white; font-size:1.4em; flex-shrink:0;
+        }
+        .selected-docente-info .info-text .name { font-weight:700; color:var(--purple); font-size:1em; }
+        .selected-docente-info .info-text .modulo { font-size:0.83em; color:var(--text-mid); margin-top:2px; }
+        .selected-docente-info .change-btn {
+            margin-left:auto; background:transparent; border:1px solid var(--green); color:var(--green);
+            padding:6px 14px; border-radius:8px; font-size:0.82em; font-weight:600; cursor:pointer;
+            font-family:'Exo 2',sans-serif; transition:all 0.2s; flex-shrink:0;
+        }
+        .selected-docente-info .change-btn:hover { background:var(--green); color:white; }
 
         .confidentiality-banner {
             background:var(--purple); color:white; padding:20px 30px; text-align:center; margin-top:30px;
@@ -282,12 +310,27 @@ $eval_activa = mysqli_fetch_assoc($res_ctrl);
             </div>
             <div class="info-notice">
                 <i class="fas fa-info-circle"></i>
-                Solo puedes evaluar <strong>una vez</strong> a cada docente por periodo. Los docentes ya evaluados aparecen marcados.
+                Busca el nombre del docente. Solo puedes evaluarlo <strong>una vez</strong> por periodo.
             </div>
-            <div id="docenteGrid" class="docente-grid">
-                <p style="color:var(--text-light);text-align:center;grid-column:1/-1;">
-                    <i class="fas fa-spinner fa-spin"></i> Cargando docentes...
-                </p>
+
+            <div class="docente-selector-wrap">
+                <input type="text" id="docenteSearch" class="docente-search-input"
+                       placeholder="Escribe el nombre del docente..." autocomplete="off"
+                       oninput="filtrarDocentes()" onfocus="abrirDropdown()">
+                <div id="docenteDropdown" class="docente-dropdown"></div>
+            </div>
+
+            <div id="selectedDocenteInfo" class="selected-docente-info" style="display:none;">
+                <div class="avatar"><i class="fas fa-user-tie"></i></div>
+                <div class="info-text">
+                    <div class="name" id="selectedNombre"></div>
+                    <div class="modulo" id="selectedModulo"></div>
+                </div>
+                <button class="change-btn" onclick="cambiarDocente()"><i class="fas fa-exchange-alt"></i> Cambiar</button>
+            </div>
+
+            <div id="loadingDocentes" style="text-align:center;padding:20px;color:var(--text-light);">
+                <i class="fas fa-spinner fa-spin"></i> Cargando docentes...
             </div>
         </div>
 
@@ -422,61 +465,100 @@ $eval_activa = mysqli_fetch_assoc($res_ctrl);
 <script>
 const CSRF_TOKEN = '<?php echo $csrf; ?>';
 let selectedDocente = null;
-let selectedProgramaModulo = null;
-let modulos = [];
-
+let todosDocentes = [];
 const ratings = {};
 
-// Cargar docentes/modulos del estudiante
+// Cargar todos los docentes
 async function cargarDocentes() {
     try {
-        const resp = await fetch('admin/api_eval_datos.php?action=modulos');
+        const resp = await fetch('admin/api_eval_datos.php?action=docentes');
         const data = await resp.json();
+        document.getElementById('loadingDocentes').style.display = 'none';
 
-        if (data.error) {
-            document.getElementById('docenteGrid').innerHTML =
-                '<p style="color:#ef4444;text-align:center;grid-column:1/-1;"><i class="fas fa-exclamation-triangle"></i> ' + data.error + '</p>';
-            return;
+        if (data.error) { showToast(data.error, true); return; }
+
+        todosDocentes = data.docentes || [];
+        if (todosDocentes.length === 0) {
+            document.getElementById('docenteSearch').placeholder = 'No hay docentes disponibles';
+            document.getElementById('docenteSearch').disabled = true;
         }
-
-        modulos = data.modulos || [];
-        if (modulos.length === 0) {
-            document.getElementById('docenteGrid').innerHTML =
-                '<p style="color:var(--text-light);text-align:center;grid-column:1/-1;"><i class="fas fa-info-circle"></i> No hay docentes asignados a tu programa o ya evaluaste a todos.</p>';
-            return;
-        }
-
-        let html = '';
-        modulos.forEach(m => {
-            const disabled = m.ya_evaluado ? 'disabled' : '';
-            const badge = m.ya_evaluado ? '<span class="badge-done"><i class="fas fa-check"></i> Evaluado</span>' : '';
-            html += `<div class="docente-card ${disabled}" data-docente="${m.docente_id}" data-pm="${m.programa_modulo_id}" onclick="seleccionarDocente(this, ${m.docente_id}, ${m.programa_modulo_id})">
-                ${badge}
-                <div class="name"><i class="fas fa-user-tie" style="color:var(--green);margin-right:8px;"></i>${escapeHtml(m.docente_nombre)}</div>
-                <div class="module"><i class="fas fa-book" style="margin-right:6px;"></i>${escapeHtml(m.modulo_nombre)}</div>
-            </div>`;
-        });
-        document.getElementById('docenteGrid').innerHTML = html;
     } catch (e) {
-        document.getElementById('docenteGrid').innerHTML =
-            '<p style="color:#ef4444;text-align:center;grid-column:1/-1;">Error al cargar docentes</p>';
+        document.getElementById('loadingDocentes').style.display = 'none';
+        showToast('Error al cargar docentes', true);
     }
 }
 
-function seleccionarDocente(el, docenteId, pmId) {
-    document.querySelectorAll('.docente-card').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedDocente = docenteId;
-    selectedProgramaModulo = pmId;
+function filtrarDocentes() {
+    const q = document.getElementById('docenteSearch').value.toLowerCase().trim();
+    abrirDropdown(q);
+}
 
-    // Reset ratings
+function abrirDropdown(q = '') {
+    const dd = document.getElementById('docenteDropdown');
+    if (todosDocentes.length === 0) return;
+
+    const filtrados = q
+        ? todosDocentes.filter(d => d.docente_nombre.toLowerCase().includes(q))
+        : todosDocentes;
+
+    if (filtrados.length === 0) {
+        dd.innerHTML = '<div style="padding:14px 18px;color:var(--text-light);font-size:0.9em;">No se encontraron docentes</div>';
+    } else {
+        dd.innerHTML = filtrados.map(d => `
+            <div class="docente-option ${d.ya_evaluado ? 'ya-evaluado' : ''}"
+                 onclick="${d.ya_evaluado ? 'void(0)' : `elegirDocente(${d.docente_id})`}">
+                <div>
+                    <div class="opt-name"><i class="fas fa-user-tie" style="color:var(--green);margin-right:7px;"></i>${escapeHtml(d.docente_nombre)}</div>
+                    <div class="opt-modulo"><i class="fas fa-book" style="margin-right:5px;"></i>${escapeHtml(d.modulos)}</div>
+                </div>
+                ${d.ya_evaluado ? '<span class="opt-badge">✓ Evaluado</span>' : ''}
+            </div>`).join('');
+    }
+
+    dd.classList.add('open');
+}
+
+function elegirDocente(docenteId) {
+    const docente = todosDocentes.find(d => d.docente_id === docenteId);
+    if (!docente) return;
+
+    selectedDocente = docenteId;
+
+    // Mostrar info del seleccionado
+    document.getElementById('docenteSearch').value = '';
+    document.getElementById('docenteDropdown').classList.remove('open');
+    document.getElementById('selectedNombre').textContent = docente.docente_nombre;
+    document.getElementById('selectedModulo').textContent = docente.modulos;
+    document.getElementById('selectedDocenteInfo').style.display = 'flex';
+
+    // Reset calificaciones
     Object.keys(ratings).forEach(k => delete ratings[k]);
     document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('comentariosPositivos').value = '';
+    document.getElementById('comentariosMejora').value = '';
     updateSummary();
 
+    // Mostrar formulario
     document.getElementById('formEvaluacion').style.display = 'block';
-    document.getElementById('formEvaluacion').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => {
+        document.getElementById('formEvaluacion').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
 }
+
+function cambiarDocente() {
+    selectedDocente = null;
+    document.getElementById('selectedDocenteInfo').style.display = 'none';
+    document.getElementById('formEvaluacion').style.display = 'none';
+    document.getElementById('docenteSearch').value = '';
+    document.getElementById('docenteSearch').focus();
+}
+
+// Cerrar dropdown al hacer click fuera
+document.addEventListener('click', e => {
+    if (!document.querySelector('.docente-selector-wrap').contains(e.target)) {
+        document.getElementById('docenteDropdown').classList.remove('open');
+    }
+});
 
 // Rating buttons
 document.querySelectorAll('.rating-options').forEach(container => {
@@ -510,8 +592,8 @@ function updateSummary() {
 }
 
 async function guardarEvaluacion() {
-    if (!selectedDocente || !selectedProgramaModulo) {
-        showToast('Selecciona un docente', true);
+    if (!selectedDocente) {
+        showToast('Selecciona un docente primero', true);
         return;
     }
 
@@ -537,7 +619,6 @@ async function guardarEvaluacion() {
             body: JSON.stringify({
                 csrf_token: CSRF_TOKEN,
                 docente_id: selectedDocente,
-                programa_modulo_id: selectedProgramaModulo,
                 calificaciones: calificaciones,
                 comentarios_positivos: document.getElementById('comentariosPositivos').value.trim(),
                 comentarios_mejora: document.getElementById('comentariosMejora').value.trim()
@@ -562,7 +643,7 @@ async function guardarEvaluacion() {
 function resetFormulario() {
     document.getElementById('thanksModal').classList.remove('show');
     selectedDocente = null;
-    selectedProgramaModulo = null;
+    document.getElementById('selectedDocenteInfo').style.display = 'none';
     Object.keys(ratings).forEach(k => delete ratings[k]);
     document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
     document.getElementById('comentariosPositivos').value = '';
@@ -589,6 +670,7 @@ function escapeHtml(text) {
 
 cargarDocentes();
 </script>
+
 <?php endif; ?>
 
 <script src="/intep/sesion.js"></script>

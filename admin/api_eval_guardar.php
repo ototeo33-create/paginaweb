@@ -33,18 +33,24 @@ if (empty($data['csrf_token']) || !verifyCsrfToken($data['csrf_token'])) {
 
 $estudiante_id = (int)$_SESSION['usuario_id'];
 $docente_id = (int)($data['docente_id'] ?? 0);
-$programa_modulo_id = (int)($data['programa_modulo_id'] ?? 0);
 $calificaciones = $data['calificaciones'] ?? [];
 $comentarios_positivos = trim($data['comentarios_positivos'] ?? '');
 $comentarios_mejora = trim($data['comentarios_mejora'] ?? '');
 
 // Validaciones
 $criterios_validos = [1,2,3,4,5,6,7,8];
-if (!$docente_id || !$programa_modulo_id) {
+if (!$docente_id) {
     http_response_code(400);
-    echo json_encode(['error' => 'Selecciona un docente y modulo']);
+    echo json_encode(['error' => 'Selecciona un docente']);
     exit;
 }
+
+// programa_modulo_id: buscar el primero asignado al docente (opcional)
+$pm_res = mysqli_prepare($conexion, "SELECT id FROM programa_modulo WHERE docente_id = ? AND estado = 'activo' LIMIT 1");
+mysqli_stmt_bind_param($pm_res, 'i', $docente_id);
+mysqli_stmt_execute($pm_res);
+$pm_row = mysqli_stmt_get_result($pm_res)->fetch_assoc();
+$programa_modulo_id = $pm_row ? (int)$pm_row['id'] : null;
 
 if (count($calificaciones) !== 8) {
     http_response_code(400);
@@ -79,16 +85,6 @@ mysqli_stmt_execute($stmt);
 if (!mysqli_stmt_get_result($stmt)->fetch_assoc()) {
     http_response_code(400);
     echo json_encode(['error' => 'Docente no valido']);
-    exit;
-}
-
-// Verificar que el programa_modulo existe y corresponde al docente
-$stmt = mysqli_prepare($conexion, "SELECT id FROM programa_modulo WHERE id = ? AND docente_id = ?");
-mysqli_stmt_bind_param($stmt, 'ii', $programa_modulo_id, $docente_id);
-mysqli_stmt_execute($stmt);
-if (!mysqli_stmt_get_result($stmt)->fetch_assoc()) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Modulo no corresponde al docente']);
     exit;
 }
 
