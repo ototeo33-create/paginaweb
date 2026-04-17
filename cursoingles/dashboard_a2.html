@@ -6,26 +6,39 @@
     <title>Dashboard A2 | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
+    <script src="course_system.js"></script>
     <style>
         body { margin: 0; }
-        .dashboard-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; background: transparent;
-            background-size: cover;  color: white; }
-        .sidebar { background: rgba(15, 23, 42, 0.6);
-            color: white; backdrop-filter: blur(15px); border-right: 1px solid rgba(255,255,255,0.1); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; }
+        .dashboard-layout { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; background: transparent; background-size: cover; color: white; }
+        .sidebar { background: rgba(15, 23, 42, 0.6); color: white; backdrop-filter: blur(15px); border-right: 1px solid rgba(255,255,255,0.1); padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
         .sidebar-logo { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; }
-        .sidebar-logo span { color: var(--primary-light); }
         .profile-widget { display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; }
-        .profile-avatar { width: 50px; height: 50px; background: #ec4899; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        .main-content {
-             padding: 3rem; background: transparent; }
+        .profile-avatar { width: 50px; height: 50px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .xp-display { background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2)); padding: 15px; border-radius: 15px; text-align: center; }
+        .xp-value { font-size: 2rem; font-weight: 800; color: var(--secondary); }
+        .xp-label { font-size: 0.85rem; color: var(--text-muted); }
+        .main-content { padding: 3rem; background: transparent; }
         .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 2rem; }
-        .module-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: white; display: block; }
-        .module-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-color: var(--secondary); background: rgba(255, 255, 255, 0.1); }
-        .module-card.locked { opacity: 0.6; cursor: not-allowed; background: rgba(0,0,0,0.2); border-color: transparent; }
+        .module-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.15); transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: white; display: block; position: relative; overflow: hidden; }
+        .module-card:hover:not(.locked) { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-color: var(--secondary); background: rgba(255, 255, 255, 0.1); }
+        .module-card.locked { opacity: 0.5; cursor: not-allowed; }
+        .module-card.locked::after { content: '🔒'; position: absolute; top: 15px; right: 15px; font-size: 1.5rem; }
+        .module-card.completed { border-color: var(--success); }
+        .module-card.completed::before { content: '✓'; position: absolute; top: 15px; right: 15px; width: 30px; height: 30px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
         .module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .module-num { background: rgba(236, 72, 153, 0.1); color: var(--secondary); padding: 6px 12px; border-radius: 10px; font-weight: 600; font-size: 0.9rem; }
         .module-progress { width: 100%; background: #e2e8f0; height: 8px; border-radius: 10px; margin-top: 20px; overflow: hidden; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, var(--secondary), #f43f5e); border-radius: 10px; }
+        .status-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-top: 10px; }
+        .status-completed { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-in-progress { background: rgba(236, 72, 153, 0.2); color: var(--secondary); }
+        .status-locked { background: rgba(100, 100, 100, 0.2); color: var(--text-muted); }
+        .exam-score { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; }
+        .level-progress { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-bottom: 2rem; }
+        .level-bar { height: 10px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+        .level-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), #8b5cf6); border-radius: 10px; }
+        .reset-btn { margin-top: auto; padding: 12px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1); color: #ef4444; cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease; }
+        .reset-btn:hover { background: rgba(239, 68, 68, 0.2); }
     </style>
 </head>
 <body>
@@ -43,85 +56,122 @@
                 </div>
             </div>
 
+            <div class="xp-display">
+                <div class="xp-value" id="totalXP">0</div>
+                <div class="xp-label">Puntos XP Totales</div>
+            </div>
+
             <nav style="display: flex; flex-direction: column; gap: 10px;">
                 <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 5px;">
                     <a href="#" style="color: white; text-decoration: none; padding: 12px; display: block; font-weight: bold;">📚 Mis Cursos 👇</a>
                     <div style="display: flex; flex-direction: column; padding-left: 20px; gap: 5px; margin-top: 5px; margin-bottom: 5px;">
-                        <a href="dashboard.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;">🔸 A1 Beginner</a>
+                        <a href="dashboard.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem;">🔸 A1 Beginner</a>
                         <a href="dashboard_a2.html" style="color: var(--secondary); text-decoration: none; font-size: 0.95rem;">🔸 A2 Elementary</a>
-                        <a href="dashboard_b1.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;">🔸 B1 Intermediate</a>
+                        <a href="dashboard_b1.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem;">🔸 B1 Intermediate</a>
                     </div>
                 </div>
                 <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 5px;">
-                    <span style="color: #10b981; padding: 12px; display: block; font-weight: bold;">Arcade</span>
+                    <span style="color: #10b981; padding: 12px; display: block; font-weight: bold;">🎮 Arcade</span>
                     <div style="display: flex; flex-direction: column; padding-left: 20px; gap: 5px; margin-top: 5px; margin-bottom: 5px;">
-                        <a href="minijuego.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">🔸 Constructor</a>
-                        <a href="match.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">🔸 Parejas</a>
-                        <a href="visual.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">🔸 Visual <span style="background:#ef4444; color:white; font-size:0.6rem; padding: 2px 6px; border-radius:10px; font-weight:bold; letter-spacing:1px; margin-left: 5px;">NUEVO</span></a>
+                        <a href="minijuego.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem;">🔸 Constructor</a>
+                        <a href="match.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem;">🔸 Parejas</a>
+                        <a href="visual.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem;">🔸 Visual</a>
                     </div>
                 </div>
-                <a href="musica.html" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s; display: flex; align-items: center; gap: 8px; font-weight: bold;">🎧 Escucha y Aprende <span style="background:#8b5cf6; color:white; font-size:0.6rem; padding: 2px 6px; border-radius:10px; font-weight:bold; letter-spacing:1px;">NUEVO</span></a>
-                <a href="logros.html" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s;">🏆 Logros</a>
-                <a href="#" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s;">⚙️ Ajustes</a>
+                <a href="musica.html" style="color: #cbd5e1; text-decoration: none; padding: 12px;">🎧 Escucha y Aprende</a>
+                <a href="logros.html" style="color: #cbd5e1; text-decoration: none; padding: 12px;">🏆 Logros</a>
             </nav>
+
+            <button class="reset-btn" onclick="if(confirm('¿Resetear todo el progreso?')) { CourseSystem.resetProgress(); location.reload(); }">🔄 Resetear Progreso</button>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1>Tu Plan de <span class="text-gradient">Estudios A2</span></h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Sube al siguiente nivel preparándote para contar historias pasadas y planes futuros.</p>
+            <h1>Tu Plan de <span class="text-gradient" style="background: linear-gradient(to right, var(--secondary), #8b5cf6); -webkit-background-clip: text;">Estudios A2</span></h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Sube al siguiente nivel: pasado simple, condicionales y más.</p>
 
-            <div class="modules-grid">
-                <!-- Módulo 1 -->
-                <a href="modulo1_a2.html" class="module-card" style="border: 2px solid var(--secondary);">
-                    <div class="module-header">
-                        <span class="module-num">Módulo 1</span>
-                        <span>✈️</span>
-                    </div>
-                    <h3>Last Year</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Cuenta historias sobre tus últimas vacaciones usando Pasado Simple.</p>
-                    <div class="module-progress"><div class="progress-bar" style="width: 15%;"></div></div>
-                    <p style="font-size: 0.8rem; text-align: right; margin-top: 5px; color: var(--secondary); font-weight: bold;">En Progreso</p>
-                </a>
-
-                <a href="modulo2_a2.html" class="module-card">
-                    <div class="module-header"><span class="module-num">Módulo 2</span><span>🚨</span></div>
-                    <h3>When it happened</h3><p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Aprende Past Continuous y relata accidentes o anécdotas.</p>
-                </a>
-
-                <a href="modulo3_a2.html" class="module-card">
-                    <div class="module-header"><span class="module-num">Módulo 3</span><span>⚖️</span></div>
-                    <h3>Bigger, Better, Faster</h3><p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Comparativos y Superlativos para comparar cosas y personas.</p>
-                </a>
-
-                <a href="modulo4_a2.html" class="module-card">
-                    <div class="module-header"><span class="module-num">Módulo 4</span><span>🌟</span></div>
-                    <h3>Have you ever?</h3><p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Introducción experta a los misterios del Present Perfect.</p>
-                </a>
-
-                <a href="modulo5_a2.html" class="module-card">
-                    <div class="module-header"><span class="module-num">Módulo 5</span><span>🔮</span></div>
-                    <h3>Future Plans</h3><p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Todo sobre Going to vs Will para hablar de decisiones.</p>
-                </a>
-
-                <a href="modulo6_a2.html" class="module-card">
-                    <div class="module-header"><span class="module-num">Módulo 6</span><span>🤔</span></div>
-                    <h3>What if...?</h3><p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Empieza con condicionales básicos de causa y efecto.</p>
-                </a>
-
-                <a href="modulo7_a2.html" class="module-card">
-                    <div class="module-header"><span class="module-num">Módulo 7</span><span>☝️</span></div>
-                    <h3>You should...</h3><p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Dar consejos y obligaciones usando modales Should y Must.</p>
-                </a>
-
-                <a href="modulo8_a2.html" class="module-card">
-                    <div class="module-header"><span class="module-num">Módulo 8</span><span>🎯</span></div>
-                    <h3>Why did you do it?</h3><p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Cláusulas de propósito para justificar el porqué de las cosas.</p>
-                </a>
+            <div class="level-progress">
+                <h3>📊 Progreso del Nivel A2</h3>
+                <div class="level-bar">
+                    <div class="level-fill" id="levelProgressFill" style="width: 0%;"></div>
+                </div>
+                <p class="level-text" id="levelProgressText">0 de 8 módulos completados (0%)</p>
             </div>
+
+            <div class="modules-grid" id="modulesContainer"></div>
         </main>
     </div>
 
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
+    <script>
+        const modulesA2 = [
+            { id: 'm1', title: 'Last Year', desc: 'Pasado Simple: verbos regulares e irregulares.', icon: '✈️', link: 'modulo1_a2.html' },
+            { id: 'm2', title: 'When it happened', desc: 'Past Continuous: acciones simultáneas.', icon: '🚨', link: 'modulo2_a2.html' },
+            { id: 'm3', title: 'Bigger, Better, Faster', desc: 'Comparativos y Superlativos.', icon: '⚖️', link: 'modulo3_a2.html' },
+            { id: 'm4', title: 'Have you ever?', desc: 'Present Perfect: experiencias de vida.', icon: '🌟', link: 'modulo4_a2.html' },
+            { id: 'm5', title: 'Future Plans', desc: 'Going to vs Will para decisiones.', icon: '🔮', link: 'modulo5_a2.html' },
+            { id: 'm6', title: 'What if...?', desc: 'Primer Condicional.', icon: '🤔', link: 'modulo6_a2.html' },
+            { id: 'm7', title: 'You should...', desc: 'Should, Must, Have to.', icon: '☝️', link: 'modulo7_a2.html' },
+            { id: 'm8', title: 'Why did you do it?', desc: 'Infinitivos de propósito y gerundios.', icon: '🎯', link: 'modulo8_a2.html' }
+        ];
+
+        function renderModules() {
+            const container = document.getElementById('modulesContainer');
+            const progress = CourseSystem.getProgress();
+            
+            document.getElementById('totalXP').textContent = progress.totalXP || 0;
+            
+            let completedCount = 0;
+            
+            modulesA2.forEach((mod, index) => {
+                const status = CourseSystem.getModuleStatus('a2', mod.id);
+                const isUnlocked = CourseSystem.isModuleUnlocked('a2', mod.id);
+                
+                if (status.completed) completedCount++;
+                
+                const card = document.createElement('a');
+                card.href = isUnlocked ? mod.link : '#';
+                card.className = `module-card ${status.completed ? 'completed' : ''} ${!isUnlocked ? 'locked' : ''}`;
+                
+                let progressPercent = status.completed ? 100 : (status.examScore > 0 ? status.examScore : (isUnlocked ? 50 : 0));
+                let statusBadge = '';
+                let examScore = '';
+                
+                if (status.completed) {
+                    statusBadge = '<span class="status-badge status-completed">✓ Completado</span>';
+                    examScore = `<p class="exam-score">Mejor puntuación: ${status.examScore}%</p>`;
+                } else if (isUnlocked) {
+                    statusBadge = '<span class="status-badge status-in-progress">📚 En Progreso</span>';
+                    if (status.examScore > 0) {
+                        examScore = `<p class="exam-score">Último intento: ${status.examScore}%</p>`;
+                    }
+                } else {
+                    statusBadge = '<span class="status-badge status-locked">🔒 Bloqueado</span>';
+                }
+                
+                card.innerHTML = `
+                    <div class="module-header">
+                        <span class="module-num">Módulo ${index + 1}</span>
+                        <span>${mod.icon}</span>
+                    </div>
+                    <h3>${mod.title}</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">${mod.desc}</p>
+                    <div class="module-progress">
+                        <div class="progress-bar" style="width: ${progressPercent}%;"></div>
+                    </div>
+                    ${statusBadge}
+                    ${examScore}
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            const percent = Math.round((completedCount / 8) * 100);
+            document.getElementById('levelProgressFill').style.width = percent + '%';
+            document.getElementById('levelProgressText').textContent = `${completedCount} de 8 módulos completados (${percent}%)`;
+        }
+        
+        renderModules();
+    </script>
+    <script src="ufo.js"></script><script src="universe_bg.js"></script>
 </body>
 </html>

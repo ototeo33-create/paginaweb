@@ -6,15 +6,15 @@
     <title>Dashboard Estudiante | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
+    <script src="course_system.js"></script>
     <style>
         body { margin: 0; }
         .dashboard-layout {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 300px 1fr;
             min-height: 100vh;
             background: transparent;
             background-size: cover;
-            
             color: white;
         }
 
@@ -26,15 +26,10 @@
             padding: 2rem;
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
-        .sidebar-logo {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2rem;
-            font-weight: 800;
-        }
-        .sidebar-logo span { color: var(--primary-light); }
+        .sidebar-logo { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; }
 
         .profile-widget {
             display: flex;
@@ -57,8 +52,25 @@
             font-weight: bold;
         }
 
+        .xp-display {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .xp-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-light);
+        }
+
+        .xp-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
         .main-content {
-            
             padding: 3rem;
             background: transparent;
         }
@@ -81,9 +93,11 @@
             text-decoration: none;
             color: white;
             display: block;
+            position: relative;
+            overflow: hidden;
         }
 
-        .module-card:hover {
+        .module-card:hover:not(.locked) {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             border-color: var(--primary-light);
@@ -91,9 +105,35 @@
         }
 
         .module-card.locked {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
-            background: rgba(0,0,0,0.2);
+        }
+
+        .module-card.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .module-card.completed {
+            border-color: var(--success);
+        }
+
+        .module-card.completed::before {
+            content: '✓';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
 
         .module-header {
@@ -125,6 +165,87 @@
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-in-progress {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary-light);
+        }
+
+        .status-locked {
+            background: rgba(100, 100, 100, 0.2);
+            color: var(--text-muted);
+        }
+
+        .exam-score {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .level-progress {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .level-progress h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .level-bar {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .level-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .level-text {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .reset-btn {
+            margin-top: auto;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
         }
     </style>
 </head>
@@ -143,9 +264,14 @@
                 </div>
             </div>
 
+            <div class="xp-display">
+                <div class="xp-value" id="totalXP">100</div>
+                <div class="xp-label">Puntos XP Totales</div>
+            </div>
+
             <nav style="display: flex; flex-direction: column; gap: 10px;">
                 <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 5px;">
-                    <a href="dashboard.html" style="color: white; text-decoration: none; padding: 12px; display: block; font-weight: bold;">📚 Mis Cursos 👇</a>
+                    <a href="#" style="color: white; text-decoration: none; padding: 12px; display: block; font-weight: bold;">📚 Mis Cursos 👇</a>
                     <div style="display: flex; flex-direction: column; padding-left: 20px; gap: 5px; margin-top: 5px; margin-bottom: 5px;">
                         <a href="dashboard.html" style="color: var(--primary-light); text-decoration: none; font-size: 0.95rem;">🔸 A1 Beginner</a>
                         <a href="dashboard_a2.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;">🔸 A2 Elementary</a>
@@ -153,122 +279,114 @@
                     </div>
                 </div>
                 <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 5px;">
-                    <span style="color: #10b981; padding: 12px; display: block; font-weight: bold;">Arcade</span>
+                    <span style="color: #10b981; padding: 12px; display: block; font-weight: bold;">🎮 Arcade</span>
                     <div style="display: flex; flex-direction: column; padding-left: 20px; gap: 5px; margin-top: 5px; margin-bottom: 5px;">
-                        <a href="minijuego.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">🔸 Constructor</a>
-                        <a href="match.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">🔸 Parejas</a>
-                        <a href="visual.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem; transition: color 0.3s;" onmouseover="this.style.color='#10b981'" onmouseout="this.style.color='#cbd5e1'">🔸 Visual <span style="background:#ef4444; color:white; font-size:0.6rem; padding: 2px 6px; border-radius:10px; font-weight:bold; letter-spacing:1px; margin-left: 5px;">NUEVO</span></a>
+                        <a href="minijuego.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem;">🔸 Constructor</a>
+                        <a href="match.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem;">🔸 Parejas</a>
+                        <a href="visual.html" style="color: #cbd5e1; text-decoration: none; font-size: 0.95rem;">🔸 Visual</a>
                     </div>
                 </div>
-                <a href="musica.html" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s; display: flex; align-items: center; gap: 8px; font-weight: bold;">🎧 Escucha y Aprende <span style="background:#8b5cf6; color:white; font-size:0.6rem; padding: 2px 6px; border-radius:10px; font-weight:bold; letter-spacing:1px;">NUEVO</span></a>
+                <a href="musica.html" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s;">🎧 Escucha y Aprende</a>
                 <a href="logros.html" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s;">🏆 Logros</a>
-                <a href="#" style="color: #cbd5e1; text-decoration: none; padding: 12px; transition: color 0.3s;">⚙️ Ajustes</a>
             </nav>
+
+            <button class="reset-btn" onclick="if(confirm('¿Resetear todo el progreso?')) { CourseSystem.resetProgress(); location.reload(); }">
+                🔄 Resetear Progreso
+            </button>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
             <h1>Tu Plan de <span class="text-gradient">Estudios A1</span></h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Sigue tu progreso paso a paso. Recuerda: 15 minutos al día.</p>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Completa cada módulo con su examen para desbloquear el siguiente. ¡15 minutos al día!</p>
 
-            <div class="modules-grid">
-                
-                <!-- Módulo 1 -->
-                <a href="modulo1.html" class="module-card">
-                    <div class="module-header">
-                        <span class="module-num">Módulo 1</span>
-                        <span>⭐</span>
-                    </div>
-                    <h3>Nice to meet you!</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Aprende el verbo To Be, saludos y cómo presentarte como un profesional.</p>
-                    <div class="module-progress">
-                        <div class="progress-bar" style="width: 100%;"></div>
-                    </div>
-                    <p style="font-size: 0.8rem; text-align: right; margin-top: 5px; color: var(--success); font-weight: bold;">Completado</p>
-                </a>
+            <div class="level-progress">
+                <h3>📊 Progreso del Nivel A1</h3>
+                <div class="level-bar">
+                    <div class="level-fill" id="levelProgressFill" style="width: 25%;"></div>
+                </div>
+                <p class="level-text" id="levelProgressText">2 de 8 módulos completados (25%)</p>
+            </div>
 
-                <!-- Módulo 2 -->
-                <a href="modulo2.html" class="module-card">
-                    <div class="module-header">
-                        <span class="module-num">Módulo 2</span>
-                        <span>🏠</span>
-                    </div>
-                    <h3>My World</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Tu familia, tus pertenencias y el verbo "Have".</p>
-                    <div class="module-progress">
-                        <div class="progress-bar" style="width: 100%;"></div>
-                    </div>
-                    <p style="font-size: 0.8rem; text-align: right; margin-top: 5px; color: var(--success); font-weight: bold;">Completado</p>
-                </a>
-
-                <!-- Módulo 3 -->
-                <a href="lesson_rutinas.html" class="module-card" style="border: 2px solid var(--primary);">
-                    <div class="module-header">
-                        <span class="module-num">Módulo 3</span>
-                        <span>⏰</span>
-                    </div>
-                    <h3>Daily Routines</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Habla sobre tu día y domina el Presente Simple.</p>
-                    <div class="module-progress">
-                        <div class="progress-bar" style="width: 35%;"></div>
-                    </div>
-                    <p style="font-size: 0.8rem; text-align: right; margin-top: 5px; color: var(--primary); font-weight: bold;">En Progreso</p>
-                </a>
-
-                <!-- Módulo 4 -->
-                <a href="modulo4.html" class="module-card">
-                    <div class="module-header">
-                        <span class="module-num">Módulo 4</span>
-                        <span>⭐</span>
-                    </div>
-                    <h3>I can do that!</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Habla de tus habilidades, talentos y hobbies usando "Can".</p>
-                </a>
-
-                <!-- Módulo 5 -->
-                <a href="modulo5.html" class="module-card">
-                    <div class="module-header">
-                        <span class="module-num">Módulo 5</span>
-                        <span>⭐</span>
-                    </div>
-                    <h3>City Life</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Moverte por la ciudad guiando "There is / There are".</p>
-                </a>
-
-                 <!-- Módulo 6 -->
-                 <a href="modulo6.html" class="module-card">
-                    <div class="module-header">
-                        <span class="module-num">Módulo 6</span>
-                        <span>⭐</span>
-                    </div>
-                    <h3>Shopping & Food</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Compras, ropa, y pedir correctamente en un restaurante.</p>
-                </a>
-
-                 <!-- Módulo 7 -->
-                 <a href="modulo7.html" class="module-card">
-                    <div class="module-header">
-                        <span class="module-num">Módulo 7</span>
-                        <span>⭐</span>
-                    </div>
-                    <h3>What are you doing?</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Describe instantes en el momento exacto usando Presente Continuo.</p>
-                </a>
-
-                <!-- Módulo 8 -->
-                <a href="modulo8.html" class="module-card">
-                    <div class="module-header">
-                        <span class="module-num">Módulo 8</span>
-                        <span>⭐</span>
-                    </div>
-                    <h3>The Past Weekend</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Habla sobre lo que hiciste ayer. Conoce a Was / Were.</p>
-                </a>
-
+            <div class="modules-grid" id="modulesContainer">
+                <!-- Módulos se generan dinámicamente -->
             </div>
         </main>
     </div>
 
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
+    <script>
+        const modulesA1 = [
+            { id: 'm1', title: 'Nice to meet you!', desc: 'Aprende el verbo To Be, saludos y cómo presentarte.', icon: '👋', link: 'modulo1.html' },
+            { id: 'm2', title: 'My World', desc: 'Tu familia, tus pertenencias y el verbo Have/Has.', icon: '🏠', link: 'modulo2.html' },
+            { id: 'm3', title: 'Daily Routines', desc: 'Habla sobre tu día y domina el Presente Simple.', icon: '⏰', link: 'lesson_rutinas.html' },
+            { id: 'm4', title: 'I can do that!', desc: 'Habla de tus habilidades, talentos y hobbies.', icon: '💪', link: 'modulo4.html' },
+            { id: 'm5', title: 'City Life', desc: 'Moverte por la ciudad con There is/There are.', icon: '🏙️', link: 'modulo5.html' },
+            { id: 'm6', title: 'Shopping & Food', desc: 'Compras, ropa, y pedir en un restaurante.', icon: '🛒', link: 'modulo6.html' },
+            { id: 'm7', title: 'What are you doing?', desc: 'Describe instantes con el Presente Continuo.', icon: '🔄', link: 'modulo7.html' },
+            { id: 'm8', title: 'The Past Weekend', desc: 'Habla sobre lo que hiciste ayer. Was/Were.', icon: '📅', link: 'modulo8.html' }
+        ];
+
+        function renderModules() {
+            const container = document.getElementById('modulesContainer');
+            const progress = CourseSystem.getProgress();
+            
+            document.getElementById('totalXP').textContent = progress.totalXP || 100;
+            
+            let completedCount = 0;
+            
+            modulesA1.forEach((mod, index) => {
+                const status = CourseSystem.getModuleStatus('a1', mod.id);
+                const isUnlocked = CourseSystem.isModuleUnlocked('a1', mod.id);
+                
+                if (status.completed) completedCount++;
+                
+                const card = document.createElement('a');
+                card.href = isUnlocked ? mod.link : '#';
+                card.className = `module-card ${status.completed ? 'completed' : ''} ${!isUnlocked ? 'locked' : ''}`;
+                
+                let progressPercent = status.completed ? 100 : (status.examScore > 0 ? status.examScore : (isUnlocked ? 50 : 0));
+                let statusBadge = '';
+                let examScore = '';
+                
+                if (status.completed) {
+                    statusBadge = '<span class="status-badge status-completed">✓ Completado</span>';
+                    examScore = `<p class="exam-score">Mejor puntuación: ${status.examScore}%</p>`;
+                } else if (isUnlocked) {
+                    statusBadge = '<span class="status-badge status-in-progress">📚 En Progreso</span>';
+                    if (status.examScore > 0) {
+                        examScore = `<p class="exam-score">Último intento: ${status.examScore}%</p>`;
+                    }
+                } else {
+                    statusBadge = '<span class="status-badge status-locked">🔒 Bloqueado</span>';
+                }
+                
+                card.innerHTML = `
+                    <div class="module-header">
+                        <span class="module-num">Módulo ${index + 1}</span>
+                        <span>${mod.icon}</span>
+                    </div>
+                    <h3>${mod.title}</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">${mod.desc}</p>
+                    <div class="module-progress">
+                        <div class="progress-bar" style="width: ${progressPercent}%;"></div>
+                    </div>
+                    ${statusBadge}
+                    ${examScore}
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            // Update level progress
+            const percent = Math.round((completedCount / 8) * 100);
+            document.getElementById('levelProgressFill').style.width = percent + '%';
+            document.getElementById('levelProgressText').textContent = 
+                `${completedCount} de 8 módulos completados (${percent}%)`;
+        }
+        
+        renderModules();
+    </script>
+    <script src="ufo.js"></script>
+    <script src="universe_bg.js"></script>
 </body>
 </html>

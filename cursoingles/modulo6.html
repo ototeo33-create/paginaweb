@@ -1,97 +1,300 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A1',num:6};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 6: Shopping & Food | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
-    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }</style>
-</head>
-<body>
-    <div class="app-container">
-        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
-
-        <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A1',num:6};</script>
-    <!-- INTEP: Session guard -->
+    <script src="course_system.js"></script>
+    <style>
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }
+        .fill-drill { background: rgba(245, 158, 11, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px; }
+        .fill-drill h4 { color: #f59e0b; margin-bottom: 15px; }
+        .drill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; flex-wrap: wrap; }
+        .drill-sentence { flex: 1; font-size: 1.1rem; min-width: 200px; }
+        .drill-input { padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-dark); font-size: 1rem; }
+        .drill-input.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .drill-input.wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .check-drill-btn { padding: 12px 20px; border-radius: 8px; border: none; background: #f59e0b; color: white; cursor: pointer; font-weight: 600; }
+    </style>
+    <script>window.__CURSO = {nivel:'A1', num:6};</script>
     <script>
     (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
+<body>
+    <div class="app-container">
+        <a href="dashboard.php" class="back-nav">← Volver al Panel</a>
+
+        <header class="lesson-header">
             <div>
-                <span class="lesson-badge">Módulo 6 • A1 Principiante</span>
-                <h1>Shopping & <span class="text-gradient">Food</span></h1>
-                <p>Pide comida en un restaurante adecuadamente.</p>
+                <span class="lesson-badge" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">Módulo 6 • A1 Principiante</span>
+                <h1>Shopping & <span class="text-gradient" style="background: linear-gradient(to right, #f59e0b, #d97706); -webkit-background-clip: text;">Food</span></h1>
+                <p>Pide comida en un restaurante y compra ropa usando SOME, ANY y WOULD LIKE.</p>
             </div>
         </header>
 
+        <!-- Section 1: Food Vocabulary -->
         <section class="learning-section">
-            <h2 class="section-title">🖼️ 1. Restaurant Vocabulary</h2>
+            <h2 class="section-title" style="color: #f59e0b;">🍽️ 1. Food & Drinks</h2>
+            <p style="margin-bottom: 2rem;">Vocabulario esencial de comida y bebidas.</p>
+            
             <div class="flashcards-grid">
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">💧</div><h3>Agua</h3></div><div class="flashcard-back"><h3>Water</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🍎</div><h3>Manzana</h3></div><div class="flashcard-back"><h3>Apple</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🍞</div><h3>Pan</h3></div><div class="flashcard-back"><h3>Bread</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🍹</div><h3>Jugo</h3></div><div class="flashcard-back"><h3>Juice</h3></div></div></div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">💧</div><h3>Agua</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Water</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🍎</div><h3>Manzana</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Apple</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🍞</div><h3>Pan</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Bread</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🍹</div><h3>Jugo</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Juice</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🍝</div><h3>Pasta</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Pasta</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🍔</div><h3>Hamburguesa</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Hamburger</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🍕</div><h3>Pizza</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Pizza</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🍰</div><h3>Pastel</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Cake</h3></div>
+                    </div>
+                </div>
             </div>
         </section>
 
+        <!-- Section 2: Countable vs Uncountable -->
+        <section class="learning-section" style="border-left: 4px solid #ec4899;">
+            <h2 class="section-title" style="color: #ec4899;">🔢 2. Countable vs Uncountable</h2>
+            <p style="margin-bottom: 1.5rem;">En inglés, las cosas se dividen en contables e incontables.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(236, 72, 153, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: #ec4899;">📊 Contables (Countable)</h4>
+                    <p style="color: var(--text-muted); margin: 10px 0;">Puedes contar: 1, 2, 3...</p>
+                    <ul style="padding-left: 20px;">
+                        <li>Apple → <strong>One apple, two apples</strong></li>
+                        <li>Orange → <strong>Three oranges</strong></li>
+                        <li>Cookie → <strong>Five cookies</strong></li>
+                    </ul>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: #8b5cf6;">📊 Incontables (Uncountable)</h4>
+                    <p style="color: var(--text-muted); margin: 10px 0;">No puedes contar en unidades.</p>
+                    <ul style="padding-left: 20px;">
+                        <li>Water → <strong>Some water, a lot of water</strong></li>
+                        <li>Milk → <strong>Some milk, a glass of milk</strong></li>
+                        <li>Rice → <strong>Some rice, a kilo of rice</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Read & Discover -->
         <section class="learning-section">
-            <h2 class="section-title">📖 2. Read & Discover</h2>
+            <h2 class="section-title" style="color: #f59e0b;">📖 3. Read & Discover</h2>
             <div class="story-box" style="border-left-color: #f59e0b;">
-                "Good evening. <span class="highlight-verb">I would like</span> some bread and <span class="highlight-verb">I would like</span> an apple juice, please. Oh, and do you have <span class="highlight-verb">any</span> water?"
+                "Good evening. <span class="highlight-verb" style="color:#f59e0b; border-color:#f59e0b;">I would like</span> some bread and <span class="highlight-verb" style="color:#f59e0b; border-color:#f59e0b;">I would like</span> an apple juice, please. Oh, and do you have <span class="highlight-verb" style="color:#f59e0b; border-color:#f59e0b;">any</span> water? I am very hungry. <span class="highlight-verb" style="color:#f59e0b; border-color:#f59e0b;">I would like</span> the steak, please."
             </div>
         </section>
 
+        <!-- Section 4: Grammar - Some/Any & Would Like -->
         <section class="learning-section">
-            <h2 class="section-title">💡 3. Grammar: "I Want" vs "I Would Like"</h2>
+            <h2 class="section-title" style="color: #f59e0b;">💡 4. Grammar: SOME, ANY y WOULD LIKE</h2>
+            
             <div class="grammar-container">
                 <div class="grammar-card normal">
-                    <h3>Informal (I want)</h3>
+                    <h3 style="color: #f59e0b;">SOME (Afirmativo)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Para pedir o dar cosas (forma educada)</p>
                     <ul class="grammar-list">
-                        <li><strong>I want</strong> water. (Suena grosero con extraños)</li>
+                        <li>I want <span>some</span> water.</li>
+                        <li>Can I have <span>some</span> bread?</li>
+                        <li>There is <span>some</span> milk.</li>
                     </ul>
                 </div>
                 <div class="grammar-card vip">
-                    <h3>Polite / Educado (I would like)</h3>
+                    <h3 style="color: #ec4899;">ANY (Negativo/Preguntas)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Para preguntas y negativos</p>
                     <ul class="grammar-list">
-                        <li><strong>I would like</strong> some water, please. (Perfecto para ser atendido)</li>
+                        <li>Do you have <span>any</span> questions?</li>
+                        <li>I don't want <span>any</span> coffee.</li>
+                        <li>Is there <span>any</span> water?</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 20px; background: rgba(245, 158, 11, 0.1); border-radius: 12px;">
+                <h4 style="color: #f59e0b;"> WOULD LIKE (Más educado que WANT)</h4>
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li>I <strong>want</strong> a coffee. (informal)</li>
+                    <li>I <strong>would like</strong> a coffee. (educado)</li>
+                    <li>I <strong>would like</strong> <strong>some</strong> water, please. (MUY educado)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 5: Restaurant Phrases -->
+        <section class="learning-section" style="border-left: 4px solid #10b981;">
+            <h2 class="section-title" style="color: #10b981;">🍴 5. Phrases para el Restaurante</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: #10b981;">👤 Como Cliente:</h4>
+                    <ul style="padding-left: 20px;">
+                        <li>"I would like some water, please."</li>
+                        <li>"Can I see the menu, please?"</li>
+                        <li>"The bill, please." (La cuenta)</li>
+                        <li>"Do you have any...?"</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(99, 102, 241, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: var(--primary);">👨‍🍳 Como Mesero:</h4>
+                    <ul style="padding-left: 20px;">
+                        <li>"What would you like?"</li>
+                        <li>"Here you are." (Aquí tiene)</li>
+                        <li>"Sorry, we don't have any..."</li>
+                        <li>"Enjoy your meal!"</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <section class="learning-section" style="border: 2px solid #f59e0b;">
-            <h2 class="section-title text-gradient">🎯 4. Mission: Hell's Kitchen</h2>
-            <div class="roleplay-grid">
-                <div class="rp-card">
-                    <span style="font-size: 2rem;">🍽️</span>
-                    <h3>Paso 1: El Cliente Molesto</h3>
-                    <p>Usa "I would like" para pedir las cosas más raras del menú o quejarte del pedido.</p>
+        <!-- Section 6: Practice -->
+        <section class="learning-section practice-section">
+            <h2 class="section-title" style="color: #8b5cf6;">✏️ 6. Ejercicios Prácticos</h2>
+            
+            <div class="fill-drill">
+                <h4>📝 Completa con SOME o ANY:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I want _____ water, please.</span>
+                    <input type="text" class="drill-input" data-correct="some" placeholder="some/any">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
                 </div>
-                <div class="rp-card" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                    <span style="font-size: 2rem;">🧑‍🍳</span>
-                    <h3>Paso 2: El Mesero</h3>
-                    <p>Responde usando polite English y disculpate: "Sorry, we don't have any..."</p>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">Do you have _____ questions?</span>
+                    <input type="text" class="drill-input" data-correct="any" placeholder="some/any">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I don't want _____ coffee.</span>
+                    <input type="text" class="drill-input" data-correct="any" placeholder="some/any">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+            
+            <div class="fill-drill" style="margin-top: 25px;">
+                <h4>📝 Transforma a forma educada:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">"I want water" → "I _____ _____ water, please."</span>
+                    <input type="text" class="drill-input" data-correct="would like" placeholder="would like">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">"She wants some bread" → "She _____ _____ _____ bread."</span>
+                    <input type="text" class="drill-input" data-correct="would like some" placeholder="would like some">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
                 </div>
             </div>
         </section>
+
+        <!-- Section 7: Mission -->
+        <section class="learning-section" style="border: 2px solid #f59e0b;">
+            <h2 class="section-title text-gradient">🎯 7. Mission: Hell's Kitchen</h2>
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">🍽️</span>
+                    <h3>Estudiante A: El Cliente Molesto</h3>
+                    <p>"I would like some bread, please." / "Do you have any salad?" / "This is terrible!"</p>
+                </div>
+                <div class="rp-card" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <span style="font-size: 2rem;">🧑‍🍳</span>
+                    <h3>Estudiante B: El Mesero</h3>
+                    <p>"Sorry, we don't have any..." / "Here you are." / "Can I get you anything else?"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: EXAM -->
+        <section class="learning-section exam-section" id="examSection">
+            <h2 class="section-title text-gradient">📝 8. EXAMEN DEL MÓDULO</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Necesitas <strong>70%</strong> para aprobar.</p>
+            <div id="examContainer"></div>
+        </section>
+
     </div>
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        function checkDrill(button) {
+            const input = button.previousElementSibling;
+            const correct = input.dataset.correct.toLowerCase().trim();
+            const userAnswer = input.value.toLowerCase().trim();
+            if (userAnswer === correct) {
+                input.classList.add('correct');
+                input.classList.remove('wrong');
+            } else {
+                input.classList.add('wrong');
+                input.classList.remove('correct');
+            }
+        }
+        
+        const module6Questions = [
+            { type: 'multiple', question: '¿Cuál es la forma educada de "I want"?', options: [{text:'I need', value:'a', correct:false},{text:'I would like', value:'b', correct:true},{text:'I want to', value:'c', correct:false}] },
+            { type: 'multiple', question: '¿Usamos SOME o ANY en preguntas?', options: [{text:'Some', value:'a', correct:false},{text:'Any', value:'b', correct:true},{text:'Both', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "I would like _____ water, please."', correctAnswer: 'some' },
+            { type: 'multiple', question: '¿"Water" es countable o uncountable?', options: [{text:'Countable', value:'a', correct:false},{text:'Uncountable', value:'b', correct:true}] },
+            { type: 'multiple', question: '¿Qué significa "The bill, please"?', options: [{text:'La carta, por favor', value:'a', correct:false},{text:'La cuenta, por favor', value:'b', correct:true},{text:'El plato, por favor', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "Do you have _____ bread?"', correctAnswer: 'any' },
+            { type: 'multiple', question: '¿Cómo se dice "Quisiera una pizza"?', options: [{text:'I want a pizza', value:'a', correct:false},{text:'I would like a pizza', value:'b', correct:true},{text:'I need a pizza', value:'c', correct:false}] },
+            { type: 'multiple', question: '¿"Some" se usa en oraciones...?', options: [{text:'Negativas', value:'a', correct:false},{text:'Afirmativas', value:'b', correct:true},{text:'Preguntas', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "She doesn\'t want _____ coffee."', correctAnswer: 'any' },
+            { type: 'translate', question: 'Traduce: "Quisiera un jugo de naranja y un pastel, por favor."', sentence: 'Quisiera un jugo de naranja y un pastel, por favor.', correctAnswer: 'i would like some orange juice and some cake please' }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const exam = ExamGenerator.createExam(module6Questions, 'a1', 'm6');
+            ExamGenerator.renderExam('examContainer');
+        });
+    </script>
+    <script src="ufo.js"></script><script src="universe_bg.js"></script>
 </body>
 </html>

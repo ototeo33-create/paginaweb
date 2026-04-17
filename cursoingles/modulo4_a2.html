@@ -1,38 +1,27 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A2',num:4};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A2: Module 4 - Have you ever? | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
     <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--secondary); }</style>
-</head>
+    <script>window.__CURSO = {nivel:'A2', num:4};</script>
+    <script>
+    (function(){
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
 <body>
     <div class="app-container">
         <a href="dashboard_a2.html" class="back-nav">← Volver al Menú Principal A2</a>
 
         <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A2',num:4};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
             <div>
                 <span class="lesson-badge" style="background: rgba(236, 72, 153, 0.1); color: var(--secondary);">Módulo 4 • A2 Elementary</span>
                 <h1>Have you <span class="text-gradient">ever?</span></h1>
@@ -88,6 +77,5 @@
         </section>
     </div>
 <script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
 </body>
 </html>

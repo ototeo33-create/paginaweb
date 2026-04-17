@@ -1,38 +1,38 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A2',num:2};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A2: Module 2 - When it happened | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
-    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--secondary); }</style>
-</head>
-<body>
-    <div class="app-container">
-        <a href="dashboard_a2.html" class="back-nav">← Volver al Menú Principal A2</a>
-
-        <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A2',num:2};</script>
-    <!-- INTEP: Session guard -->
+    <script src="course_system.js"></script>
+    <style>
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; } .back-nav:hover { color: var(--secondary); }
+        .fill-drill { background: rgba(236, 72, 153, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px; }
+        .fill-drill h4 { color: var(--secondary); margin-bottom: 15px; }
+        .drill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; }
+        .drill-sentence { flex: 1; }
+        .drill-input { padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-dark); }
+        .drill-input.correct { border-color: var(--success); }
+        .drill-input.wrong { border-color: #ef4444; }
+        .check-drill-btn { padding: 12px 20px; border-radius: 8px; border: none; background: var(--secondary); color: white; cursor: pointer; font-weight: 600; }
+    </style>
+    <script>window.__CURSO = {nivel:'A2', num:2};</script>
     <script>
     (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
+<body>
+    <div class="app-container">
+        <a href="dashboard_a2.html" class="back-nav">← Volver al Panel A2</a>
+
+        <header class="lesson-header">
             <div>
                 <span class="lesson-badge" style="background: rgba(236, 72, 153, 0.1); color: var(--secondary);">Módulo 2 • A2 Elementary</span>
                 <h1>When it <span class="text-gradient">happened</span></h1>
@@ -41,61 +41,104 @@
         </header>
 
         <section class="learning-section">
-            <h2 class="section-title">🖼️ 1. Drama Vocabulary</h2>
-            <div class="flashcards-grid">
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🚗</div><h3>Estaba conduciendo</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Was driving</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">😴</div><h3>Estaba durmiendo</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Was sleeping</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">📞</div><h3>Llamó (Interrupción)</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Called</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">💥</div><h3>Chocó (Interrupción)</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Crashed</h3></div></div></div>
-            </div>
-        </section>
-
-        <section class="learning-section">
-            <h2 class="section-title">📖 2. Real Context (The Witness)</h2>
-            <div class="story-box" style="border-left-color: var(--secondary);">
-                "Hello, Police? Yes, I saw it. I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">was walking</span> my dog when the accident <span class="highlight-verb" style="color: white; border-color: white;">happened</span>. The green car <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">was driving</span> very fast while the other guy <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">was listening</span> to music."
-            </div>
-        </section>
-
-        <section class="learning-section">
-            <h2 class="section-title">💡 3. The Grammar Secret: Action vs Interruption</h2>
+            <h2 class="section-title" style="color: var(--secondary);">⏱️ 1. Past Continuous</h2>
+            <p style="margin-bottom: 1.5rem;">Estructura: Sujeto + Was/Were + Verbo-ING</p>
+            
             <div class="grammar-container">
-                <div class="grammar-card normal" style="border-top: 6px solid var(--secondary);">
-                    <h3 style="color: var(--secondary);">Past Continuous (El Fondo)</h3>
-                    <p>La acción larga que estaba pasando tranquilo.</p>
+                <div class="grammar-card normal">
+                    <h3>AFIRMATIVO</h3>
                     <ul class="grammar-list">
-                        <li>I <span>was sleeping</span>.</li>
-                        <li>They <span>were eating</span>.</li>
+                        <li>I <span>was work-ing</span>.</li>
+                        <li>You <span>were runn-ing</span>.</li>
+                        <li>He/She <span>was sleep-ing</span>.</li>
                     </ul>
                 </div>
-                <div class="grammar-card vip" style="border-top: 6px solid #0f172a;">
-                    <h3 style="color: white;">Past Simple (La Interrupción)</h3>
-                    <p>La acción sorpresiva que arruinó la paz (usamos WHEN).</p>
+                <div class="grammar-card vip">
+                    <h3>NEGATIVO</h3>
                     <ul class="grammar-list">
-                        <li>...when the phone <span>rang</span>.</li>
-                        <li>...when the lights <span>went out</span>.</li>
+                        <li>I <span>was not (wasn't)</span> working.</li>
+                        <li>They <span>were not (weren't)</span> sleeping.</li>
                     </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="learning-section">
+            <h2 class="section-title" style="color: var(--secondary);">📖 2. Read & Discover</h2>
+            <div class="story-box" style="border-left-color: var(--secondary);">
+                "Hello, Police? Yes, I saw it. I <span class="highlight-verb" style="color:var(--secondary);">was walk-ing</span> my dog when the accident <span class="highlight-verb">happen-ed</span>. The green car <span class="highlight-verb" style="color:var(--secondary);">was driv-ing</span> very fast while the other driver <span class="highlight-verb" style="color:var(--secondary);">was listen-ing</span> to music."
+            </div>
+        </section>
+
+        <section class="learning-section" style="border-left: 4px solid #10b981;">
+            <h2 class="section-title" style="color: #10b981;">🔀 3. When vs While</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4>WHEN (Cuando)</h4>
+                    <p>La acción corta/interrumpida va con WHEN.</p>
+                    <p style="margin-top: 10px;"><em>I was sleeping <strong>when</strong> the phone rang.</p>
+                </div>
+                <div style="background: rgba(99, 102, 241, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4>WHILE (Mientras)</h4>
+                    <p>La acción larga/en progreso va con WHILE.</p>
+                    <p style="margin-top: 10px;"><em>I <strong>was sleeping</strong> while the phone was ringing.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="learning-section practice-section">
+            <h2 class="section-title" style="color: #8b5cf6;">✏️ 4. Ejercicios</h2>
+            <div class="fill-drill">
+                <div class="drill-item">
+                    <span class="drill-sentence">I _____ (work) when the accident happened.</span>
+                    <input type="text" class="drill-input" data-correct="was working" placeholder="was working">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                <div class="drill-item">
+                    <span class="drill-sentence">She _____ (eat) while he was cooking.</span>
+                    <input type="text" class="drill-input" data-correct="was eating" placeholder="was eating">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
                 </div>
             </div>
         </section>
 
         <section class="learning-section" style="border: 2px solid var(--secondary);">
-            <h2 class="section-title text-gradient">🎯 4. Mission: The Interrogation</h2>
-            <div class="roleplay-grid">
-                <div class="rp-card">
-                    <span style="font-size: 2rem;">👮</span>
-                    <h3>Jugador 1: El Detective</h3>
-                    <p>Alguien robó el banco ayer a las 8PM. Pregunta: "What were you doing when the bank was robbed?!"</p>
-                </div>
-                <div class="rp-card" style="background: linear-gradient(135deg, var(--secondary), #be185d);">
-                    <span style="font-size: 2rem;">🤷</span>
-                    <h3>Jugador 2: El Testigo Confundido</h3>
-                    <p>Inventa una excusa compleja: "I was cooking pasta when I heard a noise..."</p>
-                </div>
-            </div>
+            <h2 class="section-title text-gradient">🎯 5. Mission: The Witness</h2>
+            <p>Un testigo describe lo que estaba haciendo cuando ocurrió un accidente.</p>
+            <p style="margin-top: 15px; color: var(--secondary);">"I was walking my dog when I heard a loud noise..."</p>
+        </section>
+
+        <section class="learning-section exam-section" id="examSection">
+            <h2 class="section-title text-gradient">📝 6. EXAMEN DEL MÓDULO</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Necesitas <strong>70%</strong>.</p>
+            <div id="examContainer"></div>
         </section>
     </div>
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
+
+    <script>
+        function checkDrill(b) {
+            const i = b.previousElementSibling;
+            if (i.value.toLowerCase().trim() === i.dataset.correct.toLowerCase().trim()) {
+                i.classList.add('correct'); i.classList.remove('wrong');
+            } else { i.classList.add('wrong'); i.classList.remove('correct'); }
+        }
+        const q = [
+            {type:'multiple',question:'¿Qué estructura es Past Continuous?',options:[{text:'Sujeto + was/were + verbo-ING',value:'a',correct:true},{text:'Sujeto + verbo-ed',value:'b',correct:false}]},
+            {type:'fill',question:'Completa: "I _____ (work) when you called."',correctAnswer:'was working'},
+            {type:'multiple',question:'"While" se usa para:',options:[{text:'La acción larga/en progreso',value:'a',correct:true},{text:'La interrupción',value:'b',correct:false}]},
+            {type:'fill',question:'Completa: "She _____ (sleep) while I was studying."',correctAnswer:'was sleeping'},
+            {type:'multiple',question:'¿"I was working when the phone rang" significa?',options:[{text:'Trabajé cuando el teléfono sonó',value:'a',correct:true},{text:'Trabajo cuando el teléfono suena',value:'b',correct:false}]},
+            {type:'fill',question:'Completa: "They _____ (play) when it started raining."',correctAnswer:'were playing'},
+            {type:'multiple',question:'¿Was se usa con?',options:[{text:'I, He, She, It',value:'a',correct:true},{text:'You, We, They',value:'b',correct:false}]},
+            {type:'fill',question:'Completa: "He _____ (drive) while she was reading."',correctAnswer:'was driving'},
+            {type:'multiple',question:'¿"When" introduce qué tipo de acción?',options:[{text:'La acción larga',value:'a',correct:false},{text:'La acción corta/interrupción',value:'b',correct:true}]},
+            {type:'translate',question:'Traduce: "Estaba dormido cuando el teléfono sonó."',sentence:'Estaba dormido cuando el teléfono sonó.',correctAnswer:'i was sleeping when the phone rang'}
+        ];
+        document.addEventListener('DOMContentLoaded', function() {
+            ExamGenerator.createExam(q, 'a2', 'm2');
+            ExamGenerator.renderExam('examContainer');
+        });
+    </script>
+    <script src="ufo.js"></script><script src="universe_bg.js"></script>
 </body>
 </html>

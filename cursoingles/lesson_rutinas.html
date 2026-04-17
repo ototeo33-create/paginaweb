@@ -1,16 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A1',num:3};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 3: Daily Routines | INTEP</title>
@@ -18,43 +8,60 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
-</head>
+    <script src="course_system.js"></script>
+    <style>
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }
+        .fill-drill { background: rgba(99, 102, 241, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px; }
+        .fill-drill h4 { color: var(--primary-light); margin-bottom: 15px; }
+        .drill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; flex-wrap: wrap; }
+        .drill-sentence { flex: 1; font-size: 1.1rem; min-width: 200px; }
+        .drill-input { padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-dark); font-size: 1rem; }
+        .drill-input:focus { outline: none; border-color: var(--primary); }
+        .drill-input.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .drill-input.wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .check-drill-btn { padding: 12px 20px; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: 600; }
+        .check-drill-btn:hover { background: var(--primary-light); }
+        .time-table { display: grid; grid-template-columns: 100px 1fr; gap: 15px; margin-top: 20px; }
+        .time-slot { padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; font-weight: bold; color: var(--primary-light); }
+        .activity-slot { padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; }
+    </style>
+    <script>window.__CURSO = {nivel:'A1', num:3};</script>
+    <script>
+    (function(){
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
 <body>
 
     <div class="app-container">
         
+        <a href="dashboard.php" class="back-nav">← Volver al Panel</a>
+
         <!-- Header -->
         <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A1',num:3};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
             <div>
                 <span class="lesson-badge">Módulo 3 • A1 Principiante</span>
                 <h1>Daily <span class="text-gradient">Routines</span></h1>
                 <p>Aprende a hablar de tu día a día usando el Presente Simple.</p>
             </div>
             <div class="progress-container">
-                <div class="progress-circle">
-                    <span>35%</span>
+                <div class="progress-circle" id="progressCircle">
+                    <span id="progressText">0%</span>
                 </div>
-                <p style="font-size: 0.85rem; margin-top: 8px; color: var(--text-muted)">Progreso de Unidad</p>
+                <p style="font-size: 0.85rem; margin-top: 8px; color: var(--text-muted);" id="progressStatus">Completa el examen</p>
             </div>
         </header>
 
         <!-- Section 1: Interactive Vocabulary -->
         <section class="learning-section">
-            <h2 class="section-title">🖼️ 1. Interactive Vocabulary</h2>
-            <p style="margin-bottom: 2rem;">Pasa el mouse sobre las tarjetas para descubrir cómo se dicen tus rutinas diarias en inglés.</p>
+            <h2 class="section-title">⏰ 1. Daily Routine Verbs</h2>
+            <p style="margin-bottom: 2rem;">Verbos esenciales para describir tu rutina diaria.</p>
             
             <div class="flashcards-grid">
-                <!-- Card 1 -->
                 <div class="flashcard">
                     <div class="flashcard-inner">
                         <div class="flashcard-front">
@@ -63,12 +70,11 @@
                         </div>
                         <div class="flashcard-back">
                             <h3>Wake up</h3>
-                            <p>[ weik - up ]</p>
+                            <p>[ weik - ap ]</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Card 2 -->
                 <div class="flashcard">
                     <div class="flashcard-inner">
                         <div class="flashcard-front">
@@ -77,12 +83,11 @@
                         </div>
                         <div class="flashcard-back">
                             <h3>Take a shower</h3>
-                            <p>[ teik a shau-er ]</p>
+                            <p>[ teik a sháuer ]</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 3 -->
                 <div class="flashcard">
                     <div class="flashcard-inner">
                         <div class="flashcard-front">
@@ -91,12 +96,11 @@
                         </div>
                         <div class="flashcard-back">
                             <h3>Have breakfast</h3>
-                            <p>[ hav brek-fast ]</p>
+                            <p>[ jav brek-fast ]</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 4 -->
                 <div class="flashcard">
                     <div class="flashcard-inner">
                         <div class="flashcard-front">
@@ -109,54 +113,290 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🌙</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Dormirse</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Go to sleep</h3>
+                            <p>[ gou tu sliip ]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🏋️</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Hacer ejercicio</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Exercise</h3>
+                            <p>[ éksersais ]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">📚</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Estudiar</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Study</h3>
+                            <p>[ stédi ]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🍽️</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Almorzar</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Have lunch</h3>
+                            <p>[ jav lanch ]</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Section 2: Immersive Reading -->
+        <!-- Section 2: Days of the Week -->
+        <section class="learning-section" style="border-left: 4px solid #10b981;">
+            <h2 class="section-title" style="color: #10b981;">📅 2. Days of the Week</h2>
+            <p style="margin-bottom: 1.5rem;">Los días de la semana son esenciales para hablar de rutinas.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Lunes</p>
+                    <h4>Monday</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">[món-dei]</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Martes</p>
+                    <h4>Tuesday</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">[tiús-dei]</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Miércoles</p>
+                    <h4>Wednesday</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">[uéns-dei]</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Jueves</p>
+                    <h4>Thursday</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">[zérs-dei]</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Viernes</p>
+                    <h4>Friday</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">[frái-dei]</p>
+                </div>
+                <div style="background: rgba(245, 158, 11, 0.2); padding: 15px; border-radius: 12px; text-align: center;">
+                    <p style="color: #f59e0b; font-size: 0.8rem;">Sábado</p>
+                    <h4 style="color: #f59e0b;">Saturday</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">[sátur-dei]</p>
+                </div>
+                <div style="background: rgba(236, 72, 153, 0.2); padding: 15px; border-radius: 12px; text-align: center;">
+                    <p style="color: var(--secondary); font-size: 0.8rem;">Domingo</p>
+                    <h4 style="color: var(--secondary);">Sunday</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">[sán-dei]</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Telling Time -->
+        <section class="learning-section" style="border-left: 4px solid #f59e0b;">
+            <h2 class="section-title" style="color: #f59e0b;">🕐 3. Telling Time - La Hora</h2>
+            <p style="margin-bottom: 1.5rem;">Aprende a decir la hora en inglés.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: #f59e0b; margin-bottom: 15px;">Horas en punto</h4>
+                    <p>3:00 = <strong>Three o'clock</strong></p>
+                    <p>7:00 = <strong>Seven o'clock</strong></p>
+                    <p>12:00 = <strong>Twelve o'clock / Noon</strong></p>
+                </div>
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: #f59e0b; margin-bottom: 15px;">Media hora</h4>
+                    <p>3:30 = <strong>Half past three</strong></p>
+                    <p>7:30 = <strong>Half past seven</strong></p>
+                    <p>12:30 = <strong>Half past twelve</strong></p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 12px;">
+                <h4 style="color: var(--primary); margin-bottom: 15px;">¿Qué hora es?</h4>
+                <div class="drill-item">
+                    <span class="drill-sentence">5:30 = ?</span>
+                    <input type="text" class="drill-input" data-correct="half past five" placeholder="Half past..." style="width: 200px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                <div class="drill-item">
+                    <span class="drill-sentence">8:00 = ?</span>
+                    <input type="text" class="drill-input" data-correct="eight oclock" placeholder="Eight..." style="width: 200px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Immersive Reading -->
         <section class="learning-section">
-            <h2 class="section-title">📖 2. Read & Discover</h2>
-            <p style="margin-bottom: 1.5rem;">Lee la rutina que tiene Elon. ¿Notas algo diferente en los verbos?</p>
+            <h2 class="section-title">📖 4. Read & Discover</h2>
+            <p style="margin-bottom: 1.5rem;">Lee la rutina de Elon. ¿Notas algo diferente en los verbos?</p>
             
             <div class="story-box">
-                "Elon <span class="highlight-verb">wakes</span> up at 7:00 AM. He <span class="highlight-verb">drinks</span> black coffee quickly. Then, he <span class="highlight-verb">goes</span> to work. In the afternoon, he <span class="highlight-verb">eats</span> a sandwich at his desk. "
+                "Elon <span class="highlight-verb">wakes</span> up at 7:00 AM. He <span class="highlight-verb">drinks</span> black coffee quickly. Then, he <span class="highlight-verb">goes</span> to work. In the afternoon, he <span class="highlight-verb">eats</span> a sandwich at his desk. At night, he <span class="highlight-verb">watches</span> TV and <span class="highlight-verb">reads</span> a book before he <span class="highlight-verb">goes</span> to sleep."
             </div>
             
             <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 12px; border-left: 4px solid var(--success);">
-                <strong>💡 Aha Moment!</strong> Cuando hablamos de nosotros mismos decimos "I wake up", pero cuando hablamos de un TERCERO (él o ella), el verbo gana superpoderes y se le agrega una letra "S" al final de la palabra.
+                <strong>💡 Aha Moment!</strong> Cuando hablamos de nosotros mismos usamos "I wake up", pero cuando hablamos de un TERCERO (él o ella), el verbo gana superpoderes y se le agrega una letra "S" al final.
             </div>
         </section>
 
-        <!-- Section 3: Grammar Cheat Sheet -->
+        <!-- Section 5: Grammar Cheat Sheet -->
         <section class="learning-section">
-            <h2 class="section-title">💡 3. The Grammar Secret</h2>
+            <h2 class="section-title">💡 5. The Grammar Secret: Present Simple</h2>
             
             <div class="grammar-container">
                 <div class="grammar-card normal">
                     <h3>Grupo 1: Los Normales 🧍‍♂️</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">I / You / We / They</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">I / You / We / They - Sin cambios</p>
                     <ul class="grammar-list">
                         <li>I <span>wake</span> up at 7:00.</li>
                         <li>You <span>drink</span> coffee.</li>
-                        <li>They <span>watch</span> TV.</li>
+                        <li>We <span>watch</span> TV.</li>
+                        <li>They <span>study</span> English.</li>
                     </ul>
                 </div>
                 
                 <div class="grammar-card vip">
                     <h3>Grupo 2: Los VIPs 👑</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">He / She / It ⚠️ Añade la "S"</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">He / She / It - ¡Añade la "S"!</p>
                     <ul class="grammar-list">
-                        <li>She <span>wakes</span> up at 7:00.</li>
-                        <li>He <span>drinks</span> coffee.</li>
-                        <li>My dog (it) <span>watches</span> TV.</li>
+                        <li>She <span>wake<span style="color: #ef4444;">s</span></span> up at 7:00.</li>
+                        <li>He <span>drink<span style="color: #ef4444;">s</span></span> coffee.</li>
+                        <li>My dog (it) <span>watch<span style="color: #ef4444;">es</span></span> TV.</li>
+                        <li>She <span>studi<span style="color: #ef4444;">es</span></span> English.</li>
                     </ul>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 12px;">
+                <strong>💡 Reglas para la "S" en VIPs:</strong>
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li>Verbos normales → <strong>-s</strong> (wake<u>s</u>, drink<u>s</u>, read<u>s</u>)</li>
+                    <li>Verbos que terminan en <strong>-s, -sh, -ch, -x, -o</strong> → <strong>-es</strong> (watch<u>es</u>, teach<u>es</u>, go<u>es</u>)</li>
+                    <li>Verbos que terminan en <strong>-consonante + y</strong> → <strong>-ies</strong> (studi<u>es</u>, fli<u>es</u>)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 6: Practice Exercises -->
+        <section class="learning-section practice-section">
+            <h2 class="section-title" style="color: #8b5cf6;">✏️ 6. Ejercicios Prácticos</h2>
+            
+            <div class="fill-drill">
+                <h4>📝 Convierte al Tercero (añade la S/ES):</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I wake up → He _____ up at 6 AM.</span>
+                    <input type="text" class="drill-input" data-correct="wakes" placeholder="wakes">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I drink coffee → She _____ coffee every morning.</span>
+                    <input type="text" class="drill-input" data-correct="drinks" placeholder="drinks">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I watch TV → He _____ TV at night.</span>
+                    <input type="text" class="drill-input" data-correct="watches" placeholder="watches">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I go to work → She _____ to work at 8 AM.</span>
+                    <input type="text" class="drill-input" data-correct="goes" placeholder="goes">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I study English → They _____ English every day.</span>
+                    <input type="text" class="drill-input" data-correct="study" placeholder="study">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+            
+            <div class="fill-drill" style="margin-top: 25px;">
+                <h4>📝 Completa la rutina con el verbo correcto:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I _____ (wake up) at 6:00 AM every day.</span>
+                    <input type="text" class="drill-input" data-correct="wake up" placeholder="wake up">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">She always _____ (take a shower) in the morning.</span>
+                    <input type="text" class="drill-input" data-correct="takes a shower" placeholder="takes a shower">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">We _____ (have breakfast) at 7:30.</span>
+                    <input type="text" class="drill-input" data-correct="have breakfast" placeholder="have breakfast">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
                 </div>
             </div>
         </section>
 
-        <!-- Section 4: Mission (Roleplay) -->
+        <!-- Section 7: Your Routine -->
+        <section class="learning-section" style="border-left: 4px solid #ec4899;">
+            <h2 class="section-title" style="color: #ec4899;">📝 7. Tu Rutina Diaria</h2>
+            <p style="margin-bottom: 1.5rem;">Completa esta tabla con TU rutina real. Usa el Presente Simple.</p>
+            
+            <div class="time-table">
+                <div class="time-slot">6:00 AM</div>
+                <div class="activity-slot">
+                    <input type="text" class="drill-input" placeholder="¿Qué haces a las 6 AM?" style="width: 100%;">
+                </div>
+                <div class="time-slot">7:00 AM</div>
+                <div class="activity-slot">
+                    <input type="text" class="drill-input" placeholder="¿Qué haces a las 7 AM?" style="width: 100%;">
+                </div>
+                <div class="time-slot">12:00 PM</div>
+                <div class="activity-slot">
+                    <input type="text" class="drill-input" placeholder="¿Qué haces al mediodía?" style="width: 100%;">
+                </div>
+                <div class="time-slot">6:00 PM</div>
+                <div class="activity-slot">
+                    <input type="text" class="drill-input" placeholder="¿Qué haces a las 6 PM?" style="width: 100%;">
+                </div>
+                <div class="time-slot">10:00 PM</div>
+                <div class="activity-slot">
+                    <input type="text" class="drill-input" placeholder="¿Qué haces antes de dormir?" style="width: 100%;">
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(236, 72, 153, 0.1); border-radius: 12px;">
+                <strong>💡 Ejemplo:</strong> "I wake up at 6:00 AM. I take a shower at 6:30. I have breakfast at 7:00. I go to work at 8:00..."
+            </div>
+        </section>
+
+        <!-- Section 8: Mission (Roleplay) -->
         <section class="learning-section" style="border: 2px solid var(--primary);">
-            <h2 class="section-title text-gradient">🎯 4. Final Mission: The Perfect Roommate</h2>
-            <p style="margin-bottom: 2rem;">Es hora de hablar. Junta a tu pareja y hazle preguntas sobre su rutina usando: <strong>"What time do you...?"</strong>. Cada uno debe asumir una identidad secreta de las tarjetas de abajo.</p>
+            <h2 class="section-title text-gradient">🎯 8. Final Mission: The Perfect Roommate</h2>
+            <p style="margin-bottom: 2rem;">Es hora de hablar. Juega con tu pareja y descubre sus rutinas.</p>
             
             <div class="roleplay-grid">
                 <div class="rp-card">
@@ -167,6 +407,7 @@
                         <li><strong>Wake up:</strong> 11:30 AM</li>
                         <li><strong>Have breakfast:</strong> 12:00 PM (Pizza)</li>
                         <li><strong>Go to work:</strong> 10:00 PM</li>
+                        <li><strong>Go to sleep:</strong> 4:00 AM</li>
                     </ul>
                 </div>
 
@@ -176,20 +417,171 @@
                     <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Eres un profesor de yoga súper ordenado.</p>
                     <ul>
                         <li><strong>Wake up:</strong> 5:00 AM</li>
+                        <li><strong>Exercise:</strong> 5:30 AM</li>
                         <li><strong>Clean the house:</strong> 6:00 AM</li>
                         <li><strong>Go to sleep:</strong> 9:30 PM</li>
                     </ul>
                 </div>
             </div>
             
-            <div style="text-align: center; margin-top: 3rem;">
-                <button style="background: var(--text-dark); color: white; padding: 16px 32px; border-radius: 12px; font-weight: bold; border: none; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">Completar Módulo y Ganar 50 PTS 🏆</button>
+            <div style="margin-top: 20px; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 12px;">
+                <strong>🔑 Preguntas útiles:</strong>
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li>"What time do you wake up?"</li>
+                    <li>"When do you have breakfast?"</li>
+                    <li>"What do you do in the morning/afternoon/evening?"</li>
+                    <li>"What time do you go to sleep?"</li>
+                </ul>
             </div>
+        </section>
+
+        <!-- Section 9: EXAM -->
+        <section class="learning-section exam-section" id="examSection">
+            <h2 class="section-title text-gradient">📝 9. EXAMEN DEL MÓDULO</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Demuestra lo que aprendiste. Necesitas <strong>70%</strong> para aprobar.</p>
+            <div id="examContainer"></div>
         </section>
 
     </div>
 
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
+    <!-- Modal Victoria -->
+    <div id="victoryModal" class="victory-modal-overlay">
+        <div class="victory-box">
+            <div class="mascot-container">
+                <svg width="150" height="150" viewBox="0 0 200 200" overflow="visible">
+                    <ellipse cx="100" cy="190" rx="40" ry="10" fill="rgba(0,0,0,0.15)" class="mascot-shadow" />
+                    <g class="mascot-body-wrapper">
+                        <path d="M 50 120 Q 20 120 20 70" stroke="#ec4899" stroke-width="15" stroke-linecap="round" fill="transparent" class="mascot-arm-left" />
+                        <path d="M 150 120 Q 180 120 180 70" stroke="#f59e0b" stroke-width="15" stroke-linecap="round" fill="transparent" class="mascot-arm-right" />
+                        <rect x="40" y="60" width="120" height="110" rx="50" fill="#10b981" />
+                        <rect x="60" y="110" width="80" height="40" rx="20" fill="rgba(255,255,255,0.15)" />
+                        <circle cx="75" cy="95" r="10" fill="white" />
+                        <circle cx="75" cy="95" r="4" fill="#0f172a" />
+                        <circle cx="125" cy="95" r="10" fill="white" />
+                        <circle cx="125" cy="95" r="4" fill="#0f172a" />
+                        <path d="M 85 130 Q 100 155 115 130" stroke="white" stroke-width="7" stroke-linecap="round" fill="transparent" class="mascot-mouth" />
+                    </g>
+                </svg>
+            </div>
+            <h2>¡Módulo Completado!</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Has demostrado conocer tu rutina en inglés.</p>
+            <div class="pts-badge">+ 50 XP</div>
+            <button onclick="window.location.href='dashboard.php'" style="width: 100%; padding: 15px; border-radius: 12px; border: none; background: #0f172a; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer;">Volver al Panel</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        function checkDrill(button) {
+            const input = button.previousElementSibling;
+            const correct = input.dataset.correct.toLowerCase().trim();
+            const userAnswer = input.value.toLowerCase().trim();
+            
+            if (userAnswer === correct) {
+                input.classList.add('correct');
+                input.classList.remove('wrong');
+            } else {
+                input.classList.add('wrong');
+                input.classList.remove('correct');
+            }
+        }
+        
+        const module3Questions = [
+            {
+                type: 'multiple',
+                question: '¿Cómo se dice "Ella se despierta a las 7"?',
+                options: [
+                    { text: 'She wake up at 7', value: 'a', correct: false },
+                    { text: 'She wakes up at 7', value: 'b', correct: true },
+                    { text: 'She waking up at 7', value: 'c', correct: false },
+                    { text: 'She is wake up at 7', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: '¿Qué significa "Half past three"?',
+                options: [
+                    { text: '3:00', value: 'a', correct: false },
+                    { text: '3:30', value: 'b', correct: true },
+                    { text: '3:15', value: 'c', correct: false },
+                    { text: '3:45', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'fill',
+                question: 'Completa: "He _____ to work every day." (go)',
+                correctAnswer: 'goes'
+            },
+            {
+                type: 'multiple',
+                question: '¿Cuál es el plural de "Monday"?',
+                options: [
+                    { text: 'Mondays', value: 'a', correct: true },
+                    { text: 'Mondayes', value: 'b', correct: false },
+                    { text: 'Monday s', value: 'c', correct: false },
+                    { text: 'Mondays', value: 'd', correct: true }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: 'Completa: "I _____ breakfast at 7 AM."',
+                options: [
+                    { text: 'have', value: 'a', correct: true },
+                    { text: 'has', value: 'b', correct: false },
+                    { text: 'having', value: 'c', correct: false },
+                    { text: 'had', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'fill',
+                question: 'Completa: "What time _____ you wake up?"',
+                correctAnswer: 'do'
+            },
+            {
+                type: 'multiple',
+                question: '¿Qué día es "Friday"?',
+                options: [
+                    { text: 'Jueves', value: 'a', correct: false },
+                    { text: 'Sábado', value: 'b', correct: false },
+                    { text: 'Domingo', value: 'c', correct: false },
+                    { text: 'Viernes', value: 'd', correct: true }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: 'Completa: "She _____ TV every night." (watch)',
+                options: [
+                    { text: 'watch', value: 'a', correct: false },
+                    { text: 'watches', value: 'b', correct: true },
+                    { text: 'watchs', value: 'c', correct: false },
+                    { text: 'is watching', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: '¿Cómo se dice "Me voy a dormir"?',
+                options: [
+                    { text: 'Go to sleep', value: 'a', correct: true },
+                    { text: 'Wake up', value: 'b', correct: false },
+                    { text: 'Have breakfast', value: 'c', correct: false },
+                    { text: 'Take a shower', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'translate',
+                question: 'Traduce: "Él se levanta a las 6 y ella se levanta a las 7."',
+                sentence: 'Él se levanta a las 6 y ella se levanta a las 7.',
+                correctAnswer: 'he wakes up at 6 and she wakes up at 7'
+            }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const exam = ExamGenerator.createExam(module3Questions, 'a1', 'm3');
+            ExamGenerator.renderExam('examContainer');
+        });
+    </script>
+    <script src="ufo.js"></script>
+    <script src="universe_bg.js"></script>
 </body>
 </html>

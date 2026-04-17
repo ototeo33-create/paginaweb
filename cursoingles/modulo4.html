@@ -1,93 +1,312 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A1',num:4};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 4: I can do that | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
-    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }</style>
-</head>
-<body>
-    <div class="app-container">
-        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
-
-        <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A1',num:4};</script>
-    <!-- INTEP: Session guard -->
+    <script src="course_system.js"></script>
+    <style>
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }
+        .fill-drill { background: rgba(139, 92, 246, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px; }
+        .fill-drill h4 { color: #8b5cf6; margin-bottom: 15px; }
+        .drill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; flex-wrap: wrap; }
+        .drill-sentence { flex: 1; font-size: 1.1rem; min-width: 200px; }
+        .drill-input { padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-dark); font-size: 1rem; }
+        .drill-input.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .drill-input.wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .check-drill-btn { padding: 12px 20px; border-radius: 8px; border: none; background: #8b5cf6; color: white; cursor: pointer; font-weight: 600; }
+    </style>
+    <script>window.__CURSO = {nivel:'A1', num:4};</script>
     <script>
     (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
+<body>
+    <div class="app-container">
+        <a href="dashboard.php" class="back-nav">← Volver al Panel</a>
+
+        <header class="lesson-header">
             <div>
-                <span class="lesson-badge">Módulo 4 • A1 Principiante</span>
-                <h1>I can <span class="text-gradient">do that!</span></h1>
-                <p>Expresa talentos, habilidades y cosas que amas hacer.</p>
+                <span class="lesson-badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">Módulo 4 • A1 Principiante</span>
+                <h1>I can <span class="text-gradient" style="background: linear-gradient(to right, #8b5cf6, #ec4899); -webkit-background-clip: text;">do that!</span></h1>
+                <p>Expresa talentos, habilidades y cosas que amas hacer usando CAN y LIKE + -ING.</p>
             </div>
         </header>
 
+        <!-- Section 1: Talents & Hobbies -->
         <section class="learning-section">
-            <h2 class="section-title">🖼️ 1. Talents & Hobbies</h2>
+            <h2 class="section-title" style="color: #8b5cf6;">🎯 1. Talents & Hobbies</h2>
+            <p style="margin-bottom: 2rem;">Verbos esenciales para hablar de lo que sabes hacer.</p>
+            
             <div class="flashcards-grid">
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🏊‍♂️</div><h3>Nadar</h3></div><div class="flashcard-back"><h3>Swim</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🍳</div><h3>Cocinar</h3></div><div class="flashcard-back"><h3>Cook</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🎸</div><h3>Tocar Guitarra</h3></div><div class="flashcard-back"><h3>Play guitar</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🗣️</div><h3>Hablar Español</h3></div><div class="flashcard-back"><h3>Speak Spanish</h3></div></div></div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🏊‍♂️</div><h3>Nadar</h3></div>
+                        <div class="flashcard-back" style="background: #8b5cf6;"><h3>Swim</h3><p>[ suím ]</p></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🍳</div><h3>Cocinar</h3></div>
+                        <div class="flashcard-back" style="background: #8b5cf6;"><h3>Cook</h3><p>[ cúk ]</p></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🎸</div><h3>Tocar Guitarra</h3></div>
+                        <div class="flashcard-back" style="background: #8b5cf6;"><h3>Play guitar</h3><p>[ plei gui-tár ]</p></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🗣️</div><h3>Hablar Idiomas</h3></div>
+                        <div class="flashcard-back" style="background: #8b5cf6;"><h3>Speak languages</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🚗</div><h3>Conducir</h3></div>
+                        <div class="flashcard-back" style="background: #8b5cf6;"><h3>Drive</h3><p>[ dráiv ]</p></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">💃</div><h3>Bailar</h3></div>
+                        <div class="flashcard-back" style="background: #8b5cf6;"><h3>Dance</h3><p>[ dáns ]</p></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🎨</div><h3>Pintar</h3></div>
+                        <div class="flashcard-back" style="background: #8b5cf6;"><h3>Paint</h3><p>[ péint ]</p></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🏃</div><h3>Correr</h3></div>
+                        <div class="flashcard-back" style="background: #8b5cf6;"><h3>Run</h3><p>[ rán ]</p></div>
+                    </div>
+                </div>
             </div>
         </section>
 
+        <!-- Section 2: Sports & Activities -->
+        <section class="learning-section" style="border-left: 4px solid #10b981;">
+            <h2 class="section-title" style="color: #10b981;">⚽ 2. Sports & Activities</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 16px; text-align: center;">
+                    <span style="font-size: 3rem;">⚽</span>
+                    <h4 style="margin-top: 10px;">Football</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Fútbol</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 16px; text-align: center;">
+                    <span style="font-size: 3rem;">🏀</span>
+                    <h4 style="margin-top: 10px;">Basketball</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Baloncesto</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 16px; text-align: center;">
+                    <span style="font-size: 3rem;">🎾</span>
+                    <h4 style="margin-top: 10px;">Tennis</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Tenis</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 16px; text-align: center;">
+                    <span style="font-size: 3rem;">🏋️</span>
+                    <h4 style="margin-top: 10px;">Gym</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Gimnasio</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 16px; text-align: center;">
+                    <span style="font-size: 3rem;">🚴</span>
+                    <h4 style="margin-top: 10px;">Cycling</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Ciclismo</p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 16px; text-align: center;">
+                    <span style="font-size: 3rem;">🧘</span>
+                    <h4 style="margin-top: 10px;">Yoga</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Yoga</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Read & Discover -->
         <section class="learning-section">
-            <h2 class="section-title">📖 2. Read & Discover</h2>
+            <h2 class="section-title" style="color: #8b5cf6;">📖 3. Read & Discover</h2>
             <div class="story-box" style="border-left-color: #8b5cf6;">
-                "I want the job. I <span class="highlight-verb">can speak</span> Spanish and English. I <span class="highlight-verb">can drive</span> a car. But honestly, I <span class="highlight-verb">cannot (can't) cook</span> at all. I burn the water!"
+                "I want the job. I <span class="highlight-verb" style="color:#8b5cf6; border-color:#8b5cf6;">can speak</span> Spanish and English. I <span class="highlight-verb" style="color:#8b5cf6; border-color:#8b5cf6;">can drive</span> a car. I <span class="highlight-verb" style="color:#8b5cf6; border-color:#8b5cf6;">can cook</span> very well. But honestly, I <span class="highlight-verb" style="color:#8b5cf6; border-color:#8b5cf6;">cannot (can't)</span> swim. I burn the water!"
             </div>
         </section>
 
+        <!-- Section 4: Grammar - CAN -->
         <section class="learning-section">
-            <h2 class="section-title">💡 3. The Grammar Secret: CAN (Poder/Habilidad)</h2>
+            <h2 class="section-title" style="color: #8b5cf6;">💡 4. The Grammar Secret: CAN (Habilidad)</h2>
             <div class="grammar-container">
                 <div class="grammar-card normal">
-                    <h3>Lo fácil de CAN</h3>
-                    <p style="margin-bottom:10px;">¡CAN no cambia NUNCA! Es el mismo para todos los pronombres (incluso para VIPs).</p>
+                    <h3 style="color: #10b981;">Lo fácil de CAN</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">¡CAN no cambia NUNCA! Es el mismo para TODOS.</p>
                     <ul class="grammar-list">
-                        <li><strong>I / He / She / They</strong> <span>can</span> swim.</li>
-                        <li><strong>I / He / She / They</strong> <span>cannot (can't)</span> fly.</li>
+                        <li><strong>I</strong> <span>can</span> swim.</li>
+                        <li><strong>You</strong> <span>can</span> dance.</li>
+                        <li><strong>He/She</strong> <span>can</span> cook.</li>
+                        <li><strong>We/They</strong> <span>can</span> run.</li>
+                    </ul>
+                </div>
+                <div class="grammar-card vip">
+                    <h3 style="color: #ef4444;">Negativo: CAN'T</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Para decir que NO puedes hacer algo.</p>
+                    <ul class="grammar-list">
+                        <li>I <span>cannot (can't)</span> fly.</li>
+                        <li>She <span>can't</span> swim.</li>
+                        <li>They <span>can't</span> cook.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <section class="learning-section" style="border: 2px solid #8b5cf6;">
-            <h2 class="section-title text-gradient">🎯 4. Mission: The Interview</h2>
-            <div class="roleplay-grid">
-                <div class="rp-card">
-                    <span style="font-size: 2rem;">👨‍💼</span>
-                    <h3>Paso 1: Entrevistador</h3>
-                    <p>Preguntale a tu compañero sus habilidades: "Can you swim?" / "Can you drive?"</p>
+        <!-- Section 5: LIKE + -ING -->
+        <section class="learning-section" style="border-left: 4px solid #ec4899;">
+            <h2 class="section-title" style="color: #ec4899;">❤️ 5. Like + -ING (Gustos)</h2>
+            <p style="margin-bottom: 1.5rem;">Para hablar de las cosas que te gustan hacer, usa LIKE + verbo-ING.</p>
+            
+            <div class="grammar-container">
+                <div class="grammar-card normal">
+                    <h3 style="color: #ec4899;">Me gusta(n)...</h3>
+                    <ul class="grammar-list">
+                        <li>I <span>like swim<span style="color:#ef4444;">ming</span></span>.</li>
+                        <li>She <span>likes danc<span style="color:#ef4444;">ing</span></span>.</li>
+                        <li>They <span>like play<span style="color:#ef4444;">ing</span></span> tennis.</li>
+                    </ul>
                 </div>
-                <div class="rp-card" style="background: linear-gradient(135deg, #8b5cf6, var(--primary));">
-                    <span style="font-size: 2rem;">🙋</span>
-                    <h3>Paso 2: Solicitante (Mentiroso)</h3>
-                    <p>Miente. Di que sabes hacer de todo diciendo "Yes, I can!", excepto una cosa ridícula.</p>
+                <div class="grammar-card vip">
+                    <h3 style="color: #f59e0b;">No me gusta(n)...</h3>
+                    <ul class="grammar-list">
+                        <li>I <span>don't like</span> waking up early.</li>
+                        <li>She <span>doesn't like</span> cooking.</li>
+                        <li>They <span>don't like</span> running.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(236, 72, 153, 0.1); border-radius: 12px;">
+                <strong>💡 Consejo:</strong> El verbo que sigue a LIKE ya no cambia (no importa si es He/She). Siempre lleva -ING.
+            </div>
+        </section>
+
+        <!-- Section 6: Practice -->
+        <section class="learning-section practice-section">
+            <h2 class="section-title" style="color: #8b5cf6;">✏️ 6. Ejercicios Prácticos</h2>
+            
+            <div class="fill-drill">
+                <h4>📝 Completa con CAN o CAN'T:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I _____ swim, but I _____ fly.</span>
+                    <input type="text" class="drill-input" data-correct="can" placeholder="can/can't" style="width: 100px;">
+                    <input type="text" class="drill-input" data-correct="can't" placeholder="can/can't" style="width: 100px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">She _____ speak three languages.</span>
+                    <input type="text" class="drill-input" data-correct="can" placeholder="can/can't" style="width: 100px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">They _____ cook Italian food.</span>
+                    <input type="text" class="drill-input" data-correct="can" placeholder="can/can't" style="width: 100px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+            
+            <div class="fill-drill" style="margin-top: 25px;">
+                <h4>📝 Completa con LIKE + -ING:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I _____ (watch) movies on weekends.</span>
+                    <input type="text" class="drill-input" data-correct="like watching" placeholder="like watching">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">He _____ (play) video games.</span>
+                    <input type="text" class="drill-input" data-correct="likes playing" placeholder="likes playing">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">We _____ (listen) to music.</span>
+                    <input type="text" class="drill-input" data-correct="like listening" placeholder="like listening">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
                 </div>
             </div>
         </section>
+
+        <!-- Section 7: Mission -->
+        <section class="learning-section" style="border: 2px solid #8b5cf6;">
+            <h2 class="section-title text-gradient">🎯 7. Mission: The Interview</h2>
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">👨‍💼</span>
+                    <h3>Estudiante A: El Entrevistador</h3>
+                    <p>Pregunta sobre habilidades: "Can you swim?" / "Can you drive?"</p>
+                </div>
+                <div class="rp-card" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <span style="font-size: 2rem;">🙋</span>
+                    <h3>Estudiante B: El Mentiroso</h3>
+                    <p>Miente. Di que sabes hacer de todo diciendo "Yes, I can!", excepto una cosa ridícula como "I can't eat pizza".</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: EXAM -->
+        <section class="learning-section exam-section" id="examSection">
+            <h2 class="section-title text-gradient">📝 8. EXAMEN DEL MÓDULO</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Necesitas <strong>70%</strong> para aprobar.</p>
+            <div id="examContainer"></div>
+        </section>
+
     </div>
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        function checkDrill(button) {
+            const input = button.previousElementSibling;
+            const correct = input.dataset.correct.toLowerCase().trim();
+            const userAnswer = input.value.toLowerCase().trim();
+            if (userAnswer === correct) {
+                input.classList.add('correct');
+                input.classList.remove('wrong');
+            } else {
+                input.classList.add('wrong');
+                input.classList.remove('correct');
+            }
+        }
+        
+        const module4Questions = [
+            { type: 'multiple', question: '¿Cómo se dice "Yo puedo nadar"?', options: [{text:'I can swim', value:'a', correct:true},{text:'I can swimming', value:'b', correct:false},{text:'I can to swim', value:'c', correct:false},{text:'I could swim', value:'d', correct:false}] },
+            { type: 'multiple', question: '¿Qué significa "can\'t"?', options: [{text:'Puedo', value:'a', correct:false},{text:'No puedo', value:'b', correct:true},{text:'Quiero', value:'c', correct:false},{text:'Sé', value:'d', correct:false}] },
+            { type: 'fill', question: 'Completa: "She _____ speak English." (can)', correctAnswer: 'can' },
+            { type: 'multiple', question: '¿Cómo se dice "Me gusta bailar"?', options: [{text:'I like dance', value:'a', correct:false},{text:'I like dancing', value:'b', correct:true},{text:'I like to dancing', value:'c', correct:false},{text:'I likes dancing', value:'d', correct:false}] },
+            { type: 'multiple', question: '¿CAN cambia con He/She/It?', options: [{text:'Sí, se convierte en "cans"', value:'a', correct:false},{text:'No, siempre es "can"', value:'b', correct:true},{text:'Sí, se convierte en "canned"', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "He _____ playing tennis." (like)', correctAnswer: 'likes' },
+            { type: 'multiple', question: '¿Qué verbo sigue a LIKE siempre en presente simple?', options: [{text:'to + verbo', value:'a', correct:false},{text:'verbo-ING', value:'b', correct:true},{text:'verbo normal', value:'c', correct:false}] },
+            { type: 'multiple', question: '¿Cómo se dice "Ella no puede cocinar"?', options: [{text:'She can cook', value:'a', correct:false},{text:'She can\'t cook', value:'b', correct:true},{text:'She not can cook', value:'c', correct:false}] },
+            { type: 'multiple', question: '¿Qué significa "I can drive"?', options: [{text:'Yo quiero manejar', value:'a', correct:false},{text:'Yo sé manejar / Yo puedo manejar', value:'b', correct:true},{text:'Yo manejo todos los días', value:'c', correct:false}] },
+            { type: 'translate', question: 'Traduce: "A él le gusta nadar pero no puede nadar bien."', sentence: 'A él le gusta nadar pero no puede nadar bien.', correctAnswer: 'he likes swimming but he cant swim well' }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const exam = ExamGenerator.createExam(module4Questions, 'a1', 'm4');
+            ExamGenerator.renderExam('examContainer');
+        });
+    </script>
+    <script src="ufo.js"></script><script src="universe_bg.js"></script>
 </body>
 </html>

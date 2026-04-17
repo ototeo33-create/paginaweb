@@ -1,56 +1,45 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A1',num:1};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 1: Nice to meet you! | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
-    <!-- Inline styles to add the back button -->
+    <script src="course_system.js"></script>
     <style>
-        .back-nav {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: 20px;
-            transition: color 0.3s;
-        }
-        .back-nav:hover {
-            color: var(--primary);
-        }
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }
+        .exercise-complete-btn { background: var(--success); color: white; padding: 16px 32px; border-radius: 12px; font-weight: bold; border: none; font-size: 1.1rem; cursor: pointer; margin-top: 20px; transition: all 0.3s ease; }
+        .exercise-complete-btn:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4); }
+        .fill-drill { background: rgba(99, 102, 241, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px; }
+        .fill-drill h4 { color: var(--primary-light); margin-bottom: 15px; }
+        .drill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; }
+        .drill-sentence { flex: 1; font-size: 1.1rem; }
+        .drill-input { width: 200px; padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-dark); font-size: 1rem; }
+        .drill-input:focus { outline: none; border-color: var(--primary); }
+        .drill-input.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .drill-input.wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .check-drill-btn { padding: 12px 20px; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: 600; }
+        .check-drill-btn:hover { background: var(--primary-light); }
     </style>
-</head>
+    <script>window.__CURSO = {nivel:'A1', num:1};</script>
+    <script>
+    (function(){
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
 <body>
 
     <div class="app-container">
         
-        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
+        <a href="dashboard.php" class="back-nav">← Volver al Panel</a>
 
         <!-- Header -->
         <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A1',num:1};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
             <div>
                 <span class="lesson-badge">Módulo 1 • A1 Principiante</span>
                 <h1>Nice to <span class="text-gradient">Meet You!</span></h1>
@@ -121,16 +110,78 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">📧</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">¿Cuál es tu email?</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>What is your email?</h3>
+                            <p>[ wat is ior í-meil ]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">📱</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">¿Cuál es tu número?</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>What is your number?</h3>
+                            <p>[ wat is ior námer ]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🌞</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Buenas tardes</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Good afternoon</h3>
+                            <p>[ gud af-ter-nun ]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🌙</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Buenas noches</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Good evening / night</h3>
+                            <p>[ gud iv-ning / nait ]</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Section 2: Immersive Reading -->
         <section class="learning-section">
             <h2 class="section-title">📖 2. Real Context (Networking)</h2>
-            <p style="margin-bottom: 1.5rem;">Lee esta presentación en un evento. Notas el uso del verbo ser/estar.</p>
+            <p style="margin-bottom: 1.5rem;">Lee esta presentación en un evento. Nota el uso del verbo ser/estar.</p>
             
             <div class="story-box" style="border-left-color: var(--secondary);">
                 "Hello! <span class="highlight-verb">I am</span> Sarah. <span class="highlight-verb">I am</span> from Canada. This is my friend Mark. <span class="highlight-verb">He is</span> an engineer. <span class="highlight-verb">We are</span> very happy to be here."
+            </div>
+            
+            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 12px; border-left: 4px solid var(--success);">
+                <strong>💡 Aha Moment!</strong> El verbo "To Be" significa "Ser" o "Estar". En inglés, este verbo cambia según la persona:
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li><strong>I</strong> → <strong>am</strong> (Yo soy/estoy)</li>
+                    <li><strong>You</strong> → <strong>are</strong> (Tú eres/estás)</li>
+                    <li><strong>He/She/It</strong> → <strong>is</strong> (Él/Ella/Eso es/está)</li>
+                    <li><strong>We/They</strong> → <strong>are</strong> (Nosotros/Ellos son/están)</li>
+                </ul>
             </div>
         </section>
 
@@ -160,10 +211,267 @@
             </div>
         </section>
 
-        <!-- Section 4: Mission (Roleplay) -->
+        <!-- Section 4: Practice Exercises -->
+        <section class="learning-section practice-section">
+            <h2 class="section-title" style="color: #8b5cf6;">✏️ 4. Ejercicios Prácticos</h2>
+            <p style="margin-bottom: 1.5rem;">Completa las oraciones usando la forma correcta del verbo To Be.</p>
+            
+            <div class="fill-drill">
+                <h4>📝 Completa con am, is o are:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I _____ from Colombia.</span>
+                    <input type="text" class="drill-input" data-correct="am" placeholder="am/is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">She _____ a doctor.</span>
+                    <input type="text" class="drill-input" data-correct="is" placeholder="am/is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">We _____ students.</span>
+                    <input type="text" class="drill-input" data-correct="are" placeholder="am/is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">He _____ from Brazil.</span>
+                    <input type="text" class="drill-input" data-correct="is" placeholder="am/is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">They _____ teachers.</span>
+                    <input type="text" class="drill-input" data-correct="are" placeholder="am/is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">It _____ a beautiful day.</span>
+                    <input type="text" class="drill-input" data-correct="is" placeholder="am/is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">You _____ very smart.</span>
+                    <input type="text" class="drill-input" data-correct="are" placeholder="am/is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+            
+            <div style="margin-top: 25px;">
+                <h4 style="color: #8b5cf6; margin-bottom: 15px;">🔄 Traduce estas oraciones:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">Yo soy de Argentina.</span>
+                    <input type="text" class="drill-input" data-correct="i am from argentina" placeholder="I am from..." style="width: 300px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">Ella es mi amiga.</span>
+                    <input type="text" class="drill-input" data-correct="she is my friend" placeholder="She is..." style="width: 300px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">Nosotros estamos felices.</span>
+                    <input type="text" class="drill-input" data-correct="we are happy" placeholder="We are..." style="width: 300px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Vocabulary Expansion -->
+        <section class="learning-section" style="border-left: 4px solid #10b981;">
+            <h2 class="section-title">🌍 5. Países y Nacionalidades</h2>
+            <p style="margin-bottom: 1.5rem;">Aprende a decir de dónde eres y tu nacionalidad.</p>
+            
+            <div class="flashcards-grid">
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🇺🇸</div>
+                            <h3 style="color: var(--text-muted); font-size: 1rem;">Estados Unidos</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>American</h3>
+                            <p>USA → American</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🇬🇧</div>
+                            <h3 style="color: var(--text-muted); font-size: 1rem;">Reino Unido</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>British</h3>
+                            <p>UK → British</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🇪🇸</div>
+                            <h3 style="color: var(--text-muted); font-size: 1rem;">España</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Spanish</h3>
+                            <p>Spain → Spanish</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🇲🇽</div>
+                            <h3 style="color: var(--text-muted); font-size: 1rem;">México</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Mexican</h3>
+                            <p>Mexico → Mexican</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🇫🇷</div>
+                            <h3 style="color: var(--text-muted); font-size: 1rem;">Francia</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>French</h3>
+                            <p>France → French</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🇩🇪</div>
+                            <h3 style="color: var(--text-muted); font-size: 1rem;">Alemania</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>German</h3>
+                            <p>Germany → German</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🇮🇹</div>
+                            <h3 style="color: var(--text-muted); font-size: 1rem;">Italia</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Italian</h3>
+                            <p>Italy → Italian</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">🇯🇵</div>
+                            <h3 style="color: var(--text-muted); font-size: 1rem;">Japón</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <h3>Japanese</h3>
+                            <p>Japan → Japanese</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 25px; padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 12px;">
+                <h4 style="color: var(--success); margin-bottom: 15px;">💡 Recuerda:</h4>
+                <p>Para preguntar de dónde es alguien: <strong>"Where are you from?"</strong></p>
+                <p>Para preguntar su nacionalidad: <strong>"What nationality are you?"</strong></p>
+                <p>Ejemplo: "I am from Colombia. I am Colombian."</p>
+            </div>
+        </section>
+
+        <!-- Section 6: Numbers Review -->
+        <section class="learning-section" style="border-left: 4px solid #f59e0b;">
+            <h2 class="section-title">🔢 6. Números del 0 al 100</h2>
+            <p style="margin-bottom: 1.5rem;">Los números son esenciales para dar tu edad, teléfono o cualquier información numérica.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: var(--primary);">Básicos</h4>
+                    <p>0: Zero</p>
+                    <p>1: One</p>
+                    <p>2: Two</p>
+                    <p>3: Three</p>
+                    <p>4: Four</p>
+                    <p>5: Five</p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: var(--primary);">Del 6 al 10</h4>
+                    <p>6: Six</p>
+                    <p>7: Seven</p>
+                    <p>8: Eight</p>
+                    <p>9: Nine</p>
+                    <p>10: Ten</p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: var(--secondary);">Decenas</h4>
+                    <p>20: Twenty</p>
+                    <p>30: Thirty</p>
+                    <p>40: Forty</p>
+                    <p>50: Fifty</p>
+                    <p>60: Sixty</p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: var(--success);">Especiales</h4>
+                    <p>12: Twelve</p>
+                    <p>15: Fifteen</p>
+                    <p>18: Eighteen</p>
+                    <p>70: Seventy</p>
+                    <p>100: One hundred</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h4 style="color: #f59e0b; margin-bottom: 10px;">📝 Ejercicio: ¿Cómo se dicen estos números?</h4>
+                <div class="drill-item">
+                    <span class="drill-sentence">42 = ?</span>
+                    <input type="text" class="drill-input" data-correct="forty-two" placeholder="Forty..." style="width: 200px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                <div class="drill-item">
+                    <span class="drill-sentence">99 = ?</span>
+                    <input type="text" class="drill-input" data-correct="ninety-nine" placeholder="Ninety..." style="width: 200px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                <div class="drill-item">
+                    <span class="drill-sentence">25 = ?</span>
+                    <input type="text" class="drill-input" data-correct="twenty-five" placeholder="Twenty..." style="width: 200px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Mission (Roleplay) -->
         <section class="learning-section" style="border: 2px solid var(--success);">
-            <h2 class="section-title text-gradient">🎯 4. Final Mission: Speed Dating / Networking</h2>
-            <p style="margin-bottom: 2rem;">Usa todo lo aprendido para interactuar. Finge que estás en un evento de Networking y quieres conocer gente. Al terminar, preséntaselo al resto.</p>
+            <h2 class="section-title text-gradient">🎯 7. Mission: Speed Networking</h2>
+            <p style="margin-bottom: 2rem;">Usa todo lo aprendido para interactuar. Finge que estás en un evento de Networking.</p>
             
             <div class="roleplay-grid">
                 <div class="rp-card">
@@ -174,24 +482,30 @@
                         <li><strong>Name:</strong> "What is your name?"</li>
                         <li><strong>Origin:</strong> "Where are you from?"</li>
                         <li><strong>Job:</strong> "What do you do?"</li>
+                        <li><strong>Age:</strong> "How old are you?"</li>
                     </ul>
                 </div>
 
                 <div class="rp-card" style="background: linear-gradient(135deg, var(--success), var(--primary-light));">
                     <span style="font-size: 2rem;">🎤</span>
                     <h3>Paso 2: Presentación Oficial</h3>
-                    <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Preséntale a tu compañero al resto de la clase usando "He is" o "She is".</p>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Preséntale a tu compañero al resto usando "He is" o "She is".</p>
                     <ul>
                         <li>"Hello! This is [Nombre]."</li>
                         <li>"He/She is from [Ciudad/País]."</li>
                         <li>"He/She is a [Profesión]."</li>
+                        <li>"He/She is [Edad] years old."</li>
                     </ul>
                 </div>
             </div>
+        </section>
+
+        <!-- Section 8: EXAM -->
+        <section class="learning-section exam-section" id="examSection">
+            <h2 class="section-title text-gradient">📝 8. EXAMEN DEL MÓDULO</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Demuestra lo que aprendiste. Necesitas <strong>70%</strong> para aprobar y desbloquear el siguiente módulo.</p>
             
-            <div style="text-align: center; margin-top: 3rem;">
-                <button onclick="triggerVictory()" style="background: var(--primary); color: white; padding: 16px 32px; border-radius: 12px; font-weight: bold; border: none; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); transition: transform 0.2s;">🏆 Completar Módulo</button>
-            </div>
+            <div id="examContainer"></div>
         </section>
 
     </div>
@@ -199,51 +513,147 @@
     <!-- Modal Victoria -->
     <div id="victoryModal" class="victory-modal-overlay">
         <div class="victory-box">
-            <!-- Animated Custom Mascot -->
             <div class="mascot-container">
                 <svg width="150" height="150" viewBox="0 0 200 200" overflow="visible">
-                    <!-- Shadow -->
                     <ellipse cx="100" cy="190" rx="40" ry="10" fill="rgba(0,0,0,0.15)" class="mascot-shadow" />
-                    
                     <g class="mascot-body-wrapper">
-                        <!-- Arms -->
                         <path d="M 50 120 Q 20 120 20 70" stroke="#ec4899" stroke-width="15" stroke-linecap="round" fill="transparent" class="mascot-arm-left" />
                         <path d="M 150 120 Q 180 120 180 70" stroke="#f59e0b" stroke-width="15" stroke-linecap="round" fill="transparent" class="mascot-arm-right" />
-                        
-                        <!-- Body -->
                         <rect x="40" y="60" width="120" height="110" rx="50" fill="#6366f1" />
-                        
-                        <!-- Inner belly accent -->
                         <rect x="60" y="110" width="80" height="40" rx="20" fill="rgba(255,255,255,0.15)" />
-                        
-                        <!-- Eyes -->
                         <circle cx="75" cy="95" r="10" fill="white" />
                         <circle cx="75" cy="95" r="4" fill="#0f172a" />
-                        
                         <circle cx="125" cy="95" r="10" fill="white" />
                         <circle cx="125" cy="95" r="4" fill="#0f172a" />
-                        
-                        <!-- Happy Mouth -->
                         <path d="M 85 130 Q 100 155 115 130" stroke="white" stroke-width="7" stroke-linecap="round" fill="transparent" class="mascot-mouth" />
                     </g>
                 </svg>
             </div>
-            
-            <h2>¡Fantástico!</h2>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Completaste el módulo exitosamente.</p>
-            <div class="pts-badge">+ 50 XP</div>
-            <p style="margin-bottom: 20px; font-size: 0.9rem;">Tu recompensa ha sido enviada a tu perfil.</p>
-            <button onclick="window.location.href='/intep/cursoingles/dashboard.php'" style="width: 100%; padding: 15px; border-radius: 12px; border: none; background: #0f172a; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer;">Volver al Panel · Continuar</button>
+            <h2 id="examResultTitle">¡Examen Completado!</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem;" id="examResultMessage">Tu resultado ha sido registrado.</p>
+            <div class="pts-badge" id="examPtsBadge">+ 50 XP</div>
+            <button onclick="window.location.href='dashboard.php'" style="width: 100%; padding: 15px; border-radius: 12px; border: none; background: #0f172a; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer;">Volver al Panel</button>
         </div>
     </div>
 
     <!-- JS para Confeti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
     <script>
+        // Check drill answers
+        function checkDrill(button) {
+            const input = button.previousElementSibling;
+            const correct = input.dataset.correct.toLowerCase().trim();
+            const userAnswer = input.value.toLowerCase().trim();
+            
+            if (userAnswer === correct) {
+                input.classList.add('correct');
+                input.classList.remove('wrong');
+            } else {
+                input.classList.add('wrong');
+                input.classList.remove('correct');
+            }
+        }
+        
+        // Exam questions for Module 1
+        const module1Questions = [
+            {
+                type: 'multiple',
+                question: '¿Cuál es la forma correcta del verbo To Be para "I"?',
+                options: [
+                    { text: 'am', value: 'a', correct: true },
+                    { text: 'is', value: 'b', correct: false },
+                    { text: 'are', value: 'c', correct: false },
+                    { text: 'be', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: '¿Cómo preguntas "¿De dónde eres?" en inglés?',
+                options: [
+                    { text: 'What is your name?', value: 'a', correct: false },
+                    { text: 'Where are you from?', value: 'b', correct: true },
+                    { text: 'What do you do?', value: 'c', correct: false },
+                    { text: 'How are you?', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: 'Completa: "She _____ a teacher."',
+                options: [
+                    { text: 'am', value: 'a', correct: false },
+                    { text: 'is', value: 'b', correct: true },
+                    { text: 'are', value: 'c', correct: false },
+                    { text: 'be', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'fill',
+                question: 'Completa con la palabra correcta: "We _____ from Spain."',
+                correctAnswer: 'are'
+            },
+            {
+                type: 'multiple',
+                question: '¿Cómo se dice "Encantado de conocerte"?',
+                options: [
+                    { text: 'Good morning', value: 'a', correct: false },
+                    { text: 'Nice to meet you', value: 'b', correct: true },
+                    { text: 'How are you?', value: 'c', correct: false },
+                    { text: 'See you later', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: '¿Qué significa "What do you do?"?',
+                options: [
+                    { text: '¿Cómo te llamas?', value: 'a', correct: false },
+                    { text: '¿De dónde eres?', value: 'b', correct: false },
+                    { text: '¿A qué te dedicas?', value: 'c', correct: true },
+                    { text: '¿Cómo estás?', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'fill',
+                question: 'Completa: "I am _____ years old." (ejemplo: 25)',
+                correctAnswer: 'twenty-five'
+            },
+            {
+                type: 'multiple',
+                question: '¿Cuál es la nacionalidad de alguien de Francia?',
+                options: [
+                    { text: 'Spanish', value: 'a', correct: false },
+                    { text: 'French', value: 'b', correct: true },
+                    { text: 'German', value: 'c', correct: false },
+                    { text: 'Italian', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: 'Completa: "They _____ happy."',
+                options: [
+                    { text: 'am', value: 'a', correct: false },
+                    { text: 'is', value: 'b', correct: false },
+                    { text: 'are', value: 'c', correct: true },
+                    { text: 'be', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'translate',
+                question: 'Traduce al inglés: "Él es de México y es mexicano."',
+                sentence: 'Él es de México y es mexicano.',
+                correctAnswer: 'he is from mexico and he is mexican'
+            }
+        ];
+        
+        // Initialize exam when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const exam = ExamGenerator.createExam(module1Questions, 'a1', 'm1');
+            ExamGenerator.renderExam('examContainer');
+        });
+        
         function triggerVictory() {
             document.getElementById('victoryModal').style.display = 'flex';
             
-            // Disparar confeti
             var duration = 3 * 1000;
             var end = Date.now() + duration;
 
@@ -269,7 +679,7 @@
             }());
         }
     </script>
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
+    <script src="ufo.js"></script>
+    <script src="universe_bg.js"></script>
 </body>
 </html>

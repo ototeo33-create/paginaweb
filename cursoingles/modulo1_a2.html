@@ -1,140 +1,249 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A2',num:1};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A2: Module 1 - Last Year | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
+    <script src="course_system.js"></script>
     <style>
-        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } 
-        .back-nav:hover { color: var(--secondary); }
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--secondary); }
+        .fill-drill { background: rgba(236, 72, 153, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px; }
+        .fill-drill h4 { color: var(--secondary); margin-bottom: 15px; }
+        .drill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; flex-wrap: wrap; }
+        .drill-sentence { flex: 1; font-size: 1.1rem; min-width: 200px; }
+        .drill-input { padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-dark); font-size: 1rem; }
+        .drill-input.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .drill-input.wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .check-drill-btn { padding: 12px 20px; border-radius: 8px; border: none; background: var(--secondary); color: white; cursor: pointer; font-weight: 600; }
     </style>
-</head>
-<body>
-    <div class="app-container">
-        <a href="dashboard_a2.html" class="back-nav">← Volver al Menú Principal A2</a>
-
-        <!-- Header -->
-        <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A2',num:1};</script>
-    <!-- INTEP: Session guard -->
+    <script>window.__CURSO = {nivel:'A2', num:1};</script>
     <script>
     (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
+<body>
+    <div class="app-container">
+        <a href="dashboard_a2.html" class="back-nav">← Volver al Panel A2</a>
+
+        <header class="lesson-header">
             <div>
                 <span class="lesson-badge" style="background: rgba(236, 72, 153, 0.1); color: var(--secondary);">Módulo 1 • A2 Elementary</span>
                 <h1>Last <span class="text-gradient">Year</span></h1>
                 <p>Domina el arte de contar historias usando el Pasado Simple.</p>
             </div>
-            <div class="progress-container">
-                <div class="progress-circle" style="background: conic-gradient(var(--secondary) 15%, #e2e8f0 0); border-color: white;">
-                    <span>15%</span>
-                </div>
-            </div>
         </header>
 
-        <!-- Section 1 -->
+        <!-- Section 1: Regular vs Irregular Verbs -->
         <section class="learning-section">
-            <h2 class="section-title">🖼️ 1. Action Verbs in the Past</h2>
-            <p style="margin-bottom: 2rem;">Pasa el mouse para descubrir cómo cambia la acción cuando ya ha terminado.</p>
-            <div class="flashcards-grid">
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🚶</div><h3>Caminar</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Walked</h3><p>[ wok-t ]</p></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">✈️</div><h3>Ir / Viajar</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Went</h3><p>[ uent ]</p></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🍽️</div><h3>Comer</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Ate</h3><p>[ eit ]</p></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">👀</div><h3>Ver</h3></div><div class="flashcard-back" style="background: var(--secondary);"><h3>Saw</h3><p>[ saa ]</p></div></div></div>
+            <h2 class="section-title" style="color: var(--secondary);">📝 1. Past Simple: Regular vs Irregular</h2>
+            <p style="margin-bottom: 2rem;">En pasado simple, los verbos se dividen en dos grupos.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(99, 102, 241, 0.1); padding: 25px; border-radius: 16px;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">✓ Regulares: añades -ED</h4>
+                    <ul style="padding-left: 20px; line-height: 2;">
+                        <li>Want → <strong>Want<font color="#10b981">ed</font></strong></li>
+                        <li>Rain → <strong>Rain<font color="#10b981">ed</font></strong></li>
+                        <li>Walk → <strong>Walk<font color="#10b981">ed</font></strong></li>
+                        <li>Play → <strong>Play<font color="#10b981">ed</font></strong></li>
+                        <li>Study → <strong>Stud<font color="#10b981">ied</font></strong></li>
+                    </ul>
+                </div>
+                <div style="background: rgba(236, 72, 153, 0.1); padding: 25px; border-radius: 16px;">
+                    <h4 style="color: var(--secondary); margin-bottom: 15px;">✗ Irregulares: memorízalos</h4>
+                    <ul style="padding-left: 20px; line-height: 2;">
+                        <li>Go → <strong>Went</strong></li>
+                        <li>Eat → <strong>Ate</strong></li>
+                        <li>See → <strong>Saw</strong></li>
+                        <li>Take → <strong>Took</strong></li>
+                        <li>Write → <strong>Wrote</strong></li>
+                        <li>Speak → <strong>Spoke</strong></li>
+                    </ul>
+                </div>
             </div>
         </section>
 
-        <!-- Section 2 -->
+        <!-- Section 2: More Irregular Verbs -->
+        <section class="learning-section" style="border-left: 4px solid #8b5cf6;">
+            <h2 class="section-title" style="color: #8b5cf6;">📚 2. Más Verbos Irregulares</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4>Buy → Bought</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Comprar</p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4>Get → Got</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Obtener</p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4>Give → Gave</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Dar</p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4>Know → Knew</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Saber/Conocer</p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4>Feel → Felt</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Sentir</p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <h4>Meet → Met</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Conocer/Encontrar</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Read & Discover -->
         <section class="learning-section">
-            <h2 class="section-title">📖 2. Real Context (The Terrible Trip)</h2>
-            <p style="margin-bottom: 1.5rem;">Lee la historia de las peores vacaciones de Marco. Fíjate en los verbos.</p>
+            <h2 class="section-title" style="color: var(--secondary);">📖 3. Read & Discover</h2>
             <div class="story-box" style="border-left-color: var(--secondary);">
                 "Last year, I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">went</span> to Paris. I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">wanted</span> a perfect trip. But it <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">rained</span> every single day! I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">lost</span> my passport and I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">ate</span> a terrible sandwich. I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">cried</span> a little."
             </div>
             <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(236, 72, 153, 0.1); border-radius: 12px; border-left: 4px solid var(--secondary);">
-                <strong>💡 Aha Moment!</strong> En inglés, decir cosas en pasado es igual para todas las personas (I, You, She, They...). ¡No hay reglas VIP! El único problema es que algunos verbos siguen una regla y otros son rebeldes.
+                <strong>💡 Aha Moment!</strong> En inglés, el pasado simple NO cambia según la persona. "I went", "You went", "He went" - todos usan WENT. El problema es memorizar las formas irregulares.
             </div>
         </section>
 
-        <!-- Section 3 -->
-        <section class="learning-section">
-            <h2 class="section-title">💡 3. The Grammar Secret: The 2 Groups</h2>
-            <div class="grammar-container">
-                <div class="grammar-card normal" style="border-top: 6px solid var(--primary);">
-                    <h3 style="color: var(--primary);">Los Obedientes (Regulares)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Se portan bien. Solo piden que les agregues "ED" al final.</p>
-                    <ul class="grammar-list">
-                        <li>Want ➡️ <strong>Wanted</strong></li>
-                        <li>Rain ➡️ <strong>Rained</strong></li>
-                        <li>Walk ➡️ <strong>Walked</strong></li>
-                        <li>Play ➡️ <strong>Played</strong></li>
-                    </ul>
-                </div>
-                <div class="grammar-card vip" style="border-top: 6px solid var(--secondary);">
-                    <h3 style="color: var(--secondary);">Los Rebeldes (Irregulares)</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Rompen las reglas y cambian por completo de forma. Hay que memorizarlos.</p>
-                    <ul class="grammar-list">
-                        <li>Go ➡️ <strong>Went</strong></li>
-                        <li>Eat ➡️ <strong>Ate</strong></li>
-                        <li>See ➡️ <strong>Saw</strong></li>
-                        <li>Lose ➡️ <strong>Lost</strong></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 4 -->
-        <section class="learning-section" style="border: 2px solid var(--secondary);">
-            <h2 class="section-title text-gradient">🎯 4. Mission: The Worst Vacation Ever</h2>
-            <p style="margin-bottom: 2rem;">Todo adulto necesita saber cómo quejarse de un mal viaje. Usa el Pasado Simple para superar la historia de tu compañero.</p>
+        <!-- Section 4: Negatives & Questions -->
+        <section class="learning-section" style="border-left: 4px solid #10b981;">
+            <h2 class="section-title" style="color: #10b981;">❓ 4. Negativos y Preguntas</h2>
             
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 25px; border-radius: 16px;">
+                    <h4 style="color: #10b981;">Negativo</h4>
+                    <p style="margin: 10px 0;"><strong>Sujeto + did not (didn't) + verbo base</strong></p>
+                    <ul style="padding-left: 20px;">
+                        <li>I <strong>didn't go</strong> to the party.</li>
+                        <li>She <strong>didn't eat</strong> breakfast.</li>
+                        <li>They <strong>didn't see</strong> the movie.</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(99, 102, 241, 0.1); padding: 25px; border-radius: 16px;">
+                    <h4 style="color: var(--primary);">Pregunta</h4>
+                    <p style="margin: 10px 0;"><strong>Did + sujeto + verbo base?</strong></p>
+                    <ul style="padding-left: 20px;">
+                        <li><strong>Did</strong> you <strong>go</strong> to the party?</li>
+                        <li><strong>Did</strong> she <strong>eat</strong> breakfast?</li>
+                        <li><strong>Did</strong> they <strong>see</strong> the movie?</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Practice -->
+        <section class="learning-section practice-section">
+            <h2 class="section-title" style="color: #8b5cf6;">✏️ 5. Ejercicios Prácticos</h2>
+            
+            <div class="fill-drill">
+                <h4>📝 Convierte al pasado simple:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I go to Paris → I _____ to Paris last year.</span>
+                    <input type="text" class="drill-input" data-correct="went" placeholder="went">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">She eats pizza → She _____ pizza yesterday.</span>
+                    <input type="text" class="drill-input" data-correct="ate" placeholder="ate">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">They play soccer → They _____ soccer yesterday.</span>
+                    <input type="text" class="drill-input" data-correct="played" placeholder="played">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+            
+            <div class="fill-drill" style="margin-top: 25px;">
+                <h4>📝 Negativo o Pregunta:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">She didn't _____ (go) to work. (negativo)</span>
+                    <input type="text" class="drill-input" data-correct="go" placeholder="go">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">_____ you _____ (see) the movie? (pregunta)</span>
+                    <input type="text" class="drill-input" data-correct="did" placeholder="did" style="width: 80px;">
+                    <input type="text" class="drill-input" data-correct="see" placeholder="see" style="width: 80px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Mission -->
+        <section class="learning-section" style="border: 2px solid var(--secondary);">
+            <h2 class="section-title text-gradient">🎯 6. Mission: The Worst Vacation Ever</h2>
             <div class="roleplay-grid">
                 <div class="rp-card">
                     <span style="font-size: 2rem;">🧳</span>
                     <h3>Jugador 1: Viaje a la Playa</h3>
-                    <p>Cuéntale a tu compañero por qué tu viaje fue horrible usando Pasado Simple.</p>
-                    <ul>
-                        <li><strong style="color: var(--secondary);">Go:</strong> I went to Miami.</li>
-                        <li><strong style="color: var(--secondary);">Rain:</strong> But it rained...</li>
-                        <li><strong style="color: var(--secondary);">Lose:</strong> I lost my...</li>
-                    </ul>
+                    <p>Cuéntale a tu compañero por qué tu viaje fue horrible.</p>
+                    <p style="margin-top: 10px; color: var(--secondary);">"I went to Miami. But it rained every day..."</p>
                 </div>
                 <div class="rp-card" style="background: linear-gradient(135deg, var(--secondary), #be185d);">
                     <span style="font-size: 2rem;">🏔️</span>
                     <h3>Jugador 2: Viaje a la Montaña</h3>
                     <p>Interrumpe. Tu viaje fue peor. Cuéntale por qué.</p>
-                    <ul>
-                        <li><strong style="color: #fce7f3;">Go:</strong> I went to the mountains.</li>
-                        <li><strong style="color: #fce7f3;">See:</strong> I saw a bear...</li>
-                        <li><strong style="color: #fce7f3;">Run:</strong> I ran very fast...</li>
-                    </ul>
+                    <p style="margin-top: 10px; color: #fce7f3;">"I went to the mountains. I saw a bear..."</p>
                 </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 3rem;">
-                <button style="background: var(--text-dark); color: white; padding: 16px 32px; border-radius: 12px; font-weight: bold; border: none; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">Desbloquear Siguiente Módulo 🏆</button>
             </div>
         </section>
 
+        <!-- Section 7: EXAM -->
+        <section class="learning-section exam-section" id="examSection">
+            <h2 class="section-title text-gradient">📝 7. EXAMEN DEL MÓDULO</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Necesitas <strong>70%</strong> para aprobar y desbloquear el siguiente módulo.</p>
+            <div id="examContainer"></div>
+        </section>
+
     </div>
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        function checkDrill(button) {
+            const input = button.previousElementSibling;
+            const correct = input.dataset.correct.toLowerCase().trim();
+            const userAnswer = input.value.toLowerCase().trim();
+            if (userAnswer === correct) {
+                input.classList.add('correct');
+                input.classList.remove('wrong');
+            } else {
+                input.classList.add('wrong');
+                input.classList.remove('correct');
+            }
+        }
+        
+        const module1A2Questions = [
+            { type: 'multiple', question: '¿Cómo se dice "Yo fui a España" en pasado?', options: [{text:'I go to Spain', value:'a', correct:false},{text:'I went to Spain', value:'b', correct:true},{text:'I goed to Spain', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "She _____ (eat) pizza yesterday."', correctAnswer: 'ate' },
+            { type: 'multiple', question: '¿"Played" es un verbo...?', options: [{text:'Irregular', value:'a', correct:false},{text:'Regular', value:'b', correct:true}] },
+            { type: 'fill', question: 'Completa: "They didn\'t _____ (go) to the party."', correctAnswer: 'go' },
+            { type: 'multiple', question: '¿Cuál es el pasado de "write"?', options: [{text:'Write', value:'a', correct:false},{text:'Wrote', value:'b', correct:true},{text:'Written', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "_____ you see the movie?" (pregunta)', correctAnswer: 'did' },
+            { type: 'multiple', question: '¿"Last year" significa?', options: [{text:'El próximo año', value:'a', correct:false},{text:'El año pasado', value:'b', correct:true}] },
+            { type: 'fill', question: 'Completa: "He _____ (study) English yesterday."', correctAnswer: 'studied' },
+            { type: 'multiple', question: '¿"She didn't went" es correcto?', options: [{text:'Sí', value:'a', correct:false},{text:'No, debe ser "She didn\'t go"', value:'b', correct:true}] },
+            { type: 'translate', question: 'Traduce: "El año pasado viajé a París y comí pizza todos los días."', sentence: 'El año pasado viajé a París y comí pizza todos los días.', correctAnswer: 'last year i went to paris and i ate pizza every day' }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const exam = ExamGenerator.createExam(module1A2Questions, 'a2', 'm1');
+            ExamGenerator.renderExam('examContainer');
+        });
+    </script>
+    <script src="ufo.js"></script><script src="universe_bg.js"></script>
 </body>
 </html>

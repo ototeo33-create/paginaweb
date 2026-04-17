@@ -1,15 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logros y Misiones | INTEP</title>
@@ -89,7 +80,14 @@
         .xp-bar { background: linear-gradient(90deg, #f59e0b, #fbbf24); height: 100%; border-radius: 10px; width: 65%; }
 
     </style>
-</head>
+    <script>
+    (function(){
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script></head>
 <body>
 
     <div class="dashboard-layout">
@@ -97,7 +95,7 @@
         <aside class="sidebar">
             <div class="sidebar-logo"><img src="https://institutointep.edu.co/logointep.png" alt="INTEP" style="height: 45px; vertical-align: middle; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));"></div>
             <nav style="display: flex; flex-direction: column; gap: 10px;">
-                <a href="dashboard.html" style="color: #cbd5e1; text-decoration: none; padding: 12px;">📚 Mis Cursos</a>
+                <a href="dashboard.php" style="color: #cbd5e1; text-decoration: none; padding: 12px;">📚 Mis Cursos</a>
                 <a href="logros.html" style="color: white; text-decoration: none; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; font-weight: bold;">🏆 Logros</a>
                 <a href="#" style="color: #cbd5e1; text-decoration: none; padding: 12px;">⚙️ Ajustes</a>
             </nav>

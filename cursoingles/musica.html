@@ -1,15 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Música Bilingüe - INTEP</title>
@@ -159,14 +150,21 @@
         .orb-2 { width: 350px; height: 350px; background: #ec4899; bottom: -50px; right: -50px; animation: float 8s infinite alternate-reverse; }
         @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
     </style>
-</head>
+    <script>
+    (function(){
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script></head>
 <body>
 
     <div class="glowing-orb orb-1"></div>
     <div class="glowing-orb orb-2"></div>
 
     <div class="header">
-        <a href="dashboard.html" class="close-btn">×</a>
+        <a href="dashboard.php" class="close-btn">×</a>
     </div>
 
     <h1 class="page-title">🎙️ Letras Libres</h1>

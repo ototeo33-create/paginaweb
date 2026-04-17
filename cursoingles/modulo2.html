@@ -1,102 +1,567 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A1',num:2};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 2: My World | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
-    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }</style>
-</head>
-<body>
-    <div class="app-container">
-        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
-
-        <!-- Header -->
-        <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A1',num:2};</script>
-    <!-- INTEP: Session guard -->
+    <script src="course_system.js"></script>
+    <style>
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }
+        .fill-drill { background: rgba(236, 72, 153, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px; }
+        .fill-drill h4 { color: var(--secondary); margin-bottom: 15px; }
+        .drill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; flex-wrap: wrap; }
+        .drill-sentence { flex: 1; font-size: 1.1rem; min-width: 200px; }
+        .drill-input { padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-dark); font-size: 1rem; }
+        .drill-input:focus { outline: none; border-color: var(--secondary); }
+        .drill-input.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .drill-input.wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .check-drill-btn { padding: 12px 20px; border-radius: 8px; border: none; background: var(--secondary); color: white; cursor: pointer; font-weight: 600; }
+        .check-drill-btn:hover { background: #be185d; }
+    </style>
+    <script>window.__CURSO = {nivel:'A1', num:2};</script>
     <script>
     (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
+<body>
+    <div class="app-container">
+        <a href="dashboard.php" class="back-nav">← Volver al Panel</a>
+
+        <header class="lesson-header">
             <div>
-                <span class="lesson-badge">Módulo 2 • A1 Principiante</span>
+                <span class="lesson-badge" style="background: rgba(236, 72, 153, 0.1); color: var(--secondary);">Módulo 2 • A1 Principiante</span>
                 <h1>My <span class="text-gradient">World</span></h1>
-                <p>Habla sobre tu familia, tus amigos y las cosas que tienes usando Have/Has.</p>
+                <p>Habla sobre tu familia, tus amigos y las cosas que tienes usando Have/Has y los demostrativos.</p>
+            </div>
+            <div class="progress-container">
+                <div class="progress-circle" id="progressCircle" style="background: conic-gradient(var(--secondary) 0%, #e2e8f0 0);">
+                    <span id="progressText">0%</span>
+                </div>
+                <p style="font-size: 0.85rem; margin-top: 8px; color: var(--text-muted);" id="progressStatus">Completa el examen para desbloquear</p>
             </div>
         </header>
 
-        <!-- Section 1 -->
+        <!-- Section 1: Family Vocabulary -->
         <section class="learning-section">
-            <h2 class="section-title">🖼️ 1. Family & Possessions</h2>
+            <h2 class="section-title" style="color: var(--secondary);">👨‍👩‍👧‍👦 1. Family Members</h2>
+            <p style="margin-bottom: 2rem;">Aprende a nombrar a los miembros de tu familia.</p>
+            
             <div class="flashcards-grid">
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">👨‍👩‍👧</div><h3>Padres</h3></div><div class="flashcard-back"><h3>Parents</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">👦</div><h3>Hermano</h3></div><div class="flashcard-back"><h3>Brother</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🚗</div><h3>Carro / Coche</h3></div><div class="flashcard-back"><h3>Car</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">💻</div><h3>Computadora</h3></div><div class="flashcard-back"><h3>Laptop</h3></div></div></div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">👨</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Padre</h3>
+                        </div>
+                        <div class="flashcard-back" style="background: var(--secondary);">
+                            <h3>Father / Dad</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">👩</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Madre</h3>
+                        </div>
+                        <div class="flashcard-back" style="background: var(--secondary);">
+                            <h3>Mother / Mom</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">👦</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Hermano</h3>
+                        </div>
+                        <div class="flashcard-back" style="background: var(--secondary);">
+                            <h3>Brother</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">👧</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Hermana</h3>
+                        </div>
+                        <div class="flashcard-back" style="background: var(--secondary);">
+                            <h3>Sister</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">👴</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Abuelo</h3>
+                        </div>
+                        <div class="flashcard-back" style="background: var(--secondary);">
+                            <h3>Grandfather</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">👵</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Abuela</h3>
+                        </div>
+                        <div class="flashcard-back" style="background: var(--secondary);">
+                            <h3>Grandmother</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">👨‍👩‍👧</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Padres (conjunto)</h3>
+                        </div>
+                        <div class="flashcard-back" style="background: var(--secondary);">
+                            <h3>Parents</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="card-icon">👶</div>
+                            <h3 style="color: var(--text-muted); font-size: 1.1rem;">Bebé</h3>
+                        </div>
+                        <div class="flashcard-back" style="background: var(--secondary);">
+                            <h3>Baby</h3>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Section 2 -->
+        <!-- Section 2: Possessions Vocabulary -->
         <section class="learning-section">
-            <h2 class="section-title">📖 2. Read & Discover</h2>
-            <div class="story-box">
-                "I <span class="highlight-verb">have</span> a big family. I <span class="highlight-verb">have</span> two brothers. But my sister, Emily, is different. She <span class="highlight-verb">has</span> a new car and she <span class="highlight-verb">has</span> a dog."
+            <h2 class="section-title" style="color: var(--secondary);">🏠 2. Personal Possessions</h2>
+            <p style="margin-bottom: 1.5rem;">Cosas que puedes tener en tu casa u oficina.</p>
+            
+            <div class="flashcards-grid">
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🚗</div><h3>Carro / Coche</h3></div>
+                        <div class="flashcard-back" style="background: var(--secondary);"><h3>Car</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🏠</div><h3>Casa</h3></div>
+                        <div class="flashcard-back" style="background: var(--secondary);"><h3>House</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">💻</div><h3>Computadora</h3></div>
+                        <div class="flashcard-back" style="background: var(--secondary);"><h3>Laptop / Computer</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">📱</div><h3>Teléfono</h3></div>
+                        <div class="flashcard-back" style="background: var(--secondary);"><h3>Phone</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">⌚</div><h3>Reloj</h3></div>
+                        <div class="flashcard-back" style="background: var(--secondary);"><h3>Watch</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">💍</div><h3>Anillo</h3></div>
+                        <div class="flashcard-back" style="background: var(--secondary);"><h3>Ring</h3></div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Section 3 -->
+        <!-- Section 3: Read & Discover -->
         <section class="learning-section">
-            <h2 class="section-title">💡 3. The Grammar Secret: Have vs Has</h2>
+            <h2 class="section-title" style="color: var(--secondary);">📖 3. Read & Discover</h2>
+            <div class="story-box" style="border-left-color: var(--secondary);">
+                "I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">have</span> a big family. I <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">have</span> two brothers. But my sister, Emily, is different. She <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">has</span> a new car and she <span class="highlight-verb" style="color:var(--secondary); border-color:var(--secondary);">has</span> a dog."
+            </div>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(236, 72, 153, 0.1); border-radius: 12px; border-left: 4px solid var(--secondary);">
+                <strong>💡 Aha Moment!</strong> ¿Notas el patrón?
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li><strong>I / You / We / They</strong> → <strong>have</strong></li>
+                    <li><strong>He / She / It</strong> → <strong>has</strong></li>
+                </ul>
+                ¡Es el mismo patrón del verbo To Be! Los VIPs (He/She/It) también cambian aquí.
+            </div>
+        </section>
+
+        <!-- Section 4: Grammar - Have vs Has -->
+        <section class="learning-section">
+            <h2 class="section-title" style="color: var(--secondary);">💡 4. The Grammar Secret: Have vs Has</h2>
             <div class="grammar-container">
-                <div class="grammar-card normal">
-                    <h3>Grupo 1 (Normales): HAVE</h3>
+                <div class="grammar-card normal" style="border-top: 6px solid var(--primary);">
+                    <h3 style="color: var(--primary);">Grupo 1: Los Normales</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">I / You / We / They → <strong>HAVE</strong></p>
                     <ul class="grammar-list">
-                        <li><strong>I / You / We / They</strong> <span>have</span> a dog.</li>
+                        <li><strong>I</strong> <span>have</span> a dog.</li>
+                        <li><strong>You</strong> <span>have</span> a big house.</li>
+                        <li><strong>We</strong> <span>have</span> two cars.</li>
+                        <li><strong>They</strong> <span>have</span> three children.</li>
                     </ul>
                 </div>
-                <div class="grammar-card vip">
-                    <h3>Grupo 2 (VIP): HAS</h3>
+                <div class="grammar-card vip" style="border-top: 6px solid var(--secondary);">
+                    <h3 style="color: var(--secondary);">Grupo 2: Los VIPs</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">He / She / It → <strong>HAS</strong></p>
                     <ul class="grammar-list">
-                        <li><strong>He / She / It</strong> <span>has</span> a dog.</li>
+                        <li><strong>He</strong> <span>has</span> a beautiful wife.</li>
+                        <li><strong>She</strong> <span>has</span> blue eyes.</li>
+                        <li><strong>It</strong> <span>has</span> four legs.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- Section 4 -->
-        <section class="learning-section" style="border: 2px solid var(--primary);">
-            <h2 class="section-title text-gradient">🎯 4. Mission: Photo Tour</h2>
+        <!-- Section 5: Demonstratives -->
+        <section class="learning-section" style="border-left: 4px solid #8b5cf6;">
+            <h2 class="section-title" style="color: #8b5cf6;">👆 5. This, That, These, Those</h2>
+            <p style="margin-bottom: 1.5rem;">Los demostrativos nos indican cercanía o lejanía.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: #8b5cf6; margin-bottom: 15px;">Cercanía (This/These)</h4>
+                    <p><strong>This</strong> = Esto/Ese (singular, cerca)</p>
+                    <p><em>"This is my house."</em></p>
+                    <p style="margin-top: 15px;"><strong>These</strong> = Estos/Esas (plural, cerca)</p>
+                    <p><em>"These are my books."</em></p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: #8b5cf6; margin-bottom: 15px;">Lejanía (That/Those)</h4>
+                    <p><strong>That</strong> = Eso/Aquel (singular, lejos)</p>
+                    <p><em>"That is John's car."</em></p>
+                    <p style="margin-top: 15px;"><strong>Those</strong> = Esos/Aquellos (plural, lejos)</p>
+                    <p><em>"Those are my parents."</em></p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 12px;">
+                <strong>💡 Consejo:</strong> Si puedes tocarlo o está cerca de ti → <strong>this/these</strong>. Si está lejos → <strong>that/those</strong>.
+            </div>
+        </section>
+
+        <!-- Section 6: Colors & Adjectives -->
+        <section class="learning-section" style="border-left: 4px solid #f59e0b;">
+            <h2 class="section-title" style="color: #f59e0b;">🎨 6. Colores y Adjetivos</h2>
+            
+            <div class="flashcards-grid">
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🔴</div><h3>Rojo</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Red</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🔵</div><h3>Azul</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Blue</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🟢</div><h3>Verde</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Green</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🟡</div><h3>Amarillo</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Yellow</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">⚫</div><h3>Negro</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>Black</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">⚪</div><h3>Blanco</h3></div>
+                        <div class="flashcard-back" style="background: #f59e0b;"><h3>White</h3></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h4 style="color: #f59e0b; margin-bottom: 10px;">Adjetivos de personalidad:</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <span style="padding: 8px 15px; background: rgba(255,255,255,0.05); border-radius: 20px;">Happy 😊</span>
+                    <span style="padding: 8px 15px; background: rgba(255,255,255,0.05); border-radius: 20px;">Sad 😢</span>
+                    <span style="padding: 8px 15px; background: rgba(255,255,255,0.05); border-radius: 20px;">Smart 🧠</span>
+                    <span style="padding: 8px 15px; background: rgba(255,255,255,0.05); border-radius: 20px;">Funny 😄</span>
+                    <span style="padding: 8px 15px; background: rgba(255,255,255,0.05); border-radius: 20px;">Serious 😐</span>
+                    <span style="padding: 8px 15px; background: rgba(255,255,255,0.05); border-radius: 20px;">Nice 😊</span>
+                    <span style="padding: 8px 15px; background: rgba(255,255,255,0.05); border-radius: 20px;">Kind 💖</span>
+                    <span style="padding: 8px 15px; background: rgba(255,255,255,0.05); border-radius: 20px;">Brave 💪</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Practice Exercises -->
+        <section class="learning-section practice-section">
+            <h2 class="section-title" style="color: #8b5cf6;">✏️ 7. Ejercicios Prácticos</h2>
+            
+            <div class="fill-drill">
+                <h4>📝 Completa con HAVE o HAS:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I _____ a beautiful house.</span>
+                    <input type="text" class="drill-input" data-correct="have" placeholder="have/has">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">She _____ blue eyes.</span>
+                    <input type="text" class="drill-input" data-correct="has" placeholder="have/has">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">They _____ three dogs.</span>
+                    <input type="text" class="drill-input" data-correct="have" placeholder="have/has">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">He _____ a red car.</span>
+                    <input type="text" class="drill-input" data-correct="has" placeholder="have/has">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">We _____ two children.</span>
+                    <input type="text" class="drill-input" data-correct="have" placeholder="have/has">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">My cat _____ four legs.</span>
+                    <input type="text" class="drill-input" data-correct="has" placeholder="have/has">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+            
+            <div class="fill-drill" style="margin-top: 25px;">
+                <h4>📝 Completa con THIS, THAT, THESE o THOSE:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">_____ is my phone. (cerca)</span>
+                    <input type="text" class="drill-input" data-correct="this" placeholder="this/that/these/those">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">_____ are my books. (cerca)</span>
+                    <input type="text" class="drill-input" data-correct="these" placeholder="this/that/these/those">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">_____ is John's house. (lejos)</span>
+                    <input type="text" class="drill-input" data-correct="that" placeholder="this/that/these/those">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">_____ are my parents. (lejos)</span>
+                    <input type="text" class="drill-input" data-correct="those" placeholder="this/that/these/those">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: Mission -->
+        <section class="learning-section" style="border: 2px solid var(--secondary);">
+            <h2 class="section-title text-gradient">🎯 8. Mission: Photo Tour</h2>
             <div class="roleplay-grid">
                 <div class="rp-card">
                     <span style="font-size: 2rem;">📸</span>
                     <h3>Paso 1: Muestra una Foto</h3>
                     <p>Saca tu teléfono y busca una foto de tu familia o de tu habitación.</p>
                 </div>
-                <div class="rp-card" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+                <div class="rp-card" style="background: linear-gradient(135deg, var(--secondary), var(--primary));">
                     <span style="font-size: 2rem;">🗣️</span>
                     <h3>Paso 2: Describe tus posesiones</h3>
                     <p>Usa They have... / He has... / She has... para describir qué tienen las personas en tu foto.</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem;">Ejemplo: "This is my brother. He has a blue car. These are my parents. They have a big house."</p>
                 </div>
             </div>
         </section>
+
+        <!-- Section 9: EXAM -->
+        <section class="learning-section exam-section" id="examSection">
+            <h2 class="section-title text-gradient">📝 9. EXAMEN DEL MÓDULO</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Demuestra lo que aprendiste. Necesitas <strong>70%</strong> para aprobar.</p>
+            <div id="examContainer"></div>
+        </section>
+
     </div>
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
+
+    <!-- Modal Victoria -->
+    <div id="victoryModal" class="victory-modal-overlay">
+        <div class="victory-box">
+            <div class="mascot-container">
+                <svg width="150" height="150" viewBox="0 0 200 200" overflow="visible">
+                    <ellipse cx="100" cy="190" rx="40" ry="10" fill="rgba(0,0,0,0.15)" class="mascot-shadow" />
+                    <g class="mascot-body-wrapper">
+                        <path d="M 50 120 Q 20 120 20 70" stroke="#ec4899" stroke-width="15" stroke-linecap="round" fill="transparent" class="mascot-arm-left" />
+                        <path d="M 150 120 Q 180 120 180 70" stroke="#f59e0b" stroke-width="15" stroke-linecap="round" fill="transparent" class="mascot-arm-right" />
+                        <rect x="40" y="60" width="120" height="110" rx="50" fill="#ec4899" />
+                        <rect x="60" y="110" width="80" height="40" rx="20" fill="rgba(255,255,255,0.15)" />
+                        <circle cx="75" cy="95" r="10" fill="white" />
+                        <circle cx="75" cy="95" r="4" fill="#0f172a" />
+                        <circle cx="125" cy="95" r="10" fill="white" />
+                        <circle cx="125" cy="95" r="4" fill="#0f172a" />
+                        <path d="M 85 130 Q 100 155 115 130" stroke="white" stroke-width="7" stroke-linecap="round" fill="transparent" class="mascot-mouth" />
+                    </g>
+                </svg>
+            </div>
+            <h2 id="examResultTitle">¡Examen Completado!</h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem;" id="examResultMessage">Tu resultado ha sido registrado.</p>
+            <div class="pts-badge" id="examPtsBadge">+ 50 XP</div>
+            <button onclick="window.location.href='dashboard.php'" style="width: 100%; padding: 15px; border-radius: 12px; border: none; background: #0f172a; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer;">Volver al Panel</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        function checkDrill(button) {
+            const input = button.previousElementSibling;
+            const correct = input.dataset.correct.toLowerCase().trim();
+            const userAnswer = input.value.toLowerCase().trim();
+            
+            if (userAnswer === correct) {
+                input.classList.add('correct');
+                input.classList.remove('wrong');
+            } else {
+                input.classList.add('wrong');
+                input.classList.remove('correct');
+            }
+        }
+        
+        const module2Questions = [
+            {
+                type: 'multiple',
+                question: '¿Cuál es la forma correcta? "She _____ a beautiful dog."',
+                options: [
+                    { text: 'have', value: 'a', correct: false },
+                    { text: 'has', value: 'b', correct: true },
+                    { text: 'having', value: 'c', correct: false },
+                    { text: 'had', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: '¿Qué demostrativo usas para algo singular y cerca de ti?',
+                options: [
+                    { text: 'That', value: 'a', correct: false },
+                    { text: 'These', value: 'b', correct: false },
+                    { text: 'This', value: 'c', correct: true },
+                    { text: 'Those', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: '¿Cómo dices "Mis hermanos" en plural?',
+                options: [
+                    { text: 'My brother', value: 'a', correct: false },
+                    { text: 'My brothers', value: 'b', correct: true },
+                    { text: 'I brother', value: 'c', correct: false },
+                    { text: 'Brother my', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'fill',
+                question: 'Completa: "We _____ a big family."',
+                correctAnswer: 'have'
+            },
+            {
+                type: 'multiple',
+                question: '¿Qué significa "My sister has blue eyes"?',
+                options: [
+                    { text: 'Mi hermano tiene ojos azules', value: 'a', correct: false },
+                    { text: 'Mi hermana tiene ojos azules', value: 'b', correct: true },
+                    { text: 'Mi hermana tiene ojos verdes', value: 'c', correct: false },
+                    { text: 'Mi hermano tiene ojos verdes', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: '¿Cuál es el plural de "child"?',
+                options: [
+                    { text: 'Childs', value: 'a', correct: false },
+                    { text: 'Childrens', value: 'b', correct: false },
+                    { text: 'Children', value: 'c', correct: true },
+                    { text: 'Childes', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'fill',
+                question: 'Completa: "_____ are my parents." (lejos, plural)',
+                correctAnswer: 'those'
+            },
+            {
+                type: 'multiple',
+                question: '¿Qué color es "Yellow"?',
+                options: [
+                    { text: 'Rojo', value: 'a', correct: false },
+                    { text: 'Azul', value: 'b', correct: false },
+                    { text: 'Amarillo', value: 'c', correct: true },
+                    { text: 'Verde', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'multiple',
+                question: '¿Cómo se dice "Abuelo" en inglés?',
+                options: [
+                    { text: 'Grandmother', value: 'a', correct: false },
+                    { text: 'Grandfather', value: 'b', correct: true },
+                    { text: 'Father', value: 'c', correct: false },
+                    { text: 'Uncle', value: 'd', correct: false }
+                ]
+            },
+            {
+                type: 'translate',
+                question: 'Traduce: "Él tiene un carro rojo y ella tiene una casa grande."',
+                sentence: 'Él tiene un carro rojo y ella tiene una casa grande.',
+                correctAnswer: 'he has a red car and she has a big house'
+            }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const exam = ExamGenerator.createExam(module2Questions, 'a1', 'm2');
+            ExamGenerator.renderExam('examContainer');
+        });
+    </script>
+    <script src="ufo.js"></script>
+    <script src="universe_bg.js"></script>
 </body>
 </html>

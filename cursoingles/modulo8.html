@@ -1,99 +1,330 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A1',num:8};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 8: The Past Weekend | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
-    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }</style>
-</head>
-<body>
-    <div class="app-container">
-        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
-
-        <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A1',num:8};</script>
-    <!-- INTEP: Session guard -->
+    <script src="course_system.js"></script>
+    <style>
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }
+        .fill-drill { background: rgba(239, 68, 68, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px; }
+        .fill-drill h4 { color: #ef4444; margin-bottom: 15px; }
+        .drill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; flex-wrap: wrap; }
+        .drill-sentence { flex: 1; font-size: 1.1rem; min-width: 200px; }
+        .drill-input { padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-dark); font-size: 1rem; }
+        .drill-input.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .drill-input.wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .check-drill-btn { padding: 12px 20px; border-radius: 8px; border: none; background: #ef4444; color: white; cursor: pointer; font-weight: 600; }
+    </style>
+    <script>window.__CURSO = {nivel:'A1', num:8};</script>
     <script>
     (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
+<body>
+    <div class="app-container">
+        <a href="dashboard.php" class="back-nav">← Volver al Panel</a>
+
+        <header class="lesson-header">
             <div>
-                <span class="lesson-badge">Módulo 8 • A1 Principiante</span>
-                <h1>The <span class="text-gradient">Past Weekend</span></h1>
-                <p>Nombra el ayer. Introducción al verbo To Be en tiempo Pasado.</p>
+                <span class="lesson-badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">Módulo 8 • A1 Principiante</span>
+                <h1>The <span class="text-gradient" style="background: linear-gradient(to right, #ef4444, #b91c1c); -webkit-background-clip: text;">Past Weekend</span></h1>
+                <p>Habla sobre lo que hiciste ayer. Introducción al verbo To Be en pasado (Was/Were).</p>
             </div>
         </header>
 
+        <!-- Section 1: Time Expressions -->
         <section class="learning-section">
-            <h2 class="section-title">🖼️ 1. Time in the Past</h2>
+            <h2 class="section-title" style="color: #ef4444;">⏰ 1. Time in the Past</h2>
+            <p style="margin-bottom: 2rem;">Expresiones de tiempo para hablar del pasado.</p>
+            
             <div class="flashcards-grid">
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">📅</div><h3>Ayer</h3></div><div class="flashcard-back"><h3>Yesterday</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🌙</div><h3>Anoche</h3></div><div class="flashcard-back"><h3>Last night</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🎉</div><h3>El fin de semana pasado</h3></div><div class="flashcard-back"><h3>Last weekend</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">⏱️</div><h3>Hace dos días</h3></div><div class="flashcard-back"><h3>Two days ago</h3></div></div></div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">📅</div><h3>Ayer</h3></div>
+                        <div class="flashcard-back" style="background: #ef4444;"><h3>Yesterday</h3><p>[ iéster-dei ]</p></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🌙</div><h3>Anoche</h3></div>
+                        <div class="flashcard-back" style="background: #ef4444;"><h3>Last night</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🎉</div><h3>El fin de semana pasado</h3></div>
+                        <div class="flashcard-back" style="background: #ef4444;"><h3>Last weekend</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">⏱️</div><h3>Hace dos días</h3></div>
+                        <div class="flashcard-back" style="background: #ef4444;"><h3>Two days ago</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">📆</div><h3>La semana pasada</h3></div>
+                        <div class="flashcard-back" style="background: #ef4444;"><h3>Last week</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">📅</div><h3>El mes pasado</h3></div>
+                        <div class="flashcard-back" style="background: #ef4444;"><h3>Last month</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🏖️</div><h3>El verano pasado</h3></div>
+                        <div class="flashcard-back" style="background: #ef4444;"><h3>Last summer</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🎂</div><h3>Anoche/cumpleaños</h3></div>
+                        <div class="flashcard-back" style="background: #ef4444;"><h3>Last year</h3></div>
+                    </div>
+                </div>
             </div>
         </section>
 
+        <!-- Section 2: Common Past Verbs -->
+        <section class="learning-section" style="border-left: 4px solid #8b5cf6;">
+            <h2 class="section-title" style="color: #8b5cf6;">📝 2. Verbos comunes en pasado</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: #8b5cf6;">Acciones comunes</h4>
+                    <ul style="padding-left: 20px; line-height: 2;">
+                        <li>Go → <strong>Went</strong></li>
+                        <li>Eat → <strong>Ate</strong></li>
+                        <li>See → <strong>Saw</strong></li>
+                        <li>Drink → <strong>Drank</strong></li>
+                        <li>Sleep → <strong>Slept</strong></li>
+                    </ul>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 16px;">
+                    <h4 style="color: #8b5cf6;">Más verbos</h4>
+                    <ul style="padding-left: 20px; line-height: 2;">
+                        <li>Run → <strong>Ran</strong></li>
+                        <li>Write → <strong>Wrote</strong></li>
+                        <li>Read → <strong>Read</strong></li>
+                        <li>Speak → <strong>Spoke</strong></li>
+                        <li>Meet → <strong>Met</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Read & Discover -->
         <section class="learning-section">
-            <h2 class="section-title">📖 2. Read & Discover</h2>
+            <h2 class="section-title" style="color: #ef4444;">📖 3. Read & Discover</h2>
             <div class="story-box" style="border-left-color: #ef4444;">
-                "Today I am happy. But <span class="highlight-verb">yesterday</span>, I <span class="highlight-verb">was</span> very tired. The weather <span class="highlight-verb">was</span> bad. We <span class="highlight-verb">were</span> at the cinema watching a boring movie."
+                "Today I am happy. But <span class="highlight-verb" style="color:#ef4444; border-color:#ef4444;">yesterday</span>, I <span class="highlight-verb" style="color:#ef4444; border-color:#ef4444;">was</span> very tired. The weather <span class="highlight-verb" style="color:#ef4444; border-color:#ef4444;">was</span> bad. We <span class="highlight-verb" style="color:#ef4444; border-color:#ef4444;">were</span> at the cinema watching a boring movie."
+            </div>
+            
+            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 12px; border-left: 4px solid #ef4444;">
+                <strong>💡 Aha Moment!</strong> WAS y WERE son formas del verbo TO BE en pasado. WAS se usa con I/He/She/It y WERE con You/We/They.
             </div>
         </section>
 
+        <!-- Section 4: Grammar -->
         <section class="learning-section">
-            <h2 class="section-title">💡 3. Grammar: Was vs Were</h2>
+            <h2 class="section-title" style="color: #ef4444;">💡 4. Was vs Were</h2>
             <div class="grammar-container">
                 <div class="grammar-card normal">
-                    <h3>WAS (I / He / She / It)</h3>
+                    <h3 style="color: #ef4444;">WAS (I / He / She / It)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Singular</p>
                     <ul class="grammar-list">
-                        <li><strong>I / He</strong> <span>was</span> tired. (Él/Yo estaba cansado)</li>
+                        <li><strong>I</strong> <span>was</span> tired. (Yo estaba cansado)</li>
+                        <li><strong>He</strong> <span>was</span> happy.</li>
+                        <li><strong>She</strong> <span>was</span> at home.</li>
                         <li><strong>It</strong> <span>was</span> raining.</li>
                     </ul>
                 </div>
                 <div class="grammar-card vip">
-                    <h3>WERE (You / We / They)</h3>
+                    <h3 style="color: #8b5cf6;">WERE (You / We / They)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Plural</p>
                     <ul class="grammar-list">
                         <li><strong>You</strong> <span>were</span> at home. (Estabas en casa)</li>
-                        <li><strong>They</strong> <span>were</span> happy.</li>
+                        <li><strong>We</strong> <span>were</span> happy.</li>
+                        <li><strong>They</strong> <span>were</span> tired.</li>
                     </ul>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 12px;">
+                <strong>💡 Forma negativa:</strong>
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li>I <strong>was not (wasn't)</strong> tired.</li>
+                    <li>They <strong>were not (weren't)</strong> happy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 5: Practice -->
+        <section class="learning-section practice-section">
+            <h2 class="section-title" style="color: #8b5cf6;">✏️ 5. Ejercicios Prácticos</h2>
+            
+            <div class="fill-drill">
+                <h4>📝 Completa con WAS o WERE:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">I _____ tired yesterday.</span>
+                    <input type="text" class="drill-input" data-correct="was" placeholder="was/were">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">They _____ at the beach last weekend.</span>
+                    <input type="text" class="drill-input" data-correct="were" placeholder="was/were">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">She _____ happy on her birthday.</span>
+                    <input type="text" class="drill-input" data-correct="was" placeholder="was/were">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">We _____ in Paris last summer.</span>
+                    <input type="text" class="drill-input" data-correct="were" placeholder="was/were">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+            
+            <div class="fill-drill" style="margin-top: 25px;">
+                <h4>📝 Responde usando ayer (yesterday):</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">Where _____ you yesterday? (at home)</span>
+                    <input type="text" class="drill-input" data-correct="were" placeholder="was/were">
+                    <input type="text" class="drill-input" data-correct="at home" placeholder="respuesta" style="width: 200px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">What _____ he doing last night? (sleeping)</span>
+                    <input type="text" class="drill-input" data-correct="was" placeholder="was">
+                    <input type="text" class="drill-input" data-correct="sleeping" placeholder="sleeping" style="width: 200px;">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
                 </div>
             </div>
         </section>
 
+        <!-- Section 6: Mission -->
         <section class="learning-section" style="border: 2px solid #ef4444;">
-            <h2 class="section-title text-gradient">🎯 4. Mission: The Alibi (La Coartada)</h2>
+            <h2 class="section-title text-gradient">🎯 6. Mission: The Alibi (La Coartada)</h2>
             <div class="roleplay-grid">
                 <div class="rp-card">
                     <span style="font-size: 2rem;">🕵️‍♂️</span>
-                    <h3>Paso 1: El Policía</h3>
-                    <p>Pregúntale a tu sospechoso: "Where were you last night at 10 PM?"</p>
+                    <h3>Estudiante A: El Policía</h3>
+                    <p>"Where were you last night at 10 PM?" / "What were you doing?" / "Were you with anyone?"</p>
                 </div>
                 <div class="rp-card" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">
                     <span style="font-size: 2rem;">🥷</span>
-                    <h3>Paso 2: El Sospechoso</h3>
-                    <p>Inventa una historia usando WAS/WERE: "I was at home. I was with my mother."</p>
+                    <h3>Estudiante B: El Sospechoso</h3>
+                    <p>"I was at home. I was watching TV. My mother was with me."</p>
                 </div>
             </div>
         </section>
+
+        <!-- Section 7: Final Summary -->
+        <section class="learning-section" style="border-left: 4px solid #10b981;">
+            <h2 class="section-title" style="color: #10b981;">🎓 7. Resumen: To Be en Todos los Tiempos</h2>
+            
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <thead>
+                        <tr style="background: rgba(255,255,255,0.05);">
+                            <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--border-color);">Pronoun</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--border-color);">Present</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--border-color);">Past</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">I</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">am</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color); color: #ef4444;">was</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">You</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">are</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color); color: #ef4444;">were</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">He/She/It</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">is</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color); color: #ef4444;">was</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">We/They</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color);">are</td>
+                            <td style="padding: 12px; border-bottom: 1px solid var(--border-color); color: #ef4444;">were</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; text-align: center;">
+                <h4 style="color: #10b981;">🏆 ¡Felicidades! Has completado el Nivel A1</h4>
+                <p style="color: var(--text-muted); margin-top: 10px;">Ahora puedes presentarte, describir tu rutina, hablar de posesiones y contar cosas del pasado.</p>
+            </div>
+        </section>
+
+        <!-- Section 8: EXAM -->
+        <section class="learning-section exam-section" id="examSection">
+            <h2 class="section-title text-gradient">📝 8. EXAMEN FINAL - MÓDULO 8</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Completa este examen para finalizar el nivel A1. Necesitas <strong>70%</strong>.</p>
+            <div id="examContainer"></div>
+        </section>
+
     </div>
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        function checkDrill(button) {
+            const input = button.previousElementSibling;
+            const correct = input.dataset.correct.toLowerCase().trim();
+            const userAnswer = input.value.toLowerCase().trim();
+            if (userAnswer === correct) {
+                input.classList.add('correct');
+                input.classList.remove('wrong');
+            } else {
+                input.classList.add('wrong');
+                input.classList.remove('correct');
+            }
+        }
+        
+        const module8Questions = [
+            { type: 'multiple', question: '¿Qué significa "Yesterday"?', options: [{text:'Hoy', value:'a', correct:false},{text:'Ayer', value:'b', correct:true},{text:'Mañana', value:'c', correct:false}] },
+            { type: 'multiple', question: '¿Usamos WAS o WERE con "I"?', options: [{text:'Were', value:'a', correct:false},{text:'Was', value:'b', correct:true},{text:'Am', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "They _____ at the beach last weekend."', correctAnswer: 'were' },
+            { type: 'multiple', question: '¿"Last night" significa?', options: [{text:'La próxima noche', value:'a', correct:false},{text:'Anoche', value:'b', correct:true},{text:'Esta noche', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "She _____ happy yesterday."', correctAnswer: 'was' },
+            { type: 'multiple', question: '¿Usamos WAS o WERE con "We"?', options: [{text:'Was', value:'a', correct:false},{text:'Were', value:'b', correct:true}] },
+            { type: 'multiple', question: '¿"Last week" significa?', options: [{text:'La próxima semana', value:'a', correct:false},{text:'La semana pasada', value:'b', correct:true}] },
+            { type: 'fill', question: 'Completa: "It _____ raining all day yesterday."', correctAnswer: 'was' },
+            { type: 'multiple', question: '¿"Two days ago" significa?', options: [{text:'Pasado mañana', value:'a', correct:false},{text:'Hace dos días', value:'b', correct:true},{text:'Hace una semana', value:'c', correct:false}] },
+            { type: 'translate', question: 'Traduce: "Yo estaba en casa ayer. Estaba cansado."', sentence: 'Yo estaba en casa ayer. Estaba cansado.', correctAnswer: 'i was at home yesterday i was tired' }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const exam = ExamGenerator.createExam(module8Questions, 'a1', 'm8');
+            ExamGenerator.renderExam('examContainer');
+        });
+    </script>
+    <script src="ufo.js"></script><script src="universe_bg.js"></script>
 </body>
 </html>

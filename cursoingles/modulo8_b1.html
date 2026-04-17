@@ -1,38 +1,27 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'B1',num:8};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>B1: Module 8 - Before that | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
     <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: #eab308; }</style>
-</head>
+    <script>window.__CURSO = {nivel:'B1', num:8};</script>
+    <script>
+    (function(){
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
 <body>
     <div class="app-container">
         <a href="dashboard_b1.html" class="back-nav">← Volver al Menú Principal B1</a>
 
         <header class="lesson-header">
-    <script>window.__CURSO={nivel:'B1',num:8};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
             <div>
                 <span class="lesson-badge" style="background: rgba(234, 179, 8, 0.1); color: #ca8a04;">Módulo 8 • B1 Intermediate</span>
                 <h1>Before <span class="text-gradient" style="background: linear-gradient(to right, #eab308, #ca8a04); -webkit-background-clip: text;">That...</span></h1>
@@ -95,6 +84,5 @@
         </section>
     </div>
 <script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
 </body>
 </html>

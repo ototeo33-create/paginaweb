@@ -1,15 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arcade - Parejas | INTEP</title>
@@ -131,10 +122,17 @@
             text-align: center;
         }
     </style>
-</head>
+    <script>
+    (function(){
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        .then(function(r){return r.json();})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .catch(function(){window.location.replace('/intep/login.php');});
+    })();
+    </script></head>
 <body>
     <div class="game-header">
-        <a href="dashboard.html" class="close-btn">×</a>
+        <a href="dashboard.php" class="close-btn">×</a>
         <div style="color: white; font-size: 1.5rem; font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px;" id="timerDisplay">⏳ 00:00</div>
     </div>
 
@@ -156,7 +154,7 @@
         
         <div style="display: flex; gap: 20px;">
             <button onclick="location.reload()" class="match-btn" style="background:#6366f1; color:white; border-color:#4f46e5; border-bottom: 8px solid #4338ca; padding: 20px 40px; font-size: 1.2rem;">JUGAR DE NUEVO</button>
-            <a href="dashboard.html" class="match-btn" style="display:inline-block; text-decoration:none; background:#10b981; color:white; border-color:#059669; border-bottom: 8px solid #047857; padding: 20px 40px; font-size: 1.2rem;">VOLVER</a>
+            <a href="dashboard.php" class="match-btn" style="display:inline-block; text-decoration:none; background:#10b981; color:white; border-color:#059669; border-bottom: 8px solid #047857; padding: 20px 40px; font-size: 1.2rem;">VOLVER</a>
         </div>
     </div>
 

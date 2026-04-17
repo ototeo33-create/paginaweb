@@ -1,99 +1,338 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-    <script>window.__CURSO={nivel:'A1',num:5};</script>
-    <!-- INTEP: Session guard -->
-    <script>
-    (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
-        .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
-        .catch(function(){window.location.replace('/intep/login.php');});
-    })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 5: City Life | INTEP</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
-    <style>.back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }</style>
-</head>
-<body>
-    <div class="app-container">
-        <a href="dashboard.html" class="back-nav">← Volver al Menú Principal</a>
-
-        <header class="lesson-header">
-    <script>window.__CURSO={nivel:'A1',num:5};</script>
-    <!-- INTEP: Session guard -->
+    <script src="course_system.js"></script>
+    <style>
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; margin-bottom: 20px; transition: color 0.3s; } .back-nav:hover { color: var(--primary); }
+        .fill-drill { background: rgba(16, 185, 129, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px; }
+        .fill-drill h4 { color: #10b981; margin-bottom: 15px; }
+        .drill-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; flex-wrap: wrap; }
+        .drill-sentence { flex: 1; font-size: 1.1rem; min-width: 200px; }
+        .drill-input { padding: 12px; border-radius: 8px; border: 2px solid var(--border-color); background: rgba(255,255,255,0.05); color: var(--text-dark); font-size: 1rem; }
+        .drill-input.correct { border-color: var(--success); background: rgba(16, 185, 129, 0.2); }
+        .drill-input.wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .check-drill-btn { padding: 12px 20px; border-radius: 8px; border: none; background: #10b981; color: white; cursor: pointer; font-weight: 600; }
+    </style>
+    <script>window.__CURSO = {nivel:'A1', num:5};</script>
     <script>
     (function(){
-      fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
+        fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php');window.__INTEP=d;})
+        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script>
+    <script src="/intep/cursoingles/cursos_api.js"></script></head>
+<body>
+    <div class="app-container">
+        <a href="dashboard.php" class="back-nav">← Volver al Panel</a>
+
+        <header class="lesson-header">
             <div>
-                <span class="lesson-badge">Módulo 5 • A1 Principiante</span>
-                <h1>City <span class="text-gradient">Life</span></h1>
+                <span class="lesson-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Módulo 5 • A1 Principiante</span>
+                <h1>City <span class="text-gradient" style="background: linear-gradient(to right, #10b981, #059669); -webkit-background-clip: text;">Life</span></h1>
                 <p>Navega el mundo real usando vocabulario de ciudad y preposiciones.</p>
             </div>
         </header>
 
+        <!-- Section 1: Places in Town -->
         <section class="learning-section">
-            <h2 class="section-title">🖼️ 1. Places in Town</h2>
+            <h2 class="section-title" style="color: #10b981;">🏙️ 1. Places in Town</h2>
+            <p style="margin-bottom: 2rem;">Lugares esenciales en cualquier ciudad.</p>
+            
             <div class="flashcards-grid">
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🏥</div><h3>Hospital</h3></div><div class="flashcard-back"><h3>Hospital</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🏦</div><h3>Banco</h3></div><div class="flashcard-back"><h3>Bank</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">☕</div><h3>Cafetería</h3></div><div class="flashcard-back"><h3>Coffee Shop</h3></div></div></div>
-                <div class="flashcard"><div class="flashcard-inner"><div class="flashcard-front"><div class="card-icon">🛒</div><h3>Mercado</h3></div><div class="flashcard-back"><h3>Supermarket</h3></div></div></div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🏥</div><h3>Hospital</h3></div>
+                        <div class="flashcard-back" style="background: #10b981;"><h3>Hospital</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🏦</div><h3>Banco</h3></div>
+                        <div class="flashcard-back" style="background: #10b981;"><h3>Bank</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">☕</div><h3>Cafetería</h3></div>
+                        <div class="flashcard-back" style="background: #10b981;"><h3>Coffee Shop</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🛒</div><h3>Mercado</h3></div>
+                        <div class="flashcard-back" style="background: #10b981;"><h3>Supermarket</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🏨</div><h3>Hotel</h3></div>
+                        <div class="flashcard-back" style="background: #10b981;"><h3>Hotel</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🏫</div><h3>Escuela</h3></div>
+                        <div class="flashcard-back" style="background: #10b981;"><h3>School</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">⛪</div><h3>Iglesia</h3></div>
+                        <div class="flashcard-back" style="background: #10b981;"><h3>Church</h3></div>
+                    </div>
+                </div>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front"><div class="card-icon">🏥</div><h3>Farmacia</h3></div>
+                        <div class="flashcard-back" style="background: #10b981;"><h3>Pharmacy</h3></div>
+                    </div>
+                </div>
             </div>
         </section>
 
+        <!-- Section 2: More Places -->
+        <section class="learning-section" style="border-left: 4px solid #f59e0b;">
+            <h2 class="section-title" style="color: #f59e0b;">🗺️ 2. More City Vocabulary</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <span style="font-size: 2rem;">🏪</span>
+                    <h4 style="margin-top: 8px;">Store</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Tienda</p>
+                </div>
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <span style="font-size: 2rem;">🎬</span>
+                    <h4 style="margin-top: 8px;">Cinema</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Cine</p>
+                </div>
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <span style="font-size: 2rem;">🏦</span>
+                    <h4 style="margin-top: 8px;">ATM</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Cajero</p>
+                </div>
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <span style="font-size: 2rem;">⛽</span>
+                    <h4 style="margin-top: 8px;">Gas Station</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Gasolinera</p>
+                </div>
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <span style="font-size: 2rem;">🏥</span>
+                    <h4 style="margin-top: 8px;">Police Station</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Policía</p>
+                </div>
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 12px; text-align: center;">
+                    <span style="font-size: 2rem;">✈️</span>
+                    <h4 style="margin-top: 8px;">Airport</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Aeropuerto</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Read & Discover -->
         <section class="learning-section">
-            <h2 class="section-title">📖 2. Read & Discover</h2>
+            <h2 class="section-title" style="color: #10b981;">📖 3. Read & Discover</h2>
             <div class="story-box" style="border-left-color: #10b981;">
-                "<span class="highlight-verb">There is</span> a beautiful park in my city. Next to the park, <span class="highlight-verb">there is</span> a bank. Also, <span class="highlight-verb">there are</span> three coffee shops near my house."
+                "<span class="highlight-verb" style="color:#10b981; border-color:#10b981;">There is</span> a beautiful park in my city. Next to the park, <span class="highlight-verb" style="color:#10b981; border-color:#10b981;">there is</span> a bank. Also, <span class="highlight-verb" style="color:#10b981; border-color:#10b981;">there are</span> three coffee shops near my house. <span class="highlight-verb" style="color:#10b981; border-color:#10b981;">There is</span> a hospital, but it is far from here."
             </div>
         </section>
 
+        <!-- Section 4: Grammar - There is/There are -->
         <section class="learning-section">
-            <h2 class="section-title">💡 3. Grammar: Hay (There is / There are)</h2>
+            <h2 class="section-title" style="color: #10b981;">💡 4. Grammar: Hay (There is / There are)</h2>
             <div class="grammar-container">
                 <div class="grammar-card normal">
-                    <h3>There Is (Singular)</h3>
+                    <h3 style="color: #10b981;">There Is (Singular)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">1 cosa / 1 persona</p>
                     <ul class="grammar-list">
                         <li><span>There is</span> <strong>a</strong> park. (Hay UN parque)</li>
                         <li><span>There is</span> <strong>one</strong> hospital.</li>
+                        <li><span>There is</span> a bank <strong>next to</strong> the hotel.</li>
                     </ul>
                 </div>
                 <div class="grammar-card vip">
-                    <h3>There Are (Plural)</h3>
+                    <h3 style="color: #8b5cf6;">There Are (Plural)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">2 o más cosas / personas</p>
                     <ul class="grammar-list">
                         <li><span>There are</span> <strong>two</strong> banks. (Hay DOS bancos)</li>
-                        <li><span>There are</span> <strong>many</strong> people. (Hay muchas personas)</li>
+                        <li><span>There are</span> <strong>many</strong> people.</li>
+                        <li><span>There are</span> three coffee shops.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <section class="learning-section" style="border: 2px solid #10b981;">
-            <h2 class="section-title text-gradient">🎯 4. Mission: The Lost Tourist</h2>
-            <div class="roleplay-grid">
-                <div class="rp-card">
-                    <span style="font-size: 2rem;">🗺️</span>
-                    <h3>Paso 1: El Turista</h3>
-                    <p>Finge que estás perdido. Pregunta: "Excuse me, where is the... [hospital / bank / park]?"</p>
+        <!-- Section 5: Prepositions -->
+        <section class="learning-section" style="border-left: 4px solid #8b5cf6;">
+            <h2 class="section-title" style="color: #8b5cf6;">📍 5. Prepositions of Place</h2>
+            <p style="margin-bottom: 1.5rem;">Las preposiciones nos dicen DÓNDE está algo.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px;">
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+                    <div style="width: 60px; height: 60px; background: #8b5cf6; border-radius: 8px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <div style="width: 20px; height: 20px; background: white; border-radius: 50%;"></div>
+                        <span style="position: absolute; bottom: -25px; font-size: 0.8rem;">ON</span>
+                    </div>
+                    <h4>On</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Encima de</p>
                 </div>
-                <div class="rp-card" style="background: linear-gradient(135deg, #10b981, #059669);">
-                    <span style="font-size: 2rem;">📍</span>
-                    <h3>Paso 2: El Local</h3>
-                    <p>Usa preposiciones para guiarlo: "It is next to...", "It is in front of..."</p>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+                    <div style="width: 60px; height: 60px; background: #8b5cf6; border-radius: 8px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <div style="width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+                        <span style="position: absolute; bottom: -25px; font-size: 0.8rem;">IN</span>
+                    </div>
+                    <h4>In</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Dentro de</p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+                    <div style="width: 60px; height: 60px; background: #8b5cf6; border-radius: 8px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <div style="width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: -10px;"></div>
+                        <span style="position: absolute; bottom: -25px; font-size: 0.8rem;">UNDER</span>
+                    </div>
+                    <h4>Under</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Debajo de</p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+                    <div style="width: 60px; height: 60px; background: #8b5cf6; border-radius: 8px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <div style="width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; left: -10px;"></div>
+                        <span style="position: absolute; bottom: -25px; font-size: 0.8rem;">NEXT TO</span>
+                    </div>
+                    <h4>Next to</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Al lado de</p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+                    <div style="width: 60px; height: 60px; background: #8b5cf6; border-radius: 8px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <div style="width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: -15px;"></div>
+                        <span style="position: absolute; bottom: -25px; font-size: 0.8rem;">IN FRONT OF</span>
+                    </div>
+                    <h4>In front of</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Enfrente de</p>
+                </div>
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 12px; text-align: center;">
+                    <div style="width: 60px; height: 60px; background: #8b5cf6; border-radius: 8px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <div style="width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; right: -15px;"></div>
+                        <span style="position: absolute; bottom: -25px; font-size: 0.8rem;">BEHIND</span>
+                    </div>
+                    <h4>Behind</h4>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Detrás de</p>
                 </div>
             </div>
         </section>
+
+        <!-- Section 6: Practice -->
+        <section class="learning-section practice-section">
+            <h2 class="section-title" style="color: #8b5cf6;">✏️ 6. Ejercicios Prácticos</h2>
+            
+            <div class="fill-drill">
+                <h4>📝 Completa con THERE IS o THERE ARE:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">_____ a beautiful park in my city.</span>
+                    <input type="text" class="drill-input" data-correct="there is" placeholder="there is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">_____ two banks near here.</span>
+                    <input type="text" class="drill-input" data-correct="there are" placeholder="there is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">_____ one hospital in this town.</span>
+                    <input type="text" class="drill-input" data-correct="there is" placeholder="there is/are">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+            
+            <div class="fill-drill" style="margin-top: 25px;">
+                <h4>📝 Completa con la preposición correcta:</h4>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">The book is _____ the table. (encima)</span>
+                    <input type="text" class="drill-input" data-correct="on" placeholder="on/in/under...">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">The cat is _____ the bed. (debajo)</span>
+                    <input type="text" class="drill-input" data-correct="under" placeholder="on/in/under...">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+                
+                <div class="drill-item">
+                    <span class="drill-sentence">The bank is _____ the hotel. (al lado)</span>
+                    <input type="text" class="drill-input" data-correct="next to" placeholder="on/in/under...">
+                    <button class="check-drill-btn" onclick="checkDrill(this)">Verificar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Mission -->
+        <section class="learning-section" style="border: 2px solid #10b981;">
+            <h2 class="section-title text-gradient">🎯 7. Mission: The Lost Tourist</h2>
+            <div class="roleplay-grid">
+                <div class="rp-card">
+                    <span style="font-size: 2rem;">🗺️</span>
+                    <h3>Estudiante A: El Turista</h3>
+                    <p>"Excuse me, where is the... [hospital / bank / park / coffee shop]?"</p>
+                </div>
+                <div class="rp-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <span style="font-size: 2rem;">📍</span>
+                    <h3>Estudiante B: El Local</h3>
+                    <p>"It is next to...", "It is in front of...", "Go straight and turn left..."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: EXAM -->
+        <section class="learning-section exam-section" id="examSection">
+            <h2 class="section-title text-gradient">📝 8. EXAMEN DEL MÓDULO</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Necesitas <strong>70%</strong> para aprobar.</p>
+            <div id="examContainer"></div>
+        </section>
+
     </div>
-<script src="ufo.js"></script><script src="universe_bg.js"></script>
-<script src="/intep/cursoingles/cursos_api.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        function checkDrill(button) {
+            const input = button.previousElementSibling;
+            const correct = input.dataset.correct.toLowerCase().trim();
+            const userAnswer = input.value.toLowerCase().trim();
+            if (userAnswer === correct) {
+                input.classList.add('correct');
+                input.classList.remove('wrong');
+            } else {
+                input.classList.add('wrong');
+                input.classList.remove('correct');
+            }
+        }
+        
+        const module5Questions = [
+            { type: 'multiple', question: '¿Cómo se dice "Hay un parque"?', options: [{text:'There is a park', value:'a', correct:true},{text:'There are a park', value:'b', correct:false},{text:'Here is a park', value:'c', correct:false}] },
+            { type: 'multiple', question: '¿Cuándo usamos THERE ARE?', options: [{text:'Para 1 cosa', value:'a', correct:false},{text:'Para 2 o más cosas', value:'b', correct:true},{text:'Para nada', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "_____ three schools in my city."', correctAnswer: 'there are' },
+            { type: 'multiple', question: '¿Qué preposición significa "al lado de"?', options: [{text:'in', value:'a', correct:false},{text:'next to', value:'b', correct:true},{text:'under', value:'c', correct:false}] },
+            { type: 'multiple', question: '¿Qué preposición significa "debajo de"?', options: [{text:'on', value:'a', correct:false},{text:'under', value:'b', correct:true},{text:'behind', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "The cat is _____ the table." (debajo)', correctAnswer: 'under' },
+            { type: 'multiple', question: '"Where is the bank?" significa:', options: [{text:'¿Qué es el banco?', value:'a', correct:false},{text:'¿Dónde está el banco?', value:'b', correct:true},{text:'¿Cómo es el banco?', value:'c', correct:false}] },
+            { type: 'fill', question: 'Completa: "There _____ one hospital in town."', correctAnswer: 'there is' },
+            { type: 'multiple', question: '¿Cómo se dice "enfrente de"?', options: [{text:'next to', value:'a', correct:false},{text:'in front of', value:'b', correct:true},{text:'behind', value:'c', correct:false}] },
+            { type: 'translate', question: 'Traduce: "Hay dos cafeterías al lado del parque."', sentence: 'Hay dos cafeterías al lado del parque.', correctAnswer: 'there are two coffee shops next to the park' }
+        ];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const exam = ExamGenerator.createExam(module5Questions, 'a1', 'm5');
+            ExamGenerator.renderExam('examContainer');
+        });
+    </script>
+    <script src="ufo.js"></script><script src="universe_bg.js"></script>
 </body>
 </html>
