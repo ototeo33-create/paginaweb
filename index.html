@@ -372,6 +372,33 @@ body::before{
   filter:drop-shadow(0 4px 24px rgba(0,0,0,.35));
 }
 
+/* Logo INTEP animado dentro de stats */
+.intep-logo-banner{
+  text-align:center;padding:1rem 1rem 2.5rem;
+}
+.ilb-inner{position:relative;z-index:1}
+.ilb-title{
+  font-family:'Exo 2',sans-serif;font-weight:900;
+  font-size:clamp(4rem,12vw,8rem);line-height:.95;
+  background:linear-gradient(135deg,#fff 0%,var(--green-light) 35%,#6ee7b7 65%,#fff 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:shimmerText 3.5s linear infinite;
+  filter:drop-shadow(0 0 30px rgba(110,231,183,.3));
+}
+.ilb-sub{
+  font-family:'Exo 2',sans-serif;font-size:clamp(.7rem,2.5vw,1rem);
+  font-weight:600;letter-spacing:4px;text-transform:uppercase;
+  color:rgba(255,255,255,.55);margin-top:.4rem;
+}
+
+/* Nav logo oculto en móvil al top, visible al scroll */
+@media(max-width:768px){
+  .nav:not(.scrolled) .nav-logo img{opacity:0;pointer-events:none}
+  .nav-logo img{transition:opacity .4s,height .4s}
+}
+
 /* Text marquee encima del marquee morado */
 .text-marquee{
   background:var(--cream);padding:.75rem 0;overflow:hidden;
@@ -1362,7 +1389,12 @@ body::before{
 <!-- STATS COUNTER -->
 <section class="stats">
 <div class="stats-inner">
-  <div class="stats-label sr">INTEP en números</div>
+  <div class="intep-logo-banner">
+    <div class="ilb-inner">
+      <div class="ilb-title"><em>INTEP</em></div>
+      <div class="ilb-sub">Instituto Técnico Pedagógico</div>
+    </div>
+  </div>
   <h2 class="stats-title sr">Una década formando <em>talento humano</em> requerido por el sector productivo local y nacional</h2>
   <div class="stats-grid">
     <div class="stat-card sr">
