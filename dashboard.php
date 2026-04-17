@@ -107,7 +107,7 @@ $eval_periodo = $eval_ctrl['periodo'] ?? '';
 $eval_pendientes = 0;
 if ($rol === 'estudiante' && $eval_activa) {
     $prog_id = null;
-    $rp = mysqli_prepare($conexion, "SELECT programa_id FROM usuarios WHERE id = ?");
+    $rp = mysqli_prepare($conexion, "SELECT COALESCE(u.programa_id, e.programa_id) AS programa_id FROM usuarios u LEFT JOIN estudiantes e ON u.estudiante_id = e.id WHERE u.id = ?");
     mysqli_stmt_bind_param($rp, 'i', $usuario_id);
     mysqli_stmt_execute($rp);
     $prog_id = mysqli_stmt_get_result($rp)->fetch_assoc()['programa_id'] ?? null;

@@ -16,8 +16,13 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_rol'] !== 'estudiante'
 $action = $_GET['action'] ?? '';
 $usuario_id = (int)$_SESSION['usuario_id'];
 
-// Obtener programa del estudiante
-$stmt = mysqli_prepare($conexion, "SELECT programa_id FROM usuarios WHERE id = ?");
+// Obtener programa del estudiante (puede estar en usuarios.programa_id o en estudiantes.programa_id via estudiante_id)
+$stmt = mysqli_prepare($conexion, "
+    SELECT COALESCE(u.programa_id, e.programa_id) AS programa_id
+    FROM usuarios u
+    LEFT JOIN estudiantes e ON u.estudiante_id = e.id
+    WHERE u.id = ?
+");
 mysqli_stmt_bind_param($stmt, 'i', $usuario_id);
 mysqli_stmt_execute($stmt);
 $res = mysqli_stmt_get_result($stmt);
