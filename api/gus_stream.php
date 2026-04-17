@@ -60,17 +60,17 @@ $rol_u = 'user';
 mysqli_stmt_bind_param($stu, 'issi', $est_id, $rol_u, $mensaje, $leccion_id);
 mysqli_stmt_execute($stu);
 
-// Gemini key
-$gemini_key = getenv('GEMINI_API_KEY') ?: '';
-if (!$gemini_key) {
+// Groq key
+$groq_key = getenv('GROQ_API_KEY') ?: '';
+if (!$groq_key) {
     $env = dirname(__DIR__) . '/.env';
     if (file_exists($env)) {
         foreach (file($env, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-            if (str_starts_with($line, 'GEMINI_API_KEY=')) { $gemini_key = substr($line, 15); break; }
+            if (str_starts_with($line, 'GROQ_API_KEY=')) { $groq_key = substr($line, 13); break; }
         }
     }
 }
-if (!$gemini_key) { sse(['error' => 'API key no configurada']); exit; }
+if (!$groq_key) { sse(['error' => 'API key no configurada']); exit; }
 
 // System prompt — voz, respuestas cortas, nombre del estudiante
 $system = <<<P
@@ -83,30 +83,26 @@ Celebrate correct answers: "¡Muy bien $nombre_est!" or "Perfect!". Correct gent
 If student says done/finish/terminar: one spoken sentence summary, then [LECCION_COMPLETADA].
 P;
 
-// Build Gemini contents (system separate, roles: user/model)
-$contents = [];
-foreach ($rows as $r) {
-    $role       = ($r['rol'] === 'assistant') ? 'model' : 'user';
-    $contents[] = ['role' => $role, 'parts' => [['text' => $r['mensaje']]]];
-}
-$contents[] = ['role' => 'user', 'parts' => [['text' => $mensaje]]];
+// Build messages para Groq
+$messages = [['role' => 'system', 'content' => $system]];
+foreach ($rows as $r) $messages[] = ['role' => $r['rol'], 'content' => $r['mensaje']];
+$messages[] = ['role' => 'user', 'content' => $mensaje];
 
-$body = json_encode([
-    'systemInstruction' => ['parts' => [['text' => $system]]],
-    'contents'          => $contents,
-    'generationConfig'  => ['temperature' => 0.75, 'maxOutputTokens' => 120],
-]);
-
-// Stream from Gemini
+// Stream from Groq
 $full = '';
 $buf  = '';
 
-$url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key={$gemini_key}";
-$ch  = curl_init($url);
+$ch = curl_init("https://api.groq.com/openai/v1/chat/completions");
 curl_setopt_array($ch, [
     CURLOPT_POST           => true,
-    CURLOPT_POSTFIELDS     => $body,
-    CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+    CURLOPT_POSTFIELDS     => json_encode([
+        'model'       => 'llama-3.3-70b-versatile',
+        'messages'    => $messages,
+        'temperature' => 0.75,
+        'max_tokens'  => 120,
+        'stream'      => true,
+    ]),
+    CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Authorization: Bearer ' . $groq_key],
     CURLOPT_TIMEOUT        => 30,
     CURLOPT_SSL_VERIFYPEER => false,
     CURLOPT_SSL_VERIFYHOST => false,
@@ -118,7 +114,7 @@ curl_setopt_array($ch, [
             if (!str_starts_with($line, 'data: ')) continue;
             $s = substr($line, 6);
             if ($s === '[DONE]') continue;
-            $c = json_decode($s, true)['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            $c = json_decode($s, true)['choices'][0]['delta']['content'] ?? '';
             if ($c !== '') { $full .= $c; sse(['chunk' => $c]); }
         }
         return strlen($data);
