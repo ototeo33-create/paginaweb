@@ -71,7 +71,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="/intep/cursoingles/cursos_api.js"></script>
     <script>
-        var examVersion = 1;
+        var examVersion = 2;
         var questions = [
             {q:'¿Cómo se dice "manzana" en inglés?',img:'🍎',options:[{t:'Apple',c:true},{t:'Orange',c:false},{t:'Banana',c:false},{t:'Grape',c:false}]},
             {q:'Selecciona "banana":',img:'🍌',options:[{t:'Apple',c:false},{t:'Banana',c:true},{t:'Grape',c:false},{t:'Milk',c:false}]},
@@ -82,7 +82,9 @@
             {q:'Completa: "I ___ pizza."',img:'🍕',options:[{t:'like',c:true},{t:'have',c:false},{t:'want',c:false},{t:'eat',c:false}]},
             {q:'Completa: "I don\'t ___ milk."',img:'🥛',options:[{t:'like',c:true},{t:'eat',c:false},{t:'have',c:false},{t:'want',c:false}]},
             {q:'¿Cómo se dice "Me gusta el pastel"?',img:'🎂',options:[{t:'I like cake.',c:true},{t:'I don\'t like cake.',c:false},{t:'I have cake.',c:false},{t:'I want cake.',c:false}]},
-            {q:'Selecciona: "No me gusta la pizza"',img:'🍕',options:[{t:'I like pizza.',c:false},{t:'I don\'t like pizza.',c:true},{t:'I eat pizza.',c:false},{t:'I want pizza.',c:false}]}
+            {q:'Selecciona: "No me gusta la pizza"',img:'🍕',options:[{t:'I like pizza.',c:false},{t:'I don\'t like pizza.',c:true},{t:'I eat pizza.',c:false},{t:'I want pizza.',c:false}]},
+            {q:'¿Cómo enseñar nombres de comida a niños jugando? 🍕',img:'🛒',options:[{t:'Usar alimentos reales o juguetes en juegos de rol',c:true},{t:'Enseñar recetas complejas en inglés',c:false},{t:'Memorizar listas de ingredientes',c:false},{t:'Explicar pirámide nutricional en detalle',c:false}]},
+            {q:'¿Qué juego de tienda ayuda a aprender comida en inglés? 🏪',img:'🎮',options:[{t:'Jugar a "la tienda" comprando y vendiendo comida',c:true},{t:'Leer artículos científicos sobre alimentación',c:false},{t:'Copiar nombres en hojas',c:false},{t:'Ver documentales sobre agricultura',c:false}]}
         ];
         var userAnswers = {};
         var currentQuestions = [];

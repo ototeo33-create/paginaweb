@@ -137,7 +137,7 @@ button {
     font-size: 1.5rem;
 }
 
-/* Animations */
+ /* Animations */
 @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
@@ -155,8 +155,48 @@ button {
     75% { transform: rotate(5deg); }
 }
 
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+}
+
+@keyframes colorChange {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
 .pulse {
     animation: pulse 2s infinite;
+}
+
+.pulse-slow {
+    animation: pulse 3s infinite ease-in-out;
 }
 
 .wobble-hover:hover {
@@ -164,7 +204,47 @@ button {
 }
 
 .bounce-hover:hover {
-    transform: translateY(-10px);
+    animation: bounce 0.3s ease-in-out infinite alternate;
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+.rotate-slow {
+    animation: rotate 20s linear infinite;
+}
+
+.rotate-slow-hover:hover {
+    animation: rotate 5s linear infinite;
+}
+
+.heartbeat {
+    animation: heartbeat 1s ease-in-out infinite;
+}
+
+.color-change {
+    animation: colorChange 10s linear infinite;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.5s ease-out forwards;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.5s ease-out forwards;
+}
+
+.animal-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+.animal-float-slow {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animal-float-fast {
+    animation: float 2s ease-in-out infinite;
 }
 
 /* Hero Section */
@@ -345,6 +425,9 @@ button {
 .bg-pink { background: #ffe4e6; }
 .bg-yellow { background: #fef3c7; }
 .bg-blue { background: #e0f2fe; }
+.bg-green { background: #d1fae5; }
+.bg-purple { background: #ede9fe; }
+.bg-orange { background: #ffedd5; }
 
 .feature-card h3 {
     font-size: 1.8rem;

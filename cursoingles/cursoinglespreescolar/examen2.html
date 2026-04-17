@@ -70,7 +70,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="/intep/cursoingles/cursos_api.js"></script>
     <script>
-        var examVersion = 1;
+        var examVersion = 2;
         var questions = [
             {q:'¿Cómo se dice "rojo" en inglés?',img:'🔴',options:[{t:'Red',c:true},{t:'Blue',c:false},{t:'Green',c:false},{t:'Yellow',c:false}]},
             {q:'Selecciona el color "blue":',img:'🔵',options:[{t:'Rojo',c:false},{t:'Azul',c:true},{t:'Verde',c:false},{t:'Amarillo',c:false}]},
@@ -81,7 +81,9 @@
             {q:'Completa: "The apple is ___."',img:'🍎',options:[{t:'red',c:true},{t:'blue',c:false},{t:'green',c:false},{t:'yellow',c:false}]},
             {q:'Completa: "The sky is ___."',img:'☁️',options:[{t:'blue',c:true},{t:'red',c:false},{t:'yellow',c:false},{t:'pink',c:false}]},
             {q:'Completa: "The grass is ___."',img:'🌿',options:[{t:'green',c:true},{t:'blue',c:false},{t:'purple',c:false},{t:'orange',c:false}]},
-            {q:'Selecciona "orange" (el color, no la fruta):',img:'🟠',options:[{t:'Naranja (color)',c:true},{t:'Naranja (fruta)',c:false},{t:'Amarillo',c:false},{t:'Rojo',c:false}]}
+            {q:'Selecciona "orange" (el color, no la fruta):',img:'🟠',options:[{t:'Naranja (color)',c:true},{t:'Naranja (fruta)',c:false},{t:'Amarillo',c:false},{t:'Rojo',c:false}]},
+            {q:'¿Cómo enseñar colores a niños pequeños de forma divertida? 🌈',img:'🎯',options:[{t:'Asociar colores con objetos y jugar "veo veo"',c:true},{t:'Enseñar teoría del color y rueda cromática',c:false},{t:'Memorizar nombres en inglés sin contexto',c:false},{t:'Explicar física de la luz',c:false}]},
+            {q:'¿Qué actividad con plastilina es mejor para aprender colores? 🧱',img:'🖍️',options:[{t:'Jugar con plastilina de colores y nombrarlos',c:true},{t:'Ver videos sobre historia de pigmentos',c:false},{t:'Copiar nombres en hojas blanco y negro',c:false},{t:'Resolver crucigramas en inglés',c:false}]}
         ];
         var userAnswers = {};
         var currentQuestions = [];

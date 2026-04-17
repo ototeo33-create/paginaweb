@@ -45,7 +45,7 @@ if ($st2) {
     mysqli_stmt_execute($st2);
     foreach (mysqli_fetch_all(mysqli_stmt_get_result($st2), MYSQLI_ASSOC) as $r) {
         $modulo = (int)$r['modulo_num'];
-        if ($modulo >= 1 && $modulo <= 4) {
+        if ($modulo >= 1 && $modulo <= 6) {
             $progreso[$modulo] = (bool)$r['completado'];
             $examenes[$modulo] = (bool)$r['examen_aprobado'];
         }
@@ -64,12 +64,14 @@ if ($st3) {
     $examen_final_aprobado = $result['total'] > 0;
 }
 
-// Definición de los 4 módulos
+// Definición de los 6 módulos
 $modulos = [
     ['num'=>1,'titulo'=>'Safari de Animales','icono'=>'🦁','bg'=>'bg-pink', 'url'=>'modulo1.html','examen'=>'examen1.html'],
     ['num'=>2,'titulo'=>'Fiesta de Colores',  'icono'=>'🎨','bg'=>'bg-yellow','url'=>'modulo2.html','examen'=>'examen2.html'],
     ['num'=>3,'titulo'=>'Números Mágicos',    'icono'=>'🔢','bg'=>'bg-blue', 'url'=>'modulo3.html','examen'=>'examen3.html'],
-    ['num'=>4,'titulo'=>'Comida Deliciosa',   'icono'=>'🍎','bg'=>'bg-green','url'=>'modulo4.html','examen'=>'examen_final.html'],
+    ['num'=>4,'titulo'=>'Comida Deliciosa',   'icono'=>'🍎','bg'=>'bg-green','url'=>'modulo4.html','examen'=>'examen4.html'],
+    ['num'=>5,'titulo'=>'Familia Feliz',      'icono'=>'👨‍👩‍👧‍👦','bg'=>'bg-purple','url'=>'modulo5.html','examen'=>'examen5.html'],
+    ['num'=>6,'titulo'=>'Acciones Divertidas','icono'=>'🏃‍♂️','bg'=>'bg-orange','url'=>'modulo6.html','examen'=>'examen6.html'],
 ];
 
 // Un módulo se desbloquea cuando el anterior está completo
@@ -172,10 +174,11 @@ for ($i = 1; $i < count($modulos); $i++) {
             <?php endforeach; ?>
         </div>
 
-        <!-- Examen Final - Solo aparece después de aprobar los 4 exámenes -->
+        <!-- Examen Final - Solo aparece después de aprobar todos los exámenes -->
         <?php 
         $todos_examenes_aprobados = true;
-        for ($i = 1; $i <= 4; $i++) {
+        foreach ($modulos as $m) {
+            $i = $m['num'];
             if (!isset($examenes[$i]) || !$examenes[$i]) {
                 $todos_examenes_aprobados = false;
                 break;
