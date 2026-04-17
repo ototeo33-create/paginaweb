@@ -7,6 +7,16 @@ const STORAGE_KEY = 'intep_almacenamiento_progress';
 const MAX_SCORE = 100;
 const PASS_SCORE = 70;
 
+// Función para mezclar arrays (Fisher-Yates shuffle)
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
 // Estado inicial del curso
 let courseState = {
     currentModule: 1,
@@ -20,79 +30,55 @@ for (let i = 1; i <= 6; i++) {
     courseState.moduleProgress[i] = { completed: false, score: 0, examPassed: false };
 }
 
-// Preguntas de evaluación (10 por módulo) - Según Parcelador INTEP
+// Preguntas de evaluación (6 por módulo) - Según Parcelador INTEP
 const QUIZ_DATA = {
     1: [
         { q: '¿Cuál es el objetivo principal de un Centro de Distribución?', a: ['Almacenar todo', 'Optimizar flujo de mercancías', 'Vender más', 'Reducir personal'], c: 1 },
-        { q: '¿Qué son las funciones de un Centro de Distribución?', a: ['Solo guardar', 'Recibir, almacenar, despachar', 'Solo vender', 'Solo transportar'], c: 1 },
-        { q: '¿Cuál es la evolución de almacenes tradicionales?', a: ['CD más complejos', 'Cierran todo', 'Menor tecnología', 'Más personal'], c: 0 },
-        { q: '¿Qué son los principios macros para operar un CD?', a: ['Reglas básicas', 'Sin reglas', 'Solo para moda'], c: 0 },
-        { q: '¿Qué son guías básicas de almacenamiento?', a: ['Normas para guardar', 'Eliminar productos', 'Solo contar'], c: 0 },
-        { q: '¿Cuáles son factores claves en un CD?', a: ['Infraestructura, procesos, organización', 'Solo espacio', 'Solo personas'], c: 0 },
-        { q: '¿Qué es la Planeación y Control de Producción?', a: ['Tema del parcelador', 'No existe', 'Fuera del tema'], c: 0 },
-        { q: '¿Cuál es propósito de la introducción del programa?', a: ['Dar lineamientos y metodología', 'Solo presentar', 'Evaluar'], c: 0 },
-        { q: '¿Qué recursos se usan en clase?', a: ['Aula, tablero, marcadores, videos', 'Solo libro', 'Nada'], c: 0 },
-        { q: '¿Qué metodología se aplica?', a: ['Exposición docente y ejercicios prácticos', 'Solo lectura', 'Solo exámenes'], c: 0 }
+        { q: '¿Cuáles son las tres funciones principales de un Centro de Distribución?', a: ['Solo guardar', 'Recibir, almacenar, despachar', 'Solo vender', 'Solo transportar'], c: 1 },
+        { q: '¿Cómo han evolucionado los almacenes tradicionales hacia los Centros de Distribución modernos?', a: ['Mayor complejidad y tecnología', 'Cierran todos', 'Menor tecnología', 'Más personal'], c: 0 },
+        { q: '¿Qué son los principios macro para operar un Centro de Distribución eficientemente?', a: ['Reglas básicas de operación', 'Sin reglas', 'Solo para moda'], c: 0 },
+        { q: '¿Qué son las guías básicas para el almacenamiento adecuado en un Centro de Distribución?', a: ['Protocolos para recepción, almacenamiento y despacho', 'Instrucciones para eliminar productos', 'Reglas para contar inventario'], c: 0 },
+        { q: '¿Cuáles son los factores clave que determinan la eficiencia de un Centro de Distribución?', a: ['Infraestructura adecuada, procesos optimizados y organización', 'Solo espacio físico', 'Solo cantidad de personal'], c: 0 }
     ],
     2: [
-        { q: '¿Qué son los principios de recepción?', a: ['Reglas básicas del recibo', 'Rechazar todo', 'Sin importancia'], c: 0 },
-        { q: '¿Qué es el método de recibo por paletizado?', a: ['Recibir en pallets', 'Recibir a granel', 'Sin método'], c: 0 },
-        { q: '¿Qué es el recibo a granel?', a: ['Sin empaque', 'Solo pallets', 'Cajas'], c: 0 },
-        { q: '¿Qué es etiquetado y marcado?', a: ['Identificar productos', 'Eliminar etiquetas', 'Solo pintar'], c: 0 },
-        { q: '¿Qué son muelles y plataformas?', a: ['Área de recibo', 'Oficina', 'Baño'], c: 0 },
-        { q: '¿Qué equipos se usan en recibo?', a: ['Montacargas, transpaletas', 'Carros de mano', 'Nada'], c: 0 },
-        { q: '¿Qué es la zona de recibo físico?', a: ['Área donde se recibe', 'Pasillo', 'Oficina'], c: 0 },
-        { q: '¿Qué es acumulación de mercancías?', a: ['Productos pendientes de validación', 'Productos terminados', 'Basura'], c: 0 },
-        { q: '¿Qué son terminales portátiles?', a: ['Dispositivos para recibir', 'Teléfonos', 'Computadores'], c: 0 },
-        { q: '¿Qué son sistemas EDI en recibo?', a: ['Documentos electrónicos', 'Papeles', 'Correo'], c: 0 }
+        { q: '¿Cuál es la diferencia entre recibo paletizado y recibo a granel?', a: ['Paletizado: mercancía en pallets; granel: sin empaque individual', 'Son exactamente iguales', 'Granel usa pallets y paletizado no'], c: 0 },
+        { q: '¿Qué son muelles y plataformas en un Centro de Distribución?', a: ['Áreas designadas para carga y descarga de vehículos', 'Oficinas administrativas del CD', 'Zonas de descanso para operarios'], c: 0 },
+        { q: '¿Para qué sirve el etiquetado y marcado en la recepción?', a: ['Identificar y registrar productos con códigos', 'Decorar los empaques de los productos', 'Eliminar etiquetas del proveedor'], c: 0 },
+        { q: '¿Qué equipos se utilizan principalmente en la zona de recibo?', a: ['Montacargas y transpaletas', 'Solo carros de mano simples', 'No se requiere equipo especializado'], c: 0 },
+        { q: '¿Qué es la zona de acumulación en recepción?', a: ['Área donde se ubican productos pendientes de verificación', 'Zona donde se guardan productos listos para despacho', 'Área de almacenamiento permanente'], c: 0 },
+        { q: '¿Qué son los sistemas EDI en el proceso de recibo?', a: ['Intercambio Electrónico de Datos que agiliza la documentación', 'Documentación manual en papel', 'Sistema de comunicación interna por correo'], c: 0 }
     ],
     3: [
-        { q: '¿Qué es cubicaje?', a: ['Calcular espacio', 'Pintar', 'Medir peso'], c: 0 },
-        { q: '¿Para qué sirve cubicaje?', a: ['Optimizar espacio', 'Gastar tiempo', 'Sin utilidad'], c: 0 },
-        { q: '¿Cómo se cubicaje un contenedor?', a: ['Calculando volumen', 'A ojo', 'Sin método'], c: 0 },
-        { q: '¿Qué son equipos de manejo de materiales?', a: ['Montacargas, carretillas', 'Computadores', 'Escritorios'], c: 0 },
-        { q: '¿Para qué sirve código de barras?', a: ['Identificar productos', 'Decorar', 'Tirar'], c: 0 },
-        { q: '¿Qué es RFID?', a: ['Identificación por radio', 'Factura', 'Recibo'], c: 0 },
-        { q: '¿Qué es codificación de inventarios?', a: ['Asignar códigos únicos', 'Sin código', 'Eliminar códigos'], c: 0 },
-        { q: '¿Cuántas clases de codificación hay?', a: ['Varios tipos', 'Una', 'Sin clases'], c: 0 },
-        { q: '¿Qué es etiquetado?', a: ['Colocar etiquetas', 'Quitar etiquetas', 'Sin usar'], c: 0 },
-        { q: '¿Qué es marcación?', a: ['Marcar productos', 'Sin marcar', 'Tirar'], c: 0 }
+        { q: '¿Qué es el cubicaje y cuál es su objetivo principal?', a: ['Calcular volúmenes para optimizar el uso del espacio', 'Medir únicamente el peso de la mercancía', 'Pintar y marcar los contenedores'], c: 0 },
+        { q: '¿Cómo se calcula el volumen de un contenedor?', a: ['Largo × Ancho × Alto', 'Peso ÷ Densidad', 'Altura × Número de cajas'], c: 0 },
+        { q: '¿Cuál es la función del código de barras EAN-13 en el almacén?', a: ['Identificar productos de forma rápida y precisa mediante escáner', 'Decorar los empaques con líneas estéticas', 'Registrar el precio de venta al consumidor'], c: 0 },
+        { q: '¿En qué se diferencia el RFID del código de barras?', a: ['RFID usa radiofrecuencia y no necesita contacto visual', 'Son tecnologías idénticas con diferente nombre', 'El código de barras es más moderno que el RFID'], c: 0 },
+        { q: '¿Qué son los equipos de manejo de materiales?', a: ['Montacargas, carretillas y transpaletas para mover mercancía', 'Computadores para gestión administrativa', 'Muebles de oficina del almacén'], c: 0 },
+        { q: '¿Qué ventaja ofrece el EDI en la gestión de inventarios?', a: ['Automatiza el intercambio de documentos entre empresas', 'Reemplaza completamente el trabajo humano', 'Solo sirve para comunicación interna'], c: 0 }
     ],
     4: [
-        { q: '¿Cuántos tipos principales de contenedores hay?', a: ['Varios tipos', 'Uno', 'Ninguno'], c: 0 },
-        { q: '¿Qué son medidas de seguridad en contenedores?', a: ['Normas de uso', 'Sin importancia', 'Para tirar'], c: 0 },
-        { q: '¿Qué es identificación de contenedores?', a: ['Códigos únicos', 'Sin identificar', 'Aleatorio'], c: 0 },
-        { q: '¿Qué es inspección de seguridad?', a: ['Verificar estado', 'Ignorar', 'Tirar'], c: 0 },
-        { q: '¿Qué es control previo al uso?', a: ['Verificar antes de usar', 'Usar sin revisar', 'Ninguno'], c: 0 },
-        { q: '¿Qué son precintos de seguridad?', a: ['Sellos oficiales', 'Cinta cualquiera', 'Nada'], c: 0 },
-        { q: '¿Qué son símbolos de seguridad?', a: ['Iconos de peligro', 'Decoración', 'Sin uso'], c: 0 },
-        { q: '¿Qué es control del contenedor en uso?', a: ['Monitorear durante uso', 'Ignorar', 'Ninguno'], c: 0 },
-        { q: '¿Qué dimensiones tienen contenedores estándar?', a: ['20 y 40 pies', '100 pies', '1 pie'], c: 0 },
-        { q: '¿Qué es capacidad de carga?', a: ['Peso máximo', 'Espacio', 'Sin límite'], c: 0 }
+        { q: '¿Cuáles son los tipos principales de contenedores de carga?', a: ['20 pies, 40 pies, High Cube y Reefer (refrigerado)', 'Solo existe un tipo estándar universal', 'Se clasifican únicamente por color'], c: 0 },
+        { q: '¿Qué información contiene la identificación de un contenedor?', a: ['Código alfanumérico único con prefijo del propietario y número serial', 'Solo el peso máximo permitido', 'Únicamente el país de fabricación'], c: 0 },
+        { q: '¿Qué se verifica en el control previo al uso de un contenedor?', a: ['Estado estructural, pisos, paredes, sellos y puertas', 'Solo el color exterior del contenedor', 'Únicamente los documentos aduaneros'], c: 0 },
+        { q: '¿Para qué sirven los precintos de seguridad en los contenedores?', a: ['Garantizar que el contenedor no fue abierto sin autorización', 'Reemplazar el candado de la puerta', 'Identificar el tipo de mercancía'], c: 0 },
+        { q: '¿Qué indican los símbolos de seguridad en los contenedores?', a: ['Peligros, restricciones y condiciones de manejo de la carga', 'Solo el destino del contenedor', 'El peso y volumen de la mercancía'], c: 0 },
+        { q: '¿Cuál es la capacidad de carga aproximada de un contenedor de 20 pies?', a: ['Aproximadamente 28 toneladas de carga útil', 'Exactamente 100 toneladas', 'No tiene límite de carga definido'], c: 0 }
     ],
     5: [
-        { q: '¿Qué es la función del almacenamiento?', a: ['Guardar mercancías', 'Tirar productos', 'Vender'], c: 0 },
-        { q: '¿Qué son objetivos del almacenamiento?', a: ['Mantener calidad y disponibilidad', 'Solo guardar', 'Ninguno'], c: 0 },
-        { q: '¿Qué es evolución del almacenamiento?', a: ['Cambios con tecnología', 'Igual siempre', 'Cierra'], c: 0 },
-        { q: '¿Qué son necesidades de sistema?', a: ['Requisitos para operar', 'Sin importancia', 'Ninguno'], c: 0 },
-        { q: '¿Qué es responsabilidad de inventarios?', a: ['Controlar existencias', 'Ignorar', 'Ninguno'], c: 0 },
-        { q: '¿Por qué es importante el control?', a: ['Evitar faltantes y sobrantes', 'Sin razón', 'Ninguno'], c: 0 },
-        { q: '¿Cuáles son principios de almacenamiento?', a: ['Orden, ubicación, seguridad', 'Cualquier forma', 'Ninguno'], c: 0 },
-        { q: '¿Qué es seguridad en almacenamiento?', a: ['Prevenir accidentes', 'No importa', 'Ninguno'], c: 0 },
-        { q: '¿Qué es gestión de ubicación?', a: ['Asignar lugares', 'Donde cabe', 'Ninguno'], c: 0 },
-        { q: '¿Qué condiciona la distribución?', a: ['Características de productos', 'Sin criterio', 'Ninguno'], c: 0 }
+        { q: '¿Cuál es la función principal del almacenamiento en la cadena logística?', a: ['Custodiar mercancías manteniendo su calidad y disponibilidad', 'Vender directamente al consumidor final', 'Transformar materias primas en productos terminados'], c: 0 },
+        { q: '¿Cuáles son los principios fundamentales del almacenamiento?', a: ['Orden, ubicación adecuada y seguridad', 'Almacenar donde haya espacio disponible', 'Priorizar velocidad sobre organización'], c: 0 },
+        { q: '¿En qué consiste la gestión de ubicación en un almacén?', a: ['Asignar posiciones fijas o dinámicas a cada referencia de producto', 'Colocar productos donde haya espacio libre', 'Mover productos diariamente sin criterio'], c: 0 },
+        { q: '¿Qué diferencia al sistema Drive-In del almacenamiento convencional?', a: ['Drive-In permite entrada del montacargas al rack para mayor densidad', 'Son sistemas idénticos con diferente nombre', 'El convencional tiene mayor densidad de almacenaje'], c: 0 },
+        { q: '¿Por qué es importante el control de inventarios en el almacén?', a: ['Evitar faltantes, sobrantes y pérdidas económicas', 'No tiene importancia en operaciones modernas', 'Solo para cumplir requisitos legales'], c: 0 },
+        { q: '¿Qué medidas de seguridad son esenciales en un almacén?', a: ['Señalización, EPP, límites de carga y rutas de evacuación', 'Solo usar cascos de seguridad', 'No se requieren medidas especiales'], c: 0 }
     ],
     6: [
-        { q: '¿Qué es identificación de ubicaciones?', a: ['Asignar códigos a lugares', 'Sin identificar', 'Aleatorio'], c: 0 },
-        { q: '¿Qué es trazabilidad?', a: ['Seguir productos', 'Perder productos', 'Sin uso'], c: 0 },
-        { q: '¿Qué es método ABC?', a: ['Clasificar por importancia', 'Ordenar por gusto', 'Aleatorio'], c: 0 },
-        { q: 'En ABC, Zona A representa:', a: ['20% items, 80% valor', '50% todo', '80% items'], c: 0 },
-        { q: '¿Qué productos van en Zona A?', a: ['Alta rotación', 'Baja rotación', 'Sin rotación'], c: 0 },
-        { q: '¿Qué es reabastecimiento?', a: ['Renovar inventario', 'Eliminar productos', 'Vender'], c: 0 },
-        { q: '¿Qué es punto de reorden?', a: ['Nivel para nuevo pedido', 'Precio mínimo', 'Última venta'], c: 0 },
-        { q: '¿Qué es stock de seguridad?', a: ['Reserva extra', 'Mercancía dañada', 'Promoción'], c: 0 },
-        { q: '¿Qué es demanda histórica?', a: ['Datos de ventas pasadas', 'Proyecciones', 'Inventario'], c: 0 },
-        { q: '¿Qué es lead time?', a: ['Tiempo de entrega', 'Tiempo de producción', 'Tiempo de venta'], c: 0 }
+        { q: '¿Qué es la trazabilidad de mercancías y por qué es importante?', a: ['Seguimiento del producto desde el origen hasta el destino final', 'Calcular el precio de venta del producto', 'Registrar únicamente las devoluciones'], c: 0 },
+        { q: '¿En qué consiste el método ABC de clasificación de inventarios?', a: ['Clasifica productos por valor e impacto: A (alta importancia) a C (baja)', 'Ordena productos alfabéticamente por nombre', 'Clasifica por tamaño físico del producto'], c: 0 },
+        { q: 'Según el método ABC, la Zona A representa:', a: ['El 20% de referencias que genera el 80% del valor del inventario', 'El 50% de referencias con el 50% del valor', 'El 80% de referencias con el 20% del valor'], c: 0 },
+        { q: '¿Qué es el punto de reorden y cómo se usa?', a: ['Nivel de stock que activa automáticamente un nuevo pedido al proveedor', 'El precio más bajo al que se puede comprar', 'La última cantidad vendida en el período'], c: 0 },
+        { q: '¿Qué es el stock de seguridad y cuándo se utiliza?', a: ['Reserva adicional para cubrir demanda imprevista o retrasos del proveedor', 'Mercancía averiada que no se puede vender', 'Productos apartados para promociones especiales'], c: 0 },
+        { q: '¿Qué es el lead time y cómo afecta el reabastecimiento?', a: ['Tiempo entre el pedido y la recepción; a mayor lead time, mayor stock necesario', 'Tiempo de producción en la planta del proveedor', 'Duración del turno laboral del operario de bodega'], c: 0 }
     ]
 };
 
@@ -142,34 +128,25 @@ const PRACTICA_DATA = {
     ]
 };
 
-// Examen Final - 15 preguntas de todos los módulos
+// Examen Final - 6 preguntas (1 por módulo)
 const FINAL_EXAM_DATA = [
-    // Módulo 1 - Procesos CD (3 preguntas)
-    { q: '¿Cuál es el objetivo principal de un Centro de Distribución?', a: ['Almacenar todo', 'Optimizar flujo de mercancías', 'Vender más', 'Reducir personal'], c: 1 },
-    { q: '¿Qué son las funciones de un Centro de Distribución?', a: ['Solo guardar', 'Recibir, almacenar, despachar', 'Solo vender', 'Solo transportar'], c: 1 },
-    { q: '¿Cuáles son factores claves en un CD?', a: ['Infraestructura, procesos, organización', 'Solo espacio', 'Solo personas', 'Solo tecnología'], c: 0 },
-    
-    // Módulo 2 - Recepción (3 preguntas)
-    { q: '¿Qué es el método de recibo por paletizado?', a: ['Recibir en pallets', 'Recibir a granel', 'Sin método', 'Recibir en cajas'], c: 0 },
-    { q: '¿Qué equipos se usan en recibo?', a: ['Montacargas, transpaletas', 'Carros de mano', 'Nada', 'Solo grúas'], c: 0 },
-    { q: '¿Qué son sistemas EDI en recibo?', a: ['Documentos electrónicos', 'Papeles', 'Correo', 'Facturas'], c: 0 },
-    
-    // Módulo 3 - Cubicaje (2 preguntas)
-    { q: '¿Qué es cubicaje?', a: ['Calcular espacio', 'Pintar', 'Medir peso', 'Contar productos'], c: 0 },
-    { q: '¿Qué son equipos de manejo de materiales?', a: ['Montacargas, carretillas', 'Computadores', 'Escritorios', 'Sillas'], c: 0 },
-    
-    // Módulo 4 - Contenedores (3 preguntas)
-    { q: '¿Qué son medidas de seguridad en contenedores?', a: ['Normas de uso', 'Sin importancia', 'Para tirar', 'Para vender'], c: 0 },
-    { q: '¿Qué es inspección de seguridad?', a: ['Verificar estado', 'Ignorar', 'Tirar', 'Vender'], c: 0 },
-    { q: '¿Qué dimensiones tienen contenedores estándar?', a: ['20 y 40 pies', '100 pies', '1 pie', '50 pies'], c: 0 },
-    
-    // Módulo 5 - Almacenamiento (2 preguntas)
-    { q: '¿Qué es la función del almacenamiento?', a: ['Guardar mercancías', 'Tirar productos', 'Vender', 'Transportar'], c: 0 },
-    { q: '¿Cuáles son principios de almacenamiento?', a: ['Orden, ubicación, seguridad', 'Cualquier forma', 'Sin orden', 'Solo espacio'], c: 0 },
-    
-    // Módulo 6 - Reabastecimiento (2 preguntas)
-    { q: '¿Qué es trazabilidad?', a: ['Seguir productos', 'Perder productos', 'Sin uso', 'Tirar productos'], c: 0 },
-    { q: '¿Qué es reabastecimiento?', a: ['Renovar inventario', 'Eliminar productos', 'Vender', 'Guardar'], c: 0 }
+    // Módulo 1 - Procesos CD
+    { q: '¿Cuáles son los factores clave que determinan la eficiencia de un Centro de Distribución?', a: ['Infraestructura adecuada, procesos optimizados y organización', 'Solo el espacio físico disponible', 'Solo la cantidad de personal contratado', 'Solo la tecnología instalada'], c: 0 },
+
+    // Módulo 2 - Recepción
+    { q: '¿Qué son los sistemas EDI en el proceso de recibo de mercancías?', a: ['Intercambio Electrónico de Datos que agiliza la documentación entre empresas', 'Documentación manual en papel', 'Comunicación interna por correo electrónico', 'Facturas impresas por el proveedor'], c: 0 },
+
+    // Módulo 3 - Cubicaje y Código de Barras
+    { q: '¿En qué se diferencia el RFID del código de barras tradicional?', a: ['RFID usa radiofrecuencia y no necesita contacto visual con el lector', 'Son tecnologías idénticas con diferente nombre comercial', 'El código de barras es la tecnología más moderna', 'RFID solo funciona en exteriores'], c: 0 },
+
+    // Módulo 4 - Contenedores y Seguridad
+    { q: '¿Para qué sirven los precintos de seguridad en los contenedores?', a: ['Garantizar que el contenedor no fue abierto sin autorización durante el transporte', 'Reemplazar el candado de la puerta del contenedor', 'Identificar visualmente el tipo de mercancía', 'Registrar el peso de la carga'], c: 0 },
+
+    // Módulo 5 - Sistemas de Almacenamiento
+    { q: '¿Qué diferencia al sistema Drive-In del almacenamiento convencional en rack?', a: ['Drive-In permite que el montacargas ingrese al rack para mayor densidad de almacenaje', 'El convencional tiene mayor capacidad de almacenaje por m²', 'Son sistemas equivalentes con diferente nombre', 'Drive-In solo se usa para productos refrigerados'], c: 0 },
+
+    // Módulo 6 - Reabastecimiento e Inventarios
+    { q: 'Según el método ABC, ¿qué características tienen los productos de la Zona A?', a: ['Son el 20% de referencias pero generan el 80% del valor del inventario', 'Son el 80% de referencias y generan el 80% del valor', 'Son los productos más baratos y de menor rotación', 'Representan el 50% del inventario en cantidad y valor'], c: 0 }
 ];
 
 // ============================================
@@ -278,16 +255,35 @@ function showTab(num,tab) {
 // ============================================
 
 function generarEvaluacion(modNum) {
-    const preguntas = QUIZ_DATA[modNum];
+    let preguntas = QUIZ_DATA[modNum];
+    
+    // Mezclar el orden de las preguntas
+    preguntas = shuffleArray(preguntas);
+    
     let html = '<div class="quiz-container">';
     
     preguntas.forEach((p, i) => {
-        html += '<div class="question" data-correct="' + p.c + '">';
+        // Mezclar las opciones de respuesta
+        const opcionesConIndices = p.a.map((texto, indice) => ({ texto, indice }));
+        const opcionesMezcladas = shuffleArray(opcionesConIndices);
+        
+        // Encontrar el nuevo índice de la respuesta correcta después de mezclar
+        let nuevoIndiceCorrecto = 0;
+        for (let j = 0; j < opcionesMezcladas.length; j++) {
+            if (opcionesMezcladas[j].indice === p.c) {
+                nuevoIndiceCorrecto = j;
+                break;
+            }
+        }
+        
+        html += '<div class="question" data-correct="' + nuevoIndiceCorrecto + '">';
         html += '<p class="question-text"><strong>' + (i+1) + '.</strong> ' + p.q + '</p>';
         html += '<div class="options">';
-        p.a.forEach((op, j) => {
-            html += '<label class="option"><input type="radio" name="q' + modNum + '_' + i + '" value="' + j + '"> ' + op + '</label>';
+        
+        opcionesMezcladas.forEach((op, j) => {
+            html += '<label class="option"><input type="radio" name="q' + modNum + '_' + i + '" value="' + j + '"> ' + op.texto + '</label>';
         });
+        
         html += '</div></div>';
     });
     
@@ -312,9 +308,13 @@ function generarPractica(modNum) {
         html += '<p>' + e.d + '</p>';
         
         if (e.p === 'opc') {
+            // Mezclar las opciones del ejercicio
+            const opcionesMezcladas = shuffleArray([...e.o]);
             html += '<div class="exercise-options">';
-            e.o.forEach(op => {
-                html += '<button class="option-btn" onclick="verificarEjercicio(' + modNum + ',' + i + ',\'' + op + '\')">' + op + '</button>';
+            opcionesMezcladas.forEach(op => {
+                // Escapar comillas simples en el texto para JavaScript
+                const opEscapada = op.replace(/'/g, "\\'");
+                html += '<button class="option-btn" onclick="verificarEjercicio(' + modNum + ',' + i + ',\'' + opEscapada + '\')">' + op + '</button>';
             });
             html += '</div>';
         } else if (e.p === 'calc') {
@@ -516,17 +516,35 @@ function generarExamenFinalHTML() {
     html += '<div class="exam-header">';
     html += '<h2>🎓 EXAMEN FINAL</h2>';
     html += '<p>Este examen cubre todos los temas del curso</p>';
-    html += '<p class="exam-instructions">Responde las 30 preguntas. Minimum 70% para aprobar.</p>';
+    html += '<p class="exam-instructions">Responde las 6 preguntas (una por módulo). Mínimo 70% para aprobar.</p>';
     html += '</div>';
     html += '<div class="quiz-container" id="finalExamQuiz">';
     
-    FINAL_EXAM_DATA.forEach((p, i) => {
-        html += '<div class="question" data-correct="' + p.c + '">';
+    // Mezclar preguntas del examen final
+    let preguntasExamen = shuffleArray(FINAL_EXAM_DATA);
+    
+    preguntasExamen.forEach((p, i) => {
+        // Mezclar las opciones de respuesta
+        const opcionesConIndices = p.a.map((texto, indice) => ({ texto, indice }));
+        const opcionesMezcladas = shuffleArray(opcionesConIndices);
+        
+        // Encontrar el nuevo índice de la respuesta correcta después de mezclar
+        let nuevoIndiceCorrecto = 0;
+        for (let j = 0; j < opcionesMezcladas.length; j++) {
+            if (opcionesMezcladas[j].indice === p.c) {
+                nuevoIndiceCorrecto = j;
+                break;
+            }
+        }
+        
+        html += '<div class="question" data-correct="' + nuevoIndiceCorrecto + '">';
         html += '<p class="question-text"><strong>' + (i+1) + '.</strong> ' + p.q + '</p>';
         html += '<div class="options">';
-        p.a.forEach((op, j) => {
-            html += '<label class="option"><input type="radio" name="fq' + i + '" value="' + j + '"> ' + op + '</label>';
+        
+        opcionesMezcladas.forEach((op, j) => {
+            html += '<label class="option"><input type="radio" name="fq' + i + '" value="' + j + '"> ' + op.texto + '</label>';
         });
+        
         html += '</div></div>';
     });
     
