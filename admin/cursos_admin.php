@@ -275,6 +275,15 @@ $_SESSION['admin_preview'] = true;
             <p>16 sesiones sobre SST, marco legal colombiano, SG-SST, ciclo PHVA, identificación de peligros, EPP, señalización y enfermedades laborales.</p>
             <div class="btn-ver">Ver curso <span>→</span></div>
         </a>
+        <a href="../cursoseguridad ocupacional/simulador_sst.html" class="curso-card sst">
+            <div class="curso-icon">🎮</div>
+            <div>
+                <span class="curso-nivel nivel-tec" style="background:#d1fae5;color:#065f46;">Simulador 3D</span>
+            </div>
+            <h3>Simulador SST 3D</h3>
+            <p>Bodega virtual interactiva con 8 peligros reales, 5 misiones: cacería de peligros, jerarquía de controles, señalización, protocolo de accidente y examen final.</p>
+            <div class="btn-ver">Abrir simulador <span>→</span></div>
+        </a>
     </div>
 
     <!-- ALMACENAMIENTO -->

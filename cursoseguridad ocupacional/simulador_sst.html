@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulador SST 3D — INTEP</title>
+<link rel="icon" href="/intep/favicon/favicon.svg" type="image/svg+xml">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; font-family:'Segoe UI',system-ui,sans-serif; background:#0b1220; color:#e5e7eb; }
+  canvas { display:block; }
+
+  /* ---------- HUD ---------- */
+  #hud {
+    position:fixed; top:16px; left:16px; right:16px; z-index:10;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    pointer-events:none;
+  }
+  .hud-card {
+    background:rgba(3,61,46,0.88); border:1px solid #10b981;
+    border-radius:14px; padding:12px 18px; backdrop-filter:blur(6px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    pointer-events:auto;
+  }
+  .hud-card h3 { font-size:0.78rem; font-weight:700; color:#a7f3d0; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
+  .hud-card .val { font-size:1.3rem; font-weight:800; color:#fff; }
+  .hud-card .sub { font-size:0.82rem; color:#6ee7b7; margin-top:4px; }
+
+  /* ---------- Minimap ---------- */
+  #minimap {
+    position:fixed; bottom:16px; right:16px; width:180px; height:180px;
+    border:2px solid #10b981; border-radius:12px; overflow:hidden;
+    background:rgba(0,0,0,0.6); z-index:10;
+  }
+  #minimap canvas { width:100%; height:100%; }
+
+  /* ---------- Mission panel ---------- */
+  #mission-panel {
+    position:fixed; top:90px; left:16px; width:320px; z-index:10;
+    background:rgba(3,61,46,0.9); border:1px solid #10b981;
+    border-radius:14px; padding:16px; backdrop-filter:blur(6px);
+  }
+  #mission-panel h2 { font-size:1rem; color:#fff; margin-bottom:8px; }
+  #mission-panel .desc { font-size:0.88rem; color:#a7f3d0; line-height:1.5; margin-bottom:10px; }
+  #mission-panel .progress { background:#1a5c4a; border-radius:6px; height:8px; overflow:hidden; margin-bottom:8px; }
+  #mission-panel .progress-bar { background:linear-gradient(90deg,#10b981,#34d399); height:100%; width:0%; transition:width 0.4s; }
+  #mission-panel .counter { font-size:0.82rem; color:#6ee7b7; font-weight:600; }
+
+  /* ---------- Crosshair ---------- */
+  #crosshair {
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:24px; height:24px; pointer-events:none; z-index:5;
+  }
+  #crosshair::before, #crosshair::after {
+    content:''; position:absolute; background:#10b981; box-shadow:0 0 4px rgba(0,0,0,0.8);
+  }
+  #crosshair::before { top:11px; left:0; width:24px; height:2px; }
+  #crosshair::after  { left:11px; top:0; width:2px; height:24px; }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop {
+    position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:100;
+    display:flex; align-items:center; justify-content:center;
+    backdrop-filter:blur(8px);
+  }
+  .modal {
+    background:linear-gradient(145deg,#033d2e,#064e3b);
+    border:2px solid #10b981; border-radius:20px;
+    padding:32px; max-width:560px; width:92%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal h1 { font-size:1.8rem; color:#fff; margin-bottom:8px; }
+  .modal .tag { display:inline-block; background:#10b981; color:#033d2e; font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:12px; text-transform:uppercase; margin-bottom:16px; }
+  .modal p { font-size:0.95rem; color:#d1fae5; line-height:1.6; margin-bottom:14px; }
+  .modal ul { color:#a7f3d0; font-size:0.88rem; line-height:1.7; padding-left:20px; margin-bottom:16px; }
+  .modal .btn-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  .btn {
+    background:#10b981; color:#033d2e; font-weight:700; border:none;
+    padding:12px 22px; border-radius:10px; cursor:pointer; font-size:0.95rem;
+    transition:transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(16,185,129,0.4); }
+  .btn.secondary { background:transparent; color:#10b981; border:1.5px solid #10b981; }
+  .btn.secondary:hover { background:rgba(16,185,129,0.1); }
+
+  /* ---------- Quiz ---------- */
+  .quiz-opt {
+    display:block; background:rgba(255,255,255,0.06); border:1.5px solid transparent;
+    padding:12px 14px; border-radius:10px; margin-bottom:8px; cursor:pointer;
+    transition:all 0.15s; color:#e5e7eb; font-size:0.9rem;
+  }
+  .quiz-opt:hover { background:rgba(16,185,129,0.15); border-color:#10b981; }
+  .quiz-opt.selected { background:#10b981; color:#033d2e; border-color:#34d399; font-weight:600; }
+  .quiz-opt.correct { background:#059669; color:#fff; border-color:#34d399; }
+  .quiz-opt.wrong   { background:#b91c1c; color:#fff; border-color:#f87171; }
+
+  /* ---------- Interact prompt ---------- */
+  #interact-prompt {
+    position:fixed; top:55%; left:50%; transform:translate(-50%,0);
+    background:rgba(16,185,129,0.95); color:#033d2e; padding:10px 18px;
+    border-radius:10px; font-weight:700; font-size:0.9rem; z-index:9;
+    display:none; box-shadow:0 6px 16px rgba(0,0,0,0.4);
+  }
+
+  /* ---------- Controls help ---------- */
+  #help {
+    position:fixed; bottom:16px; left:16px; z-index:10;
+    background:rgba(0,0,0,0.55); border:1px solid #1a5c4a;
+    border-radius:10px; padding:10px 14px; font-size:0.78rem; color:#a7f3d0;
+  }
+  #help kbd {
+    background:#033d2e; color:#fff; padding:2px 6px; border-radius:4px;
+    font-family:monospace; border:1px solid #10b981; font-size:0.75rem;
+    margin:0 2px;
+  }
+
+  /* ---------- Back button ---------- */
+  #btn-back {
+    position:fixed; top:16px; right:210px; z-index:11;
+    background:rgba(3,61,46,0.9); border:1px solid #10b981;
+    color:#a7f3d0; padding:10px 16px; border-radius:10px;
+    text-decoration:none; font-weight:600; font-size:0.85rem;
+    backdrop-filter:blur(6px);
+  }
+  #btn-back:hover { background:#10b981; color:#033d2e; }
+
+  /* ---------- Loader ---------- */
+  #loader {
+    position:fixed; inset:0; background:#033d2e; z-index:1000;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:#a7f3d0;
+  }
+  #loader .spin {
+    width:56px; height:56px; border:5px solid #1a5c4a; border-top-color:#10b981;
+    border-radius:50%; animation:spin 0.9s linear infinite; margin-bottom:18px;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #loader p { font-size:1.05rem; font-weight:600; }
+
+  /* ---------- Toast ---------- */
+  #toast {
+    position:fixed; top:80px; left:50%; transform:translateX(-50%);
+    background:#10b981; color:#033d2e; padding:12px 24px;
+    border-radius:10px; font-weight:700; z-index:50;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4); display:none;
+  }
+
+  @media (max-width:768px) {
+    #mission-panel { width:calc(100% - 32px); top:auto; bottom:210px; left:16px; }
+    #minimap { width:130px; height:130px; }
+    #btn-back { right:16px; top:auto; bottom:16px; }
+    #help { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="spin"></div><p>Cargando Simulador SST...</p></div>
+
+<a id="btn-back" href="CURSO_SST_INTERACTIVO.html">← Volver al curso</a>
+
+<div id="hud">
+  <div class="hud-card">
+    <h3>Misión</h3>
+    <div class="val" id="hud-mission">1 / 5</div>
+    <div class="sub" id="hud-mission-name">Cacería de Peligros</div>
+  </div>
+  <div class="hud-card">
+    <h3>Puntaje</h3>
+    <div class="val" id="hud-score">0</div>
+    <div class="sub" id="hud-student">Estudiante</div>
+  </div>
+</div>
+
+<div id="mission-panel">
+  <h2 id="mp-title">Cacería de Peligros</h2>
+  <div class="desc" id="mp-desc">Recorre la bodega y señala los peligros que encuentres apuntando y presionando <kbd>E</kbd>.</div>
+  <div class="progress"><div class="progress-bar" id="mp-bar"></div></div>
+  <div class="counter" id="mp-counter">0 / 8 peligros</div>
+</div>
+
+<div id="crosshair"></div>
+<div id="interact-prompt">Presiona <kbd>E</kbd> para interactuar</div>
+<div id="toast"></div>
+
+<div id="help">
+  <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> moverse &nbsp;·&nbsp;
+  <kbd>Mouse</kbd> mirar &nbsp;·&nbsp;
+  <kbd>E</kbd> interactuar &nbsp;·&nbsp;
+  <kbd>Shift</kbd> correr &nbsp;·&nbsp;
+  <kbd>Esc</kbd> liberar cursor
+</div>
+
+<div id="minimap"><canvas id="minimap-canvas" width="360" height="360"></canvas></div>
+
+<!-- Modal container -->
+<div id="modal-root"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ============================================================
+   0. STATE + STUDENT
+   ============================================================ */
+const state = {
+  mission: 1,
+  score: 0,
+  found: new Set(),
+  controlMatches: 0,
+  signQuizIndex: 0,
+  signQuizCorrect: 0,
+  examIndex: 0,
+  examCorrect: 0,
+  locked: true,
+};
+
+const STUDENT = (() => {
+  try { return JSON.parse(localStorage.getItem('intep_student') || '{}'); }
+  catch { return {}; }
+})();
+document.getElementById('hud-student').textContent = STUDENT.nombre || 'Estudiante';
+
+/* ============================================================
+   1. SCENE + LIGHTING
+   ============================================================ */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a2332);
+scene.fog = new THREE.Fog(0x1a2332, 30, 90);
+
+const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 200);
+camera.position.set(0, 1.8, 5);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+document.body.appendChild(renderer.domElement);
+
+// Ambient + hemi
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+const hemi = new THREE.HemisphereLight(0xbfd4ff, 0x2a1e10, 0.45);
+scene.add(hemi);
+
+// Main sun
+const sun = new THREE.DirectionalLight(0xfff1d6, 0.9);
+sun.position.set(15, 25, 10);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -30; sun.shadow.camera.right = 30;
+sun.shadow.camera.top = 30;   sun.shadow.camera.bottom = -30;
+sun.shadow.camera.near = 0.5; sun.shadow.camera.far = 80;
+scene.add(sun);
+
+// Warehouse point lamps
+function addLamp(x, z) {
+  const grp = new THREE.Group();
+  grp.position.set(x, 5.8, z);
+  const bulb = new THREE.Mesh(
+    new THREE.SphereGeometry(0.18, 12, 12),
+    new THREE.MeshStandardMaterial({ color:0xffeec0, emissive:0xffe2a0, emissiveIntensity:1.5 })
+  );
+  grp.add(bulb);
+  const shade = new THREE.Mesh(
+    new THREE.ConeGeometry(0.5, 0.35, 16, 1, true),
+    new THREE.MeshStandardMaterial({ color:0x333333, side:THREE.DoubleSide, metalness:0.6, roughness:0.4 })
+  );
+  shade.position.y = 0.22; shade.rotation.x = Math.PI;
+  grp.add(shade);
+  const light = new THREE.PointLight(0xffeec0, 0.9, 14, 2);
+  light.castShadow = false;
+  grp.add(light);
+  scene.add(grp);
+  return grp;
+}
+addLamp(-10, -8); addLamp(10, -8); addLamp(-10, 8); addLamp(10, 8); addLamp(0, 0);
+
+/* ============================================================
+   2. PROCEDURAL WAREHOUSE
+   ============================================================ */
+const WORLD_SIZE = 40;
+
+// Floor — concrete shader
+const floorGeom = new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE, 1, 1);
+const floorMat = new THREE.ShaderMaterial({
+  uniforms: { uColorA:{ value: new THREE.Color(0x4a4a52) }, uColorB:{ value: new THREE.Color(0x3a3a42) } },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() { vUv = uv * 20.0; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
+  `,
+  fragmentShader: `
+    varying vec2 vUv;
+    uniform vec3 uColorA, uColorB;
+    float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float noise(vec2 p) {
+      vec2 i = floor(p), f = fract(p);
+      float a=hash(i), b=hash(i+vec2(1,0)), c=hash(i+vec2(0,1)), d=hash(i+vec2(1,1));
+      vec2 u = f*f*(3.0-2.0*f);
+      return mix(a,b,u.x) + (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y;
+    }
+    void main() {
+      vec2 cell = floor(vUv);
+      vec2 local = fract(vUv);
+      float grout = smoothstep(0.97, 1.0, max(local.x, local.y)) + smoothstep(0.97, 1.0, max(1.0-local.x, 1.0-local.y));
+      float n = noise(vUv * 4.0) * 0.35 + noise(vUv * 12.0) * 0.15;
+      vec3 col = mix(uColorA, uColorB, n);
+      col = mix(col, vec3(0.15,0.15,0.17), clamp(grout, 0.0, 1.0));
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `,
+});
+const floor = new THREE.Mesh(floorGeom, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// Walls (brick texture via canvas)
+function makeBrickTexture() {
+  const cvs = document.createElement('canvas'); cvs.width = 512; cvs.height = 512;
+  const ctx = cvs.getContext('2d');
+  ctx.fillStyle = '#b9956d'; ctx.fillRect(0,0,512,512);
+  ctx.fillStyle = '#7a5a38';
+  for (let y=0; y<512; y+=32) {
+    const off = (y/32) % 2 === 0 ? 0 : 32;
+    for (let x=-64; x<512; x+=64) {
+      ctx.fillRect(x+off+1, y+1, 62, 30);
+    }
+  }
+  ctx.strokeStyle = '#8d6a43'; ctx.lineWidth = 1;
+  for (let y=0; y<512; y+=32) for (let x=0; x<512; x+=8) {
+    ctx.beginPath(); ctx.moveTo(x, y+Math.random()*32); ctx.lineTo(x+8, y+Math.random()*32); ctx.stroke();
+  }
+  const tex = new THREE.CanvasTexture(cvs);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(WORLD_SIZE/4, 1.5);
+  return tex;
+}
+const brickTex = makeBrickTexture();
+const wallMat = new THREE.MeshStandardMaterial({ map:brickTex, roughness:0.9 });
+
+function addWall(w, h, d, x, y, z) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), wallMat);
+  m.position.set(x,y,z); m.castShadow = true; m.receiveShadow = true;
+  scene.add(m); return m;
+}
+const H = 6;
+addWall(WORLD_SIZE, H, 0.5, 0, H/2, -WORLD_SIZE/2);
+addWall(WORLD_SIZE, H, 0.5, 0, H/2,  WORLD_SIZE/2);
+addWall(0.5, H, WORLD_SIZE, -WORLD_SIZE/2, H/2, 0);
+addWall(0.5, H, WORLD_SIZE,  WORLD_SIZE/2, H/2, 0);
+
+// Ceiling
+const ceil = new THREE.Mesh(
+  new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE),
+  new THREE.MeshStandardMaterial({ color:0x2a2a32, roughness:0.95 })
+);
+ceil.rotation.x = Math.PI/2; ceil.position.y = H;
+scene.add(ceil);
+
+// Storage racks
+const rackMat = new THREE.MeshStandardMaterial({ color:0x1f6feb, metalness:0.3, roughness:0.6 });
+const shelfMat = new THREE.MeshStandardMaterial({ color:0xc9a36a, roughness:0.85 });
+const boxMat = new THREE.MeshStandardMaterial({ color:0xa76d3a, roughness:0.9 });
+
+function makeRack(x, z, rot = 0) {
+  const rack = new THREE.Group();
+  rack.position.set(x, 0, z); rack.rotation.y = rot;
+  // Vertical posts
+  for (const px of [-2, 2]) for (const pz of [-0.5, 0.5]) {
+    const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 4.2, 0.12), rackMat);
+    post.position.set(px, 2.1, pz); post.castShadow = true;
+    rack.add(post);
+  }
+  // Shelves
+  for (const sy of [0.4, 1.6, 2.9]) {
+    const shelf = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.08, 1.1), shelfMat);
+    shelf.position.set(0, sy, 0); shelf.castShadow = true; shelf.receiveShadow = true;
+    rack.add(shelf);
+    // Boxes on shelf
+    for (let i=0; i<3; i++) {
+      if (Math.random() < 0.7) {
+        const bx = new THREE.Mesh(
+          new THREE.BoxGeometry(0.8, 0.6, 0.8),
+          new THREE.MeshStandardMaterial({ color: new THREE.Color().setHSL(0.08 + Math.random()*0.05, 0.5, 0.4 + Math.random()*0.15), roughness:0.9 })
+        );
+        bx.position.set(-1.3 + i*1.3, sy + 0.34, 0);
+        bx.castShadow = true;
+        rack.add(bx);
+      }
+    }
+  }
+  scene.add(rack);
+  return rack;
+}
+makeRack(-13, -10); makeRack(-13, 10); makeRack(13, -10); makeRack(13, 10);
+makeRack(-6, 14, Math.PI/2); makeRack(6, 14, Math.PI/2);
+makeRack(-6, -14, Math.PI/2); makeRack(6, -14, Math.PI/2);
+
+// Floor signs
+function addFloorSign(x, z, color, text) {
+  const cvs = document.createElement('canvas'); cvs.width=256; cvs.height=256;
+  const ctx = cvs.getContext('2d');
+  ctx.fillStyle = color; ctx.fillRect(0,0,256,256);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 40px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText(text, 128, 140);
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(2, 2),
+    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cvs) })
+  );
+  m.rotation.x = -Math.PI/2; m.position.set(x, 0.02, z);
+  scene.add(m);
+}
+addFloorSign(0, -17, '#059669', 'SALIDA');
+addFloorSign(-17, 0, '#dc2626', 'EXTINTOR');
+addFloorSign(17, 0, '#0369a1', 'BOTIQUÍN');
+
+/* ============================================================
+   3. HUMANOID CHARACTER
+   ============================================================ */
+const character = new THREE.Group();
+character.position.set(0, 0, 8);
+scene.add(character);
+
+// Materials
+const skinMat = new THREE.MeshStandardMaterial({ color:0xf0c39a, roughness:0.7 });
+const pantMat = new THREE.MeshStandardMaterial({ color:0x1e3a8a, roughness:0.85 });
+const bootMat = new THREE.MeshStandardMaterial({ color:0x1a1a1a, roughness:0.6 });
+const shirtMat = new THREE.MeshStandardMaterial({ color:0x0e7aa5, roughness:0.8 });
+
+// INTEP Vest
+function makeVestTexture() {
+  const cvs = document.createElement('canvas'); cvs.width = 512; cvs.height = 512;
+  const ctx = cvs.getContext('2d');
+  ctx.fillStyle = '#facc15'; ctx.fillRect(0,0,512,512);
+  // Reflective stripes
+  ctx.fillStyle = '#e5e7eb';
+  ctx.fillRect(0, 180, 512, 30);
+  ctx.fillRect(0, 320, 512, 30);
+  // INTEP text
+  ctx.fillStyle = '#111827';
+  ctx.font = 'bold 72px Arial Black, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('INTEP', 256, 260);
+  // Border
+  ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 8;
+  ctx.strokeRect(4, 4, 504, 504);
+  return new THREE.CanvasTexture(cvs);
+}
+const vestMat = new THREE.MeshStandardMaterial({ map: makeVestTexture(), roughness:0.7 });
+
+// Torso + Vest
+const torso = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 0.28), shirtMat);
+torso.position.y = 1.25;
+torso.castShadow = true;
+character.add(torso);
+
+const vest = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.6, 0.32), vestMat);
+vest.position.y = 1.22;
+vest.castShadow = true;
+character.add(vest);
+
+// Head
+const headGrp = new THREE.Group();
+headGrp.position.y = 1.75;
+character.add(headGrp);
+
+const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 20, 20), skinMat);
+head.castShadow = true;
+headGrp.add(head);
+
+// Helmet
+const helmet = new THREE.Mesh(
+  new THREE.SphereGeometry(0.19, 20, 20, 0, Math.PI*2, 0, Math.PI/2),
+  new THREE.MeshStandardMaterial({ color:0xfbbf24, roughness:0.4, metalness:0.1 })
+);
+helmet.position.y = 0.02;
+helmet.castShadow = true;
+headGrp.add(helmet);
+// Helmet brim
+const brim = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.21, 0.21, 0.04, 20, 1, false, -Math.PI/2, Math.PI),
+  new THREE.MeshStandardMaterial({ color:0xfbbf24, roughness:0.4 })
+);
+brim.position.set(0, 0.02, 0.06);
+headGrp.add(brim);
+
+// Eyes
+for (const x of [-0.05, 0.05]) {
+  const eye = new THREE.Mesh(
+    new THREE.SphereGeometry(0.022, 8, 8),
+    new THREE.MeshBasicMaterial({ color:0x0a0a0a })
+  );
+  eye.position.set(x, 0, 0.14);
+  headGrp.add(eye);
+}
+
+// Hips base
+const hips = new THREE.Group();
+hips.position.y = 0.92;
+character.add(hips);
+
+// Arms (shoulder -> upper arm -> elbow -> forearm)
+function makeArm(side) {
+  const shoulder = new THREE.Group();
+  shoulder.position.set(side * 0.32, 1.52, 0);
+  character.add(shoulder);
+
+  const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.05, 0.34, 10), vestMat);
+  upperArm.position.y = -0.17;
+  upperArm.castShadow = true;
+  shoulder.add(upperArm);
+
+  const elbow = new THREE.Group();
+  elbow.position.y = -0.34;
+  shoulder.add(elbow);
+
+  const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.32, 10), skinMat);
+  forearm.position.y = -0.16;
+  forearm.castShadow = true;
+  elbow.add(forearm);
+
+  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8), skinMat);
+  hand.position.y = -0.34;
+  elbow.add(hand);
+
+  return { shoulder, elbow };
+}
+const armL = makeArm(-1);
+const armR = makeArm(1);
+
+// Legs (hip -> thigh -> knee -> shin)
+function makeLeg(side) {
+  const hip = new THREE.Group();
+  hip.position.set(side * 0.13, 0.9, 0);
+  character.add(hip);
+
+  const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.075, 0.46, 10), pantMat);
+  thigh.position.y = -0.23;
+  thigh.castShadow = true;
+  hip.add(thigh);
+
+  const knee = new THREE.Group();
+  knee.position.y = -0.46;
+  hip.add(knee);
+
+  const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.42, 10), pantMat);
+  shin.position.y = -0.21;
+  shin.castShadow = true;
+  knee.add(shin);
+
+  const foot = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.22), bootMat);
+  foot.position.set(0, -0.44, 0.04);
+  foot.castShadow = true;
+  knee.add(foot);
+
+  return { hip, knee };
+}
+const legL = makeLeg(-1);
+const legR = makeLeg(1);
+
+/* ============================================================
+   4. HAZARDS (realistic)
+   ============================================================ */
+const hazards = [];
+const interactables = [];
+
+function registerHazard(obj, info) {
+  obj.userData = { type:'hazard', ...info };
+  hazards.push(obj);
+  interactables.push(obj);
+  scene.add(obj);
+}
+
+// 1. Cables en el suelo
+function makeCables() {
+  const grp = new THREE.Group();
+  grp.position.set(4, 0, -4);
+  for (let i=0; i<5; i++) {
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(Math.random()*2-1, 0.03, Math.random()*2-1),
+      new THREE.Vector3(Math.random()*2-1, 0.04, Math.random()*2-1),
+      new THREE.Vector3(Math.random()*2-1, 0.03, Math.random()*2-1),
+      new THREE.Vector3(Math.random()*2-1, 0.05, Math.random()*2-1),
+    ]);
+    const geo = new THREE.TubeGeometry(curve, 20, 0.03, 6, false);
+    const mat = new THREE.MeshStandardMaterial({ color:[0x1f1f1f,0xea580c,0x15803d][i%3], roughness:0.8 });
+    grp.add(new THREE.Mesh(geo, mat));
+  }
+  registerHazard(grp, { id:'cables', name:'Cables sueltos', desc:'Riesgo de tropiezo y eléctrico.' });
+}
+makeCables();
+
+// 2. Tambor químico sin rótulo
+function makeDrum() {
+  const grp = new THREE.Group();
+  grp.position.set(-8, 0, 4);
+  const body = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.45, 0.45, 1.05, 24),
+    new THREE.MeshStandardMaterial({ color:0xdc2626, metalness:0.5, roughness:0.4 })
+  );
+  body.position.y = 0.525; body.castShadow = true;
+  grp.add(body);
+  const top = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.47, 0.47, 0.06, 24),
+    new THREE.MeshStandardMaterial({ color:0x991b1b, metalness:0.6, roughness:0.3 })
+  );
+  top.position.y = 1.08;
+  grp.add(top);
+  // Sospechoso charco
+  const spill = new THREE.Mesh(
+    new THREE.CircleGeometry(0.7, 16),
+    new THREE.MeshStandardMaterial({ color:0x4b5563, roughness:0.3, metalness:0.2 })
+  );
+  spill.rotation.x = -Math.PI/2; spill.position.set(0.6, 0.01, 0);
+  grp.add(spill);
+  registerHazard(grp, { id:'drum', name:'Tambor químico sin rotular', desc:'Sustancia desconocida — riesgo químico.' });
+}
+makeDrum();
+
+// 3. Caja mal apilada
+function makeBadStack() {
+  const grp = new THREE.Group();
+  grp.position.set(9, 0, 6);
+  const colors = [0xb45309, 0xa16207, 0xc2410c];
+  for (let i=0; i<4; i++) {
+    const box = new THREE.Mesh(
+      new THREE.BoxGeometry(0.7, 0.55, 0.7),
+      new THREE.MeshStandardMaterial({ color:colors[i%3], roughness:0.9 })
+    );
+    box.position.set((Math.random()-0.5)*0.3, 0.28 + i*0.56, (Math.random()-0.5)*0.3);
+    box.rotation.y = (Math.random()-0.5)*0.4;
+    box.castShadow = true;
+    grp.add(box);
+  }
+  registerHazard(grp, { id:'stack', name:'Pila de cajas inestable', desc:'Caja mal apilada — riesgo de caída.' });
+}
+makeBadStack();
+
+// 4. Escalera mal ubicada
+function makeLadder() {
+  const grp = new THREE.Group();
+  grp.position.set(-6, 0, -8);
+  grp.rotation.y = 0.4;
+  const mat = new THREE.MeshStandardMaterial({ color:0xdedede, metalness:0.7, roughness:0.3 });
+  for (const x of [-0.25, 0.25]) {
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 2.8, 0.05), mat);
+    rail.position.set(x, 1.4, 0); rail.rotation.z = 0;
+    rail.castShadow = true;
+    grp.add(rail);
+  }
+  for (let i=0; i<6; i++) {
+    const step = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.04, 0.08), mat);
+    step.position.set(0, 0.3 + i*0.4, 0);
+    grp.add(step);
+  }
+  grp.rotation.z = 0.4; // caída
+  grp.position.y = 0.2;
+  registerHazard(grp, { id:'ladder', name:'Escalera inclinada mal asegurada', desc:'Riesgo de caída de altura.' });
+}
+makeLadder();
+
+// 5. Casco tirado en el suelo
+function makeFallenHelmet() {
+  const grp = new THREE.Group();
+  grp.position.set(2, 0, 10);
+  const h = new THREE.Mesh(
+    new THREE.SphereGeometry(0.15, 16, 16, 0, Math.PI*2, 0, Math.PI/2),
+    new THREE.MeshStandardMaterial({ color:0xfbbf24, roughness:0.4 })
+  );
+  h.position.y = 0.05;
+  h.rotation.x = Math.PI/2 + 0.3;
+  h.castShadow = true;
+  grp.add(h);
+  registerHazard(grp, { id:'helmet', name:'Casco fuera de uso', desc:'EPP en el suelo — incumplimiento.' });
+}
+makeFallenHelmet();
+
+// 6. Extintor con señal tapada
+function makeBlockedFire() {
+  const grp = new THREE.Group();
+  grp.position.set(-17.5, 0, 6);
+  const ext = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.11, 0.12, 0.55, 16),
+    new THREE.MeshStandardMaterial({ color:0xb91c1c, metalness:0.4, roughness:0.5 })
+  );
+  ext.position.y = 0.28;
+  grp.add(ext);
+  const box = new THREE.Mesh(
+    new THREE.BoxGeometry(0.9, 0.9, 0.5),
+    boxMat
+  );
+  box.position.set(0.5, 0.45, 0);
+  box.castShadow = true;
+  grp.add(box);
+  registerHazard(grp, { id:'blocked', name:'Extintor bloqueado por cajas', desc:'Acceso a EPP de emergencia obstaculizado.' });
+}
+makeBlockedFire();
+
+// 7. Lámpara fundida (área oscura)
+function makeDeadLamp() {
+  const grp = new THREE.Group();
+  grp.position.set(12, 0, -12);
+  const pole = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.05, 0.05, 2.4, 8),
+    new THREE.MeshStandardMaterial({ color:0x333333, metalness:0.7, roughness:0.4 })
+  );
+  pole.position.y = 1.2;
+  grp.add(pole);
+  const bulb = new THREE.Mesh(
+    new THREE.SphereGeometry(0.12, 12, 12),
+    new THREE.MeshStandardMaterial({ color:0x1a1a1a, roughness:0.9 })
+  );
+  bulb.position.y = 2.4;
+  grp.add(bulb);
+  // Sparks hint
+  const wire = new THREE.Mesh(
+    new THREE.TorusGeometry(0.08, 0.01, 6, 12),
+    new THREE.MeshStandardMaterial({ color:0x1f1f1f })
+  );
+  wire.position.y = 2.38;
+  grp.add(wire);
+  registerHazard(grp, { id:'lamp', name:'Lámpara fundida', desc:'Iluminación deficiente — riesgo de accidentes.' });
+}
+makeDeadLamp();
+
+// 8. Derrame de líquido
+function makeSpill() {
+  const grp = new THREE.Group();
+  grp.position.set(6, 0, -10);
+  const pool = new THREE.Mesh(
+    new THREE.CircleGeometry(0.8, 24),
+    new THREE.MeshStandardMaterial({ color:0x065f46, metalness:0.4, roughness:0.15 })
+  );
+  pool.rotation.x = -Math.PI/2;
+  pool.position.y = 0.015;
+  grp.add(pool);
+  // Splash
+  for (let i=0; i<4; i++) {
+    const drop = new THREE.Mesh(
+      new THREE.CircleGeometry(0.1 + Math.random()*0.15, 12),
+      new THREE.MeshStandardMaterial({ color:0x065f46, metalness:0.4, roughness:0.15 })
+    );
+    drop.rotation.x = -Math.PI/2;
+    drop.position.set((Math.random()-0.5)*2, 0.015, (Math.random()-0.5)*2);
+    grp.add(drop);
+  }
+  registerHazard(grp, { id:'spill', name:'Derrame de líquido', desc:'Piso resbaloso — riesgo biomecánico.' });
+}
+makeSpill();
+
+/* ============================================================
+   5. INPUT + CONTROLS
+   ============================================================ */
+const keys = {};
+document.addEventListener('keydown', e => { keys[e.code] = true; });
+document.addEventListener('keyup',   e => { keys[e.code] = false; });
+
+let yaw = 0, pitch = 0;
+const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+
+document.body.addEventListener('click', () => {
+  if (state.locked) return;
+  renderer.domElement.requestPointerLock();
+});
+document.addEventListener('pointerlockchange', () => {
+  // nothing special
+});
+document.addEventListener('mousemove', e => {
+  if (document.pointerLockElement === renderer.domElement) {
+    yaw   -= e.movementX * 0.0025;
+    pitch -= e.movementY * 0.0025;
+    pitch = Math.max(-1.3, Math.min(1.3, pitch));
+  }
+});
+
+// E interact
+document.addEventListener('keydown', e => {
+  if (e.code === 'KeyE') onInteract();
+});
+
+/* ============================================================
+   6. MOVEMENT + ANIMATION
+   ============================================================ */
+const forward = new THREE.Vector3();
+const right   = new THREE.Vector3();
+const moveVec = new THREE.Vector3();
+let walkPhase = 0;
+let charTargetRot = 0;
+
+function updateCharacter(dt) {
+  // Camera directions (yaw only for movement)
+  forward.set(-Math.sin(yaw), 0, -Math.cos(yaw));
+  right.set(Math.cos(yaw), 0, -Math.sin(yaw));
+
+  moveVec.set(0,0,0);
+  if (keys['KeyW']) moveVec.add(forward);
+  if (keys['KeyS']) moveVec.sub(forward);
+  if (keys['KeyA']) moveVec.sub(right);
+  if (keys['KeyD']) moveVec.add(right);
+
+  const moving = moveVec.lengthSq() > 0.001;
+  if (moving) moveVec.normalize();
+
+  const speed = keys['ShiftLeft'] || keys['ShiftRight'] ? 4.5 : 2.6;
+  const nx = character.position.x + moveVec.x * speed * dt;
+  const nz = character.position.z + moveVec.z * speed * dt;
+  const limit = WORLD_SIZE/2 - 1.5;
+  character.position.x = Math.max(-limit, Math.min(limit, nx));
+  character.position.z = Math.max(-limit, Math.min(limit, nz));
+
+  // Character rotation — face movement direction
+  if (moving) {
+    charTargetRot = Math.atan2(moveVec.x, moveVec.z);
+  }
+  let delta = charTargetRot - character.rotation.y;
+  while (delta >  Math.PI) delta -= Math.PI*2;
+  while (delta < -Math.PI) delta += Math.PI*2;
+  character.rotation.y += delta * Math.min(1, dt * 12);
+
+  // Walk cycle
+  if (moving) {
+    walkPhase += dt * speed * 2.2;
+  } else {
+    walkPhase *= 0.9;
+  }
+  const s = Math.sin(walkPhase);
+  const c = Math.cos(walkPhase);
+
+  legL.hip.rotation.x =  s * 0.6;
+  legR.hip.rotation.x = -s * 0.6;
+  legL.knee.rotation.x = Math.max(0, -c * 0.7);
+  legR.knee.rotation.x = Math.max(0,  c * 0.7);
+
+  armL.shoulder.rotation.x = -s * 0.5;
+  armR.shoulder.rotation.x =  s * 0.5;
+  armL.elbow.rotation.x = Math.max(0, c * 0.3 + 0.2);
+  armR.elbow.rotation.x = Math.max(0, -c * 0.3 + 0.2);
+
+  // Torso bob
+  const bob = moving ? Math.abs(Math.sin(walkPhase*2)) * 0.04 : 0;
+  torso.position.y = 1.25 + bob;
+  vest.position.y  = 1.22 + bob;
+  headGrp.position.y = 1.75 + bob;
+
+  // Camera: third-person follow
+  const camOffset = new THREE.Vector3(
+    Math.sin(yaw) * 3.2 * Math.cos(pitch),
+    1.9 + Math.sin(-pitch) * 2.2,
+    Math.cos(yaw) * 3.2 * Math.cos(pitch)
+  );
+  camera.position.copy(character.position).add(new THREE.Vector3(0, 1.6, 0)).add(camOffset);
+  const lookAt = character.position.clone().add(new THREE.Vector3(0, 1.4, 0));
+  camera.lookAt(lookAt);
+}
+
+/* ============================================================
+   7. INTERACTION (raycast)
+   ============================================================ */
+const raycaster = new THREE.Raycaster();
+const forwardCam = new THREE.Vector3();
+
+function getTargeted() {
+  camera.getWorldDirection(forwardCam);
+  const origin = camera.position.clone();
+  raycaster.set(origin, forwardCam);
+  raycaster.far = 10;
+
+  let closest = null;
+  let closestDist = Infinity;
+  for (const obj of interactables) {
+    if (obj.userData.found) continue;
+    const hit = raycaster.intersectObject(obj, true)[0];
+    if (hit && hit.distance < closestDist) {
+      closest = obj;
+      closestDist = hit.distance;
+    }
+  }
+  // Also check simple distance to character for generosity
+  if (!closest) {
+    for (const obj of interactables) {
+      if (obj.userData.found) continue;
+      const d = obj.position.distanceTo(character.position);
+      if (d < 2.5 && d < closestDist) {
+        // Must be roughly in front
+        const toObj = obj.position.clone().sub(character.position).normalize();
+        const camFwd = new THREE.Vector3(forward.x, 0, forward.z).normalize();
+        if (toObj.dot(camFwd) > 0.3) {
+          closest = obj;
+          closestDist = d;
+        }
+      }
+    }
+  }
+  return closest;
+}
+
+const interactPrompt = document.getElementById('interact-prompt');
+
+function updateInteractPrompt() {
+  if (state.mission !== 1) { interactPrompt.style.display = 'none'; return; }
+  const t = getTargeted();
+  if (t) {
+    interactPrompt.style.display = 'block';
+    interactPrompt.innerHTML = `Presiona <kbd style="background:#033d2e;color:#fff;padding:1px 6px;border-radius:3px;">E</kbd> para marcar peligro`;
+  } else {
+    interactPrompt.style.display = 'none';
+  }
+}
+
+function onInteract() {
+  if (state.mission !== 1) return;
+  const t = getTargeted();
+  if (!t || t.userData.found) return;
+
+  t.userData.found = true;
+  state.found.add(t.userData.id);
+  state.score += 100;
+
+  // Visual highlight
+  t.traverse(obj => {
+    if (obj.isMesh && obj.material) {
+      obj.material = obj.material.clone();
+      obj.material.emissive = new THREE.Color(0x10b981);
+      obj.material.emissiveIntensity = 0.4;
+    }
+  });
+
+  showToast(`✓ ${t.userData.name}`);
+  updateHUD();
+  updateMissionUI();
+
+  if (state.found.size >= hazards.length) {
+    setTimeout(endMission1, 800);
+  }
+}
+
+/* ============================================================
+   8. UI HELPERS
+   ============================================================ */
+const missionData = {
+  1: { name:'Cacería de Peligros', desc:'Recorre la bodega y marca los 8 peligros apuntando + E.' },
+  2: { name:'Jerarquía de Controles', desc:'Arrastra cada medida al nivel correcto.' },
+  3: { name:'Señalización', desc:'Identifica el significado de cada señal.' },
+  4: { name:'Protocolo de Accidente', desc:'Ordena los pasos para atender un accidente.' },
+  5: { name:'Examen Final', desc:'10 preguntas sobre SST.' },
+};
+
+function updateHUD() {
+  document.getElementById('hud-mission').textContent = `${state.mission} / 5`;
+  document.getElementById('hud-mission-name').textContent = missionData[state.mission].name;
+  document.getElementById('hud-score').textContent = state.score;
+}
+
+function updateMissionUI() {
+  document.getElementById('mp-title').textContent = missionData[state.mission].name;
+  document.getElementById('mp-desc').textContent = missionData[state.mission].desc;
+  if (state.mission === 1) {
+    const pct = (state.found.size / hazards.length) * 100;
+    document.getElementById('mp-bar').style.width = pct + '%';
+    document.getElementById('mp-counter').textContent = `${state.found.size} / ${hazards.length} peligros`;
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(showToast._id);
+  showToast._id = setTimeout(() => { t.style.display = 'none'; }, 1800);
+}
+
+function showModal(html) {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `<div class="modal-backdrop"><div class="modal">${html}</div></div>`;
+  document.exitPointerLock?.();
+  state.locked = true;
+}
+function closeModal() {
+  document.getElementById('modal-root').innerHTML = '';
+  state.locked = false;
+}
+
+/* ============================================================
+   9. MISSIONS 2-5
+   ============================================================ */
+
+// --- Mission 1 end
+function endMission1() {
+  showModal(`
+    <span class="tag">Misión 1 completada</span>
+    <h1>¡Cacería exitosa!</h1>
+    <p>Identificaste los 8 peligros de la bodega. Cada uno representa un riesgo real que debe ser controlado.</p>
+    <p><strong>+${hazards.length * 100} puntos</strong></p>
+    <div class="btn-row">
+      <button class="btn" onclick="window.__startM2()">Siguiente misión →</button>
+    </div>
+  `);
+}
+
+// --- Mission 2: Jerarquía de Controles
+const m2Controls = [
+  { text:'Eliminar la sustancia química peligrosa', level:'eliminacion' },
+  { text:'Reemplazar por producto menos tóxico',    level:'sustitucion' },
+  { text:'Instalar ventilación extractora',         level:'ingenieria' },
+  { text:'Rotar turnos para limitar la exposición', level:'administrativo' },
+  { text:'Uso obligatorio de respirador',           level:'epp' },
+];
+const m2Levels = {
+  eliminacion:    { label:'1. Eliminación',     color:'#059669' },
+  sustitucion:    { label:'2. Sustitución',     color:'#0891b2' },
+  ingenieria:     { label:'3. Controles de ingeniería', color:'#7c3aed' },
+  administrativo: { label:'4. Controles administrativos', color:'#ea580c' },
+  epp:            { label:'5. EPP',             color:'#b91c1c' },
+};
+
+window.__startM2 = () => {
+  state.mission = 2; state.controlMatches = 0;
+  updateHUD(); updateMissionUI();
+  renderM2();
+};
+
+function renderM2() {
+  const controls = m2Controls.map((c,i) =>
+    `<button class="quiz-opt" data-ctrl="${i}" data-level="${c.level}">${c.text}</button>`
+  ).join('');
+  const levels = Object.entries(m2Levels).map(([k,v]) =>
+    `<button class="quiz-opt" style="border-left:4px solid ${v.color};" data-lv="${k}">${v.label}</button>`
+  ).join('');
+
+  showModal(`
+    <span class="tag">Misión 2</span>
+    <h1>Jerarquía de Controles</h1>
+    <p>Selecciona una <strong>medida</strong> (izquierda) y luego el <strong>nivel</strong> al que pertenece.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><h3 style="color:#a7f3d0;font-size:0.8rem;margin-bottom:6px;text-transform:uppercase;">Medidas</h3>${controls}</div>
+      <div><h3 style="color:#a7f3d0;font-size:0.8rem;margin-bottom:6px;text-transform:uppercase;">Niveles</h3>${levels}</div>
+    </div>
+    <p id="m2-status" style="margin-top:14px;color:#6ee7b7;">${state.controlMatches} / ${m2Controls.length} correctos</p>
+  `);
+
+  let selectedCtrl = null;
+  document.querySelectorAll('[data-ctrl]').forEach(b => {
+    b.onclick = () => {
+      if (b.classList.contains('correct')) return;
+      document.querySelectorAll('[data-ctrl]').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+      selectedCtrl = b;
+    };
+  });
+  document.querySelectorAll('[data-lv]').forEach(b => {
+    b.onclick = () => {
+      if (!selectedCtrl) return;
+      const targetLv = selectedCtrl.dataset.level;
+      if (b.dataset.lv === targetLv) {
+        selectedCtrl.classList.remove('selected');
+        selectedCtrl.classList.add('correct');
+        selectedCtrl.disabled = true;
+        state.controlMatches++;
+        state.score += 80;
+        updateHUD();
+        document.getElementById('m2-status').textContent = `${state.controlMatches} / ${m2Controls.length} correctos`;
+        selectedCtrl = null;
+        if (state.controlMatches >= m2Controls.length) setTimeout(endM2, 600);
+      } else {
+        b.classList.add('wrong');
+        setTimeout(() => b.classList.remove('wrong'), 500);
+      }
+    };
+  });
+}
+
+function endM2() {
+  showModal(`
+    <span class="tag">Misión 2 completada</span>
+    <h1>Jerarquía dominada</h1>
+    <p>La jerarquía de controles prioriza <strong>eliminar</strong> el riesgo en la fuente antes de recurrir al EPP.</p>
+    <div class="btn-row">
+      <button class="btn" onclick="window.__startM3()">Siguiente misión →</button>
+    </div>
+  `);
+}
+
+// --- Mission 3: Señalización
+const m3Questions = [
+  { sign:'🚫', color:'#dc2626', q:'Señal roja con borde y barra diagonal', a:'Prohibición',
+    opts:['Prohibición','Obligación','Advertencia','Emergencia'] },
+  { sign:'⚠', color:'#f59e0b', q:'Triángulo amarillo con borde negro', a:'Advertencia',
+    opts:['Prohibición','Obligación','Advertencia','Salvamento'] },
+  { sign:'●', color:'#2563eb', q:'Círculo azul con pictograma blanco', a:'Obligación',
+    opts:['Prohibición','Obligación','Advertencia','Salvamento'] },
+  { sign:'+', color:'#059669', q:'Cuadrado verde con pictograma blanco', a:'Salvamento / Emergencia',
+    opts:['Prohibición','Salvamento / Emergencia','Advertencia','Peligro químico'] },
+  { sign:'🔥', color:'#dc2626', q:'Cuadrado rojo con pictograma blanco', a:'Equipos contra incendio',
+    opts:['Obligación','Advertencia','Equipos contra incendio','Salvamento'] },
+];
+
+window.__startM3 = () => {
+  state.mission = 3; state.signQuizIndex = 0; state.signQuizCorrect = 0;
+  updateHUD(); updateMissionUI();
+  renderM3();
+};
+
+function renderM3() {
+  const q = m3Questions[state.signQuizIndex];
+  const opts = q.opts.map(o => `<button class="quiz-opt" data-opt="${o}">${o}</button>`).join('');
+  showModal(`
+    <span class="tag">Misión 3 — Pregunta ${state.signQuizIndex+1}/${m3Questions.length}</span>
+    <h1>Señalización</h1>
+    <div style="text-align:center;margin:16px 0;">
+      <div style="display:inline-block;width:110px;height:110px;background:${q.color};border-radius:${q.q.includes('Triángulo')?'0':q.q.includes('Círculo')?'50%':'8px'};display:flex;align-items:center;justify-content:center;font-size:3rem;color:#fff;box-shadow:0 6px 20px rgba(0,0,0,0.4);">${q.sign}</div>
+    </div>
+    <p>${q.q}. ¿Qué tipo de señal es?</p>
+    ${opts}
+  `);
+  document.querySelectorAll('[data-opt]').forEach(b => {
+    b.onclick = () => {
+      const correct = b.dataset.opt === q.a;
+      document.querySelectorAll('[data-opt]').forEach(x => x.disabled = true);
+      if (correct) {
+        b.classList.add('correct');
+        state.signQuizCorrect++;
+        state.score += 60;
+      } else {
+        b.classList.add('wrong');
+        document.querySelector(`[data-opt="${q.a}"]`).classList.add('correct');
+      }
+      updateHUD();
+      setTimeout(() => {
+        state.signQuizIndex++;
+        if (state.signQuizIndex >= m3Questions.length) endM3();
+        else renderM3();
+      }, 1200);
+    };
+  });
+}
+
+function endM3() {
+  showModal(`
+    <span class="tag">Misión 3 completada</span>
+    <h1>Señales reconocidas</h1>
+    <p>Acertaste <strong>${state.signQuizCorrect} de ${m3Questions.length}</strong> señales.</p>
+    <ul>
+      <li><strong>Roja:</strong> Prohibición / Incendio</li>
+      <li><strong>Amarilla:</strong> Advertencia</li>
+      <li><strong>Azul:</strong> Obligación</li>
+      <li><strong>Verde:</strong> Salvamento / Emergencia</li>
+    </ul>
+    <div class="btn-row">
+      <button class="btn" onclick="window.__startM4()">Siguiente misión →</button>
+    </div>
+  `);
+}
+
+// --- Mission 4: Protocolo
+const m4Steps = [
+  'Evaluar la escena y asegurar que no haya más peligros',
+  'Activar el sistema de emergencia (llamar al 123 / Jefe SG-SST)',
+  'Prestar primeros auxilios al accidentado',
+  'Acordonar la zona para preservar evidencia',
+  'Reportar el accidente a la ARL dentro de 48 horas',
+  'Investigar causas y definir acciones correctivas',
+];
+
+window.__startM4 = () => {
+  state.mission = 4;
+  updateHUD(); updateMissionUI();
+  renderM4(shuffle([...m4Steps.keys()]));
+};
+
+function shuffle(arr) {
+  for (let i=arr.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function renderM4(order) {
+  const items = order.map((idx, pos) =>
+    `<div class="quiz-opt" draggable="true" data-idx="${idx}" data-pos="${pos}" style="cursor:grab;">
+      <span style="color:#a7f3d0;font-weight:700;margin-right:8px;">${pos+1}.</span> ${m4Steps[idx]}
+    </div>`
+  ).join('');
+  showModal(`
+    <span class="tag">Misión 4</span>
+    <h1>Protocolo de Accidente</h1>
+    <p>Arrastra los pasos para ponerlos en el <strong>orden correcto</strong>.</p>
+    <div id="m4-list">${items}</div>
+    <div class="btn-row">
+      <button class="btn" id="m4-check">Verificar orden</button>
+    </div>
+  `);
+
+  const list = document.getElementById('m4-list');
+  let dragging = null;
+  list.querySelectorAll('[draggable]').forEach(el => {
+    el.addEventListener('dragstart', () => { dragging = el; el.style.opacity = 0.4; });
+    el.addEventListener('dragend',   () => { dragging = null; el.style.opacity = 1; });
+    el.addEventListener('dragover',  e => { e.preventDefault(); });
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragging || dragging === el) return;
+      const rect = el.getBoundingClientRect();
+      if (e.clientY < rect.top + rect.height/2) list.insertBefore(dragging, el);
+      else list.insertBefore(dragging, el.nextSibling);
+    });
+  });
+  document.getElementById('m4-check').onclick = () => {
+    const finalOrder = [...list.querySelectorAll('[data-idx]')].map(e => +e.dataset.idx);
+    const correct = finalOrder.every((v, i) => v === i);
+    if (correct) {
+      state.score += 200;
+      updateHUD();
+      endM4();
+    } else {
+      // Show how many are in place
+      list.querySelectorAll('[data-idx]').forEach((el, pos) => {
+        el.classList.toggle('correct', +el.dataset.idx === pos);
+        el.classList.toggle('wrong',   +el.dataset.idx !== pos);
+      });
+    }
+  };
+}
+
+function endM4() {
+  showModal(`
+    <span class="tag">Misión 4 completada</span>
+    <h1>Protocolo dominado</h1>
+    <p>Ante un accidente laboral, la secuencia correcta salva vidas y protege la investigación.</p>
+    <div class="btn-row">
+      <button class="btn" onclick="window.__startM5()">Examen Final →</button>
+    </div>
+  `);
+}
+
+// --- Mission 5: Examen Final
+const examQuestions = [
+  { q:'¿Qué significa SG-SST?', a:2, opts:[
+    'Servicio General de Seguridad Social y Trabajo',
+    'Sistema Garantizado de Salud Social del Trabajador',
+    'Sistema de Gestión de la Seguridad y Salud en el Trabajo',
+    'Subgerencia de Seguridad y Salud en el Trabajo',
+  ]},
+  { q:'¿Cuál es la norma colombiana que rige el SG-SST?', a:1, opts:[
+    'Ley 1562 de 2012', 'Decreto 1072 de 2015', 'Resolución 2400 de 1979', 'Ley 100 de 1993',
+  ]},
+  { q:'El ciclo PHVA significa:', a:0, opts:[
+    'Planear, Hacer, Verificar, Actuar',
+    'Planear, Homologar, Valorar, Ajustar',
+    'Proteger, Hacer, Validar, Adaptar',
+    'Prevenir, Habilitar, Verificar, Anunciar',
+  ]},
+  { q:'¿Cuál es el primer nivel de la jerarquía de controles?', a:0, opts:[
+    'Eliminación', 'EPP', 'Controles administrativos', 'Sustitución',
+  ]},
+  { q:'En la metodología GTC-45, ¿qué significa NR?', a:3, opts:[
+    'Nivel de Responsabilidad', 'Número de Riesgo', 'Nivel Registrado', 'Nivel de Riesgo',
+  ]},
+  { q:'¿Cuál color corresponde a señales de OBLIGACIÓN?', a:2, opts:[
+    'Rojo', 'Amarillo', 'Azul', 'Verde',
+  ]},
+  { q:'¿En cuánto tiempo debe reportarse un accidente grave a la ARL?', a:1, opts:[
+    '24 horas', '48 horas', '72 horas', '5 días hábiles',
+  ]},
+  { q:'El COPASST está conformado por:', a:2, opts:[
+    'Solo representantes del empleador',
+    'Solo representantes de los trabajadores',
+    'Representantes del empleador y de los trabajadores en partes iguales',
+    'La ARL exclusivamente',
+  ]},
+  { q:'¿Qué EPP protege contra caída de objetos en la cabeza?', a:1, opts:[
+    'Gafas de seguridad', 'Casco', 'Arnés', 'Tapones auditivos',
+  ]},
+  { q:'La enfermedad laboral se diferencia del accidente porque:', a:2, opts:[
+    'Siempre es más grave',
+    'Requiere hospitalización',
+    'Es contraída como resultado de la exposición a factores de riesgo en el trabajo',
+    'Se cura más rápido',
+  ]},
+];
+
+window.__startM5 = () => {
+  state.mission = 5; state.examIndex = 0; state.examCorrect = 0;
+  updateHUD(); updateMissionUI();
+  renderExam();
+};
+
+function renderExam() {
+  const q = examQuestions[state.examIndex];
+  const opts = q.opts.map((o,i) => `<button class="quiz-opt" data-i="${i}">${o}</button>`).join('');
+  showModal(`
+    <span class="tag">Examen Final — Pregunta ${state.examIndex+1}/${examQuestions.length}</span>
+    <h1>Examen Final</h1>
+    <p>${q.q}</p>
+    ${opts}
+  `);
+  document.querySelectorAll('[data-i]').forEach(b => {
+    b.onclick = () => {
+      const i = +b.dataset.i;
+      document.querySelectorAll('[data-i]').forEach(x => x.disabled = true);
+      if (i === q.a) {
+        b.classList.add('correct');
+        state.examCorrect++;
+        state.score += 50;
+      } else {
+        b.classList.add('wrong');
+        document.querySelector(`[data-i="${q.a}"]`).classList.add('correct');
+      }
+      updateHUD();
+      setTimeout(() => {
+        state.examIndex++;
+        if (state.examIndex >= examQuestions.length) endExam();
+        else renderExam();
+      }, 1100);
+    };
+  });
+}
+
+function endExam() {
+  const pct = Math.round(state.examCorrect / examQuestions.length * 100);
+  const passed = pct >= 70;
+  showModal(`
+    <span class="tag" style="background:${passed?'#10b981':'#b91c1c'};color:#fff;">${passed?'Aprobado':'No aprobado'}</span>
+    <h1>${passed?'¡Felicitaciones!':'Casi lo logras'}</h1>
+    <p>Acertaste <strong>${state.examCorrect} / ${examQuestions.length}</strong> preguntas (${pct}%).</p>
+    <p>Puntaje total: <strong>${state.score}</strong></p>
+    ${passed ? `<p>Has completado el Simulador SST. Tu dominio de Seguridad y Salud en el Trabajo ha sido verificado.</p>` :
+               `<p>Necesitas mínimo 70% para aprobar. Repasa el curso y vuelve a intentar.</p>`}
+    <div class="btn-row">
+      <a class="btn" href="CURSO_SST_INTERACTIVO.html">Volver al curso</a>
+      <button class="btn secondary" onclick="location.reload()">Reintentar</button>
+    </div>
+  `);
+
+  try {
+    localStorage.setItem('sst_sim_score', state.score);
+    localStorage.setItem('sst_sim_passed', passed ? '1' : '0');
+  } catch {}
+}
+
+/* ============================================================
+   10. MINIMAP
+   ============================================================ */
+const mmCanvas = document.getElementById('minimap-canvas');
+const mmCtx = mmCanvas.getContext('2d');
+function drawMinimap() {
+  const W = 360, H = 360;
+  mmCtx.fillStyle = '#033d2e'; mmCtx.fillRect(0,0,W,H);
+  const scale = W / WORLD_SIZE;
+  // Hazards
+  for (const h of hazards) {
+    mmCtx.fillStyle = h.userData.found ? '#10b981' : '#f59e0b';
+    mmCtx.beginPath();
+    mmCtx.arc(W/2 + h.position.x*scale, H/2 + h.position.z*scale, 6, 0, Math.PI*2);
+    mmCtx.fill();
+  }
+  // Character
+  mmCtx.save();
+  mmCtx.translate(W/2 + character.position.x*scale, H/2 + character.position.z*scale);
+  mmCtx.rotate(character.rotation.y);
+  mmCtx.fillStyle = '#fff';
+  mmCtx.beginPath();
+  mmCtx.moveTo(0, -8);
+  mmCtx.lineTo(6, 6);
+  mmCtx.lineTo(-6, 6);
+  mmCtx.closePath();
+  mmCtx.fill();
+  mmCtx.restore();
+}
+
+/* ============================================================
+   11. WELCOME + GAME LOOP
+   ============================================================ */
+document.getElementById('loader').style.display = 'none';
+
+showModal(`
+  <span class="tag">Simulador SST 3D</span>
+  <h1>Bienvenido, ${STUDENT.nombre || 'Estudiante'}</h1>
+  <p>Esta es una bodega virtual con riesgos reales. Tu tarea: completar las 5 misiones para demostrar tu dominio de Seguridad y Salud en el Trabajo.</p>
+  <ul>
+    <li><strong>Misión 1:</strong> Cacería de Peligros</li>
+    <li><strong>Misión 2:</strong> Jerarquía de Controles</li>
+    <li><strong>Misión 3:</strong> Señalización</li>
+    <li><strong>Misión 4:</strong> Protocolo de Accidente</li>
+    <li><strong>Misión 5:</strong> Examen Final</li>
+  </ul>
+  <p style="font-size:0.85rem;color:#6ee7b7;">Usa <kbd style="background:#033d2e;padding:2px 6px;border-radius:3px;">WASD</kbd> para moverte, <kbd style="background:#033d2e;padding:2px 6px;border-radius:3px;">mouse</kbd> para mirar, <kbd style="background:#033d2e;padding:2px 6px;border-radius:3px;">E</kbd> para interactuar. Haz clic en la pantalla para capturar el cursor.</p>
+  <div class="btn-row">
+    <button class="btn" onclick="window.__startGame()">Comenzar simulación</button>
+  </div>
+`);
+
+window.__startGame = () => {
+  closeModal();
+  updateHUD();
+  updateMissionUI();
+  renderer.domElement.requestPointerLock();
+};
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+const clock = new THREE.Clock();
+function loop() {
+  const dt = Math.min(clock.getDelta(), 0.1);
+  if (!state.locked) {
+    updateCharacter(dt);
+    updateInteractPrompt();
+  }
+  drawMinimap();
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+loop();
+
+</script>
+
+</body>
+</html>
