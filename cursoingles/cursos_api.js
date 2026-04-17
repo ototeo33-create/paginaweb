@@ -113,28 +113,6 @@
         checkPortalBtn();
         window.addEventListener('resize', checkPortalBtn);
 
-        // Inyectar seccion de examen si hay curso definido
-        if (window.__CURSO && window.__CURSO.num > 0) {
-            (function inyectarSeccionExamen() {
-                var curso = window.__CURSO;
-                if (document.getElementById('intep-quiz-section')) return;
-                var quizUrl = '/intep/cursoingles/quiz.php?nivel=' + encodeURIComponent(curso.nivel)
-                            + '&modulo=' + encodeURIComponent(curso.num);
-                var section = document.createElement('div');
-                section.id = 'intep-quiz-section';
-                section.style.cssText = 'max-width:700px;margin:3rem auto 2rem;padding:2rem;background:rgba(99,102,241,0.08);border:2px solid rgba(99,102,241,0.3);border-radius:20px;text-align:center;font-family:Outfit,sans-serif;';
-                section.innerHTML = '<div style="font-size:2.5rem;margin-bottom:12px;">\u{1F4DD}</div>'
-                    + '<h2 style="margin:0 0 8px;color:white;font-size:1.4rem;">Examen del M\xF3dulo ' + curso.num + '</h2>'
-                    + '<p style="color:#94a3b8;margin:0 0 20px;font-size:0.95rem;">\xBFListo para demostrar lo que aprendiste? Responde 10 preguntas y obt\xE9n tu certificado.</p>'
-                    + '<a href="' + quizUrl + '" style="display:inline-block;padding:14px 36px;border-radius:14px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;font-weight:700;font-size:1.05rem;text-decoration:none;box-shadow:0 4px 15px rgba(99,102,241,0.4);transition:transform 0.2s;" '
-                    + 'onmouseover="this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.transform=\'\'">'
-                    + '\u{1F4DD} Ir al Examen</a>';
-                var victoryModal = document.getElementById('victoryModal');
-                if (victoryModal) victoryModal.parentNode.insertBefore(section, victoryModal);
-                else document.body.appendChild(section);
-            })();
-        }
-
         // Parchar triggerVictory
         var originalFn = window.triggerVictory;
         if (typeof originalFn === 'function' && window.__CURSO) {
