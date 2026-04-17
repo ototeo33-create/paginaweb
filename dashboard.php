@@ -97,6 +97,34 @@ if ($rol === 'admin') {
     $stats_admin['modulos'] = mysqli_fetch_assoc($r)['total'];
 }
 
+// Estado de evaluacion docente
+$res_eval = mysqli_query($conexion, "SELECT periodo, activa FROM eval_control ORDER BY id DESC LIMIT 1");
+$eval_ctrl = $res_eval ? mysqli_fetch_assoc($res_eval) : null;
+$eval_activa = ($eval_ctrl && $eval_ctrl['activa'] == 1);
+$eval_periodo = $eval_ctrl['periodo'] ?? '';
+
+// Si es estudiante: verificar cuántos docentes le faltan por evaluar
+$eval_pendientes = 0;
+if ($rol === 'estudiante' && $eval_activa) {
+    $prog_id = null;
+    $rp = mysqli_prepare($conexion, "SELECT programa_id FROM usuarios WHERE id = ?");
+    mysqli_stmt_bind_param($rp, 'i', $usuario_id);
+    mysqli_stmt_execute($rp);
+    $prog_id = mysqli_stmt_get_result($rp)->fetch_assoc()['programa_id'] ?? null;
+    if ($prog_id) {
+        $stmt_pend = mysqli_prepare($conexion,
+            "SELECT COUNT(*) as total FROM programa_modulo pm
+             JOIN usuarios u ON pm.docente_id = u.id
+             WHERE pm.programa_id = ? AND pm.estado = 'activo' AND u.rol = 'docente'
+               AND pm.docente_id NOT IN (
+                   SELECT docente_id FROM eval_docente WHERE estudiante_id = ? AND periodo = ?
+               )");
+        mysqli_stmt_bind_param($stmt_pend, 'iis', $prog_id, $usuario_id, $eval_periodo);
+        mysqli_stmt_execute($stmt_pend);
+        $eval_pendientes = (int)mysqli_stmt_get_result($stmt_pend)->fetch_assoc()['total'];
+    }
+}
+
 // Zona horaria Colombia
 date_default_timezone_set('America/Bogota');
 
@@ -448,6 +476,34 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             margin: 0;
             line-height: 1.5;
         }
+
+        /* Tarjeta evaluacion activa */
+        .menu-card-v2.eval-activa {
+            border: 2px solid #059669;
+            background: linear-gradient(135deg, #fff 60%, #ECFDF5 100%);
+            box-shadow: 0 4px 20px rgba(5,150,105,0.18);
+        }
+        .menu-card-v2.eval-activa::after { opacity: 1; }
+        .menu-card-v2.eval-deshabilitada {
+            opacity: 0.45;
+            pointer-events: none;
+            filter: grayscale(0.4);
+        }
+        .eval-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #059669; color: white;
+            font-size: 0.72rem; font-weight: 700;
+            padding: 3px 10px; border-radius: 20px;
+            margin-bottom: 8px; width: fit-content;
+        }
+        .eval-badge .dot {
+            width: 7px; height: 7px; background: white;
+            border-radius: 50%; animation: blink 1.2s infinite;
+        }
+        .eval-badge.pendiente { background: #f59e0b; }
+        .eval-badge.completa  { background: #059669; }
+        .eval-badge.inactiva  { background: #9CA3AF; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
 
         .menu-card-v2 .card-arrow {
             position: absolute;
@@ -1034,10 +1090,22 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Descarga guías, talleres y recursos compartidos por tus profesores</p>
                     <span class="card-arrow">→</span>
                 </a>
-                <a href="evaluar_docente.php" class="menu-card-v2">
+                <a href="evaluar_docente.php" class="menu-card-v2 <?php echo $eval_activa ? 'eval-activa' : 'eval-deshabilitada'; ?>">
                     <div class="card-icon morado">⭐</div>
+                    <?php if ($eval_activa): ?>
+                        <?php if ($eval_pendientes > 0): ?>
+                            <span class="eval-badge pendiente"><span class="dot"></span> <?php echo $eval_pendientes; ?> pendiente<?php echo $eval_pendientes > 1 ? 's' : ''; ?></span>
+                        <?php else: ?>
+                            <span class="eval-badge completa"><span class="dot"></span> Completada</span>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <span class="eval-badge inactiva">No disponible</span>
+                    <?php endif; ?>
                     <h3>Evaluar Docentes</h3>
-                    <p>Evalúa el desempeño de tus docentes de forma anónima y confidencial</p>
+                    <p><?php echo $eval_activa
+                        ? ($eval_pendientes > 0 ? 'La evaluación está abierta · Período ' . htmlspecialchars($eval_periodo) : '¡Ya evaluaste a todos tus docentes este período!')
+                        : 'La evaluación no está habilitada por el momento'; ?>
+                    </p>
                     <span class="card-arrow">→</span>
                 </a>
                 <?php if (!empty($tiene_ingles)): ?>
@@ -1126,10 +1194,16 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Sube guías, talleres, evaluaciones y recursos para tus estudiantes</p>
                     <span class="card-arrow">→</span>
                 </a>
-                <a href="admin/eval_resultados.php" class="menu-card-v2">
+                <a href="admin/eval_resultados.php" class="menu-card-v2 <?php echo $eval_activa ? 'eval-activa' : ''; ?>">
                     <div class="card-icon morado">⭐</div>
+                    <?php if ($eval_activa): ?>
+                        <span class="eval-badge pendiente"><span class="dot"></span> En curso · <?php echo htmlspecialchars($eval_periodo); ?></span>
+                    <?php endif; ?>
                     <h3>Mi Evaluación de Desempeño</h3>
-                    <p>Consulta los resultados de las evaluaciones que te hacen tus estudiantes</p>
+                    <p><?php echo $eval_activa
+                        ? 'Tus estudiantes te están evaluando ahora · Ve tus resultados'
+                        : 'Consulta los resultados de evaluaciones anteriores'; ?>
+                    </p>
                     <span class="card-arrow">→</span>
                 </a>
                 <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)" style="display:none;">
