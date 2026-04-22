@@ -744,9 +744,9 @@ if ($rol !== 'estudiante' && $estudiante_id) {
     <div class="asig-section">
         <div class="asig-header" onclick="toggleAsig()">
             <h2>📅 Asignar Horarios</h2>
-            <span class="asig-toggle <?php echo ($docente_sel || $mensaje_asig) ? 'open' : ''; ?>" id="asig-toggle-icon">▼</span>
+            <span class="asig-toggle open" id="asig-toggle-icon">▼</span>
         </div>
-        <div class="asig-body <?php echo ($docente_sel || $mensaje_asig) ? 'open' : ''; ?>" id="asig-body">
+        <div class="asig-body open" id="asig-body">
 
             <?php if ($mensaje_asig):
                 $mp = explode('|', $mensaje_asig, 2); ?>
