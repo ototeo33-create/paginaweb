@@ -30,8 +30,8 @@ if (mysqli_num_rows($tabla_existe) === 0) {
 } else {
 
 // ============================================================
-// OBTENER MATERIALES DEL PROGRAMA DEL ESTUDIANTE
-// Solo módulos de su programa, bimestre activo primero
+// OBTENER MATERIALES ASIGNADOS AL ESTUDIANTE
+// Solo módulos que el admin le asignó explícitamente
 // ============================================================
 $sql = "
     SELECT mc.id, mc.titulo, mc.descripcion, mc.categoria,
@@ -46,8 +46,8 @@ $sql = "
     JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
     JOIN programas p ON pm.programa_id = p.id
     LEFT JOIN usuarios u ON mc.docente_id = u.id
-    JOIN estudiantes e ON e.programa_id = pm.programa_id
-    WHERE e.id = ? AND mc.activo = 1
+    JOIN estudiante_modulo em ON em.programa_modulo_id = pm.id
+    WHERE em.estudiante_id = ? AND mc.activo = 1 AND em.estado = 'activo'
     ORDER BY pm.bimestre DESC, mf.nombre ASC, mc.fecha_subida DESC
 ";
 $stmt = mysqli_prepare($conexion, $sql);

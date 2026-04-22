@@ -1254,6 +1254,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Crea y asigna módulos por bimestre y programa</p>
                     <span class="card-arrow">→</span>
                 </a>
+                <a href="admin/modulos_estudiantes.php" class="menu-card-v2">
+                    <div class="card-icon amarillo">📚</div>
+                    <h3>Módulos Estudiantes</h3>
+                    <p>Asigna módulos del bimestre a cada estudiante individualmente</p>
+                    <span class="card-arrow">→</span>
+                </a>
                 <a href="admin/ingresar_notas.php" class="menu-card-v2">
                     <div class="card-icon amarillo">✏️</div>
                     <h3>Ingresar Notas</h3>

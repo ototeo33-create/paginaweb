@@ -6,13 +6,13 @@ if ($_SESSION['usuario_rol'] !== 'estudiante') { header('Location: dashboard.php
 
 $estudiante_id = $_SESSION['estudiante_id'];
 
-// Módulos del estudiante (desde programa_modulo del programa del estudiante)
+// Módulos del estudiante (desde asignación directa en estudiante_modulo)
 $modulos = [];
 $q_mod = "SELECT pm.id, mf.nombre
           FROM programa_modulo pm
           JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
-          JOIN estudiantes e ON e.programa_id = pm.programa_id
-          WHERE e.id = ? AND pm.estado = 'activo'
+          JOIN estudiante_modulo em ON em.programa_modulo_id = pm.id
+          WHERE em.estudiante_id = ? AND pm.estado = 'activo' AND em.estado = 'activo'
           ORDER BY pm.bimestre, pm.orden";
 $stmt = mysqli_prepare($conexion, $q_mod);
 mysqli_stmt_bind_param($stmt, 'i', $estudiante_id);

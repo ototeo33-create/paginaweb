@@ -6,1428 +6,1474 @@
 <title>Simulador SST 3D — INTEP</title>
 <link rel="icon" href="/intep/favicon/favicon.svg" type="image/svg+xml">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html, body { width:100%; height:100%; overflow:hidden; font-family:'Segoe UI',system-ui,sans-serif; background:#0b1220; color:#e5e7eb; }
-  canvas { display:block; }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Segoe UI',system-ui,sans-serif}
+canvas{display:block}
 
-  /* ---------- HUD ---------- */
-  #hud {
-    position:fixed; top:16px; left:16px; right:16px; z-index:10;
-    display:flex; justify-content:space-between; align-items:flex-start;
-    pointer-events:none;
-  }
-  .hud-card {
-    background:rgba(3,61,46,0.88); border:1px solid #10b981;
-    border-radius:14px; padding:12px 18px; backdrop-filter:blur(6px);
-    box-shadow:0 8px 24px rgba(0,0,0,0.35);
-    pointer-events:auto;
-  }
-  .hud-card h3 { font-size:0.78rem; font-weight:700; color:#a7f3d0; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }
-  .hud-card .val { font-size:1.3rem; font-weight:800; color:#fff; }
-  .hud-card .sub { font-size:0.82rem; color:#6ee7b7; margin-top:4px; }
+#overlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(3,35,24,0.97);color:#e5e7eb;text-align:center;padding:2rem}
+#overlay h1{font-size:2.2rem;font-weight:900;color:#fff;margin-bottom:.6rem}
+#overlay .tag{display:inline-block;background:#10b981;color:#033d2e;font-weight:700;font-size:.78rem;padding:4px 12px;border-radius:20px;text-transform:uppercase;margin-bottom:1rem}
+#overlay p{color:#a7f3d0;line-height:1.7;max-width:520px;margin-bottom:.6rem}
+#overlay ul{color:#6ee7b7;text-align:left;line-height:1.8;max-width:400px;margin:0 auto .6rem;font-size:.93rem}
+#overlay .controls-hint{background:rgba(16,185,129,.12);border:1px solid #10b981;border-radius:12px;padding:.9rem 1.4rem;margin:.8rem 0;font-size:.85rem;color:#a7f3d0}
+#overlay .controls-hint kbd{background:#033d2e;color:#fff;padding:2px 8px;border-radius:5px;border:1px solid #10b981;font-family:monospace;margin:0 3px}
 
-  /* ---------- Minimap ---------- */
-  #minimap {
-    position:fixed; bottom:16px; right:16px; width:180px; height:180px;
-    border:2px solid #10b981; border-radius:12px; overflow:hidden;
-    background:rgba(0,0,0,0.6); z-index:10;
-  }
-  #minimap canvas { width:100%; height:100%; }
+#pause-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;color:#e5e7eb}
+#pause-overlay.show{display:flex}
 
-  /* ---------- Mission panel ---------- */
-  #mission-panel {
-    position:fixed; top:90px; left:16px; width:320px; z-index:10;
-    background:rgba(3,61,46,0.9); border:1px solid #10b981;
-    border-radius:14px; padding:16px; backdrop-filter:blur(6px);
-  }
-  #mission-panel h2 { font-size:1rem; color:#fff; margin-bottom:8px; }
-  #mission-panel .desc { font-size:0.88rem; color:#a7f3d0; line-height:1.5; margin-bottom:10px; }
-  #mission-panel .progress { background:#1a5c4a; border-radius:6px; height:8px; overflow:hidden; margin-bottom:8px; }
-  #mission-panel .progress-bar { background:linear-gradient(90deg,#10b981,#34d399); height:100%; width:0%; transition:width 0.4s; }
-  #mission-panel .counter { font-size:0.82rem; color:#6ee7b7; font-weight:600; }
+.btn{background:#10b981;color:#033d2e;font-weight:700;border:none;padding:13px 26px;border-radius:12px;cursor:pointer;font-size:1rem;transition:transform .15s,box-shadow .15s;margin-top:.4rem}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(16,185,129,.45)}
+.btn.outline{background:transparent;color:#10b981;border:2px solid #10b981}
+.btn.outline:hover{background:rgba(16,185,129,.12)}
 
-  /* ---------- Crosshair ---------- */
-  #crosshair {
-    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-    width:24px; height:24px; pointer-events:none; z-index:5;
-  }
-  #crosshair::before, #crosshair::after {
-    content:''; position:absolute; background:#10b981; box-shadow:0 0 4px rgba(0,0,0,0.8);
-  }
-  #crosshair::before { top:11px; left:0; width:24px; height:2px; }
-  #crosshair::after  { left:11px; top:0; width:2px; height:24px; }
+#hud{position:fixed;top:0;left:0;right:0;z-index:10;pointer-events:none;padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.hud-pill{background:rgba(3,35,24,.88);border:1px solid rgba(16,185,129,.5);border-radius:12px;padding:10px 16px;backdrop-filter:blur(6px);pointer-events:auto}
+.hud-pill h4{font-size:.7rem;font-weight:700;color:#6ee7b7;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.hud-pill .val{font-size:1.25rem;font-weight:800;color:#fff;line-height:1}
+.hud-pill .sub{font-size:.78rem;color:#a7f3d0;margin-top:3px}
 
-  /* ---------- Modal ---------- */
-  .modal-backdrop {
-    position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:100;
-    display:flex; align-items:center; justify-content:center;
-    backdrop-filter:blur(8px);
-  }
-  .modal {
-    background:linear-gradient(145deg,#033d2e,#064e3b);
-    border:2px solid #10b981; border-radius:20px;
-    padding:32px; max-width:560px; width:92%;
-    box-shadow:0 20px 60px rgba(0,0,0,0.6);
-  }
-  .modal h1 { font-size:1.8rem; color:#fff; margin-bottom:8px; }
-  .modal .tag { display:inline-block; background:#10b981; color:#033d2e; font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:12px; text-transform:uppercase; margin-bottom:16px; }
-  .modal p { font-size:0.95rem; color:#d1fae5; line-height:1.6; margin-bottom:14px; }
-  .modal ul { color:#a7f3d0; font-size:0.88rem; line-height:1.7; padding-left:20px; margin-bottom:16px; }
-  .modal .btn-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
-  .btn {
-    background:#10b981; color:#033d2e; font-weight:700; border:none;
-    padding:12px 22px; border-radius:10px; cursor:pointer; font-size:0.95rem;
-    transition:transform 0.15s, box-shadow 0.15s;
-  }
-  .btn:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(16,185,129,0.4); }
-  .btn.secondary { background:transparent; color:#10b981; border:1.5px solid #10b981; }
-  .btn.secondary:hover { background:rgba(16,185,129,0.1); }
+#mission-bar{position:fixed;top:80px;left:14px;width:280px;z-index:10;background:rgba(3,35,24,.9);border:1px solid rgba(16,185,129,.5);border-radius:14px;padding:14px 16px;backdrop-filter:blur(6px)}
+#mission-bar h3{font-size:.92rem;color:#fff;font-weight:700;margin-bottom:6px}
+#mission-bar .desc{font-size:.8rem;color:#a7f3d0;line-height:1.5;margin-bottom:10px}
+#mission-bar .prog-bg{height:8px;background:#1a5c4a;border-radius:4px;overflow:hidden}
+#mission-bar .prog-fill{height:100%;background:linear-gradient(90deg,#10b981,#34d399);width:0%;transition:width .4s}
+#mission-bar .prog-txt{font-size:.78rem;color:#6ee7b7;font-weight:600;margin-top:5px}
 
-  /* ---------- Quiz ---------- */
-  .quiz-opt {
-    display:block; background:rgba(255,255,255,0.06); border:1.5px solid transparent;
-    padding:12px 14px; border-radius:10px; margin-bottom:8px; cursor:pointer;
-    transition:all 0.15s; color:#e5e7eb; font-size:0.9rem;
-  }
-  .quiz-opt:hover { background:rgba(16,185,129,0.15); border-color:#10b981; }
-  .quiz-opt.selected { background:#10b981; color:#033d2e; border-color:#34d399; font-weight:600; }
-  .quiz-opt.correct { background:#059669; color:#fff; border-color:#34d399; }
-  .quiz-opt.wrong   { background:#b91c1c; color:#fff; border-color:#f87171; }
+#xhair{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px;pointer-events:none;z-index:5;border:2px solid rgba(255,255,255,.7);border-radius:50%;box-shadow:0 0 4px rgba(0,0,0,.8),inset 0 0 4px rgba(0,0,0,.8)}
 
-  /* ---------- Interact prompt ---------- */
-  #interact-prompt {
-    position:fixed; top:55%; left:50%; transform:translate(-50%,0);
-    background:rgba(16,185,129,0.95); color:#033d2e; padding:10px 18px;
-    border-radius:10px; font-weight:700; font-size:0.9rem; z-index:9;
-    display:none; box-shadow:0 6px 16px rgba(0,0,0,0.4);
-  }
+#prompt{position:fixed;top:58%;left:50%;transform:translateX(-50%);background:#f59e0b;color:#1c1917;padding:9px 18px;border-radius:10px;font-weight:700;font-size:.88rem;display:none;z-index:9;box-shadow:0 6px 16px rgba(0,0,0,.4)}
 
-  /* ---------- Controls help ---------- */
-  #help {
-    position:fixed; bottom:16px; left:16px; z-index:10;
-    background:rgba(0,0,0,0.55); border:1px solid #1a5c4a;
-    border-radius:10px; padding:10px 14px; font-size:0.78rem; color:#a7f3d0;
-  }
-  #help kbd {
-    background:#033d2e; color:#fff; padding:2px 6px; border-radius:4px;
-    font-family:monospace; border:1px solid #10b981; font-size:0.75rem;
-    margin:0 2px;
-  }
+#toast{position:fixed;top:76px;left:50%;transform:translateX(-50%);background:#10b981;color:#033d2e;padding:10px 22px;border-radius:10px;font-weight:700;font-size:.88rem;z-index:50;display:none;box-shadow:0 6px 16px rgba(0,0,0,.4);white-space:nowrap;max-width:90vw;text-align:center}
 
-  /* ---------- Back button ---------- */
-  #btn-back {
-    position:fixed; top:16px; right:210px; z-index:11;
-    background:rgba(3,61,46,0.9); border:1px solid #10b981;
-    color:#a7f3d0; padding:10px 16px; border-radius:10px;
-    text-decoration:none; font-weight:600; font-size:0.85rem;
-    backdrop-filter:blur(6px);
-  }
-  #btn-back:hover { background:#10b981; color:#033d2e; }
+#minimap{position:fixed;bottom:14px;right:14px;z-index:10;border:2px solid rgba(16,185,129,.6);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.6)}
 
-  /* ---------- Loader ---------- */
-  #loader {
-    position:fixed; inset:0; background:#033d2e; z-index:1000;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    color:#a7f3d0;
-  }
-  #loader .spin {
-    width:56px; height:56px; border:5px solid #1a5c4a; border-top-color:#10b981;
-    border-radius:50%; animation:spin 0.9s linear infinite; margin-bottom:18px;
-  }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  #loader p { font-size:1.05rem; font-weight:600; }
+#btn-back{position:fixed;top:14px;right:165px;z-index:11;background:rgba(3,35,24,.88);border:1px solid rgba(16,185,129,.5);color:#a7f3d0;padding:9px 14px;border-radius:10px;text-decoration:none;font-weight:600;font-size:.82rem;backdrop-filter:blur(6px);transition:background .2s,color .2s}
+#btn-back:hover{background:#10b981;color:#033d2e}
 
-  /* ---------- Toast ---------- */
-  #toast {
-    position:fixed; top:80px; left:50%; transform:translateX(-50%);
-    background:#10b981; color:#033d2e; padding:12px 24px;
-    border-radius:10px; font-weight:700; z-index:50;
-    box-shadow:0 8px 24px rgba(0,0,0,0.4); display:none;
-  }
+#help{position:fixed;bottom:14px;left:14px;z-index:10;background:rgba(0,0,0,.5);border:1px solid #1a5c4a;border-radius:10px;padding:9px 13px;font-size:.75rem;color:#a7f3d0}
+#help kbd{background:#033d2e;color:#fff;padding:1px 6px;border-radius:4px;border:1px solid #10b981;font-family:monospace;font-size:.72rem;margin:0 2px}
 
-  @media (max-width:768px) {
-    #mission-panel { width:calc(100% - 32px); top:auto; bottom:210px; left:16px; }
-    #minimap { width:130px; height:130px; }
-    #btn-back { right:16px; top:auto; bottom:16px; }
-    #help { display:none; }
-  }
+.modal-bg{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal{background:linear-gradient(160deg,#032b1f,#054535);border:2px solid #10b981;border-radius:20px;padding:28px 32px;max-width:600px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.7);max-height:90vh;overflow-y:auto}
+.modal .tag{display:inline-block;background:#10b981;color:#033d2e;font-weight:700;font-size:.72rem;padding:3px 10px;border-radius:12px;text-transform:uppercase;margin-bottom:10px}
+.modal h2{font-size:1.55rem;color:#fff;margin-bottom:8px}
+.modal p{font-size:.9rem;color:#d1fae5;line-height:1.6;margin-bottom:10px}
+.modal ul{color:#a7f3d0;font-size:.88rem;line-height:1.75;padding-left:20px;margin-bottom:12px}
+.modal .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+.qopt{display:block;width:100%;text-align:left;background:rgba(255,255,255,.07);border:1.5px solid transparent;padding:11px 14px;border-radius:10px;margin-bottom:7px;cursor:pointer;color:#e5e7eb;font-size:.88rem;transition:all .15s}
+.qopt:hover:not(:disabled){background:rgba(16,185,129,.18);border-color:#10b981;color:#fff}
+.qopt.ok{background:#065f46!important;border-color:#34d399!important;color:#fff!important;font-weight:600}
+.qopt.ko{background:#7f1d1d!important;border-color:#f87171!important;color:#fff!important}
+.qopt:disabled{cursor:default}
+
+.pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.pair-item{padding:10px 12px;border-radius:9px;cursor:pointer;font-size:.82rem;font-weight:600;text-align:left;border:2px solid transparent;background:rgba(255,255,255,.07);color:#e5e7eb;transition:all .15s;width:100%}
+.pair-item:hover:not(:disabled):not(.matched){background:rgba(16,185,129,.15);border-color:#10b981}
+.pair-item.selected{background:rgba(245,158,11,.2);border-color:#f59e0b;color:#fbbf24}
+.pair-item.matched{background:#065f46;border-color:#34d399;color:#a7f3d0;cursor:default;font-style:italic}
+
+.step-btn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:rgba(255,255,255,.07);border:1.5px solid transparent;padding:11px 14px;border-radius:10px;margin-bottom:7px;cursor:pointer;color:#e5e7eb;font-size:.85rem;transition:all .15s}
+.step-btn:hover:not(:disabled){background:rgba(16,185,129,.18);border-color:#10b981}
+.step-btn .num{min-width:26px;height:26px;border-radius:50%;background:#10b981;color:#033d2e;font-weight:800;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+.step-btn.ok{background:#065f46!important;border-color:#34d399!important}
+.step-btn.ko{background:#7f1d1d!important;border-color:#f87171!important}
+
+@media(max-width:640px){
+  #mission-bar{width:calc(100% - 28px)}
+  #minimap{width:120px;height:120px}
+  .pair-grid{grid-template-columns:1fr}
+  #btn-back{right:14px;top:auto;bottom:60px}
+  #help{display:none}
+}
 </style>
 </head>
 <body>
 
-<div id="loader"><div class="spin"></div><p>Cargando Simulador SST...</p></div>
+<div id="overlay">
+  <span class="tag">Simulador 3D — SST</span>
+  <h1>🦺 Simulador Seguridad Ocupacional</h1>
+  <p id="overlay-student">Bienvenido, Estudiante</p>
+  <ul>
+    <li>🔍 <strong>Misión 1:</strong> Cacería de Peligros</li>
+    <li>⚖️ <strong>Misión 2:</strong> Jerarquía de Controles</li>
+    <li>🚦 <strong>Misión 3:</strong> Señalización</li>
+    <li>🚑 <strong>Misión 4:</strong> Protocolo de Accidente</li>
+    <li>📋 <strong>Misión 5:</strong> Examen Final</li>
+  </ul>
+  <div class="controls-hint">
+    <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover &nbsp;|&nbsp;
+    <kbd>Mouse</kbd> cámara &nbsp;|&nbsp;
+    <kbd>E</kbd> interactuar &nbsp;|&nbsp;
+    <kbd>Shift</kbd> correr &nbsp;|&nbsp;
+    <kbd>Esc</kbd> pausa
+  </div>
+  <button class="btn" id="btn-start">▶ Comenzar simulación</button>
+</div>
 
-<a id="btn-back" href="CURSO_SST_INTERACTIVO.html">← Volver al curso</a>
+<div id="pause-overlay">
+  <div style="text-align:center">
+    <div style="font-size:2rem;margin-bottom:.8rem">⏸</div>
+    <h2 style="color:#fff;margin-bottom:.5rem">En pausa</h2>
+    <p style="color:#a7f3d0;margin-bottom:1rem">Haz clic en la pantalla para continuar</p>
+    <a href="CURSO_SST_INTERACTIVO.html" class="btn outline" style="display:inline-block">← Volver al curso</a>
+  </div>
+</div>
+
+<a id="btn-back" href="CURSO_SST_INTERACTIVO.html">← Curso</a>
 
 <div id="hud">
-  <div class="hud-card">
-    <h3>Misión</h3>
-    <div class="val" id="hud-mission">1 / 5</div>
-    <div class="sub" id="hud-mission-name">Cacería de Peligros</div>
+  <div class="hud-pill">
+    <h4>Misión</h4>
+    <div class="val" id="h-mission">1 / 5</div>
+    <div class="sub" id="h-mname">Cacería de Peligros</div>
   </div>
-  <div class="hud-card">
-    <h3>Puntaje</h3>
-    <div class="val" id="hud-score">0</div>
-    <div class="sub" id="hud-student">Estudiante</div>
+  <div class="hud-pill" style="text-align:right">
+    <h4>Puntaje</h4>
+    <div class="val" id="h-score">0</div>
+    <div class="sub" id="h-name">Estudiante</div>
   </div>
 </div>
 
-<div id="mission-panel">
-  <h2 id="mp-title">Cacería de Peligros</h2>
-  <div class="desc" id="mp-desc">Recorre la bodega y señala los peligros que encuentres apuntando y presionando <kbd>E</kbd>.</div>
-  <div class="progress"><div class="progress-bar" id="mp-bar"></div></div>
-  <div class="counter" id="mp-counter">0 / 8 peligros</div>
+<div id="mission-bar">
+  <h3 id="mb-title">Cacería de Peligros</h3>
+  <div class="desc" id="mb-desc">Camina hacia cada peligro y presiona <strong>E</strong> para identificarlo.</div>
+  <div class="prog-bg"><div class="prog-fill" id="mb-fill"></div></div>
+  <div class="prog-txt" id="mb-txt">0 / 8 peligros</div>
 </div>
 
-<div id="crosshair"></div>
-<div id="interact-prompt">Presiona <kbd>E</kbd> para interactuar</div>
+<div id="xhair"></div>
+<div id="prompt">Presiona <strong>E</strong> para identificar el peligro</div>
 <div id="toast"></div>
 
 <div id="help">
-  <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> moverse &nbsp;·&nbsp;
-  <kbd>Mouse</kbd> mirar &nbsp;·&nbsp;
-  <kbd>E</kbd> interactuar &nbsp;·&nbsp;
-  <kbd>Shift</kbd> correr &nbsp;·&nbsp;
-  <kbd>Esc</kbd> liberar cursor
+  <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover &nbsp;·&nbsp;
+  <kbd>Mouse</kbd> cámara &nbsp;·&nbsp;
+  <kbd>E</kbd> interactuar
 </div>
 
-<div id="minimap"><canvas id="minimap-canvas" width="360" height="360"></canvas></div>
-
-<!-- Modal container -->
+<div id="minimap"><canvas id="mm" width="320" height="320" style="width:160px;height:160px"></canvas></div>
 <div id="modal-root"></div>
 
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js"
-  }
-}
-</script>
-
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
 
-/* ============================================================
-   0. STATE + STUDENT
-   ============================================================ */
-const state = {
-  mission: 1,
-  score: 0,
-  found: new Set(),
-  controlMatches: 0,
-  signQuizIndex: 0,
-  signQuizCorrect: 0,
-  examIndex: 0,
-  examCorrect: 0,
-  locked: true,
-};
+const STUDENT = (() => { try { return JSON.parse(localStorage.getItem('intep_student')||'{}'); } catch{return {};} })();
+document.getElementById('overlay-student').textContent = `Bienvenido, ${STUDENT.nombre||'Estudiante'}`;
+document.getElementById('h-name').textContent = STUDENT.nombre||'Estudiante';
 
-const STUDENT = (() => {
-  try { return JSON.parse(localStorage.getItem('intep_student') || '{}'); }
-  catch { return {}; }
-})();
-document.getElementById('hud-student').textContent = STUDENT.nombre || 'Estudiante';
-
-/* ============================================================
-   1. SCENE + LIGHTING
-   ============================================================ */
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a2332);
-scene.fog = new THREE.Fog(0x1a2332, 30, 90);
-
-const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 200);
-camera.position.set(0, 1.8, 5);
-
-const renderer = new THREE.WebGLRenderer({ antialias:true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(innerWidth, innerHeight);
+/* ============================================
+   RENDERER + SCENE
+   ============================================ */
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+renderer.toneMappingExposure = 1.0;
 document.body.appendChild(renderer.domElement);
 
-// Ambient + hemi
-scene.add(new THREE.AmbientLight(0xffffff, 0.35));
-const hemi = new THREE.HemisphereLight(0xbfd4ff, 0x2a1e10, 0.45);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0f14);
+scene.fog = new THREE.FogExp2(0x0a0f14, 0.016);
+
+const camera = new THREE.PerspectiveCamera(65, innerWidth/innerHeight, 0.1, 150);
+
+/* ============================================
+   LIGHTING
+   ============================================ */
+scene.add(new THREE.AmbientLight(0xfff8f0, 0.5));
+const hemi = new THREE.HemisphereLight(0xbfd4ff, 0x2a1e10, 0.35);
 scene.add(hemi);
 
-// Main sun
-const sun = new THREE.DirectionalLight(0xfff1d6, 0.9);
-sun.position.set(15, 25, 10);
-sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.left = -30; sun.shadow.camera.right = 30;
-sun.shadow.camera.top = 30;   sun.shadow.camera.bottom = -30;
-sun.shadow.camera.near = 0.5; sun.shadow.camera.far = 80;
+function addCeilLight(x,z){
+  const pl = new THREE.PointLight(0xfff5e0, 1.7, 20, 1.6);
+  pl.position.set(x,5.6,z);
+  scene.add(pl);
+  // Panel
+  const pan = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.8,0.6),
+    new THREE.MeshBasicMaterial({color:0xfffde0,side:THREE.DoubleSide})
+  );
+  pan.rotation.x = Math.PI/2; pan.position.set(x,5.75,z);
+  scene.add(pan);
+  // Volumetric light cone
+  const cone = new THREE.Mesh(
+    new THREE.ConeGeometry(1.8, 5.4, 20, 1, true),
+    new THREE.MeshBasicMaterial({
+      color:0xfff5d0, transparent:true, opacity:0.05,
+      side:THREE.DoubleSide, depthWrite:false
+    })
+  );
+  cone.position.set(x, 2.9, z);
+  cone.rotation.x = Math.PI;
+  scene.add(cone);
+}
+for(const [x,z] of [[-8,-7],[0,-7],[8,-7],[-8,7],[0,7],[8,7],[0,0]])
+  addCeilLight(x,z);
+
+const sun = new THREE.DirectionalLight(0xfff0d0, 0.6);
+sun.position.set(5,14,8); sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-22;sun.shadow.camera.right=22;
+sun.shadow.camera.top=22;sun.shadow.camera.bottom=-22;
+sun.shadow.camera.near=0.1; sun.shadow.camera.far=55;
+sun.shadow.bias = -0.0005;
 scene.add(sun);
 
-// Warehouse point lamps
-function addLamp(x, z) {
-  const grp = new THREE.Group();
-  grp.position.set(x, 5.8, z);
-  const bulb = new THREE.Mesh(
-    new THREE.SphereGeometry(0.18, 12, 12),
-    new THREE.MeshStandardMaterial({ color:0xffeec0, emissive:0xffe2a0, emissiveIntensity:1.5 })
-  );
-  grp.add(bulb);
-  const shade = new THREE.Mesh(
-    new THREE.ConeGeometry(0.5, 0.35, 16, 1, true),
-    new THREE.MeshStandardMaterial({ color:0x333333, side:THREE.DoubleSide, metalness:0.6, roughness:0.4 })
-  );
-  shade.position.y = 0.22; shade.rotation.x = Math.PI;
-  grp.add(shade);
-  const light = new THREE.PointLight(0xffeec0, 0.9, 14, 2);
-  light.castShadow = false;
-  grp.add(light);
-  scene.add(grp);
-  return grp;
+/* ============================================
+   WORLD + COLLISION
+   ============================================ */
+const WW=36, WD=28, WH=6;
+const WORLD_LIMIT_X = WW/2 - 1.2;
+const WORLD_LIMIT_Z = WD/2 - 1.2;
+const CHAR_RADIUS = 0.35;
+
+// Axis-aligned box colliders [minX,maxX,minZ,maxZ]
+const COLLIDERS = [];
+function addCollider(cx, cz, hw, hd){
+  COLLIDERS.push([cx-hw, cx+hw, cz-hd, cz+hd]);
 }
-addLamp(-10, -8); addLamp(10, -8); addLamp(-10, 8); addLamp(10, 8); addLamp(0, 0);
-
-/* ============================================================
-   2. PROCEDURAL WAREHOUSE
-   ============================================================ */
-const WORLD_SIZE = 40;
-
-// Floor — concrete shader
-const floorGeom = new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE, 1, 1);
-const floorMat = new THREE.ShaderMaterial({
-  uniforms: { uColorA:{ value: new THREE.Color(0x4a4a52) }, uColorB:{ value: new THREE.Color(0x3a3a42) } },
-  vertexShader: `
-    varying vec2 vUv;
-    void main() { vUv = uv * 20.0; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
-  `,
-  fragmentShader: `
-    varying vec2 vUv;
-    uniform vec3 uColorA, uColorB;
-    float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-    float noise(vec2 p) {
-      vec2 i = floor(p), f = fract(p);
-      float a=hash(i), b=hash(i+vec2(1,0)), c=hash(i+vec2(0,1)), d=hash(i+vec2(1,1));
-      vec2 u = f*f*(3.0-2.0*f);
-      return mix(a,b,u.x) + (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y;
-    }
-    void main() {
-      vec2 cell = floor(vUv);
-      vec2 local = fract(vUv);
-      float grout = smoothstep(0.97, 1.0, max(local.x, local.y)) + smoothstep(0.97, 1.0, max(1.0-local.x, 1.0-local.y));
-      float n = noise(vUv * 4.0) * 0.35 + noise(vUv * 12.0) * 0.15;
-      vec3 col = mix(uColorA, uColorB, n);
-      col = mix(col, vec3(0.15,0.15,0.17), clamp(grout, 0.0, 1.0));
-      gl_FragColor = vec4(col, 1.0);
-    }
-  `,
-});
-const floor = new THREE.Mesh(floorGeom, floorMat);
-floor.rotation.x = -Math.PI/2;
-floor.receiveShadow = true;
-scene.add(floor);
-
-// Walls (brick texture via canvas)
-function makeBrickTexture() {
-  const cvs = document.createElement('canvas'); cvs.width = 512; cvs.height = 512;
-  const ctx = cvs.getContext('2d');
-  ctx.fillStyle = '#b9956d'; ctx.fillRect(0,0,512,512);
-  ctx.fillStyle = '#7a5a38';
-  for (let y=0; y<512; y+=32) {
-    const off = (y/32) % 2 === 0 ? 0 : 32;
-    for (let x=-64; x<512; x+=64) {
-      ctx.fillRect(x+off+1, y+1, 62, 30);
-    }
+function collides(x, z){
+  if(x < -WORLD_LIMIT_X || x > WORLD_LIMIT_X || z < -WORLD_LIMIT_Z || z > WORLD_LIMIT_Z) return true;
+  for(const c of COLLIDERS){
+    if(x+CHAR_RADIUS > c[0] && x-CHAR_RADIUS < c[1] &&
+       z+CHAR_RADIUS > c[2] && z-CHAR_RADIUS < c[3]) return true;
   }
-  ctx.strokeStyle = '#8d6a43'; ctx.lineWidth = 1;
-  for (let y=0; y<512; y+=32) for (let x=0; x<512; x+=8) {
-    ctx.beginPath(); ctx.moveTo(x, y+Math.random()*32); ctx.lineTo(x+8, y+Math.random()*32); ctx.stroke();
+  return false;
+}
+
+/* ============================================
+   MATERIALS + PROCEDURAL TEXTURES
+   ============================================ */
+function makeFloorTex(){
+  const cvs=document.createElement('canvas');cvs.width=1024;cvs.height=1024;
+  const ctx=cvs.getContext('2d');
+  ctx.fillStyle='#8c8c84';ctx.fillRect(0,0,1024,1024);
+  // noise grain
+  for(let i=0;i<8000;i++){
+    const g=40+Math.random()*60;
+    ctx.fillStyle=`rgba(${g},${g-2},${g-8},${Math.random()*.35})`;
+    ctx.fillRect(Math.random()*1024,Math.random()*1024,Math.random()*3+1,Math.random()*3+1);
   }
-  const tex = new THREE.CanvasTexture(cvs);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(WORLD_SIZE/4, 1.5);
+  // oil stains
+  for(let i=0;i<12;i++){
+    const x=Math.random()*1024,y=Math.random()*1024,r=20+Math.random()*40;
+    const grd=ctx.createRadialGradient(x,y,0,x,y,r);
+    grd.addColorStop(0,'rgba(30,30,30,0.4)');
+    grd.addColorStop(1,'rgba(30,30,30,0)');
+    ctx.fillStyle=grd; ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  }
+  // expansion joints
+  ctx.strokeStyle='rgba(0,0,0,0.25)';ctx.lineWidth=2;
+  for(let i=0;i<=1024;i+=128){
+    ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,1024);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(1024,i);ctx.stroke();
+  }
+  const tex=new THREE.CanvasTexture(cvs);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+  tex.repeat.set(4,3);
+  tex.anisotropy=8;
   return tex;
 }
-const brickTex = makeBrickTexture();
-const wallMat = new THREE.MeshStandardMaterial({ map:brickTex, roughness:0.9 });
-
-function addWall(w, h, d, x, y, z) {
-  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), wallMat);
-  m.position.set(x,y,z); m.castShadow = true; m.receiveShadow = true;
-  scene.add(m); return m;
-}
-const H = 6;
-addWall(WORLD_SIZE, H, 0.5, 0, H/2, -WORLD_SIZE/2);
-addWall(WORLD_SIZE, H, 0.5, 0, H/2,  WORLD_SIZE/2);
-addWall(0.5, H, WORLD_SIZE, -WORLD_SIZE/2, H/2, 0);
-addWall(0.5, H, WORLD_SIZE,  WORLD_SIZE/2, H/2, 0);
-
-// Ceiling
-const ceil = new THREE.Mesh(
-  new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE),
-  new THREE.MeshStandardMaterial({ color:0x2a2a32, roughness:0.95 })
-);
-ceil.rotation.x = Math.PI/2; ceil.position.y = H;
-scene.add(ceil);
-
-// Storage racks
-const rackMat = new THREE.MeshStandardMaterial({ color:0x1f6feb, metalness:0.3, roughness:0.6 });
-const shelfMat = new THREE.MeshStandardMaterial({ color:0xc9a36a, roughness:0.85 });
-const boxMat = new THREE.MeshStandardMaterial({ color:0xa76d3a, roughness:0.9 });
-
-function makeRack(x, z, rot = 0) {
-  const rack = new THREE.Group();
-  rack.position.set(x, 0, z); rack.rotation.y = rot;
-  // Vertical posts
-  for (const px of [-2, 2]) for (const pz of [-0.5, 0.5]) {
-    const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 4.2, 0.12), rackMat);
-    post.position.set(px, 2.1, pz); post.castShadow = true;
-    rack.add(post);
+function makeWallTex(){
+  const cvs=document.createElement('canvas');cvs.width=512;cvs.height=512;
+  const ctx=cvs.getContext('2d');
+  ctx.fillStyle='#d4cfc0';ctx.fillRect(0,0,512,512);
+  for(let i=0;i<3000;i++){
+    const g=200+Math.random()*30;
+    ctx.fillStyle=`rgba(${g},${g-5},${g-15},${Math.random()*.25})`;
+    ctx.fillRect(Math.random()*512,Math.random()*512,Math.random()*3,Math.random()*3);
   }
-  // Shelves
-  for (const sy of [0.4, 1.6, 2.9]) {
-    const shelf = new THREE.Mesh(new THREE.BoxGeometry(4.1, 0.08, 1.1), shelfMat);
-    shelf.position.set(0, sy, 0); shelf.castShadow = true; shelf.receiveShadow = true;
-    rack.add(shelf);
-    // Boxes on shelf
-    for (let i=0; i<3; i++) {
-      if (Math.random() < 0.7) {
-        const bx = new THREE.Mesh(
-          new THREE.BoxGeometry(0.8, 0.6, 0.8),
-          new THREE.MeshStandardMaterial({ color: new THREE.Color().setHSL(0.08 + Math.random()*0.05, 0.5, 0.4 + Math.random()*0.15), roughness:0.9 })
-        );
-        bx.position.set(-1.3 + i*1.3, sy + 0.34, 0);
-        bx.castShadow = true;
-        rack.add(bx);
-      }
-    }
+  // horizontal siding lines
+  ctx.strokeStyle='rgba(80,70,55,0.25)';ctx.lineWidth=1;
+  for(let y=0;y<512;y+=64){
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(512,y);ctx.stroke();
   }
-  scene.add(rack);
-  return rack;
+  const tex=new THREE.CanvasTexture(cvs);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+  tex.repeat.set(4,1);
+  return tex;
 }
-makeRack(-13, -10); makeRack(-13, 10); makeRack(13, -10); makeRack(13, 10);
-makeRack(-6, 14, Math.PI/2); makeRack(6, 14, Math.PI/2);
-makeRack(-6, -14, Math.PI/2); makeRack(6, -14, Math.PI/2);
 
-// Floor signs
-function addFloorSign(x, z, color, text) {
-  const cvs = document.createElement('canvas'); cvs.width=256; cvs.height=256;
-  const ctx = cvs.getContext('2d');
-  ctx.fillStyle = color; ctx.fillRect(0,0,256,256);
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 40px Segoe UI'; ctx.textAlign = 'center';
-  ctx.fillText(text, 128, 140);
-  const m = new THREE.Mesh(
-    new THREE.PlaneGeometry(2, 2),
-    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cvs) })
-  );
-  m.rotation.x = -Math.PI/2; m.position.set(x, 0.02, z);
+const M = {
+  floor: new THREE.MeshLambertMaterial({map:makeFloorTex()}),
+  wall:  new THREE.MeshLambertMaterial({map:makeWallTex()}),
+  ceil:  new THREE.MeshLambertMaterial({color:0x23262a}),
+  rack:  new THREE.MeshLambertMaterial({color:0xd97706}),
+  shelf: new THREE.MeshLambertMaterial({color:0x1e40af}),
+  wood:  new THREE.MeshLambertMaterial({color:0x92400e}),
+  box:   (h=0.1) => new THREE.MeshLambertMaterial({color:new THREE.Color().setHSL(0.08+h*.06,0.5,0.38+h*.1)}),
+  stripe:new THREE.MeshBasicMaterial({color:0xf8e80a,opacity:0.9,transparent:true}),
+};
+
+/* ============================================
+   WAREHOUSE GEOMETRY
+   ============================================ */
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(WW,WD),M.floor);
+floor.rotation.x=-Math.PI/2; floor.receiveShadow=true;
+scene.add(floor);
+
+function stripe(w,d,x,z){
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),M.stripe);
+  m.rotation.x=-Math.PI/2; m.position.set(x,.005,z);
   scene.add(m);
 }
-addFloorSign(0, -17, '#059669', 'SALIDA');
-addFloorSign(-17, 0, '#dc2626', 'EXTINTOR');
-addFloorSign(17, 0, '#0369a1', 'BOTIQUÍN');
+// Aisle lines
+stripe(.12,WD,-6,0); stripe(.12,WD,6,0);
+stripe(WW,.12,0,-2); stripe(WW,.12,0,2);
+// Caution stripes in corners
+function hashStripe(x, z, w){
+  for(let i=0;i<w*2.5;i++){
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(.22,.22),new THREE.MeshBasicMaterial({color:i%2?0xf8e80a:0x111}));
+    m.rotation.x=-Math.PI/2;
+    m.rotation.z=Math.PI/4;
+    m.position.set(x+i*.3-w*.6, .006, z);
+    scene.add(m);
+  }
+}
 
-/* ============================================================
-   3. HUMANOID CHARACTER
-   ============================================================ */
-const character = new THREE.Group();
-character.position.set(0, 0, 8);
-scene.add(character);
+// Walls (use planes on inside facing in, so texture shows)
+function wallPlane(w, h, x, y, z, rotY){
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),M.wall);
+  m.position.set(x,y,z); m.rotation.y=rotY; m.receiveShadow=true;
+  scene.add(m);
+}
+// Back wall
+wallPlane(WW, WH, 0, WH/2, -WD/2+0.01, 0);
+// Front wall (inside-facing)
+wallPlane(WW, WH, 0, WH/2, WD/2-0.01, Math.PI);
+// Left
+wallPlane(WD, WH, -WW/2+0.01, WH/2, 0, Math.PI/2);
+// Right
+wallPlane(WD, WH, WW/2-0.01, WH/2, 0, -Math.PI/2);
+// Outer solid wall (for back-face / shadow)
+function wallSolid(w,h,d,x,y,z){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshLambertMaterial({color:0x3a3a3a}));
+  m.position.set(x,y,z); scene.add(m);
+}
+wallSolid(WW+0.2,WH,0.2, 0,WH/2,-WD/2-0.1);
+wallSolid(WW+0.2,WH,0.2, 0,WH/2, WD/2+0.1);
+wallSolid(0.2,WH,WD, -WW/2-0.1,WH/2,0);
+wallSolid(0.2,WH,WD,  WW/2+0.1,WH/2,0);
 
-// Materials
-const skinMat = new THREE.MeshStandardMaterial({ color:0xf0c39a, roughness:0.7 });
-const pantMat = new THREE.MeshStandardMaterial({ color:0x1e3a8a, roughness:0.85 });
-const bootMat = new THREE.MeshStandardMaterial({ color:0x1a1a1a, roughness:0.6 });
-const shirtMat = new THREE.MeshStandardMaterial({ color:0x0e7aa5, roughness:0.8 });
+// Ceiling
+const ceil=new THREE.Mesh(new THREE.PlaneGeometry(WW,WD),M.ceil);
+ceil.rotation.x=Math.PI/2; ceil.position.y=WH; scene.add(ceil);
 
-// INTEP Vest
-function makeVestTexture() {
-  const cvs = document.createElement('canvas'); cvs.width = 512; cvs.height = 512;
-  const ctx = cvs.getContext('2d');
-  ctx.fillStyle = '#facc15'; ctx.fillRect(0,0,512,512);
-  // Reflective stripes
-  ctx.fillStyle = '#e5e7eb';
-  ctx.fillRect(0, 180, 512, 30);
-  ctx.fillRect(0, 320, 512, 30);
-  // INTEP text
-  ctx.fillStyle = '#111827';
-  ctx.font = 'bold 72px Arial Black, sans-serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('INTEP', 256, 260);
-  // Border
-  ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 8;
-  ctx.strokeRect(4, 4, 504, 504);
+// Ceiling beams
+const beamMat = new THREE.MeshLambertMaterial({color:0x2a2a2a});
+for(const bx of [-12,-4,4,12]){
+  const b=new THREE.Mesh(new THREE.BoxGeometry(.25,WH,.25),beamMat);
+  b.position.set(bx,WH/2,0); b.receiveShadow=true;
+  scene.add(b);
+  addCollider(bx, 0, 0.15, 0.15);
+}
+// Horizontal trusses
+for(let z=-10;z<=10;z+=5){
+  const t=new THREE.Mesh(new THREE.BoxGeometry(WW-2,0.15,0.15),beamMat);
+  t.position.set(0, WH-0.2, z);
+  scene.add(t);
+}
+
+/* ============================================
+   WINDOWS with light shafts
+   ============================================ */
+function makeWindow(x, z, rotY){
+  const g=new THREE.Group();
+  g.position.set(x, 3.4, z); g.rotation.y=rotY;
+  // Frame
+  const frame=new THREE.Mesh(
+    new THREE.BoxGeometry(2.2, 1.5, 0.1),
+    new THREE.MeshLambertMaterial({color:0x4a4a4a})
+  );
+  g.add(frame);
+  // Cross bars
+  const cross=new THREE.Mesh(
+    new THREE.BoxGeometry(2.3, 0.08, 0.05),
+    new THREE.MeshLambertMaterial({color:0x4a4a4a})
+  );
+  cross.position.z=0.05; g.add(cross);
+  const cross2=new THREE.Mesh(
+    new THREE.BoxGeometry(0.08, 1.55, 0.05),
+    new THREE.MeshLambertMaterial({color:0x4a4a4a})
+  );
+  cross2.position.z=0.05; g.add(cross2);
+  // Glass
+  const glass=new THREE.Mesh(
+    new THREE.PlaneGeometry(2.0, 1.35),
+    new THREE.MeshBasicMaterial({color:0xcde6ff, transparent:true, opacity:0.7})
+  );
+  glass.position.z=0.06; g.add(glass);
+  // Glow
+  const glow=new THREE.Mesh(
+    new THREE.PlaneGeometry(2.4, 1.7),
+    new THREE.MeshBasicMaterial({color:0xfff5d0, transparent:true, opacity:0.25})
+  );
+  glow.position.z=0.02; g.add(glow);
+  scene.add(g);
+  // Light shaft
+  const shaft=new THREE.Mesh(
+    new THREE.CylinderGeometry(0.25, 1.4, 4.2, 8, 1, true),
+    new THREE.MeshBasicMaterial({color:0xfff5c0, transparent:true, opacity:0.07, side:THREE.DoubleSide, depthWrite:false})
+  );
+  const outwardX = Math.sin(rotY);
+  const outwardZ = Math.cos(rotY);
+  shaft.position.set(x + outwardX*1.5, 1.5, z + outwardZ*1.5);
+  shaft.rotation.z = Math.PI/6 * outwardX;
+  shaft.rotation.x = Math.PI/6 * outwardZ;
+  scene.add(shaft);
+}
+// Left wall windows
+makeWindow(-WW/2+0.3, -8, Math.PI/2);
+makeWindow(-WW/2+0.3,  0, Math.PI/2);
+makeWindow(-WW/2+0.3,  8, Math.PI/2);
+// Right wall windows
+makeWindow( WW/2-0.3, -8, -Math.PI/2);
+makeWindow( WW/2-0.3,  0, -Math.PI/2);
+makeWindow( WW/2-0.3,  8, -Math.PI/2);
+
+/* ============================================
+   STORAGE RACKS
+   ============================================ */
+function makeRack(cx,cz,rot=0){
+  const g=new THREE.Group();
+  g.position.set(cx,0,cz); g.rotation.y=rot;
+  const rw=3.8,rh=4,rd=.9;
+  for(const px of [-(rw/2-0.06),(rw/2-0.06)])
+    for(const pz of [-(rd/2-0.05),(rd/2-0.05)]){
+      const p=new THREE.Mesh(new THREE.BoxGeometry(.1,rh,.1),M.rack);
+      p.position.set(px,rh/2,pz); p.castShadow=true;
+      g.add(p);
+    }
+  for(const sh of [1,2.5,3.8]){
+    for(const pz of [-(rd/2-0.05),(rd/2-0.05)]){
+      const br=new THREE.Mesh(new THREE.BoxGeometry(rw,.07,.06),M.rack);
+      br.position.set(0,sh,pz); g.add(br);
+    }
+    const sh_m=new THREE.Mesh(new THREE.BoxGeometry(rw-0.1,.07,rd-.1),M.shelf);
+    sh_m.position.set(0,sh,0); sh_m.receiveShadow=true; g.add(sh_m);
+    const nc=Math.floor(Math.random()*2)+2;
+    for(let i=0;i<nc;i++){
+      const bw=.7+Math.random()*.3,bh=.45+Math.random()*.3,bd=.5+Math.random()*.2;
+      const bx=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,bd),M.box(Math.random()));
+      bx.position.set(-rw/2+.5+i*(rw/(nc+1)),sh+.07+bh/2, (Math.random()-.5)*(rd*.4));
+      bx.castShadow=true; g.add(bx);
+    }
+  }
+  scene.add(g);
+  // Collider (larger than rack for safety buffer)
+  if(rot===0) addCollider(cx, cz, rw/2+0.15, rd/2+0.15);
+  else addCollider(cx, cz, rd/2+0.15, rw/2+0.15);
+}
+for(const z of [-9,0,9]){ makeRack(-14,z); makeRack(14,z); }
+for(const x of [-9,0,9]) makeRack(x,-11,0);
+
+/* ============================================
+   PALLETS
+   ============================================ */
+function pallet(x,z){
+  const g=new THREE.Group(); g.position.set(x,0,z);
+  for(let i=0;i<3;i++){
+    const b=new THREE.Mesh(new THREE.BoxGeometry(2.6,.06,1.2),M.wood);
+    b.position.y=.03+i*.12; g.add(b);
+  }
+  for(let i=0;i<3;i++){
+    const b=new THREE.Mesh(new THREE.BoxGeometry(.3,.25,.3),M.wood);
+    b.position.set(-1+i,-.09,0); g.add(b);
+  }
+  for(let row=0;row<2;row++) for(let col=0;col<2;col++){
+    const bx=new THREE.Mesh(new THREE.BoxGeometry(.9,.65,.8),M.box(row*.2+col*.1));
+    bx.position.set(-.5+col*.9,.45+row*.65,.1);
+    bx.castShadow=true; g.add(bx);
+  }
+  scene.add(g);
+  addCollider(x, z, 1.4, 0.7);
+}
+pallet(-10,6); pallet(10,-6);
+
+/* ============================================
+   FORKLIFT
+   ============================================ */
+function makeForklift(x, z, rotY=0){
+  const g = new THREE.Group();
+  g.position.set(x, 0, z); g.rotation.y = rotY;
+  const yellow = new THREE.MeshLambertMaterial({color:0xeab308});
+  const dark = new THREE.MeshLambertMaterial({color:0x1a1a1a});
+  const gray = new THREE.MeshLambertMaterial({color:0x4b5563});
+  // Chassis
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.55, 1.8), yellow);
+  body.position.y = 0.55; body.castShadow = true;
+  g.add(body);
+  // Counterweight
+  const cw = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.7, 0.6), new THREE.MeshLambertMaterial({color:0xca8a04}));
+  cw.position.set(0, 0.6, -0.95); cw.castShadow = true;
+  g.add(cw);
+  // Cabin frame
+  for(const [cx,cz] of [[-0.5,-0.3],[0.5,-0.3],[-0.5,0.5],[0.5,0.5]]){
+    const p = new THREE.Mesh(new THREE.BoxGeometry(0.06,1.2,0.06), gray);
+    p.position.set(cx, 1.4, cz);
+    g.add(p);
+  }
+  // Roof
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.08, 1.1), gray);
+  roof.position.set(0, 2.05, 0.1); g.add(roof);
+  // Seat
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.2, 0.5), dark);
+  seat.position.set(0, 0.95, 0.1); g.add(seat);
+  // Seat back
+  const seatBack = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 0.1), dark);
+  seatBack.position.set(0, 1.2, -0.15); g.add(seatBack);
+  // Mast
+  const mast = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.2, 0.08), gray);
+  mast.position.set(0, 1.3, 0.95); g.add(mast);
+  // Forks
+  for(const fx of [-0.3, 0.3]){
+    const fork = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 1.0), dark);
+    fork.position.set(fx, 0.2, 1.5); g.add(fork);
+    const vert = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.4, 0.06), dark);
+    vert.position.set(fx, 0.4, 1.0); g.add(vert);
+  }
+  // Wheels
+  for(const [wx, wz, wr] of [[-0.55, 0.65, 0.28], [0.55, 0.65, 0.28], [-0.45, -0.7, 0.25], [0.45, -0.7, 0.25]]){
+    const wheel = new THREE.Mesh(new THREE.CylinderGeometry(wr, wr, 0.2, 14), dark);
+    wheel.rotation.z = Math.PI/2;
+    wheel.position.set(wx, wr, wz); wheel.castShadow = true;
+    g.add(wheel);
+  }
+  // Steering wheel hint
+  const sw = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.02, 6, 12), dark);
+  sw.rotation.x = Math.PI/2 * 0.3;
+  sw.position.set(0, 1.15, 0.35);
+  g.add(sw);
+  scene.add(g);
+  addCollider(x, z, 0.85, 1.1);
+}
+makeForklift(-3, 11, 0.3);
+makeForklift(4, -13, Math.PI);
+
+/* ============================================
+   BARRELS STACK (decoration)
+   ============================================ */
+function barrel(x, y, z, color=0x0891b2){
+  const g = new THREE.Group();
+  g.position.set(x, y, z);
+  const b = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.85, 20), new THREE.MeshLambertMaterial({color}));
+  b.castShadow = true;
+  g.add(b);
+  // Ring
+  for(const ry of [-0.3, 0, 0.3]){
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.02, 6, 20), new THREE.MeshLambertMaterial({color:0x333}));
+    ring.rotation.x = Math.PI/2;
+    ring.position.y = ry;
+    g.add(ring);
+  }
+  scene.add(g);
+}
+// Stack of blue barrels
+barrel(-15.5, 0.43, 11); barrel(-15.5, 0.43, 12.2);
+barrel(-14.3, 0.43, 11); barrel(-14.3, 0.43, 12.2);
+barrel(-14.9, 1.29, 11.6);
+addCollider(-14.9, 11.6, 1.1, 0.9);
+// Green barrels
+barrel(15.5, 0.43, 11, 0x15803d); barrel(14.3, 0.43, 11, 0x15803d);
+barrel(15.5, 0.43, 12.2, 0x15803d); barrel(14.3, 0.43, 12.2, 0x15803d);
+addCollider(14.9, 11.6, 1.1, 0.9);
+
+/* ============================================
+   SAFETY SIGNS on walls
+   ============================================ */
+function makeSignTex(lines, bg, fg){
+  const cvs=document.createElement('canvas'); cvs.width=256; cvs.height=256;
+  const ctx=cvs.getContext('2d');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,256,256);
+  ctx.fillStyle=fg; ctx.font='bold 26px Arial'; ctx.textAlign='center';
+  lines.forEach((ln,i)=>ctx.fillText(ln, 128, 100+i*36));
+  ctx.strokeStyle=fg; ctx.lineWidth=4; ctx.strokeRect(8,8,240,240);
   return new THREE.CanvasTexture(cvs);
 }
-const vestMat = new THREE.MeshStandardMaterial({ map: makeVestTexture(), roughness:0.7 });
+function wallPoster(x, y, z, rotY, tex){
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.2),new THREE.MeshBasicMaterial({map:tex}));
+  m.position.set(x,y,z); m.rotation.y=rotY;
+  scene.add(m);
+}
+wallPoster(-WW/2+0.15, 2.5, 12, Math.PI/2, makeSignTex(['⚠️','USO','OBLIGATORIO','DE EPP'], '#facc15', '#1c1917'));
+wallPoster(-WW/2+0.15, 2.5, -12, Math.PI/2, makeSignTex(['🚫','PROHIBIDO','FUMAR'], '#dc2626', '#fff'));
+wallPoster( WW/2-0.15, 2.5, -12, -Math.PI/2, makeSignTex(['+','BOTIQUÍN','DE PRIMEROS','AUXILIOS'], '#16a34a', '#fff'));
+wallPoster( WW/2-0.15, 2.5, 12, -Math.PI/2, makeSignTex(['🔥','EXTINTOR'], '#dc2626', '#fff'));
 
-// Torso + Vest
-const torso = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 0.28), shirtMat);
-torso.position.y = 1.25;
-torso.castShadow = true;
-character.add(torso);
+// Exit signs (big, lit)
+function exitSign(x,z,rotY=0){
+  const cvs=document.createElement('canvas'); cvs.width=256;cvs.height=128;
+  const ctx=cvs.getContext('2d');
+  ctx.fillStyle='#15803d'; ctx.fillRect(0,0,256,128);
+  ctx.fillStyle='#fff'; ctx.font='bold 52px Arial'; ctx.textAlign='center';
+  ctx.fillText('SALIDA',128,80);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.75),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cvs),side:THREE.DoubleSide}));
+  m.position.set(x,5.0,z); m.rotation.y=rotY;
+  scene.add(m);
+}
+exitSign(0,-WD/2+.3,0); exitSign(-WW/2+.3,0,Math.PI/2); exitSign(WW/2-.3,0,-Math.PI/2);
 
-const vest = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.6, 0.32), vestMat);
-vest.position.y = 1.22;
-vest.castShadow = true;
-character.add(vest);
+/* ============================================
+   DUST PARTICLES
+   ============================================ */
+const DUST_N = 280;
+const dustGeom = new THREE.BufferGeometry();
+const dustPos = new Float32Array(DUST_N*3);
+const dustBaseY = new Float32Array(DUST_N);
+for(let i=0;i<DUST_N;i++){
+  dustPos[i*3]   = (Math.random()-0.5)*WW*0.9;
+  dustPos[i*3+1] = Math.random()*4.5+0.5;
+  dustPos[i*3+2] = (Math.random()-0.5)*WD*0.9;
+  dustBaseY[i]   = dustPos[i*3+1];
+}
+dustGeom.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dust = new THREE.Points(dustGeom, new THREE.PointsMaterial({
+  size:0.04, color:0xfff5d0, transparent:true, opacity:0.55, depthWrite:false, sizeAttenuation:true
+}));
+scene.add(dust);
 
-// Head
-const headGrp = new THREE.Group();
-headGrp.position.y = 1.75;
-character.add(headGrp);
-
-const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 20, 20), skinMat);
-head.castShadow = true;
-headGrp.add(head);
-
-// Helmet
-const helmet = new THREE.Mesh(
-  new THREE.SphereGeometry(0.19, 20, 20, 0, Math.PI*2, 0, Math.PI/2),
-  new THREE.MeshStandardMaterial({ color:0xfbbf24, roughness:0.4, metalness:0.1 })
-);
-helmet.position.y = 0.02;
-helmet.castShadow = true;
-headGrp.add(helmet);
-// Helmet brim
-const brim = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.21, 0.21, 0.04, 20, 1, false, -Math.PI/2, Math.PI),
-  new THREE.MeshStandardMaterial({ color:0xfbbf24, roughness:0.4 })
-);
-brim.position.set(0, 0.02, 0.06);
-headGrp.add(brim);
-
-// Eyes
-for (const x of [-0.05, 0.05]) {
-  const eye = new THREE.Mesh(
-    new THREE.SphereGeometry(0.022, 8, 8),
-    new THREE.MeshBasicMaterial({ color:0x0a0a0a })
-  );
-  eye.position.set(x, 0, 0.14);
-  headGrp.add(eye);
+function animateDust(t){
+  const pos = dust.geometry.attributes.position.array;
+  for(let i=0;i<DUST_N;i++){
+    pos[i*3+1] = dustBaseY[i] + Math.sin(t*0.4+i)*0.3;
+    pos[i*3]   += Math.sin(t*0.2+i*0.1)*0.002;
+    pos[i*3+2] += Math.cos(t*0.15+i*0.1)*0.002;
+  }
+  dust.geometry.attributes.position.needsUpdate = true;
 }
 
-// Hips base
-const hips = new THREE.Group();
-hips.position.y = 0.92;
-character.add(hips);
+/* ============================================
+   CHARACTER
+   ============================================ */
+const character = new THREE.Group();
+character.position.set(0,0,10);
+scene.add(character);
 
-// Arms (shoulder -> upper arm -> elbow -> forearm)
-function makeArm(side) {
+const skinMat  = new THREE.MeshLambertMaterial({color:0xf0c39a});
+const pantMat  = new THREE.MeshLambertMaterial({color:0x1e3a8a});
+const bootMat  = new THREE.MeshLambertMaterial({color:0x111827});
+const shirtMat = new THREE.MeshLambertMaterial({color:0x1e40af});
+
+function makeVestTex(){
+  const cvs=document.createElement('canvas'); cvs.width=512; cvs.height=512;
+  const ctx=cvs.getContext('2d');
+  ctx.fillStyle='#facc15'; ctx.fillRect(0,0,512,512);
+  ctx.fillStyle='#e5e7eb';
+  ctx.fillRect(0,120,512,22); ctx.fillRect(0,160,512,22);
+  ctx.fillRect(0,355,512,22); ctx.fillRect(0,395,512,22);
+  ctx.fillStyle='#111827';
+  ctx.font='bold 104px Arial Black, Arial';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('INTEP',256,265);
+  ctx.strokeStyle='#ea580c'; ctx.lineWidth=10;
+  ctx.strokeRect(5,5,502,502);
+  const tex=new THREE.CanvasTexture(cvs);
+  tex.anisotropy=4;
+  return tex;
+}
+const vestMat = new THREE.MeshLambertMaterial({map:makeVestTex()});
+const vestArmMat = new THREE.MeshLambertMaterial({color:0xfacc15});
+
+const pelvis = new THREE.Group();
+pelvis.position.y = 0.9;
+character.add(pelvis);
+
+const spine = new THREE.Group();
+pelvis.add(spine);
+
+const shirt = new THREE.Mesh(new THREE.BoxGeometry(0.4,0.55,0.25),shirtMat);
+shirt.position.y = 0.27; shirt.castShadow = true;
+spine.add(shirt);
+
+const vest = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.52,0.32),vestMat);
+vest.position.y = 0.26; vest.castShadow = true;
+spine.add(vest);
+
+const belt = new THREE.Mesh(new THREE.BoxGeometry(0.42,0.06,0.27), new THREE.MeshLambertMaterial({color:0x1c1917}));
+belt.position.y = 0.02;
+spine.add(belt);
+
+const neckGrp = new THREE.Group();
+neckGrp.position.y = 0.58;
+spine.add(neckGrp);
+
+const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.06,0.08,10), skinMat);
+neck.position.y = 0.04;
+neckGrp.add(neck);
+
+const head = new THREE.Mesh(new THREE.SphereGeometry(0.135,20,20), skinMat);
+head.position.y = 0.22; head.castShadow = true;
+neckGrp.add(head);
+
+const helmet = new THREE.Mesh(
+  new THREE.SphereGeometry(0.16,20,20,0,Math.PI*2,0,Math.PI/2),
+  new THREE.MeshLambertMaterial({color:0xfbbf24})
+);
+helmet.position.y = 0.25; helmet.castShadow = true;
+neckGrp.add(helmet);
+
+const brim = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.18,0.18,0.025,20,1,false,-Math.PI/2,Math.PI),
+  new THREE.MeshLambertMaterial({color:0xf59e0b})
+);
+brim.position.set(0,0.25,0.08);
+neckGrp.add(brim);
+
+for(const ex of [-0.045,0.045]){
+  const eye = new THREE.Mesh(
+    new THREE.SphereGeometry(0.018,8,8),
+    new THREE.MeshBasicMaterial({color:0x0a0a0a})
+  );
+  eye.position.set(ex,0.23,0.115);
+  neckGrp.add(eye);
+}
+const nose = new THREE.Mesh(new THREE.ConeGeometry(0.018,0.04,8), skinMat);
+nose.rotation.x = Math.PI/2; nose.position.set(0,0.2,0.13);
+neckGrp.add(nose);
+
+function makeArm(side){
   const shoulder = new THREE.Group();
-  shoulder.position.set(side * 0.32, 1.52, 0);
-  character.add(shoulder);
-
-  const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.05, 0.34, 10), vestMat);
-  upperArm.position.y = -0.17;
-  upperArm.castShadow = true;
+  shoulder.position.set(side*0.27,0.48,0);
+  spine.add(shoulder);
+  const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.05,0.28,10), vestArmMat);
+  upperArm.position.y = -0.14; upperArm.castShadow = true;
   shoulder.add(upperArm);
-
   const elbow = new THREE.Group();
-  elbow.position.y = -0.34;
+  elbow.position.y = -0.28;
   shoulder.add(elbow);
-
-  const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.32, 10), skinMat);
-  forearm.position.y = -0.16;
-  forearm.castShadow = true;
+  const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.045,0.26,10), skinMat);
+  forearm.position.y = -0.13; forearm.castShadow = true;
   elbow.add(forearm);
-
-  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8), skinMat);
-  hand.position.y = -0.34;
+  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055,10,10), skinMat);
+  hand.position.y = -0.28;
   elbow.add(hand);
-
   return { shoulder, elbow };
 }
 const armL = makeArm(-1);
 const armR = makeArm(1);
 
-// Legs (hip -> thigh -> knee -> shin)
-function makeLeg(side) {
+function makeLeg(side){
   const hip = new THREE.Group();
-  hip.position.set(side * 0.13, 0.9, 0);
-  character.add(hip);
-
-  const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.075, 0.46, 10), pantMat);
-  thigh.position.y = -0.23;
-  thigh.castShadow = true;
+  hip.position.set(side*0.1,0,0);
+  pelvis.add(hip);
+  const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.085,0.075,0.42,10), pantMat);
+  thigh.position.y = -0.21; thigh.castShadow = true;
   hip.add(thigh);
-
   const knee = new THREE.Group();
-  knee.position.y = -0.46;
+  knee.position.y = -0.42;
   hip.add(knee);
-
-  const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.42, 10), pantMat);
-  shin.position.y = -0.21;
-  shin.castShadow = true;
+  const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.06,0.4,10), pantMat);
+  shin.position.y = -0.2; shin.castShadow = true;
   knee.add(shin);
-
-  const foot = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.22), bootMat);
-  foot.position.set(0, -0.44, 0.04);
-  foot.castShadow = true;
+  const foot = new THREE.Mesh(new THREE.BoxGeometry(0.13,0.08,0.24), bootMat);
+  foot.position.set(0,-0.44,0.05); foot.castShadow = true;
   knee.add(foot);
-
   return { hip, knee };
 }
 const legL = makeLeg(-1);
 const legR = makeLeg(1);
 
-/* ============================================================
-   4. HAZARDS (realistic)
-   ============================================================ */
-const hazards = [];
-const interactables = [];
+/* ============================================
+   HAZARDS
+   ============================================ */
+const HAZARDS=[];
 
-function registerHazard(obj, info) {
-  obj.userData = { type:'hazard', ...info };
-  hazards.push(obj);
-  interactables.push(obj);
-  scene.add(obj);
+function mkHazard(id, name, desc, buildFn, x, z, colHW=0.6, colHD=0.6){
+  const grp=new THREE.Group(); grp.position.set(x,0,z);
+  buildFn(grp);
+  const ring=new THREE.Mesh(
+    new THREE.TorusGeometry(.35,.06,8,24),
+    new THREE.MeshBasicMaterial({color:0xfb923c})
+  );
+  ring.position.y=1.6; ring.rotation.x=Math.PI/2;
+  grp.add(ring);
+  const col = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.05,0.05,3.2,8),
+    new THREE.MeshBasicMaterial({color:0xfb923c,transparent:true,opacity:0.3,depthWrite:false})
+  );
+  col.position.y = 1.6;
+  grp.add(col);
+  scene.add(grp);
+  HAZARDS.push({id, name, desc, found:false, group:grp, ring, col, x, z});
+  if(colHW>0 && colHD>0) addCollider(x, z, colHW, colHD);
 }
 
-// 1. Cables en el suelo
-function makeCables() {
-  const grp = new THREE.Group();
-  grp.position.set(4, 0, -4);
-  for (let i=0; i<5; i++) {
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(Math.random()*2-1, 0.03, Math.random()*2-1),
-      new THREE.Vector3(Math.random()*2-1, 0.04, Math.random()*2-1),
-      new THREE.Vector3(Math.random()*2-1, 0.03, Math.random()*2-1),
-      new THREE.Vector3(Math.random()*2-1, 0.05, Math.random()*2-1),
-    ]);
-    const geo = new THREE.TubeGeometry(curve, 20, 0.03, 6, false);
-    const mat = new THREE.MeshStandardMaterial({ color:[0x1f1f1f,0xea580c,0x15803d][i%3], roughness:0.8 });
-    grp.add(new THREE.Mesh(geo, mat));
+mkHazard('cables','Cables sueltos','Riesgo eléctrico y de tropiezo.',
+grp=>{
+  const mat=new THREE.MeshLambertMaterial({color:0x1c1c1c});
+  const mat2=new THREE.MeshLambertMaterial({color:0xea580c});
+  function cable(pts,m){
+    const curve=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(...p)));
+    const geo=new THREE.TubeGeometry(curve,20,.028,6,false);
+    grp.add(new THREE.Mesh(geo,m));
   }
-  registerHazard(grp, { id:'cables', name:'Cables sueltos', desc:'Riesgo de tropiezo y eléctrico.' });
-}
-makeCables();
+  cable([[-.8,.04,-.5],[-.3,.05,.1],[.4,.03,.4],[.9,.04,0]],mat);
+  cable([[-.6,.04,.3],[0,.05,-.2],[.5,.03,-.5]],mat2);
+  cable([[-.2,.04,-.3],[.3,.06,.2],[.7,.03,.5],[1,.04,.2]],mat);
+}, 4, 5, 0, 0);
 
-// 2. Tambor químico sin rótulo
-function makeDrum() {
-  const grp = new THREE.Group();
-  grp.position.set(-8, 0, 4);
-  const body = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.45, 0.45, 1.05, 24),
-    new THREE.MeshStandardMaterial({ color:0xdc2626, metalness:0.5, roughness:0.4 })
-  );
-  body.position.y = 0.525; body.castShadow = true;
-  grp.add(body);
-  const top = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.47, 0.47, 0.06, 24),
-    new THREE.MeshStandardMaterial({ color:0x991b1b, metalness:0.6, roughness:0.3 })
-  );
-  top.position.y = 1.08;
-  grp.add(top);
-  // Sospechoso charco
-  const spill = new THREE.Mesh(
-    new THREE.CircleGeometry(0.7, 16),
-    new THREE.MeshStandardMaterial({ color:0x4b5563, roughness:0.3, metalness:0.2 })
-  );
-  spill.rotation.x = -Math.PI/2; spill.position.set(0.6, 0.01, 0);
-  grp.add(spill);
-  registerHazard(grp, { id:'drum', name:'Tambor químico sin rotular', desc:'Sustancia desconocida — riesgo químico.' });
-}
-makeDrum();
+mkHazard('drum','Tambor químico sin rotular','Sustancia desconocida — riesgo químico.',
+grp=>{
+  const drum=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,.9,20),new THREE.MeshLambertMaterial({color:0xb91c1c}));
+  drum.position.y=.45; drum.castShadow=true; grp.add(drum);
+  const top=new THREE.Mesh(new THREE.CylinderGeometry(.4,.4,.06,20),new THREE.MeshLambertMaterial({color:0x7f1d1d}));
+  top.position.y=.93; grp.add(top);
+  const spill=new THREE.Mesh(new THREE.CircleGeometry(.8,20),new THREE.MeshLambertMaterial({color:0x065f46,transparent:true,opacity:.8}));
+  spill.rotation.x=-Math.PI/2; spill.position.set(.5,.005,0); grp.add(spill);
+  const cvs=document.createElement('canvas'); cvs.width=128;cvs.height=128;
+  const ctx=cvs.getContext('2d');
+  ctx.fillStyle='#b91c1c'; ctx.fillRect(0,0,128,128);
+  ctx.strokeStyle='#fff'; ctx.lineWidth=16;
+  ctx.beginPath();ctx.moveTo(20,20);ctx.lineTo(108,108);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(108,20);ctx.lineTo(20,108);ctx.stroke();
+  const label=new THREE.Mesh(new THREE.PlaneGeometry(.5,.5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cvs),side:THREE.DoubleSide}));
+  label.position.set(0,.45,.4); grp.add(label);
+}, -8, 2, 0.55, 0.55);
 
-// 3. Caja mal apilada
-function makeBadStack() {
-  const grp = new THREE.Group();
-  grp.position.set(9, 0, 6);
-  const colors = [0xb45309, 0xa16207, 0xc2410c];
-  for (let i=0; i<4; i++) {
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(0.7, 0.55, 0.7),
-      new THREE.MeshStandardMaterial({ color:colors[i%3], roughness:0.9 })
-    );
-    box.position.set((Math.random()-0.5)*0.3, 0.28 + i*0.56, (Math.random()-0.5)*0.3);
-    box.rotation.y = (Math.random()-0.5)*0.4;
-    box.castShadow = true;
-    grp.add(box);
+mkHazard('stack','Pila de cajas inestable','Apilamiento incorrecto — pueden caer.',
+grp=>{
+  const offsets=[[0,0,0],[.08,.6,.06],[-.1,1.2,-.08],[.14,1.8,.1],[-.05,2.4,.08]];
+  const rots=[0,.3,-.25,.4,-.35];
+  offsets.forEach(([x,y,z],i)=>{
+    const bx=new THREE.Mesh(new THREE.BoxGeometry(.75,.55,.65),M.box(i*.2));
+    bx.position.set(x,y+.28,z); bx.rotation.y=rots[i];
+    bx.castShadow=true; grp.add(bx);
+  });
+}, 9, 5, 0.6, 0.55);
+
+mkHazard('ladder','Escalera mal asegurada','Ángulo inseguro — riesgo de caída.',
+grp=>{
+  const mat=new THREE.MeshLambertMaterial({color:0xd1d5db});
+  for(const x of [-.25,.25]){
+    const r=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,2.8,8),mat);
+    r.position.set(x,1.4,0); grp.add(r);
   }
-  registerHazard(grp, { id:'stack', name:'Pila de cajas inestable', desc:'Caja mal apilada — riesgo de caída.' });
-}
-makeBadStack();
-
-// 4. Escalera mal ubicada
-function makeLadder() {
-  const grp = new THREE.Group();
-  grp.position.set(-6, 0, -8);
-  grp.rotation.y = 0.4;
-  const mat = new THREE.MeshStandardMaterial({ color:0xdedede, metalness:0.7, roughness:0.3 });
-  for (const x of [-0.25, 0.25]) {
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 2.8, 0.05), mat);
-    rail.position.set(x, 1.4, 0); rail.rotation.z = 0;
-    rail.castShadow = true;
-    grp.add(rail);
+  for(let i=0;i<7;i++){
+    const rung=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.55,8),mat);
+    rung.rotation.z=Math.PI/2; rung.position.set(0,.25+i*.38,0);
+    grp.add(rung);
   }
-  for (let i=0; i<6; i++) {
-    const step = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.04, 0.08), mat);
-    step.position.set(0, 0.3 + i*0.4, 0);
-    grp.add(step);
+  grp.rotation.z=-.55; grp.rotation.y=.3;
+  grp.position.y=.3;
+}, -11, -6, 0.7, 0.5);
+
+mkHazard('helmet','Casco fuera de uso','EPP tirado — incumplimiento.',
+grp=>{
+  const h=new THREE.Mesh(
+    new THREE.SphereGeometry(.16,20,20,0,Math.PI*2,0,Math.PI*.6),
+    new THREE.MeshLambertMaterial({color:0xfbbf24})
+  );
+  h.rotation.z=Math.PI*.8; h.position.y=.12; h.castShadow=true; grp.add(h);
+  const brim2=new THREE.Mesh(
+    new THREE.CylinderGeometry(.2,.22,.05,20),
+    new THREE.MeshLambertMaterial({color:0xf59e0b})
+  );
+  brim2.position.y=.06; grp.add(brim2);
+}, 5, -8, 0, 0);
+
+mkHazard('blocked','Extintor bloqueado','No es accesible en emergencia.',
+grp=>{
+  const ext=new THREE.Mesh(new THREE.CylinderGeometry(.1,.11,.52,14),new THREE.MeshLambertMaterial({color:0xdc2626}));
+  ext.position.set(-.7,.26,0); ext.castShadow=true; grp.add(ext);
+  const valve=new THREE.Mesh(new THREE.SphereGeometry(.06,8,8),new THREE.MeshLambertMaterial({color:0x111}));
+  valve.position.set(-.7,.56,0); grp.add(valve);
+  for(const [bx,by,bz] of [[0,.3,.1],[.2,1,.0],[-.1,1.65,.1]]){
+    const box=new THREE.Mesh(new THREE.BoxGeometry(.7,.65,.6),M.box(by*.1));
+    box.position.set(bx,by,bz); box.castShadow=true; grp.add(box);
   }
-  grp.rotation.z = 0.4; // caída
-  grp.position.y = 0.2;
-  registerHazard(grp, { id:'ladder', name:'Escalera inclinada mal asegurada', desc:'Riesgo de caída de altura.' });
-}
-makeLadder();
+}, -16, 3, 0.8, 0.5);
 
-// 5. Casco tirado en el suelo
-function makeFallenHelmet() {
-  const grp = new THREE.Group();
-  grp.position.set(2, 0, 10);
-  const h = new THREE.Mesh(
-    new THREE.SphereGeometry(0.15, 16, 16, 0, Math.PI*2, 0, Math.PI/2),
-    new THREE.MeshStandardMaterial({ color:0xfbbf24, roughness:0.4 })
-  );
-  h.position.y = 0.05;
-  h.rotation.x = Math.PI/2 + 0.3;
-  h.castShadow = true;
-  grp.add(h);
-  registerHazard(grp, { id:'helmet', name:'Casco fuera de uso', desc:'EPP en el suelo — incumplimiento.' });
-}
-makeFallenHelmet();
+mkHazard('lamp','Lámpara fundida','Iluminación deficiente — zona oscura.',
+grp=>{
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,2.5,8),new THREE.MeshLambertMaterial({color:0x444}));
+  pole.position.y=1.25; grp.add(pole);
+  const head2=new THREE.Mesh(new THREE.ConeGeometry(.28,.22,14,1,true),new THREE.MeshLambertMaterial({color:0x333,side:THREE.DoubleSide}));
+  head2.rotation.x=Math.PI; head2.position.y=2.6; grp.add(head2);
+  const bulb=new THREE.Mesh(new THREE.SphereGeometry(.1,10,10),new THREE.MeshLambertMaterial({color:0x1a1a1a}));
+  bulb.position.y=2.55; grp.add(bulb);
+  const dark=new THREE.Mesh(new THREE.CircleGeometry(2,16),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.4,depthWrite:false}));
+  dark.rotation.x=-Math.PI/2; dark.position.y=.01; grp.add(dark);
+}, 10, -11, 0.2, 0.2);
 
-// 6. Extintor con señal tapada
-function makeBlockedFire() {
-  const grp = new THREE.Group();
-  grp.position.set(-17.5, 0, 6);
-  const ext = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.11, 0.12, 0.55, 16),
-    new THREE.MeshStandardMaterial({ color:0xb91c1c, metalness:0.4, roughness:0.5 })
-  );
-  ext.position.y = 0.28;
-  grp.add(ext);
-  const box = new THREE.Mesh(
-    new THREE.BoxGeometry(0.9, 0.9, 0.5),
-    boxMat
-  );
-  box.position.set(0.5, 0.45, 0);
-  box.castShadow = true;
-  grp.add(box);
-  registerHazard(grp, { id:'blocked', name:'Extintor bloqueado por cajas', desc:'Acceso a EPP de emergencia obstaculizado.' });
-}
-makeBlockedFire();
-
-// 7. Lámpara fundida (área oscura)
-function makeDeadLamp() {
-  const grp = new THREE.Group();
-  grp.position.set(12, 0, -12);
-  const pole = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.05, 0.05, 2.4, 8),
-    new THREE.MeshStandardMaterial({ color:0x333333, metalness:0.7, roughness:0.4 })
-  );
-  pole.position.y = 1.2;
-  grp.add(pole);
-  const bulb = new THREE.Mesh(
-    new THREE.SphereGeometry(0.12, 12, 12),
-    new THREE.MeshStandardMaterial({ color:0x1a1a1a, roughness:0.9 })
-  );
-  bulb.position.y = 2.4;
-  grp.add(bulb);
-  // Sparks hint
-  const wire = new THREE.Mesh(
-    new THREE.TorusGeometry(0.08, 0.01, 6, 12),
-    new THREE.MeshStandardMaterial({ color:0x1f1f1f })
-  );
-  wire.position.y = 2.38;
-  grp.add(wire);
-  registerHazard(grp, { id:'lamp', name:'Lámpara fundida', desc:'Iluminación deficiente — riesgo de accidentes.' });
-}
-makeDeadLamp();
-
-// 8. Derrame de líquido
-function makeSpill() {
-  const grp = new THREE.Group();
-  grp.position.set(6, 0, -10);
-  const pool = new THREE.Mesh(
-    new THREE.CircleGeometry(0.8, 24),
-    new THREE.MeshStandardMaterial({ color:0x065f46, metalness:0.4, roughness:0.15 })
-  );
-  pool.rotation.x = -Math.PI/2;
-  pool.position.y = 0.015;
-  grp.add(pool);
-  // Splash
-  for (let i=0; i<4; i++) {
-    const drop = new THREE.Mesh(
-      new THREE.CircleGeometry(0.1 + Math.random()*0.15, 12),
-      new THREE.MeshStandardMaterial({ color:0x065f46, metalness:0.4, roughness:0.15 })
-    );
-    drop.rotation.x = -Math.PI/2;
-    drop.position.set((Math.random()-0.5)*2, 0.015, (Math.random()-0.5)*2);
-    grp.add(drop);
+mkHazard('spill','Derrame de líquido','Piso resbaloso sin señalización.',
+grp=>{
+  const puddle=new THREE.Mesh(new THREE.CircleGeometry(.9,20),new THREE.MeshLambertMaterial({color:0x1a2e1a,transparent:true,opacity:.85}));
+  puddle.rotation.x=-Math.PI/2; puddle.position.y=.008; grp.add(puddle);
+  for(const [dx,dz,r] of [[.7,.4,.25],[-.6,.5,.18],[.4,-.7,.2],[-1,-.3,.15]]){
+    const drop=new THREE.Mesh(new THREE.CircleGeometry(r,12),new THREE.MeshLambertMaterial({color:0x1a2e1a,transparent:true,opacity:.7}));
+    drop.rotation.x=-Math.PI/2; drop.position.set(dx,.008,dz); grp.add(drop);
   }
-  registerHazard(grp, { id:'spill', name:'Derrame de líquido', desc:'Piso resbaloso — riesgo biomecánico.' });
-}
-makeSpill();
+  const cvs=document.createElement('canvas'); cvs.width=64;cvs.height=64;
+  const ctx=cvs.getContext('2d');
+  ctx.fillStyle='#dc2626'; ctx.beginPath();ctx.moveTo(32,4);ctx.lineTo(60,58);ctx.lineTo(4,58);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 32px Arial'; ctx.textAlign='center'; ctx.fillText('!',32,48);
+  const cone=new THREE.Mesh(new THREE.PlaneGeometry(.6,.6),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cvs),side:THREE.DoubleSide,transparent:true}));
+  cone.position.set(.5,.3,0); grp.add(cone);
+}, -3, -4, 0, 0);
 
-/* ============================================================
-   5. INPUT + CONTROLS
-   ============================================================ */
-const keys = {};
-document.addEventListener('keydown', e => { keys[e.code] = true; });
-document.addEventListener('keyup',   e => { keys[e.code] = false; });
-
-let yaw = 0, pitch = 0;
-const euler = new THREE.Euler(0, 0, 0, 'YXZ');
-
-document.body.addEventListener('click', () => {
-  if (state.locked) return;
-  renderer.domElement.requestPointerLock();
-});
-document.addEventListener('pointerlockchange', () => {
-  // nothing special
-});
-document.addEventListener('mousemove', e => {
-  if (document.pointerLockElement === renderer.domElement) {
-    yaw   -= e.movementX * 0.0025;
-    pitch -= e.movementY * 0.0025;
-    pitch = Math.max(-1.3, Math.min(1.3, pitch));
+/* ============================================
+   CONTROLS
+   ============================================ */
+const keys={};
+let lastInteract = 0;
+document.addEventListener('keydown',e=>{
+  keys[e.code]=true;
+  if(e.code==='KeyE' && !modalOpen() && !paused){
+    // Debounce against key auto-repeat
+    const now = performance.now();
+    if(now - lastInteract > 350){
+      lastInteract = now;
+      interact();
+    }
   }
 });
+document.addEventListener('keyup',e=>{keys[e.code]=false;});
 
-// E interact
-document.addEventListener('keydown', e => {
-  if (e.code === 'KeyE') onInteract();
+let camYaw = Math.PI;
+let camPitch = -0.15;
+const CAM_DIST = 4.2;
+const CAM_HEIGHT = 1.8;
+
+let paused=true;
+
+document.addEventListener('mousemove',e=>{
+  if(document.pointerLockElement!==renderer.domElement)return;
+  camYaw   -= e.movementX*.0025;
+  camPitch -= e.movementY*.0022;
+  camPitch = Math.max(-1.2, Math.min(0.8, camPitch));
 });
 
-/* ============================================================
-   6. MOVEMENT + ANIMATION
-   ============================================================ */
-const forward = new THREE.Vector3();
-const right   = new THREE.Vector3();
-const moveVec = new THREE.Vector3();
+document.addEventListener('pointerlockchange',()=>{
+  const locked=document.pointerLockElement===renderer.domElement;
+  paused=!locked;
+  const po=document.getElementById('pause-overlay');
+  if(locked){ po.classList.remove('show'); }
+  else if(!modalOpen()){ po.classList.add('show'); }
+});
+
+function requestLock(){renderer.domElement.requestPointerLock();}
+
+document.getElementById('btn-start').addEventListener('click',()=>{
+  document.getElementById('overlay').style.display='none';
+  requestLock();
+});
+document.getElementById('pause-overlay').addEventListener('click',requestLock);
+
+window.addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+/* ============================================
+   MOVEMENT + ANIMATION (with collision)
+   ============================================ */
+const fwdVec=new THREE.Vector3(), rgtVec=new THREE.Vector3(), mvVec=new THREE.Vector3();
 let walkPhase = 0;
-let charTargetRot = 0;
+let charTargetRot = Math.PI;
+let idleTime = 0;
 
-function updateCharacter(dt) {
-  // Camera directions (yaw only for movement)
-  forward.set(-Math.sin(yaw), 0, -Math.cos(yaw));
-  right.set(Math.cos(yaw), 0, -Math.sin(yaw));
+function updateCharacter(dt, t){
+  if(paused||modalOpen()){
+    // Still update camera even when paused so pausing doesn't snap
+    updateCamera();
+    return;
+  }
 
-  moveVec.set(0,0,0);
-  if (keys['KeyW']) moveVec.add(forward);
-  if (keys['KeyS']) moveVec.sub(forward);
-  if (keys['KeyA']) moveVec.sub(right);
-  if (keys['KeyD']) moveVec.add(right);
+  fwdVec.set(-Math.sin(camYaw),0,-Math.cos(camYaw));
+  rgtVec.set( Math.cos(camYaw),0,-Math.sin(camYaw));
 
-  const moving = moveVec.lengthSq() > 0.001;
-  if (moving) moveVec.normalize();
+  mvVec.set(0,0,0);
+  if(keys['KeyW']) mvVec.add(fwdVec);
+  if(keys['KeyS']) mvVec.sub(fwdVec);
+  if(keys['KeyA']) mvVec.sub(rgtVec);
+  if(keys['KeyD']) mvVec.add(rgtVec);
 
-  const speed = keys['ShiftLeft'] || keys['ShiftRight'] ? 4.5 : 2.6;
-  const nx = character.position.x + moveVec.x * speed * dt;
-  const nz = character.position.z + moveVec.z * speed * dt;
-  const limit = WORLD_SIZE/2 - 1.5;
-  character.position.x = Math.max(-limit, Math.min(limit, nx));
-  character.position.z = Math.max(-limit, Math.min(limit, nz));
+  const moving = mvVec.lengthSq() > .001;
+  if(moving) mvVec.normalize();
 
-  // Character rotation — face movement direction
-  if (moving) {
-    charTargetRot = Math.atan2(moveVec.x, moveVec.z);
+  const running = keys['ShiftLeft']||keys['ShiftRight'];
+  const spd = running ? 5.0 : 2.8;
+
+  // Physics: try X then Z separately so character slides along walls
+  const nx = character.position.x + mvVec.x*spd*dt;
+  if(!collides(nx, character.position.z)) character.position.x = nx;
+  const nz = character.position.z + mvVec.z*spd*dt;
+  if(!collides(character.position.x, nz)) character.position.z = nz;
+
+  // Rotate toward movement
+  if(moving){
+    charTargetRot = Math.atan2(mvVec.x, mvVec.z);
+    idleTime = 0;
+  } else {
+    idleTime += dt;
   }
   let delta = charTargetRot - character.rotation.y;
-  while (delta >  Math.PI) delta -= Math.PI*2;
-  while (delta < -Math.PI) delta += Math.PI*2;
-  character.rotation.y += delta * Math.min(1, dt * 12);
+  while(delta >  Math.PI) delta -= Math.PI*2;
+  while(delta < -Math.PI) delta += Math.PI*2;
+  character.rotation.y += delta * Math.min(1, dt*12);
 
-  // Walk cycle
-  if (moving) {
-    walkPhase += dt * speed * 2.2;
+  // Walk cycle / idle breathing
+  if(moving){
+    walkPhase += dt*spd*2.2;
   } else {
-    walkPhase *= 0.9;
+    walkPhase *= 0.82;
   }
+
   const s = Math.sin(walkPhase);
   const c = Math.cos(walkPhase);
+  legL.hip.rotation.x =  s*0.65;
+  legR.hip.rotation.x = -s*0.65;
+  legL.knee.rotation.x = Math.max(0, -c*0.55);
+  legR.knee.rotation.x = Math.max(0,  c*0.55);
+  armL.shoulder.rotation.x = -s*0.5;
+  armR.shoulder.rotation.x =  s*0.5;
+  armL.elbow.rotation.x = Math.max(0,  c*0.3+0.15);
+  armR.elbow.rotation.x = Math.max(0, -c*0.3+0.15);
 
-  legL.hip.rotation.x =  s * 0.6;
-  legR.hip.rotation.x = -s * 0.6;
-  legL.knee.rotation.x = Math.max(0, -c * 0.7);
-  legR.knee.rotation.x = Math.max(0,  c * 0.7);
+  const bob = moving ? Math.abs(Math.sin(walkPhase*2))*0.035 : 0;
+  // Idle breathing
+  const breath = moving ? 0 : Math.sin(t*1.8)*0.012;
+  pelvis.position.y = 0.9 + bob + breath;
+  spine.rotation.x = moving ? 0 : breath*0.4;
 
-  armL.shoulder.rotation.x = -s * 0.5;
-  armR.shoulder.rotation.x =  s * 0.5;
-  armL.elbow.rotation.x = Math.max(0, c * 0.3 + 0.2);
-  armR.elbow.rotation.x = Math.max(0, -c * 0.3 + 0.2);
+  neckGrp.rotation.x = camPitch * 0.3;
 
-  // Torso bob
-  const bob = moving ? Math.abs(Math.sin(walkPhase*2)) * 0.04 : 0;
-  torso.position.y = 1.25 + bob;
-  vest.position.y  = 1.22 + bob;
-  headGrp.position.y = 1.75 + bob;
-
-  // Camera: third-person follow
-  const camOffset = new THREE.Vector3(
-    Math.sin(yaw) * 3.2 * Math.cos(pitch),
-    1.9 + Math.sin(-pitch) * 2.2,
-    Math.cos(yaw) * 3.2 * Math.cos(pitch)
-  );
-  camera.position.copy(character.position).add(new THREE.Vector3(0, 1.6, 0)).add(camOffset);
-  const lookAt = character.position.clone().add(new THREE.Vector3(0, 1.4, 0));
-  camera.lookAt(lookAt);
+  updateCamera();
 }
 
-/* ============================================================
-   7. INTERACTION (raycast)
-   ============================================================ */
-const raycaster = new THREE.Raycaster();
-const forwardCam = new THREE.Vector3();
+function updateCamera(){
+  const cp = Math.max(-0.6, Math.min(0.6, camPitch));
+  const dist = CAM_DIST * (1 + Math.max(0,-cp));
+  const ox = Math.sin(camYaw) * dist * Math.cos(cp);
+  const oz = Math.cos(camYaw) * dist * Math.cos(cp);
+  const oy = CAM_HEIGHT - Math.sin(cp) * dist;
+  camera.position.set(
+    character.position.x + ox,
+    oy,
+    character.position.z + oz
+  );
+  camera.lookAt(
+    character.position.x,
+    character.position.y + 1.4,
+    character.position.z
+  );
+}
 
-function getTargeted() {
-  camera.getWorldDirection(forwardCam);
-  const origin = camera.position.clone();
-  raycaster.set(origin, forwardCam);
-  raycaster.far = 10;
+/* ============================================
+   INTERACTION
+   ============================================ */
+const promptEl=document.getElementById('prompt');
+let nearestHazard=null;
 
-  let closest = null;
-  let closestDist = Infinity;
-  for (const obj of interactables) {
-    if (obj.userData.found) continue;
-    const hit = raycaster.intersectObject(obj, true)[0];
-    if (hit && hit.distance < closestDist) {
-      closest = obj;
-      closestDist = hit.distance;
-    }
+function getNearestHazard(){
+  if(G.mission!==1) return null;
+  let best=null, bestD=Infinity;
+  for(const h of HAZARDS){
+    if(h.found) continue;
+    const dx=h.x-character.position.x, dz=h.z-character.position.z;
+    const d=Math.sqrt(dx*dx+dz*dz);
+    if(d<3.0 && d<bestD){ best=h; bestD=d; }
   }
-  // Also check simple distance to character for generosity
-  if (!closest) {
-    for (const obj of interactables) {
-      if (obj.userData.found) continue;
-      const d = obj.position.distanceTo(character.position);
-      if (d < 2.5 && d < closestDist) {
-        // Must be roughly in front
-        const toObj = obj.position.clone().sub(character.position).normalize();
-        const camFwd = new THREE.Vector3(forward.x, 0, forward.z).normalize();
-        if (toObj.dot(camFwd) > 0.3) {
-          closest = obj;
-          closestDist = d;
-        }
+  return best;
+}
+
+function interact(){
+  if(G.mission!==1 || !nearestHazard || nearestHazard.found) return;
+  const h=nearestHazard;
+  h.found=true;
+  G.score+=100; G.found++;
+  // Reset pointer immediately to prevent double-interact
+  nearestHazard = null;
+  promptEl.style.display = 'none';
+
+  // Change ring/column to green
+  h.ring.material.color.set(0x10b981);
+  h.col.material.color.set(0x10b981);
+  // Highlight main meshes (skip basic materials that have no emissive support)
+  h.group.traverse(o=>{
+    if(o.isMesh && o.material && o!==h.ring && o!==h.col){
+      if(o.material.emissive !== undefined){
+        o.material = o.material.clone();
+        o.material.emissive = new THREE.Color(0x10b981);
+        o.material.emissiveIntensity = 0.35;
       }
     }
-  }
-  return closest;
-}
-
-const interactPrompt = document.getElementById('interact-prompt');
-
-function updateInteractPrompt() {
-  if (state.mission !== 1) { interactPrompt.style.display = 'none'; return; }
-  const t = getTargeted();
-  if (t) {
-    interactPrompt.style.display = 'block';
-    interactPrompt.innerHTML = `Presiona <kbd style="background:#033d2e;color:#fff;padding:1px 6px;border-radius:3px;">E</kbd> para marcar peligro`;
-  } else {
-    interactPrompt.style.display = 'none';
-  }
-}
-
-function onInteract() {
-  if (state.mission !== 1) return;
-  const t = getTargeted();
-  if (!t || t.userData.found) return;
-
-  t.userData.found = true;
-  state.found.add(t.userData.id);
-  state.score += 100;
-
-  // Visual highlight
-  t.traverse(obj => {
-    if (obj.isMesh && obj.material) {
-      obj.material = obj.material.clone();
-      obj.material.emissive = new THREE.Color(0x10b981);
-      obj.material.emissiveIntensity = 0.4;
-    }
   });
+  shakeCam();
+  showToast(`✓ ${h.name}  +100 pts`);
+  updateHUD(); updateMissionBar();
+  if(G.found >= HAZARDS.length) setTimeout(finishM1, 700);
+}
 
-  showToast(`✓ ${t.userData.name}`);
-  updateHUD();
-  updateMissionUI();
+let shakeTime=0, shakeAmt=0;
+function shakeCam(){ shakeTime=.3; shakeAmt=.05; }
 
-  if (state.found.size >= hazards.length) {
-    setTimeout(endMission1, 800);
+function updateInteractPrompt(){
+  if(paused||modalOpen()){
+    promptEl.style.display='none';
+    return;
+  }
+  nearestHazard = getNearestHazard();
+  promptEl.style.display = nearestHazard ? 'block' : 'none';
+}
+
+/* ============================================
+   STATE + UI
+   ============================================ */
+const G={mission:1, score:0, found:0};
+
+const MNAMES=['Cacería de Peligros','Jerarquía de Controles','Señalización','Protocolo de Accidente','Examen Final'];
+const MDESCS=[
+  'Camina hacia cada peligro y presiona <strong>E</strong> para identificarlo.',
+  'Empareja cada medida con su nivel en la jerarquía.',
+  'Identifica el significado de cada tipo de señal.',
+  'Selecciona los pasos del protocolo en el orden correcto.',
+  'Responde 10 preguntas sobre Seguridad y Salud en el Trabajo.',
+];
+
+function updateHUD(){
+  document.getElementById('h-mission').textContent=`${G.mission} / 5`;
+  document.getElementById('h-mname').textContent=MNAMES[G.mission-1];
+  document.getElementById('h-score').textContent=G.score;
+}
+function updateMissionBar(extra=''){
+  document.getElementById('mb-title').textContent=MNAMES[G.mission-1];
+  document.getElementById('mb-desc').innerHTML=MDESCS[G.mission-1];
+  if(G.mission===1){
+    const p=G.found/HAZARDS.length*100;
+    document.getElementById('mb-fill').style.width=p+'%';
+    document.getElementById('mb-txt').textContent=`${G.found} / ${HAZARDS.length} peligros`;
+  } else {
+    document.getElementById('mb-fill').style.width='100%';
+    document.getElementById('mb-txt').textContent=extra||'';
   }
 }
 
-/* ============================================================
-   8. UI HELPERS
-   ============================================================ */
-const missionData = {
-  1: { name:'Cacería de Peligros', desc:'Recorre la bodega y marca los 8 peligros apuntando + E.' },
-  2: { name:'Jerarquía de Controles', desc:'Arrastra cada medida al nivel correcto.' },
-  3: { name:'Señalización', desc:'Identifica el significado de cada señal.' },
-  4: { name:'Protocolo de Accidente', desc:'Ordena los pasos para atender un accidente.' },
-  5: { name:'Examen Final', desc:'10 preguntas sobre SST.' },
-};
-
-function updateHUD() {
-  document.getElementById('hud-mission').textContent = `${state.mission} / 5`;
-  document.getElementById('hud-mission-name').textContent = missionData[state.mission].name;
-  document.getElementById('hud-score').textContent = state.score;
+let toastId;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.display='block';
+  clearTimeout(toastId);
+  toastId=setTimeout(()=>t.style.display='none',2200);
 }
 
-function updateMissionUI() {
-  document.getElementById('mp-title').textContent = missionData[state.mission].name;
-  document.getElementById('mp-desc').textContent = missionData[state.mission].desc;
-  if (state.mission === 1) {
-    const pct = (state.found.size / hazards.length) * 100;
-    document.getElementById('mp-bar').style.width = pct + '%';
-    document.getElementById('mp-counter').textContent = `${state.found.size} / ${hazards.length} peligros`;
-  }
-}
+function modalOpen(){return document.getElementById('modal-root').childElementCount>0;}
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  clearTimeout(showToast._id);
-  showToast._id = setTimeout(() => { t.style.display = 'none'; }, 1800);
-}
-
-function showModal(html) {
-  const root = document.getElementById('modal-root');
-  root.innerHTML = `<div class="modal-backdrop"><div class="modal">${html}</div></div>`;
+function showModal(html){
+  document.getElementById('modal-root').innerHTML=`<div class="modal-bg"><div class="modal">${html}</div></div>`;
   document.exitPointerLock?.();
-  state.locked = true;
+  paused=true;
+  document.getElementById('pause-overlay').classList.remove('show');
 }
-function closeModal() {
-  document.getElementById('modal-root').innerHTML = '';
-  state.locked = false;
+function closeModal(){
+  document.getElementById('modal-root').innerHTML='';
+  requestLock();
 }
+window.__closeModal=closeModal;
 
-/* ============================================================
-   9. MISSIONS 2-5
-   ============================================================ */
-
-// --- Mission 1 end
-function endMission1() {
+/* ============================================
+   MISSION 1 end
+   ============================================ */
+function finishM1(){
   showModal(`
-    <span class="tag">Misión 1 completada</span>
-    <h1>¡Cacería exitosa!</h1>
-    <p>Identificaste los 8 peligros de la bodega. Cada uno representa un riesgo real que debe ser controlado.</p>
-    <p><strong>+${hazards.length * 100} puntos</strong></p>
-    <div class="btn-row">
-      <button class="btn" onclick="window.__startM2()">Siguiente misión →</button>
+    <span class="tag">Misión 1 completada ✓</span>
+    <h2>¡Cacería exitosa!</h2>
+    <p>Identificaste los <strong>8 peligros</strong> de la bodega.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0">
+      ${HAZARDS.map(h=>`<div style="background:rgba(16,185,129,.12);border:1px solid #10b981;border-radius:8px;padding:7px 10px;font-size:.8rem;color:#a7f3d0"><strong style="color:#fff">${h.name}</strong><br>${h.desc}</div>`).join('')}
     </div>
+    <div class="btn-row"><button class="btn" onclick="window.__m2()">Misión 2 →</button></div>
   `);
 }
 
-// --- Mission 2: Jerarquía de Controles
-const m2Controls = [
-  { text:'Eliminar la sustancia química peligrosa', level:'eliminacion' },
-  { text:'Reemplazar por producto menos tóxico',    level:'sustitucion' },
-  { text:'Instalar ventilación extractora',         level:'ingenieria' },
-  { text:'Rotar turnos para limitar la exposición', level:'administrativo' },
-  { text:'Uso obligatorio de respirador',           level:'epp' },
+/* ============================================
+   MISSION 2
+   ============================================ */
+const M2_PAIRS=[
+  {measure:'Eliminar la máquina peligrosa',  level:'elim', label:'1. Eliminación',    color:'#065f46'},
+  {measure:'Cambiar por proceso más seguro',  level:'sust', label:'2. Sustitución',    color:'#0891b2'},
+  {measure:'Instalar barrera de protección',  level:'ing',  label:'3. Ingeniería',     color:'#7c3aed'},
+  {measure:'Rotar turnos de exposición',      level:'adm',  label:'4. Administrativo', color:'#b45309'},
+  {measure:'Uso de respirador obligatorio',   level:'epp',  label:'5. EPP',            color:'#b91c1c'},
 ];
-const m2Levels = {
-  eliminacion:    { label:'1. Eliminación',     color:'#059669' },
-  sustitucion:    { label:'2. Sustitución',     color:'#0891b2' },
-  ingenieria:     { label:'3. Controles de ingeniería', color:'#7c3aed' },
-  administrativo: { label:'4. Controles administrativos', color:'#ea580c' },
-  epp:            { label:'5. EPP',             color:'#b91c1c' },
-};
-
-window.__startM2 = () => {
-  state.mission = 2; state.controlMatches = 0;
-  updateHUD(); updateMissionUI();
-  renderM2();
-};
-
-function renderM2() {
-  const controls = m2Controls.map((c,i) =>
-    `<button class="quiz-opt" data-ctrl="${i}" data-level="${c.level}">${c.text}</button>`
-  ).join('');
-  const levels = Object.entries(m2Levels).map(([k,v]) =>
-    `<button class="quiz-opt" style="border-left:4px solid ${v.color};" data-lv="${k}">${v.label}</button>`
-  ).join('');
-
+window.__m2=()=>{
+  G.mission=2; updateHUD(); updateMissionBar();
+  let selMeasure=null, matched=0;
   showModal(`
     <span class="tag">Misión 2</span>
-    <h1>Jerarquía de Controles</h1>
-    <p>Selecciona una <strong>medida</strong> (izquierda) y luego el <strong>nivel</strong> al que pertenece.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><h3 style="color:#a7f3d0;font-size:0.8rem;margin-bottom:6px;text-transform:uppercase;">Medidas</h3>${controls}</div>
-      <div><h3 style="color:#a7f3d0;font-size:0.8rem;margin-bottom:6px;text-transform:uppercase;">Niveles</h3>${levels}</div>
+    <h2>Jerarquía de Controles</h2>
+    <p>Selecciona una <strong>medida</strong> y luego su <strong>nivel</strong>.</p>
+    <div class="pair-grid">
+      <div id="m2m">${M2_PAIRS.map((p,i)=>`<button class="pair-item" id="ms${i}" data-i="${i}">${p.measure}</button>`).join('')}</div>
+      <div id="m2l">${M2_PAIRS.map((p,i)=>`<button class="pair-item" id="lv${i}" data-i="${i}" style="border-left:4px solid ${p.color}">${p.label}</button>`).join('')}</div>
     </div>
-    <p id="m2-status" style="margin-top:14px;color:#6ee7b7;">${state.controlMatches} / ${m2Controls.length} correctos</p>
+    <p id="m2-info" style="color:#6ee7b7;font-weight:600">0/${M2_PAIRS.length} emparejados</p>
   `);
-
-  let selectedCtrl = null;
-  document.querySelectorAll('[data-ctrl]').forEach(b => {
-    b.onclick = () => {
-      if (b.classList.contains('correct')) return;
-      document.querySelectorAll('[data-ctrl]').forEach(x => x.classList.remove('selected'));
-      b.classList.add('selected');
-      selectedCtrl = b;
+  const lvDiv=document.getElementById('m2l');
+  [...lvDiv.children].sort(()=>Math.random()-.5).forEach(c=>lvDiv.appendChild(c));
+  document.getElementById('m2m').querySelectorAll('.pair-item').forEach(b=>{
+    b.onclick=()=>{
+      if(b.classList.contains('matched'))return;
+      document.querySelectorAll('#m2m .pair-item').forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected'); selMeasure=+b.dataset.i;
     };
   });
-  document.querySelectorAll('[data-lv]').forEach(b => {
-    b.onclick = () => {
-      if (!selectedCtrl) return;
-      const targetLv = selectedCtrl.dataset.level;
-      if (b.dataset.lv === targetLv) {
-        selectedCtrl.classList.remove('selected');
-        selectedCtrl.classList.add('correct');
-        selectedCtrl.disabled = true;
-        state.controlMatches++;
-        state.score += 80;
+  document.getElementById('m2l').querySelectorAll('.pair-item').forEach(b=>{
+    b.onclick=()=>{
+      if(b.classList.contains('matched')||selMeasure===null)return;
+      if(+b.dataset.i===selMeasure){
+        b.classList.add('matched'); b.disabled=true;
+        const mb=document.getElementById(`ms${selMeasure}`);
+        mb.classList.add('matched'); mb.disabled=true;
+        G.score+=80; matched++; selMeasure=null;
         updateHUD();
-        document.getElementById('m2-status').textContent = `${state.controlMatches} / ${m2Controls.length} correctos`;
-        selectedCtrl = null;
-        if (state.controlMatches >= m2Controls.length) setTimeout(endM2, 600);
+        document.getElementById('m2-info').textContent=`${matched}/${M2_PAIRS.length} emparejados`;
+        if(matched>=M2_PAIRS.length) setTimeout(window.__m2end,600);
       } else {
-        b.classList.add('wrong');
-        setTimeout(() => b.classList.remove('wrong'), 500);
+        b.classList.add('ko'); setTimeout(()=>b.classList.remove('ko'),500);
+        showToast('Ese nivel no corresponde');
       }
     };
   });
-}
-
-function endM2() {
+};
+window.__m2end=()=>{
   showModal(`
-    <span class="tag">Misión 2 completada</span>
-    <h1>Jerarquía dominada</h1>
-    <p>La jerarquía de controles prioriza <strong>eliminar</strong> el riesgo en la fuente antes de recurrir al EPP.</p>
-    <div class="btn-row">
-      <button class="btn" onclick="window.__startM3()">Siguiente misión →</button>
-    </div>
+    <span class="tag">Misión 2 completada ✓</span>
+    <h2>Jerarquía dominada</h2>
+    <p>Recuerda: <strong>siempre eliminar primero</strong>. El EPP es el último recurso.</p>
+    <ul>${M2_PAIRS.map(p=>`<li><strong style="color:#34d399">${p.label}</strong> — ${p.measure}</li>`).join('')}</ul>
+    <div class="btn-row"><button class="btn" onclick="window.__m3()">Misión 3 →</button></div>
   `);
-}
-
-// --- Mission 3: Señalización
-const m3Questions = [
-  { sign:'🚫', color:'#dc2626', q:'Señal roja con borde y barra diagonal', a:'Prohibición',
-    opts:['Prohibición','Obligación','Advertencia','Emergencia'] },
-  { sign:'⚠', color:'#f59e0b', q:'Triángulo amarillo con borde negro', a:'Advertencia',
-    opts:['Prohibición','Obligación','Advertencia','Salvamento'] },
-  { sign:'●', color:'#2563eb', q:'Círculo azul con pictograma blanco', a:'Obligación',
-    opts:['Prohibición','Obligación','Advertencia','Salvamento'] },
-  { sign:'+', color:'#059669', q:'Cuadrado verde con pictograma blanco', a:'Salvamento / Emergencia',
-    opts:['Prohibición','Salvamento / Emergencia','Advertencia','Peligro químico'] },
-  { sign:'🔥', color:'#dc2626', q:'Cuadrado rojo con pictograma blanco', a:'Equipos contra incendio',
-    opts:['Obligación','Advertencia','Equipos contra incendio','Salvamento'] },
-];
-
-window.__startM3 = () => {
-  state.mission = 3; state.signQuizIndex = 0; state.signQuizCorrect = 0;
-  updateHUD(); updateMissionUI();
-  renderM3();
 };
 
-function renderM3() {
-  const q = m3Questions[state.signQuizIndex];
-  const opts = q.opts.map(o => `<button class="quiz-opt" data-opt="${o}">${o}</button>`).join('');
+/* ============================================
+   MISSION 3
+   ============================================ */
+const M3_Q=[
+  {sign:'🚫',shape:'circle',bg:'#dc2626',q:'¿Qué tipo de señal tiene forma circular con barra diagonal en ROJO?',a:0,opts:['Prohibición','Obligación','Advertencia','Emergencia']},
+  {sign:'⚠',shape:'triangle',bg:'#f59e0b',q:'Triángulo AMARILLO con borde negro. ¿Qué indica?',a:2,opts:['Prohibición','Obligación','Advertencia','Peligro incendio']},
+  {sign:'●',shape:'circle',bg:'#2563eb',q:'Círculo AZUL con pictograma blanco. ¿Qué tipo es?',a:1,opts:['Prohibición','Obligación','Advertencia','Salvamento']},
+  {sign:'+',shape:'square',bg:'#16a34a',q:'Cuadrado VERDE con símbolo blanco. ¿Qué indica?',a:3,opts:['Prohibición','Obligación','Advertencia','Salvamento / Emergencia']},
+  {sign:'🔥',shape:'square',bg:'#dc2626',q:'Cuadrado ROJO con pictograma blanco.',a:2,opts:['Obligación','Salvamento','Equipos contra incendio','Advertencia']},
+];
+let m3idx=0,m3correct=0;
+window.__m3=()=>{ G.mission=3; m3idx=0; m3correct=0; updateHUD(); updateMissionBar(); renderM3Q(); };
+function renderM3Q(){
+  const q=M3_Q[m3idx];
+  const sh=q.shape==='triangle'?'clip-path:polygon(50% 0%,100% 100%,0% 100%)':q.shape==='circle'?'border-radius:50%':'border-radius:6px';
   showModal(`
-    <span class="tag">Misión 3 — Pregunta ${state.signQuizIndex+1}/${m3Questions.length}</span>
-    <h1>Señalización</h1>
-    <div style="text-align:center;margin:16px 0;">
-      <div style="display:inline-block;width:110px;height:110px;background:${q.color};border-radius:${q.q.includes('Triángulo')?'0':q.q.includes('Círculo')?'50%':'8px'};display:flex;align-items:center;justify-content:center;font-size:3rem;color:#fff;box-shadow:0 6px 20px rgba(0,0,0,0.4);">${q.sign}</div>
+    <span class="tag">Misión 3 — ${m3idx+1}/${M3_Q.length}</span>
+    <h2>Señalización de Seguridad</h2>
+    <div style="text-align:center;margin:16px 0">
+      <div style="display:inline-flex;align-items:center;justify-content:center;width:110px;height:110px;background:${q.bg};${sh};font-size:2.8rem;box-shadow:0 6px 20px rgba(0,0,0,.5)">${q.sign}</div>
     </div>
-    <p>${q.q}. ¿Qué tipo de señal es?</p>
-    ${opts}
+    <p>${q.q}</p>
+    ${q.opts.map((o,i)=>`<button class="qopt" data-i="${i}">${o}</button>`).join('')}
   `);
-  document.querySelectorAll('[data-opt]').forEach(b => {
-    b.onclick = () => {
-      const correct = b.dataset.opt === q.a;
-      document.querySelectorAll('[data-opt]').forEach(x => x.disabled = true);
-      if (correct) {
-        b.classList.add('correct');
-        state.signQuizCorrect++;
-        state.score += 60;
-      } else {
-        b.classList.add('wrong');
-        document.querySelector(`[data-opt="${q.a}"]`).classList.add('correct');
-      }
+  document.querySelectorAll('.qopt').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.qopt').forEach(x=>x.disabled=true);
+      const i=+b.dataset.i;
+      if(i===q.a){ b.classList.add('ok'); m3correct++; G.score+=60; showToast('Correcto ✓'); }
+      else { b.classList.add('ko'); document.querySelector(`.qopt[data-i="${q.a}"]`).classList.add('ok'); showToast('Incorrecto'); }
       updateHUD();
-      setTimeout(() => {
-        state.signQuizIndex++;
-        if (state.signQuizIndex >= m3Questions.length) endM3();
-        else renderM3();
-      }, 1200);
+      setTimeout(()=>{ m3idx++; if(m3idx>=M3_Q.length)window.__m3end(); else renderM3Q(); },1200);
     };
   });
 }
-
-function endM3() {
+window.__m3end=()=>{
   showModal(`
-    <span class="tag">Misión 3 completada</span>
-    <h1>Señales reconocidas</h1>
-    <p>Acertaste <strong>${state.signQuizCorrect} de ${m3Questions.length}</strong> señales.</p>
+    <span class="tag">Misión 3 completada ✓</span>
+    <h2>Señales reconocidas</h2>
+    <p>Acertaste <strong>${m3correct}/${M3_Q.length}</strong>.</p>
     <ul>
-      <li><strong>Roja:</strong> Prohibición / Incendio</li>
-      <li><strong>Amarilla:</strong> Advertencia</li>
-      <li><strong>Azul:</strong> Obligación</li>
-      <li><strong>Verde:</strong> Salvamento / Emergencia</li>
+      <li><strong style="color:#dc2626">Roja:</strong> Prohibición / incendio</li>
+      <li><strong style="color:#f59e0b">Amarilla:</strong> Advertencia</li>
+      <li><strong style="color:#2563eb">Azul:</strong> Obligación</li>
+      <li><strong style="color:#16a34a">Verde:</strong> Salvamento</li>
     </ul>
-    <div class="btn-row">
-      <button class="btn" onclick="window.__startM4()">Siguiente misión →</button>
-    </div>
+    <div class="btn-row"><button class="btn" onclick="window.__m4()">Misión 4 →</button></div>
   `);
-}
+};
 
-// --- Mission 4: Protocolo
-const m4Steps = [
+/* ============================================
+   MISSION 4
+   ============================================ */
+const M4_STEPS=[
   'Evaluar la escena y asegurar que no haya más peligros',
-  'Activar el sistema de emergencia (llamar al 123 / Jefe SG-SST)',
+  'Activar sistema de emergencia (llamar al 123 / ARL)',
   'Prestar primeros auxilios al accidentado',
   'Acordonar la zona para preservar evidencia',
-  'Reportar el accidente a la ARL dentro de 48 horas',
+  'Reportar el accidente a la ARL en máximo 48 horas',
   'Investigar causas y definir acciones correctivas',
 ];
-
-window.__startM4 = () => {
-  state.mission = 4;
-  updateHUD(); updateMissionUI();
-  renderM4(shuffle([...m4Steps.keys()]));
-};
-
-function shuffle(arr) {
-  for (let i=arr.length-1; i>0; i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-function renderM4(order) {
-  const items = order.map((idx, pos) =>
-    `<div class="quiz-opt" draggable="true" data-idx="${idx}" data-pos="${pos}" style="cursor:grab;">
-      <span style="color:#a7f3d0;font-weight:700;margin-right:8px;">${pos+1}.</span> ${m4Steps[idx]}
-    </div>`
-  ).join('');
+window.__m4=()=>{
+  G.mission=4; updateHUD(); updateMissionBar();
+  const shuffled=[...M4_STEPS.keys()].sort(()=>Math.random()-.5);
+  let nextExpected=0;
   showModal(`
     <span class="tag">Misión 4</span>
-    <h1>Protocolo de Accidente</h1>
-    <p>Arrastra los pasos para ponerlos en el <strong>orden correcto</strong>.</p>
-    <div id="m4-list">${items}</div>
-    <div class="btn-row">
-      <button class="btn" id="m4-check">Verificar orden</button>
+    <h2>Protocolo de Accidente</h2>
+    <p>Clic en los pasos <strong>en orden correcto</strong> (1 al 6).</p>
+    <div id="m4list">
+      ${shuffled.map(idx=>`<button class="step-btn" id="s${idx}" data-idx="${idx}"><span class="num">?</span><span>${M4_STEPS[idx]}</span></button>`).join('')}
     </div>
+    <p id="m4msg" style="color:#6ee7b7;font-size:.85rem;margin-top:8px"></p>
   `);
-
-  const list = document.getElementById('m4-list');
-  let dragging = null;
-  list.querySelectorAll('[draggable]').forEach(el => {
-    el.addEventListener('dragstart', () => { dragging = el; el.style.opacity = 0.4; });
-    el.addEventListener('dragend',   () => { dragging = null; el.style.opacity = 1; });
-    el.addEventListener('dragover',  e => { e.preventDefault(); });
-    el.addEventListener('drop', e => {
-      e.preventDefault();
-      if (!dragging || dragging === el) return;
-      const rect = el.getBoundingClientRect();
-      if (e.clientY < rect.top + rect.height/2) list.insertBefore(dragging, el);
-      else list.insertBefore(dragging, el.nextSibling);
-    });
+  document.querySelectorAll('.step-btn').forEach(b=>{
+    b.onclick=()=>{
+      if(b.disabled)return;
+      const idx=+b.dataset.idx;
+      if(idx===nextExpected){
+        b.querySelector('.num').textContent=nextExpected+1;
+        b.classList.add('ok'); b.disabled=true;
+        nextExpected++; G.score+=50; updateHUD();
+        if(nextExpected>=M4_STEPS.length) setTimeout(window.__m4end,600);
+      } else {
+        b.classList.add('ko'); setTimeout(()=>b.classList.remove('ko'),400);
+        document.getElementById('m4msg').textContent='Ese no es el siguiente paso.';
+      }
+    };
   });
-  document.getElementById('m4-check').onclick = () => {
-    const finalOrder = [...list.querySelectorAll('[data-idx]')].map(e => +e.dataset.idx);
-    const correct = finalOrder.every((v, i) => v === i);
-    if (correct) {
-      state.score += 200;
-      updateHUD();
-      endM4();
-    } else {
-      // Show how many are in place
-      list.querySelectorAll('[data-idx]').forEach((el, pos) => {
-        el.classList.toggle('correct', +el.dataset.idx === pos);
-        el.classList.toggle('wrong',   +el.dataset.idx !== pos);
-      });
-    }
-  };
-}
-
-function endM4() {
+};
+window.__m4end=()=>{
   showModal(`
-    <span class="tag">Misión 4 completada</span>
-    <h1>Protocolo dominado</h1>
-    <p>Ante un accidente laboral, la secuencia correcta salva vidas y protege la investigación.</p>
-    <div class="btn-row">
-      <button class="btn" onclick="window.__startM5()">Examen Final →</button>
-    </div>
+    <span class="tag">Misión 4 completada ✓</span>
+    <h2>Protocolo dominado</h2>
+    <p>La secuencia correcta salva vidas y garantiza la investigación.</p>
+    <ol style="color:#a7f3d0;font-size:.88rem;line-height:1.8;padding-left:20px">
+      ${M4_STEPS.map(s=>`<li>${s}</li>`).join('')}
+    </ol>
+    <div class="btn-row"><button class="btn" onclick="window.__m5()">Examen Final →</button></div>
   `);
-}
-
-// --- Mission 5: Examen Final
-const examQuestions = [
-  { q:'¿Qué significa SG-SST?', a:2, opts:[
-    'Servicio General de Seguridad Social y Trabajo',
-    'Sistema Garantizado de Salud Social del Trabajador',
-    'Sistema de Gestión de la Seguridad y Salud en el Trabajo',
-    'Subgerencia de Seguridad y Salud en el Trabajo',
-  ]},
-  { q:'¿Cuál es la norma colombiana que rige el SG-SST?', a:1, opts:[
-    'Ley 1562 de 2012', 'Decreto 1072 de 2015', 'Resolución 2400 de 1979', 'Ley 100 de 1993',
-  ]},
-  { q:'El ciclo PHVA significa:', a:0, opts:[
-    'Planear, Hacer, Verificar, Actuar',
-    'Planear, Homologar, Valorar, Ajustar',
-    'Proteger, Hacer, Validar, Adaptar',
-    'Prevenir, Habilitar, Verificar, Anunciar',
-  ]},
-  { q:'¿Cuál es el primer nivel de la jerarquía de controles?', a:0, opts:[
-    'Eliminación', 'EPP', 'Controles administrativos', 'Sustitución',
-  ]},
-  { q:'En la metodología GTC-45, ¿qué significa NR?', a:3, opts:[
-    'Nivel de Responsabilidad', 'Número de Riesgo', 'Nivel Registrado', 'Nivel de Riesgo',
-  ]},
-  { q:'¿Cuál color corresponde a señales de OBLIGACIÓN?', a:2, opts:[
-    'Rojo', 'Amarillo', 'Azul', 'Verde',
-  ]},
-  { q:'¿En cuánto tiempo debe reportarse un accidente grave a la ARL?', a:1, opts:[
-    '24 horas', '48 horas', '72 horas', '5 días hábiles',
-  ]},
-  { q:'El COPASST está conformado por:', a:2, opts:[
-    'Solo representantes del empleador',
-    'Solo representantes de los trabajadores',
-    'Representantes del empleador y de los trabajadores en partes iguales',
-    'La ARL exclusivamente',
-  ]},
-  { q:'¿Qué EPP protege contra caída de objetos en la cabeza?', a:1, opts:[
-    'Gafas de seguridad', 'Casco', 'Arnés', 'Tapones auditivos',
-  ]},
-  { q:'La enfermedad laboral se diferencia del accidente porque:', a:2, opts:[
-    'Siempre es más grave',
-    'Requiere hospitalización',
-    'Es contraída como resultado de la exposición a factores de riesgo en el trabajo',
-    'Se cura más rápido',
-  ]},
-];
-
-window.__startM5 = () => {
-  state.mission = 5; state.examIndex = 0; state.examCorrect = 0;
-  updateHUD(); updateMissionUI();
-  renderExam();
 };
 
-function renderExam() {
-  const q = examQuestions[state.examIndex];
-  const opts = q.opts.map((o,i) => `<button class="quiz-opt" data-i="${i}">${o}</button>`).join('');
+/* ============================================
+   MISSION 5
+   ============================================ */
+const EXAM=[
+  {q:'¿Qué significa SG-SST?',a:2,opts:['Servicio General de Seguridad Social y Trabajo','Sistema Garantizado de Salud Social del Trabajador','Sistema de Gestión de la Seguridad y Salud en el Trabajo','Subgerencia de SST']},
+  {q:'Norma colombiana que regula el SG-SST:',a:1,opts:['Ley 1562 de 2012','Decreto 1072 de 2015','Resolución 2400 de 1979','Ley 100 de 1993']},
+  {q:'El ciclo PHVA significa:',a:0,opts:['Planear, Hacer, Verificar, Actuar','Prevenir, Habilitar, Verificar, Anunciar','Planear, Homologar, Valorar, Ajustar','Proteger, Hacer, Validar, Adaptar']},
+  {q:'Primer nivel de la jerarquía de controles:',a:0,opts:['Eliminación','EPP','Controles administrativos','Sustitución']},
+  {q:'En GTC-45, ¿qué es NR?',a:3,opts:['Nivel de Responsabilidad','Número de Riesgo','Nivel Registrado','Nivel de Riesgo']},
+  {q:'Color de señales de OBLIGACIÓN:',a:2,opts:['Rojo','Amarillo','Azul','Verde']},
+  {q:'Plazo para reportar un accidente grave a la ARL:',a:1,opts:['24 horas','48 horas','72 horas','5 días hábiles']},
+  {q:'El COPASST está conformado por:',a:2,opts:['Solo representantes del empleador','Solo representantes de los trabajadores','Partes iguales: empleador y trabajadores','La ARL exclusivamente']},
+  {q:'EPP que protege contra caída de objetos en la cabeza:',a:1,opts:['Gafas de seguridad','Casco de seguridad','Arnés','Tapones auditivos']},
+  {q:'La enfermedad laboral es contraída por:',a:2,opts:['Accidente repentino','Descuido del trabajador','Exposición a factores de riesgo en el trabajo','Condiciones previas']},
+];
+let examIdx=0,examCorrect=0;
+window.__m5=()=>{ G.mission=5; examIdx=0; examCorrect=0; updateHUD(); updateMissionBar(); renderExamQ(); };
+function renderExamQ(){
+  const q=EXAM[examIdx];
   showModal(`
-    <span class="tag">Examen Final — Pregunta ${state.examIndex+1}/${examQuestions.length}</span>
-    <h1>Examen Final</h1>
-    <p>${q.q}</p>
-    ${opts}
+    <span class="tag">Examen Final — ${examIdx+1}/${EXAM.length}</span>
+    <h2 style="font-size:1.1rem">${q.q}</h2>
+    ${q.opts.map((o,i)=>`<button class="qopt" data-i="${i}">${o}</button>`).join('')}
   `);
-  document.querySelectorAll('[data-i]').forEach(b => {
-    b.onclick = () => {
-      const i = +b.dataset.i;
-      document.querySelectorAll('[data-i]').forEach(x => x.disabled = true);
-      if (i === q.a) {
-        b.classList.add('correct');
-        state.examCorrect++;
-        state.score += 50;
-      } else {
-        b.classList.add('wrong');
-        document.querySelector(`[data-i="${q.a}"]`).classList.add('correct');
-      }
+  document.querySelectorAll('.qopt').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.qopt').forEach(x=>x.disabled=true);
+      const i=+b.dataset.i;
+      if(i===q.a){ b.classList.add('ok'); examCorrect++; G.score+=50; }
+      else { b.classList.add('ko'); document.querySelector(`.qopt[data-i="${q.a}"]`).classList.add('ok'); }
       updateHUD();
-      setTimeout(() => {
-        state.examIndex++;
-        if (state.examIndex >= examQuestions.length) endExam();
-        else renderExam();
-      }, 1100);
+      setTimeout(()=>{ examIdx++; if(examIdx>=EXAM.length)finishExam(); else renderExamQ(); },1100);
     };
   });
 }
-
-function endExam() {
-  const pct = Math.round(state.examCorrect / examQuestions.length * 100);
-  const passed = pct >= 70;
+function finishExam(){
+  const pct=Math.round(examCorrect/EXAM.length*100);
+  const pass=pct>=70;
+  try{localStorage.setItem('sst_sim_score',G.score);localStorage.setItem('sst_sim_passed',pass?'1':'0');}catch{}
   showModal(`
-    <span class="tag" style="background:${passed?'#10b981':'#b91c1c'};color:#fff;">${passed?'Aprobado':'No aprobado'}</span>
-    <h1>${passed?'¡Felicitaciones!':'Casi lo logras'}</h1>
-    <p>Acertaste <strong>${state.examCorrect} / ${examQuestions.length}</strong> preguntas (${pct}%).</p>
-    <p>Puntaje total: <strong>${state.score}</strong></p>
-    ${passed ? `<p>Has completado el Simulador SST. Tu dominio de Seguridad y Salud en el Trabajo ha sido verificado.</p>` :
-               `<p>Necesitas mínimo 70% para aprobar. Repasa el curso y vuelve a intentar.</p>`}
+    <span class="tag" style="background:${pass?'#10b981':'#dc2626'};color:${pass?'#033d2e':'#fff'}">${pass?'✓ Aprobado':'✗ No aprobado'}</span>
+    <h2>${pass?'¡Felicitaciones!':'Sigue intentando'}</h2>
+    <p>${examCorrect}/${EXAM.length} correctas (${pct}%) — Puntaje: <strong>${G.score} pts</strong></p>
+    ${pass?'<p>Has completado el Simulador SST de INTEP.</p>':'<p>Necesitas mínimo 70%. Repasa y vuelve a intentar.</p>'}
     <div class="btn-row">
-      <a class="btn" href="CURSO_SST_INTERACTIVO.html">Volver al curso</a>
-      <button class="btn secondary" onclick="location.reload()">Reintentar</button>
+      <a class="btn" href="CURSO_SST_INTERACTIVO.html">← Volver al curso</a>
+      <button class="btn outline" onclick="location.reload()">Reiniciar</button>
     </div>
   `);
-
-  try {
-    localStorage.setItem('sst_sim_score', state.score);
-    localStorage.setItem('sst_sim_passed', passed ? '1' : '0');
-  } catch {}
 }
 
-/* ============================================================
-   10. MINIMAP
-   ============================================================ */
-const mmCanvas = document.getElementById('minimap-canvas');
-const mmCtx = mmCanvas.getContext('2d');
-function drawMinimap() {
-  const W = 360, H = 360;
-  mmCtx.fillStyle = '#033d2e'; mmCtx.fillRect(0,0,W,H);
-  const scale = W / WORLD_SIZE;
+/* ============================================
+   MINIMAP
+   ============================================ */
+const mmCvs=document.getElementById('mm'), mmCtx=mmCvs.getContext('2d');
+const MM=320, mmSx=MM/WW, mmSz=MM/WD;
+function drawMinimap(){
+  mmCtx.fillStyle='#0a1a12'; mmCtx.fillRect(0,0,MM,MM);
+  mmCtx.strokeStyle='#10b981'; mmCtx.lineWidth=3; mmCtx.strokeRect(3,3,MM-6,MM-6);
+  // Racks
+  mmCtx.fillStyle='#d97706';
+  for(const rx of [-14,14]) for(const rz of [-9,0,9])
+    mmCtx.fillRect(MM/2+rx*mmSx-9,MM/2+rz*mmSz-5,18,10);
+  for(const x of [-9,0,9]) mmCtx.fillRect(MM/2+x*mmSx-9,MM/2+(-11)*mmSz-5,18,10);
   // Hazards
-  for (const h of hazards) {
-    mmCtx.fillStyle = h.userData.found ? '#10b981' : '#f59e0b';
+  for(const h of HAZARDS){
+    mmCtx.fillStyle=h.found?'#10b981':'#fb923c';
     mmCtx.beginPath();
-    mmCtx.arc(W/2 + h.position.x*scale, H/2 + h.position.z*scale, 6, 0, Math.PI*2);
+    mmCtx.arc(MM/2+h.x*mmSx, MM/2+h.z*mmSz, 7, 0, Math.PI*2);
     mmCtx.fill();
   }
   // Character
-  mmCtx.save();
-  mmCtx.translate(W/2 + character.position.x*scale, H/2 + character.position.z*scale);
-  mmCtx.rotate(character.rotation.y);
-  mmCtx.fillStyle = '#fff';
-  mmCtx.beginPath();
-  mmCtx.moveTo(0, -8);
-  mmCtx.lineTo(6, 6);
-  mmCtx.lineTo(-6, 6);
-  mmCtx.closePath();
-  mmCtx.fill();
-  mmCtx.restore();
+  const px=MM/2+character.position.x*mmSx;
+  const pz=MM/2+character.position.z*mmSz;
+  mmCtx.save(); mmCtx.translate(px,pz); mmCtx.rotate(character.rotation.y+Math.PI);
+  mmCtx.fillStyle='#fff';
+  mmCtx.beginPath(); mmCtx.moveTo(0,-10); mmCtx.lineTo(7,7); mmCtx.lineTo(-7,7); mmCtx.closePath();
+  mmCtx.fill(); mmCtx.restore();
 }
 
-/* ============================================================
-   11. WELCOME + GAME LOOP
-   ============================================================ */
-document.getElementById('loader').style.display = 'none';
+/* ============================================
+   INDICATORS ANIMATION
+   ============================================ */
+function animateIndicators(t){
+  for(const h of HAZARDS){
+    if(!h.found){
+      h.ring.rotation.y = t*0.8;
+      const s = 0.88 + 0.12*Math.sin(t*3);
+      h.ring.scale.set(s,1,s);
+      h.ring.position.y = 1.6 + 0.08*Math.sin(t*2.5);
+      h.col.material.opacity = 0.2 + 0.15*Math.sin(t*3);
+    } else {
+      h.ring.visible = false;
+      h.col.visible = false;
+    }
+  }
+}
 
-showModal(`
-  <span class="tag">Simulador SST 3D</span>
-  <h1>Bienvenido, ${STUDENT.nombre || 'Estudiante'}</h1>
-  <p>Esta es una bodega virtual con riesgos reales. Tu tarea: completar las 5 misiones para demostrar tu dominio de Seguridad y Salud en el Trabajo.</p>
-  <ul>
-    <li><strong>Misión 1:</strong> Cacería de Peligros</li>
-    <li><strong>Misión 2:</strong> Jerarquía de Controles</li>
-    <li><strong>Misión 3:</strong> Señalización</li>
-    <li><strong>Misión 4:</strong> Protocolo de Accidente</li>
-    <li><strong>Misión 5:</strong> Examen Final</li>
-  </ul>
-  <p style="font-size:0.85rem;color:#6ee7b7;">Usa <kbd style="background:#033d2e;padding:2px 6px;border-radius:3px;">WASD</kbd> para moverte, <kbd style="background:#033d2e;padding:2px 6px;border-radius:3px;">mouse</kbd> para mirar, <kbd style="background:#033d2e;padding:2px 6px;border-radius:3px;">E</kbd> para interactuar. Haz clic en la pantalla para capturar el cursor.</p>
-  <div class="btn-row">
-    <button class="btn" onclick="window.__startGame()">Comenzar simulación</button>
-  </div>
-`);
-
-window.__startGame = () => {
-  closeModal();
-  updateHUD();
-  updateMissionUI();
-  renderer.domElement.requestPointerLock();
-};
-
-window.addEventListener('resize', () => {
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
-});
-
-const clock = new THREE.Clock();
-function loop() {
-  const dt = Math.min(clock.getDelta(), 0.1);
-  if (!state.locked) {
-    updateCharacter(dt);
-    updateInteractPrompt();
+/* ============================================
+   GAME LOOP
+   ============================================ */
+const clock=new THREE.Clock();
+updateCamera();
+function loop(){
+  const dt=Math.min(clock.getDelta(),.1);
+  const t=clock.getElapsedTime();
+  updateCharacter(dt, t);
+  updateInteractPrompt();
+  animateIndicators(t);
+  animateDust(t);
+  if(shakeTime>0){
+    shakeTime-=dt;
+    camera.position.x += (Math.random()-.5)*shakeAmt;
+    camera.position.y += (Math.random()-.5)*shakeAmt*.5;
   }
   drawMinimap();
-  renderer.render(scene, camera);
+  renderer.render(scene,camera);
   requestAnimationFrame(loop);
 }
 loop();
-
 </script>
-
 </body>
 </html>

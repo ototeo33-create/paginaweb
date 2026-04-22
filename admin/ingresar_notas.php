@@ -71,12 +71,14 @@ if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
     }
 
     if ($modulo_seleccionado) {
-        // Estudiantes del programa
-        $sql_est = "SELECT id, nombre, documento FROM estudiantes
-                    WHERE programa_id = ? AND estado = 'activo'
-                    ORDER BY nombre";
+        // Estudiantes asignados explícitamente a este módulo (via estudiante_modulo)
+        // Incluye estudiantes de cualquier programa, no solo el del módulo
+        $sql_est = "SELECT e.id, e.nombre, e.documento FROM estudiantes e
+                    JOIN estudiante_modulo em ON em.estudiante_id = e.id
+                    WHERE em.programa_modulo_id = ? AND e.estado = 'activo' AND em.estado = 'activo'
+                    ORDER BY e.nombre";
         $stmt_est = mysqli_prepare($conexion, $sql_est);
-        mysqli_stmt_bind_param($stmt_est, 'i', $modulo_seleccionado['programa_id']);
+        mysqli_stmt_bind_param($stmt_est, 'i', $modulo_id_sel);
         mysqli_stmt_execute($stmt_est);
         $res_est = mysqli_stmt_get_result($stmt_est);
         while ($row = mysqli_fetch_assoc($res_est)) {
