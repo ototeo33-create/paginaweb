@@ -18,22 +18,25 @@ $usuario_id = (int)$_SESSION['usuario_id'];
 $modulos = [];
 if ($es_admin) {
     $sql_mod = "SELECT pm.id, mf.nombre, pm.bimestre, pm.orden, pm.tipo,
-                       p.nombre as programa_nombre, p.id as programa_id, u.username as docente_nombre
+                       COALESCE(p.nombre, 'Transversales (todos los tecnicos)') as programa_nombre,
+                       p.id as programa_id, u.username as docente_nombre
                 FROM programa_modulo pm
                 JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
-                JOIN programas p ON pm.programa_id = p.id
+                LEFT JOIN programas p ON pm.programa_id = p.id
                 LEFT JOIN usuarios u ON pm.docente_id = u.id
-                ORDER BY p.nombre, pm.bimestre, pm.orden";
+                WHERE pm.estado = 'activo'
+                ORDER BY pm.programa_id IS NULL DESC, p.nombre, pm.bimestre, pm.orden";
     $res_mod = mysqli_query($conexion, $sql_mod);
 } else {
     $sql_mod = "SELECT pm.id, mf.nombre, pm.bimestre, pm.orden, pm.tipo,
-                       p.nombre as programa_nombre, p.id as programa_id, u.username as docente_nombre
+                       COALESCE(p.nombre, 'Transversales (todos los tecnicos)') as programa_nombre,
+                       p.id as programa_id, u.username as docente_nombre
                 FROM programa_modulo pm
                 JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
-                JOIN programas p ON pm.programa_id = p.id
+                LEFT JOIN programas p ON pm.programa_id = p.id
                 LEFT JOIN usuarios u ON pm.docente_id = u.id
-                WHERE pm.docente_id = ?
-                ORDER BY p.nombre, pm.bimestre, pm.orden";
+                WHERE pm.docente_id = ? AND pm.estado = 'activo'
+                ORDER BY pm.programa_id IS NULL DESC, p.nombre, pm.bimestre, pm.orden";
     $stmt_mod = mysqli_prepare($conexion, $sql_mod);
     mysqli_stmt_bind_param($stmt_mod, 'i', $usuario_id);
     mysqli_stmt_execute($stmt_mod);
@@ -54,10 +57,12 @@ if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
     $modulo_id_sel = (int)$_GET['modulo_id'];
 
     $sql_info = "SELECT pm.id, mf.nombre, pm.bimestre, pm.orden, pm.tipo, pm.docente_id,
-                        pm.programa_id, p.nombre as programa_nombre, u.username as docente_nombre
+                        pm.programa_id,
+                        COALESCE(p.nombre, 'Transversales (todos los tecnicos)') as programa_nombre,
+                        u.username as docente_nombre
                  FROM programa_modulo pm
                  JOIN modulos_formacion mf ON pm.modulo_formacion_id = mf.id
-                 JOIN programas p ON pm.programa_id = p.id
+                 LEFT JOIN programas p ON pm.programa_id = p.id
                  LEFT JOIN usuarios u ON pm.docente_id = u.id
                  WHERE pm.id = ?";
     $stmt_info = mysqli_prepare($conexion, $sql_info);
@@ -95,14 +100,94 @@ if (isset($_GET['modulo_id']) && $_GET['modulo_id'] > 0) {
             $notas_existentes[$row['estudiante_id']] = $row;
         }
 
-        // Asistencia existente
-        $sql_asist = "SELECT * FROM asistencia WHERE programa_modulo_id = ?";
-        $stmt_asist = mysqli_prepare($conexion, $sql_asist);
-        mysqli_stmt_bind_param($stmt_asist, 'i', $modulo_id_sel);
-        mysqli_stmt_execute($stmt_asist);
-        $res_asist = mysqli_stmt_get_result($stmt_asist);
-        while ($row = mysqli_fetch_assoc($res_asist)) {
-            $asistencia_existente[$row['estudiante_id']] = $row;
+        // ===== ASISTENCIA POR FECHAS (planilla completa) =====
+        // 1) Bimestre actual: mapear pm.bimestre (1-5) -> bimestres (con fechas)
+        $bimestre_actual = null;
+        if ($modulo_seleccionado['bimestre']) {
+            $stmt_bim = mysqli_prepare($conexion,
+                "SELECT * FROM bimestres
+                 WHERE numero = ? AND estado = 'activo'
+                 ORDER BY anio DESC, fecha_inicio DESC
+                 LIMIT 1");
+            mysqli_stmt_bind_param($stmt_bim, 'i', $modulo_seleccionado['bimestre']);
+            mysqli_stmt_execute($stmt_bim);
+            $bimestre_actual = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_bim));
+        }
+
+        // 2) Generar semanas/fechas según horario del módulo
+        $semanas = [];
+        $todas_fechas = [];
+        if ($bimestre_actual) {
+            $dias_clase = [];
+            $stmt_dc = mysqli_prepare($conexion,
+                "SELECT DISTINCT dia FROM horarios WHERE programa_modulo_id = ?");
+            mysqli_stmt_bind_param($stmt_dc, 'i', $modulo_id_sel);
+            mysqli_stmt_execute($stmt_dc);
+            $res_dc = mysqli_stmt_get_result($stmt_dc);
+            while ($d = mysqli_fetch_assoc($res_dc)) $dias_clase[] = $d['dia'];
+            if (empty($dias_clase)) $dias_clase = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
+
+            $dias_map    = ['Monday'=>'Lunes','Tuesday'=>'Martes','Wednesday'=>'Miércoles','Thursday'=>'Jueves','Friday'=>'Viernes','Saturday'=>'Sábado'];
+            $dias_cortos = ['Lunes'=>'LUN','Martes'=>'MAR','Miércoles'=>'MIE','Jueves'=>'JUE','Viernes'=>'VIE','Sábado'=>'SAB'];
+
+            $inicio = new DateTime($bimestre_actual['fecha_inicio']);
+            $fin    = new DateTime($bimestre_actual['fecha_fin']);
+            $fin->modify('+1 day');
+
+            $semana_inicio = clone $inicio;
+            if ($semana_inicio->format('N') != 1) $semana_inicio->modify('last monday');
+
+            $current = clone $inicio;
+            while ($current < $fin) {
+                $dia_es = $dias_map[$current->format('l')] ?? '';
+                if (in_array($dia_es, $dias_clase)) {
+                    $diff = $semana_inicio->diff($current);
+                    $sem  = intval(floor($diff->days / 7)) + 1;
+                    if (!isset($semanas[$sem])) $semanas[$sem] = [];
+                    $semanas[$sem][] = [
+                        'fecha'     => $current->format('Y-m-d'),
+                        'dia'       => $dia_es,
+                        'dia_corto' => $dias_cortos[$dia_es] ?? $dia_es,
+                        'dia_num'   => $current->format('d/m')
+                    ];
+                    $todas_fechas[] = $current->format('Y-m-d');
+                }
+                $current->modify('+1 day');
+            }
+        }
+
+        // 3) Cargar asistencias por fecha
+        $asist_map = []; // [est_id][fecha] => row
+        if (!empty($estudiantes) && !empty($todas_fechas) && $bimestre_actual) {
+            $est_ids_str = implode(',', array_map('intval', array_column($estudiantes, 'id')));
+            $bim_id      = (int)$bimestre_actual['id'];
+            $stmt_a = mysqli_prepare($conexion,
+                "SELECT * FROM asistencias
+                 WHERE estudiante_id IN ($est_ids_str)
+                   AND programa_modulo_id = ?
+                   AND bimestre_id = ?");
+            mysqli_stmt_bind_param($stmt_a, 'ii', $modulo_id_sel, $bim_id);
+            mysqli_stmt_execute($stmt_a);
+            $res_a = mysqli_stmt_get_result($stmt_a);
+            while ($a = mysqli_fetch_assoc($res_a)) {
+                $asist_map[$a['estudiante_id']][$a['fecha']] = $a;
+            }
+        }
+
+        // Resumen por estudiante (para %)
+        $resumen_asist = [];
+        foreach ($estudiantes as $e) {
+            $tot = 0; $pres = 0;
+            if (isset($asist_map[$e['id']])) {
+                foreach ($asist_map[$e['id']] as $a) {
+                    $tot++;
+                    if ($a['estado'] === 'presente' || $a['estado'] === 'excusa') $pres++;
+                }
+            }
+            $resumen_asist[$e['id']] = [
+                'total' => $tot,
+                'pct'   => $tot > 0 ? round($pres / $tot * 100) : 0,
+            ];
         }
 
         // Observaciones existentes
@@ -293,12 +378,80 @@ foreach ($estudiantes as $e) {
         .btn-guardar:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(5,150,105,0.3); }
         .btn-guardar:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Asistencia table */
-        .planilla-asist input[type="number"] { width: 60px; }
-        .porcentaje-cell { font-weight: 700; }
-        .porcentaje-cell.alta { color: #059669; }
-        .porcentaje-cell.media { color: #F59E0B; }
-        .porcentaje-cell.baja { color: #EF4444; }
+        /* Asistencia por fechas (planilla) */
+        .planilla-asist-info {
+            padding: 0.9rem 1.4rem;
+            background: linear-gradient(135deg, #064E3B, #065f46);
+            color: white;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem; flex-wrap: wrap;
+            font-size: 0.85rem;
+        }
+        .leyenda-asist { display: flex; gap: 0.9rem; flex-wrap: wrap; font-size: 0.78rem; }
+        .leyenda-asist .leg { display: inline-flex; align-items: center; gap: 0.3rem; }
+        .leyenda-asist .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+        .dot-p { background: #D1FAE5; border: 1px solid #10B981; }
+        .dot-a { background: #FEE2E2; border: 1px solid #EF4444; }
+        .dot-t { background: #FEF3C7; border: 1px solid #F59E0B; }
+        .dot-e { background: #DBEAFE; border: 1px solid #3B82F6; }
+
+        .planilla-fechas {
+            width: 100%; border-collapse: collapse; font-size: 0.78rem;
+            min-width: 720px;
+        }
+        .planilla-fechas thead th {
+            background: #F0FDF4; padding: 0.4rem 0.3rem; text-align: center;
+            font-size: 0.7rem; font-weight: 700; color: #065F46;
+            border: 1px solid #E0F2E8;
+        }
+        .planilla-fechas .semana-h {
+            background: #059669; color: white;
+            font-size: 0.72rem; letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .planilla-fechas .dia-h { background: #D1FAE5; color: #065F46; font-size: 0.68rem; }
+        .planilla-fechas .dia-h .dia-num { font-weight: 400; font-size: 0.6rem; }
+        .planilla-fechas th.col-num { width: 30px; }
+        .planilla-fechas th.col-nombre { min-width: 180px; text-align: left; padding-left: 0.6rem; }
+        .planilla-fechas th.col-pct { width: 50px; background: #FEF3C7; color: #92400E; }
+
+        .planilla-fechas td {
+            padding: 0.3rem; text-align: center;
+            border: 1px solid #F0F0F0; vertical-align: middle;
+        }
+        .planilla-fechas td.col-num { font-weight: 700; color: #888; background: #FAFAFA; font-size: 0.75rem; }
+        .planilla-fechas td.col-nombre {
+            text-align: left; padding-left: 0.6rem;
+            font-weight: 600; font-size: 0.82rem; color: #1A1A1A;
+            background: #FAFAFA; white-space: nowrap;
+            position: sticky; left: 0; z-index: 1;
+        }
+        .planilla-fechas td.col-pct {
+            font-weight: 800; font-size: 0.82rem; background: #FFFBEB;
+        }
+        .planilla-fechas tr:hover td { background: rgba(16,185,129,0.04); }
+        .planilla-fechas tr:hover td.col-num,
+        .planilla-fechas tr:hover td.col-nombre { background: rgba(16,185,129,0.08); }
+
+        .asist-cell { position: relative; min-width: 38px; }
+        .asist-btn {
+            width: 30px; height: 26px;
+            border: 2px solid #E0E0E0; border-radius: 6px;
+            cursor: pointer; font-size: 0.78rem; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: all 0.15s; background: white;
+        }
+        .asist-btn:hover { transform: scale(1.1); box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .asist-btn[data-estado=""]         { background: white; color: #CCC; border-color: #E8E8E8; }
+        .asist-btn[data-estado="presente"] { background: #D1FAE5; color: #065F46; border-color: #10B981; }
+        .asist-btn[data-estado="ausente"]  { background: #FEE2E2; color: #991B1B; border-color: #EF4444; }
+        .asist-btn[data-estado="tardanza"] { background: #FEF3C7; color: #92400E; border-color: #F59E0B; }
+        .asist-btn[data-estado="excusa"]   { background: #DBEAFE; color: #1E40AF; border-color: #3B82F6; }
+        .obs-icon {
+            position: absolute; top: 1px; right: 1px;
+            font-size: 0.55rem; cursor: pointer; opacity: 0.5;
+        }
+        .obs-icon:hover { opacity: 1; }
+        .obs-icon.tiene { opacity: 0.95; color: #F59E0B; }
 
         /* Observaciones */
         .obs-list { padding: 1.5rem; }
@@ -513,50 +666,123 @@ foreach ($estudiantes as $e) {
                         </div>
                     </div>
 
-                    <!-- ===== TAB ASISTENCIA ===== -->
+                    <!-- ===== TAB ASISTENCIA (planilla por fechas) ===== -->
                     <div class="tab-content" id="tab-asistencia">
-                        <div class="planilla-wrapper">
-                            <table class="planilla planilla-asist" id="planilla-asistencia">
-                                <thead>
-                                    <tr>
-                                        <th class="col-num">N&deg;</th>
-                                        <th class="col-nombre">Estudiante</th>
-                                        <th>Total Clases</th>
-                                        <th>Asistencias</th>
-                                        <th>Inasistencias</th>
-                                        <th>% Asistencia</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($estudiantes as $i => $est):
-                                        $a = $asistencia_existente[$est['id']] ?? [];
-                                    ?>
-                                    <tr data-estudiante-id="<?php echo $est['id']; ?>">
-                                        <td><?php echo $i + 1; ?></td>
-                                        <td class="col-nombre"><?php echo htmlspecialchars($est['nombre']); ?></td>
-                                        <td><input type="number" min="0" max="200" class="asist-input" data-field="total_clases" value="<?php echo $a['total_clases'] ?? ''; ?>"></td>
-                                        <td><input type="number" min="0" max="200" class="asist-input" data-field="total_asistencias" value="<?php echo $a['total_asistencias'] ?? ''; ?>"></td>
-                                        <td class="calc-cell" data-calc="inasistencias">
-                                            <?php
-                                            if (isset($a['total_inasistencias'])) echo $a['total_inasistencias'];
-                                            else echo '--';
-                                            ?>
-                                        </td>
-                                        <td class="porcentaje-cell <?php
-                                            $p = $a['porcentaje_asistencia'] ?? null;
-                                            echo $p !== null ? ($p >= 80 ? 'alta' : ($p >= 60 ? 'media' : 'baja')) : '';
-                                        ?>" data-calc="porcentaje">
-                                            <?php echo $p !== null ? number_format($p, 1) . '%' : '--'; ?>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="save-bar">
-                            <div class="info"></div>
-                            <button class="btn-guardar" id="btn-guardar-asist" onclick="guardarAsistencia()">Guardar Asistencia</button>
-                        </div>
+                        <?php if (!$bimestre_actual): ?>
+                            <div class="sin-datos" style="padding:2.5rem;">
+                                <div class="icono">&#9888;</div>
+                                <p>No hay un bimestre activo en la BD que coincida con el bimestre <strong><?php echo (int)$modulo_seleccionado['bimestre']; ?></strong> de este modulo.</p>
+                                <p style="font-size:0.85rem;">Crea o activa el bimestre desde el modulo de bimestres para registrar asistencia.</p>
+                            </div>
+                        <?php elseif (empty($semanas)): ?>
+                            <div class="sin-datos" style="padding:2.5rem;">
+                                <div class="icono">&#128197;</div>
+                                <p>No hay fechas de clase en el rango del bimestre.</p>
+                                <p style="font-size:0.85rem;">Verifica los horarios del modulo o las fechas del bimestre.</p>
+                            </div>
+                        <?php else: ?>
+
+                        <form method="POST" action="guardar_asistencia_planilla.php" id="form-planilla-asist">
+                            <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
+                            <input type="hidden" name="programa_modulo_id" value="<?php echo $modulo_id_sel; ?>">
+                            <input type="hidden" name="bimestre_id" value="<?php echo (int)$bimestre_actual['id']; ?>">
+
+                            <div class="planilla-asist-info">
+                                <div>
+                                    <strong>Bimestre <?php echo $bimestre_actual['numero']; ?></strong>
+                                    (<?php echo $bimestre_actual['anio']; ?>) &middot;
+                                    <?php echo date('d/m/Y', strtotime($bimestre_actual['fecha_inicio'])); ?>
+                                    al
+                                    <?php echo date('d/m/Y', strtotime($bimestre_actual['fecha_fin'])); ?>
+                                </div>
+                                <div class="leyenda-asist">
+                                    <span class="leg"><span class="dot dot-p"></span><strong>P</strong> Presente</span>
+                                    <span class="leg"><span class="dot dot-a"></span><strong>A</strong> Ausente</span>
+                                    <span class="leg"><span class="dot dot-t"></span><strong>T</strong> Tardanza</span>
+                                    <span class="leg"><span class="dot dot-e"></span><strong>E</strong> Excusa</span>
+                                </div>
+                            </div>
+
+                            <div class="planilla-wrapper">
+                                <table class="planilla-fechas">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-num" rowspan="2">N&deg;</th>
+                                            <th class="col-nombre" rowspan="2">Estudiante</th>
+                                            <?php foreach ($semanas as $num => $dias): ?>
+                                                <th class="semana-h" colspan="<?php echo count($dias); ?>">Sem <?php echo $num; ?></th>
+                                            <?php endforeach; ?>
+                                            <th class="col-pct" rowspan="2">%</th>
+                                        </tr>
+                                        <tr>
+                                            <?php foreach ($semanas as $dias): ?>
+                                                <?php foreach ($dias as $d): ?>
+                                                    <th class="dia-h" title="<?php echo $d['dia'] . ' ' . $d['fecha']; ?>">
+                                                        <?php echo $d['dia_corto']; ?><br>
+                                                        <span class="dia-num"><?php echo $d['dia_num']; ?></span>
+                                                    </th>
+                                                <?php endforeach; ?>
+                                            <?php endforeach; ?>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($estudiantes as $i => $est):
+                                            $eid = (int)$est['id'];
+                                            $r   = $resumen_asist[$eid] ?? ['total' => 0, 'pct' => 0];
+                                            $pct_color = $r['total'] === 0 ? '#9CA3AF' :
+                                                         ($r['pct'] >= 80 ? '#059669' :
+                                                         ($r['pct'] >= 60 ? '#D97706' : '#EF4444'));
+                                            $pct_label = $r['total'] > 0 ? $r['pct'] . '%' : '--';
+                                        ?>
+                                        <tr>
+                                            <td class="col-num"><?php echo $i + 1; ?></td>
+                                            <td class="col-nombre" title="<?php echo htmlspecialchars($est['nombre']); ?>">
+                                                <?php echo htmlspecialchars($est['nombre']); ?>
+                                            </td>
+                                            <?php foreach ($semanas as $dias): ?>
+                                                <?php foreach ($dias as $d):
+                                                    $fecha = $d['fecha'];
+                                                    $estado_act = $asist_map[$eid][$fecha]['estado'] ?? '';
+                                                    $obs_act    = $asist_map[$eid][$fecha]['observacion'] ?? '';
+                                                    $labels = ['' => '·', 'presente' => 'P', 'ausente' => 'A', 'tardanza' => 'T', 'excusa' => 'E'];
+                                                    $label  = $labels[$estado_act] ?? '·';
+                                                ?>
+                                                    <td class="asist-cell">
+                                                        <input type="hidden" class="asist-val"
+                                                               name="asist[<?php echo $eid; ?>][<?php echo $fecha; ?>]"
+                                                               value="<?php echo $estado_act; ?>">
+                                                        <input type="hidden" class="obs-val"
+                                                               name="obs[<?php echo $eid; ?>][<?php echo $fecha; ?>]"
+                                                               value="<?php echo htmlspecialchars($obs_act); ?>">
+                                                        <button type="button" class="asist-btn"
+                                                                data-estado="<?php echo $estado_act; ?>"
+                                                                onclick="ciclarAsist(this)"><?php echo $label; ?></button>
+                                                        <span class="obs-icon <?php echo $obs_act ? 'tiene' : ''; ?>"
+                                                              onclick="editarObsAsist(this)"
+                                                              title="<?php echo htmlspecialchars($obs_act ?: 'Agregar observacion'); ?>">&#128172;</span>
+                                                    </td>
+                                                <?php endforeach; ?>
+                                            <?php endforeach; ?>
+                                            <td class="col-pct" style="color:<?php echo $pct_color; ?>;">
+                                                <?php echo $pct_label; ?>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="save-bar">
+                                <div class="info">
+                                    <span style="font-size:0.82rem;color:#6B7280;">
+                                        Click en cada celda para ciclar P &rarr; A &rarr; T &rarr; E &rarr; vacio.
+                                    </span>
+                                </div>
+                                <button type="submit" class="btn-guardar">&#128190; Guardar Planilla</button>
+                            </div>
+                        </form>
+
+                        <?php endif; ?>
                     </div>
 
                     <!-- ===== TAB OBSERVACIONES ===== -->
@@ -612,14 +838,30 @@ foreach ($estudiantes as $e) {
     var unsavedNotas = 0;
 
     // ===== TABS =====
+    function activarTab(nombre) {
+        document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+        var btn = document.querySelector('.tab-btn[data-tab="' + nombre + '"]');
+        var pan = document.getElementById('tab-' + nombre);
+        if (btn) btn.classList.add('active');
+        if (pan) pan.classList.add('active');
+    }
     document.querySelectorAll('.tab-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
-            btn.classList.add('active');
-            document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-        });
+        btn.addEventListener('click', function() { activarTab(btn.dataset.tab); });
     });
+    // Activar tab si viene en la URL
+    (function() {
+        var p = new URLSearchParams(window.location.search);
+        var t = p.get('tab');
+        if (t) activarTab(t);
+        var msg = p.get('msg');
+        if (msg) {
+            var parts = msg.split('|');
+            setTimeout(function() {
+                showToast(parts[1] || msg, parts[0] === 'success' ? 'exito' : 'error');
+            }, 200);
+        }
+    })();
 
     // ===== TOAST =====
     function showToast(msg, tipo) {
@@ -752,41 +994,33 @@ foreach ($estudiantes as $e) {
         });
     }
 
-    // ===== GUARDAR ASISTENCIA (AJAX) =====
-    function guardarAsistencia() {
-        var btn = document.getElementById('btn-guardar-asist');
-        btn.disabled = true;
-        btn.textContent = 'Guardando...';
+    // ===== ASISTENCIA POR FECHAS =====
+    var ESTADOS_ASIST = ['', 'presente', 'ausente', 'tardanza', 'excusa'];
+    var LABELS_ASIST  = {'': '·', 'presente': 'P', 'ausente': 'A', 'tardanza': 'T', 'excusa': 'E'};
 
-        var asistencias = [];
-        document.querySelectorAll('#planilla-asistencia tbody tr').forEach(function(row) {
-            asistencias.push({
-                estudiante_id: parseInt(row.dataset.estudianteId),
-                total_clases: parseInt(row.querySelector('input[data-field="total_clases"]').value) || 0,
-                total_asistencias: parseInt(row.querySelector('input[data-field="total_asistencias"]').value) || 0
-            });
-        });
+    function ciclarAsist(btn) {
+        var input = btn.parentElement.querySelector('.asist-val');
+        var actual = input.value || '';
+        var idx = ESTADOS_ASIST.indexOf(actual);
+        idx = (idx + 1) % ESTADOS_ASIST.length;
+        var nuevo = ESTADOS_ASIST[idx];
+        input.value = nuevo;
+        btn.setAttribute('data-estado', nuevo);
+        btn.textContent = LABELS_ASIST[nuevo];
+    }
 
-        fetch('guardar_asistencia.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ programa_modulo_id: MODULO_ID, asistencias: asistencias })
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.ok) {
-                showToast('Asistencia guardada (' + data.guardados + ' estudiantes)', 'exito');
-            } else {
-                showToast('Error: ' + (data.error || 'Desconocido'), 'error');
-            }
-            btn.disabled = false;
-            btn.textContent = 'Guardar Asistencia';
-        })
-        .catch(function() {
-            showToast('Error de conexion', 'error');
-            btn.disabled = false;
-            btn.textContent = 'Guardar Asistencia';
-        });
+    function editarObsAsist(icon) {
+        var input = icon.parentElement.querySelector('.obs-val');
+        var v = prompt('Observacion:', input.value || '');
+        if (v === null) return;
+        input.value = v;
+        if (v.trim()) {
+            icon.classList.add('tiene');
+            icon.title = v;
+        } else {
+            icon.classList.remove('tiene');
+            icon.title = 'Agregar observacion';
+        }
     }
 
     // ===== OBSERVACIONES =====

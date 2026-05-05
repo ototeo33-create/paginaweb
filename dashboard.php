@@ -1176,12 +1176,6 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Consulta los horarios de los estudiantes del programa</p>
                     <span class="card-arrow">→</span>
                 </a>
-                <a href="admin/asistencia.php" class="menu-card-v2">
-                    <div class="card-icon verde">📋</div>
-                    <h3>Asistencia</h3>
-                    <p>Registra la asistencia de los estudiantes por módulo</p>
-                    <span class="card-arrow">→</span>
-                </a>
                 <a href="admin/links_virtuales.php" class="menu-card-v2">
                     <div class="card-icon azul">🔗</div>
                     <h3>Links de Clases Virtuales</h3>
@@ -1270,12 +1264,6 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <div class="card-icon azul">📅</div>
                     <h3>Horarios</h3>
                     <p>Gestiona los horarios de clases del instituto</p>
-                    <span class="card-arrow">→</span>
-                </a>
-                <a href="admin/asistencia.php" class="menu-card-v2">
-                    <div class="card-icon verde">📋</div>
-                    <h3>Asistencia</h3>
-                    <p>Registra y controla la asistencia de los estudiantes por módulo</p>
                     <span class="card-arrow">→</span>
                 </a>
                 <a href="admin/links_virtuales.php" class="menu-card-v2">
