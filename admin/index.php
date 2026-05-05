@@ -1499,6 +1499,43 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
     <!-- ============================================ -->
     <div class="panel-admin" id="panel-estadisticas">
 
+        <!-- EN LÍNEA AHORA -->
+        <div class="card" style="margin-bottom:1.5rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                <h3 style="display:flex;align-items:center;gap:8px;margin:0;">
+                    <span style="width:10px;height:10px;background:#22c55e;border-radius:50%;display:inline-block;animation:pulso 1.5s infinite;"></span>
+                    En línea ahora
+                    <span id="online-count" style="background:#22c55e;color:white;font-size:0.8rem;padding:2px 10px;border-radius:20px;font-weight:700;">0</span>
+                </h3>
+                <span id="online-ts" style="font-size:0.75rem;color:#aaa;"></span>
+            </div>
+            <div id="online-lista"><p style="color:#aaa;text-align:center;padding:1rem;font-size:0.9rem;">Cargando...</p></div>
+        </div>
+        <style>@keyframes pulso{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}</style>
+        <script>
+        function cargarOnline(){
+            fetch('api_online.php').then(r=>r.json()).then(d=>{
+                document.getElementById('online-count').textContent=d.total;
+                document.getElementById('online-ts').textContent='Actualizado: '+d.ts;
+                const lista=document.getElementById('online-lista');
+                if(d.usuarios.length===0){
+                    lista.innerHTML='<p style="color:#aaa;text-align:center;padding:1rem;font-size:0.9rem;">Ningún estudiante conectado en este momento.</p>';
+                }else{
+                    lista.innerHTML=d.usuarios.map(u=>`
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:8px;margin-bottom:6px;background:#f0fdf4;border:1px solid #bbf7d0;">
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <span style="width:8px;height:8px;background:#22c55e;border-radius:50%;flex-shrink:0;"></span>
+                                <div><div style="font-weight:600;font-size:0.9rem;">${u.nombre}</div><div style="font-size:0.75rem;color:#666;">${u.username}</div></div>
+                            </div>
+                            <span style="font-size:0.8rem;color:#059669;font-weight:600;">${u.hace}</span>
+                        </div>`).join('');
+                }
+            }).catch(()=>{});
+        }
+        cargarOnline();
+        setInterval(cargarOnline,30000);
+        </script>
+
         <!-- USO DE PLATAFORMA -->
         <div class="card" style="margin-bottom:1.5rem;">
             <h3 style="margin-bottom:1.2rem;">📱 Uso de Plataforma</h3>

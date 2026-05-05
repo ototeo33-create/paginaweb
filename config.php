@@ -236,4 +236,12 @@ if (isset($_SESSION['usuario_id'])) {
 
     // Siempre actualizar último acceso
     $_SESSION['ultimo_acceso'] = time();
+
+    // Registrar actividad en BD cada 2 minutos para no saturar queries
+    $ahora = time();
+    if (!isset($_SESSION['_actividad_ts']) || ($ahora - $_SESSION['_actividad_ts']) >= 120) {
+        $uid = (int)$_SESSION['usuario_id'];
+        mysqli_query($conexion, "UPDATE usuarios SET ultima_actividad = NOW() WHERE id = $uid");
+        $_SESSION['_actividad_ts'] = $ahora;
+    }
 }
