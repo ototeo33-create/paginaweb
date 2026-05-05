@@ -47,6 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['estudiante_id'] = $usuario['estudiante_id'];
                 $_SESSION['ultimo_acceso'] = time();
                 $_SESSION['login_time'] = time();
+                $upd_login = mysqli_prepare($conexion, "UPDATE usuarios SET ultimo_login = NOW() WHERE id = ?");
+                mysqli_stmt_bind_param($upd_login, 'i', $usuario['id']);
+                mysqli_stmt_execute($upd_login);
                 $loginExitoso = true;
             } elseif ($usuario['estado'] === 'inactivo') {
                 $error = 'Tu cuenta ha sido desactivada. Contacta a secretaría.';

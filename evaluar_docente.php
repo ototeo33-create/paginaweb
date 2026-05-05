@@ -113,8 +113,14 @@ $eval_activa = mysqli_fetch_assoc($res_ctrl);
         .criteria-table td { padding:18px 15px; border-bottom:1px solid #eee; vertical-align:middle; }
         .criteria-table tr:nth-child(even) { background:var(--cream); }
         .criteria-table tr:hover { background:var(--green-pale); }
-        .criteria-name { font-weight:600; color:var(--text); margin-bottom:4px; }
-        .criteria-description { font-size:0.8em; color:var(--text-light); }
+        .criteria-name { font-weight:700; color:var(--text); margin-bottom:8px; font-size:1em; }
+        .criteria-description {
+            font-size:0.83em; color:var(--purple-mid);
+            background:var(--purple-pale); border-left:3px solid var(--purple-light);
+            padding:7px 10px; border-radius:0 8px 8px 0; margin-top:4px;
+            display:flex; align-items:flex-start; gap:6px;
+        }
+        .criteria-description::before { content:"\f05a"; font-family:"Font Awesome 6 Free"; font-weight:900; font-size:0.9em; color:var(--purple-light); flex-shrink:0; margin-top:1px; }
         .rating-cell { text-align:center; }
         .rating-options { display:flex; justify-content:center; gap:6px; }
         .rating-btn {

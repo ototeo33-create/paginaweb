@@ -336,16 +336,36 @@ while ($d = mysqli_fetch_assoc($res_doc)) $docentes[] = $d;
 
 // Estadísticas por programa
 $stats_programa = [];
-$q_stats = "SELECT p.nombre, p.id, 
+$q_stats = "SELECT p.nombre, p.id,
                    COUNT(CASE WHEN e.estado = 'activo' THEN 1 END) as activos,
                    COUNT(e.id) as total
-            FROM programas p 
-            LEFT JOIN estudiantes e ON p.id = e.programa_id 
-            GROUP BY p.id, p.nombre 
+            FROM programas p
+            LEFT JOIN estudiantes e ON p.id = e.programa_id
+            GROUP BY p.id, p.nombre
             HAVING total > 0
             ORDER BY activos DESC";
 $res_stats = mysqli_query($conexion, $q_stats);
 while ($s = mysqli_fetch_assoc($res_stats)) $stats_programa[] = $s;
+
+// Estadísticas de uso de plataforma
+$uso = [];
+$r = mysqli_query($conexion, "SELECT COUNT(*) as n FROM usuarios WHERE rol='estudiante' AND ultimo_login IS NOT NULL AND DATE(ultimo_login) = CURDATE()");
+$uso['hoy'] = mysqli_fetch_assoc($r)['n'] ?? 0;
+$r = mysqli_query($conexion, "SELECT COUNT(*) as n FROM usuarios WHERE rol='estudiante' AND ultimo_login >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+$uso['semana'] = mysqli_fetch_assoc($r)['n'] ?? 0;
+$r = mysqli_query($conexion, "SELECT COUNT(*) as n FROM usuarios WHERE rol='estudiante' AND ultimo_login >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+$uso['mes'] = mysqli_fetch_assoc($r)['n'] ?? 0;
+$r = mysqli_query($conexion, "SELECT COUNT(*) as n FROM usuarios WHERE rol='estudiante' AND ultimo_login IS NOT NULL");
+$uso['alguna_vez'] = mysqli_fetch_assoc($r)['n'] ?? 0;
+$r = mysqli_query($conexion, "SELECT COUNT(*) as n FROM usuarios WHERE rol='estudiante' AND ultimo_login IS NULL AND estado='activo'");
+$uso['nunca'] = mysqli_fetch_assoc($r)['n'] ?? 0;
+$uso['total_estudiantes'] = count($estudiantes_activos) + count($estudiantes_inactivos);
+$r = mysqli_query($conexion, "SELECT u.username, COALESCE(e.nombre, u.username) as nombre, u.ultimo_login
+                               FROM usuarios u LEFT JOIN estudiantes e ON u.estudiante_id = e.id
+                               WHERE u.rol='estudiante' AND u.ultimo_login IS NOT NULL
+                               ORDER BY u.ultimo_login DESC LIMIT 10");
+$uso['recientes'] = [];
+while ($row = mysqli_fetch_assoc($r)) $uso['recientes'][] = $row;
 
 $msg_parts = $mensaje ? explode('|', $mensaje) : null;
 ?>
@@ -1478,6 +1498,66 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
     <!-- PANEL: ESTADÍSTICAS -->
     <!-- ============================================ -->
     <div class="panel-admin" id="panel-estadisticas">
+
+        <!-- USO DE PLATAFORMA -->
+        <div class="card" style="margin-bottom:1.5rem;">
+            <h3 style="margin-bottom:1.2rem;">📱 Uso de Plataforma</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+                <div style="background:#F0FDF4; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #BBF7D0;">
+                    <div style="font-size:2rem; font-weight:800; color:#059669;"><?php echo $uso['hoy']; ?></div>
+                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Hoy</div>
+                </div>
+                <div style="background:#EFF6FF; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #BFDBFE;">
+                    <div style="font-size:2rem; font-weight:800; color:#3B82F6;"><?php echo $uso['semana']; ?></div>
+                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Últimos 7 días</div>
+                </div>
+                <div style="background:#FFFBEB; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #FDE68A;">
+                    <div style="font-size:2rem; font-weight:800; color:#D97706;"><?php echo $uso['mes']; ?></div>
+                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Últimos 30 días</div>
+                </div>
+                <div style="background:#F3F4F6; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #E5E7EB;">
+                    <div style="font-size:2rem; font-weight:800; color:#374151;"><?php echo $uso['alguna_vez']; ?>/<?php echo $uso['total_estudiantes']; ?></div>
+                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Han ingresado</div>
+                </div>
+                <div style="background:#FFF1F2; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #FECDD3;">
+                    <div style="font-size:2rem; font-weight:800; color:#e63946;"><?php echo $uso['nunca']; ?></div>
+                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Nunca han entrado</div>
+                </div>
+            </div>
+            <?php if (!empty($uso['recientes'])): ?>
+            <h4 style="margin-bottom:0.8rem; color:#444; font-size:0.95rem;">🕐 Últimos 10 accesos</h4>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+                    <thead>
+                        <tr style="background:#f9fafb;">
+                            <th style="padding:8px 12px; text-align:left; color:#666; font-weight:600; border-bottom:2px solid #eee;">Estudiante</th>
+                            <th style="padding:8px 12px; text-align:left; color:#666; font-weight:600; border-bottom:2px solid #eee;">Usuario</th>
+                            <th style="padding:8px 12px; text-align:left; color:#666; font-weight:600; border-bottom:2px solid #eee;">Último ingreso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($uso['recientes'] as $ur): ?>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                            <td style="padding:8px 12px; font-weight:500;"><?php echo htmlspecialchars($ur['nombre']); ?></td>
+                            <td style="padding:8px 12px; color:#666;"><?php echo htmlspecialchars($ur['username']); ?></td>
+                            <td style="padding:8px 12px; color:#059669; font-weight:600;">
+                                <?php
+                                $diff = time() - strtotime($ur['ultimo_login']);
+                                if ($diff < 3600) echo round($diff/60) . ' min atrás';
+                                elseif ($diff < 86400) echo round($diff/3600) . ' h atrás';
+                                else echo date('d/m/Y H:i', strtotime($ur['ultimo_login']));
+                                ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php else: ?>
+            <p style="color:#aaa; text-align:center; padding:1rem;">Aún no hay registros de acceso. Se registran cuando los estudiantes inicien sesión.</p>
+            <?php endif; ?>
+        </div>
+
         <div class="card">
             <h3>📊 Estudiantes por Programa</h3>
             <?php if (empty($stats_programa)): ?>
