@@ -20,6 +20,20 @@ $programa_modulo_id = $pm_id;
 $guardados = 0;
 $errores = 0;
 
+// Validacion: docente solo puede guardar notas de SUS modulos asignados
+if ($_SESSION['usuario_rol'] === 'docente') {
+    $usuario_id = (int)$_SESSION['usuario_id'];
+    $stmt_v = mysqli_prepare($conexion,
+        "SELECT id FROM programa_modulo WHERE id = ? AND docente_id = ? AND estado = 'activo'");
+    mysqli_stmt_bind_param($stmt_v, 'ii', $programa_modulo_id, $usuario_id);
+    mysqli_stmt_execute($stmt_v);
+    $r_v = mysqli_stmt_get_result($stmt_v);
+    if (mysqli_num_rows($r_v) === 0) {
+        echo json_encode(['ok' => false, 'error' => 'No autorizado para este modulo']);
+        exit;
+    }
+}
+
 foreach ($input['notas'] as $nota) {
     $estudiante_id = (int)$nota['estudiante_id'];
     $parcial1 = $nota['parcial1'] !== '' && $nota['parcial1'] !== null ? (float)$nota['parcial1'] : null;
