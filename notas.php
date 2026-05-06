@@ -621,5 +621,6 @@ foreach ($notas_por_bimestre as $modulos) {
         }
     </script>
     <script src="/intep/sesion.js"></script>
+    <?php include __DIR__ . '/partials/student_bottom_nav.php'; ?>
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once __DIR__ . '/partials/icons.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
@@ -399,7 +400,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
         }
 
         /* ═══════════════════════════════════════════
-           MENU CARDS — blancas sobre fondo claro
+           MENU CARDS — desktop: cards anchas con descripción
         ═══════════════════════════════════════════ */
         .menu-grid {
             display: grid;
@@ -423,7 +424,6 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             border: 1px solid rgba(16,185,129,0.1);
         }
 
-        /* Línea de acento superior al hacer hover */
         .menu-card-v2::after {
             content: '';
             position: absolute;
@@ -454,14 +454,15 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             margin-bottom: 1rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.07);
         }
+        .menu-card-v2 .card-icon svg { width: 26px; height: 26px; display: block; }
 
-        .menu-card-v2 .card-icon.verde    { background: #ECFDF5; }
-        .menu-card-v2 .card-icon.azul     { background: #EFF6FF; }
-        .menu-card-v2 .card-icon.amarillo { background: #FFFBEB; }
-        .menu-card-v2 .card-icon.rojo     { background: #FDF2F8; }
-        .menu-card-v2 .card-icon.morado   { background: #ECFDF5; }
-        .menu-card-v2 .card-icon.naranja  { background: #FFF7ED; }
-        .menu-card-v2 .card-icon.gris     { background: #F1F5F9; }
+        .menu-card-v2 .card-icon.verde    { background: #ECFDF5; color: #059669; }
+        .menu-card-v2 .card-icon.azul     { background: #EFF6FF; color: #2563EB; }
+        .menu-card-v2 .card-icon.amarillo { background: #FFFBEB; color: #D97706; }
+        .menu-card-v2 .card-icon.rojo     { background: #FDF2F8; color: #DB2777; }
+        .menu-card-v2 .card-icon.morado   { background: #F5F3FF; color: #7C3AED; }
+        .menu-card-v2 .card-icon.naranja  { background: #FFF7ED; color: #EA580C; }
+        .menu-card-v2 .card-icon.gris     { background: #F1F5F9; color: #64748B; }
 
         .menu-card-v2 h3 {
             font-size: 1.05rem;
@@ -513,6 +514,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             color: #D1D5DB;
             transition: all 0.3s;
         }
+        .menu-card-v2 .card-arrow svg { width: 18px; height: 18px; }
 
         .menu-card-v2:hover .card-arrow {
             color: #10B981;
@@ -768,25 +770,21 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                 font-size: 0.7rem;
             }
             
-            .menu-grid { 
-                grid-template-columns: 1fr; 
-                gap: 1rem;
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.85rem;
             }
-            
             .menu-card-v2 {
-                padding: 1.4rem;
-                border-radius: 14px;
+                padding: 1rem;
+                border-radius: 16px;
             }
             .menu-card-v2 .card-icon {
-                width: 44px;
-                height: 44px;
+                width: 42px;
+                height: 42px;
                 font-size: 1.2rem;
             }
             .menu-card-v2 h3 {
-                font-size: 0.95rem;
-            }
-            .menu-card-v2 p {
-                font-size: 0.8rem;
+                font-size: 0.88rem;
             }
             
             .info-programa {
@@ -863,29 +861,19 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             }
             
             .menu-grid {
-                gap: 0.8rem;
+                gap: 0.75rem;
             }
-            
             .menu-card-v2 {
-                padding: 1.2rem;
-                border-radius: 12px;
+                padding: 0.85rem;
+                border-radius: 14px;
             }
             .menu-card-v2 .card-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.1rem;
-                margin-bottom: 0.8rem;
+                width: 38px;
+                height: 38px;
+                font-size: 1.05rem;
             }
             .menu-card-v2 h3 {
-                font-size: 0.9rem;
-            }
-            .menu-card-v2 p {
-                font-size: 0.75rem;
-            }
-            .menu-card-v2 .card-arrow {
-                top: 1.2rem;
-                right: 1rem;
-                font-size: 0.9rem;
+                font-size: 0.82rem;
             }
             
             .info-programa {
@@ -922,8 +910,159 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             }
             
             .menu-card-v2 {
-                padding: 1rem;
+                padding: 0.75rem;
             }
+            .menu-card-v2 h3 {
+                font-size: 0.78rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           MÓVIL ESTUDIANTE: grid cuadrado + bottom-nav
+           Solo aplica con max-width:768px y rol estudiante
+        ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            body[data-rol="estudiante"] .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.85rem;
+            }
+            body[data-rol="estudiante"] .menu-card-v2 {
+                aspect-ratio: 1 / 1;
+                padding: 1rem;
+                border-radius: 18px;
+                justify-content: space-between;
+                opacity: 0;
+                animation: card-pop .5s cubic-bezier(.34,1.56,.64,1) forwards;
+                will-change: transform, opacity;
+            }
+            body[data-rol="estudiante"] .menu-card-v2 p { display: none; }
+            body[data-rol="estudiante"] .menu-card-v2 .card-arrow { display: none; }
+            body[data-rol="estudiante"] .menu-card-v2 .card-icon {
+                width: 44px; height: 44px; margin-bottom: 0;
+            }
+            body[data-rol="estudiante"] .menu-card-v2 .card-icon svg {
+                width: 22px; height: 22px;
+            }
+            body[data-rol="estudiante"] .menu-card-v2 h3 {
+                font-size: 0.88rem;
+                margin: 0;
+                line-height: 1.25;
+            }
+
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(1)  { animation-delay: .04s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(2)  { animation-delay: .08s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(3)  { animation-delay: .12s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(4)  { animation-delay: .16s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(5)  { animation-delay: .20s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(6)  { animation-delay: .24s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(7)  { animation-delay: .28s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(8)  { animation-delay: .32s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(9)  { animation-delay: .36s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(10) { animation-delay: .40s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(11) { animation-delay: .44s; }
+            body[data-rol="estudiante"] .menu-card-v2:nth-child(12) { animation-delay: .48s; }
+
+            body[data-rol="estudiante"] .menu-card-v2:active {
+                transform: scale(.94);
+                box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+                transition: transform .08s ease;
+            }
+
+            body[data-rol="estudiante"] .menu-card-v2:hover {
+                transform: none;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+                border-color: rgba(16,185,129,0.1);
+            }
+
+            /* Bottom-nav solo en móvil */
+            body[data-rol="estudiante"] .bottom-nav { display: flex; }
+            body[data-rol="estudiante"] .dashboard-container { padding-bottom: 90px; }
+        }
+
+        @keyframes card-pop {
+            0%   { opacity: 0; transform: translateY(14px) scale(.92); }
+            70%  { opacity: 1; transform: translateY(-2px) scale(1.02); }
+            100% { opacity: 1; transform: translateY(0)    scale(1);   }
+        }
+
+        /* ═══════════════════════════════════════════
+           BOTTOM NAV — oculto por defecto, visible solo en móvil
+        ═══════════════════════════════════════════ */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 64px;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: saturate(180%) blur(14px);
+            -webkit-backdrop-filter: saturate(180%) blur(14px);
+            justify-content: space-around;
+            align-items: stretch;
+            padding: 0 8px calc(env(safe-area-inset-bottom, 0px)) 8px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 -6px 24px rgba(0,0,0,0.06);
+            z-index: 100;
+        }
+        .bn-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            text-decoration: none;
+            color: #9CA3AF;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: color .2s ease, transform .15s ease;
+            position: relative;
+            padding-top: 6px;
+        }
+        .bn-item .bn-icon {
+            width: 26px; height: 26px;
+            display: inline-flex;
+            align-items: center; justify-content: center;
+            transition: transform .2s ease;
+        }
+        .bn-item .bn-icon svg { width: 24px; height: 24px; display: block; }
+        .bn-item.active { color: #059669; }
+        .bn-item.active .bn-icon { transform: translateY(-2px) scale(1.08); }
+        .bn-item:active { transform: scale(.92); }
+        .bn-item.active::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: #059669;
+            animation: bn-dot .35s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes bn-dot {
+            from { opacity: 0; transform: scale(0); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .bn-item.bn-home { transform: translateY(-22px); }
+        .bn-item.bn-home .bn-icon {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            box-shadow: 0 6px 18px rgba(5,150,105,0.45), 0 0 0 4px rgba(255,255,255,0.95);
+            transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease;
+        }
+        .bn-item.bn-home .bn-icon svg { width: 28px; height: 28px; color: white; }
+        .bn-item.bn-home.active .bn-icon {
+            transform: rotate(-4deg) scale(1.06);
+            box-shadow: 0 10px 24px rgba(5,150,105,0.55), 0 0 0 4px rgba(255,255,255,0.95);
+        }
+        .bn-item.bn-home.active::before { display: none; }
+        .bn-item.bn-home span:last-child { margin-top: 4px; font-size: 0.68rem; }
+        .bn-item.bn-home:active { transform: translateY(-22px) scale(.92); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .menu-card-v2 { animation: none !important; opacity: 1 !important; }
+            .bn-item.active::before { animation: none; }
         }
     </style>
 </head>
@@ -1055,43 +1194,43 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
 
             <div class="menu-grid">
                 <a href="notas.php" class="menu-card-v2">
-                    <div class="card-icon verde">📊</div>
+                    <div class="card-icon verde"><?= icon('notas') ?></div>
                     <h3>Mis Notas</h3>
                     <p>Consulta tus calificaciones por bimestre y módulo con detalle de los 3 cortes</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <a href="horarios.php" class="menu-card-v2">
-                    <div class="card-icon azul">📅</div>
+                    <div class="card-icon azul"><?= icon('horario') ?></div>
                     <h3>Mi Horario</h3>
                     <p>Consulta tu horario semanal y mensual de clases</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <a href="mi_cartera.php" class="menu-card-v2">
-                    <div class="card-icon naranja">💳</div>
+                    <div class="card-icon naranja"><?= icon('cartera') ?></div>
                     <h3>Mi Cartera</h3>
                     <p>Consulta tus pagos, cuotas pendientes y estado de cuenta</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <a href="asistencia.php" class="menu-card-v2">
-                    <div class="card-icon verde">📋</div>
+                    <div class="card-icon verde"><?= icon('asistencia') ?></div>
                     <h3>Mi Asistencia</h3>
                     <p>Consulta tu registro de asistencia por módulo y bimestre</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <a href="solicitudes.php" class="menu-card-v2">
-                    <div class="card-icon morado">📋</div>
+                    <div class="card-icon morado"><?= icon('solicitudes') ?></div>
                     <h3>Solicitudes</h3>
                     <p>Certificados, paz y salvo, reparación de equipos y más trámites</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <a href="materiales.php" class="menu-card-v2">
-                    <div class="card-icon naranja">📚</div>
+                    <div class="card-icon naranja"><?= icon('materiales') ?></div>
                     <h3>Material de Clase</h3>
                     <p>Descarga guías, talleres y recursos compartidos por tus profesores</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <a href="evaluar_docente.php" class="menu-card-v2 <?php echo $eval_activa ? 'eval-activa' : 'eval-deshabilitada'; ?>">
-                    <div class="card-icon morado">⭐</div>
+                    <div class="card-icon morado"><?= icon('evaluar') ?></div>
                     <?php if ($eval_activa): ?>
                         <?php if ($eval_pendientes > 0): ?>
                             <span class="eval-badge pendiente"><span class="dot"></span> <?php echo $eval_pendientes; ?> pendiente<?php echo $eval_pendientes > 1 ? 's' : ''; ?></span>
@@ -1106,37 +1245,37 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                         ? ($eval_pendientes > 0 ? 'La evaluación está abierta · Período ' . htmlspecialchars($eval_periodo) : '¡Ya evaluaste a todos tus docentes este período!')
                         : 'La evaluación no está habilitada por el momento'; ?>
                     </p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <?php if (!empty($tiene_ingles)): ?>
                 <a href="/intep/cursoingles/index.php" class="menu-card-v2">
-                    <div class="card-icon morado">🌍</div>
+                    <div class="card-icon morado"><?= icon('ingles') ?></div>
                     <h3>Módulos de Inglés</h3>
                     <p>Aprende con flashcards, juegos y misiones de rol interactivas</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <?php endif; ?>
                 <?php if (!empty($es_primera_infancia)): ?>
                 <a href="/intep/cursoingles/cursoinglespreescolar/index.php" class="menu-card-v2">
-                    <div class="card-icon amarillo">🧸</div>
+                    <div class="card-icon amarillo"><?= icon('kids') ?></div>
                     <h3>INTEP Kids</h3>
                     <p>Practica inglés con juegos, canciones y actividades para tu seminario</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <?php endif; ?>
                 <?php if (!empty($tiene_almacenamiento)): ?>
                 <a href="/intep/cursodealmacenamiento/entrada_curso.php" class="menu-card-v2">
-                    <div class="card-icon naranja">📦</div>
+                    <div class="card-icon naranja"><?= icon('almacen') ?></div>
                     <h3>Curso de Almacenamiento</h3>
                     <p>Técnicas de almacenamiento, recibo y despacho de mercancías · 6 módulos</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <?php endif; ?>
                 <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)">
-                    <div class="card-icon verde">📲</div>
+                    <div class="card-icon verde"><?= icon('app') ?></div>
                     <h3>Descargar App</h3>
                     <p>Instala la aplicación en tu celular para acceso rápido</p>
-                    <span class="card-arrow">→</span>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
             </div>
 
@@ -1301,6 +1440,34 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
         <?php endif; ?>
 
     </div>
+
+    <?php if ($rol === 'estudiante'):
+        $bn_page = basename($_SERVER['PHP_SELF']);
+        $bn = function($file) use ($bn_page) { return $bn_page === $file ? ' active' : ''; };
+    ?>
+    <nav class="bottom-nav" aria-label="Navegación principal">
+        <a href="notas.php" class="bn-item<?php echo $bn('notas.php'); ?>">
+            <span class="bn-icon"><?= icon('notas', ['size' => 24]) ?></span>
+            <span>Notas</span>
+        </a>
+        <a href="horarios.php" class="bn-item<?php echo $bn('horarios.php'); ?>">
+            <span class="bn-icon"><?= icon('horario', ['size' => 24]) ?></span>
+            <span>Horario</span>
+        </a>
+        <a href="dashboard.php" class="bn-item bn-home<?php echo $bn('dashboard.php'); ?>">
+            <span class="bn-icon"><?= icon('home', ['size' => 28]) ?></span>
+            <span>Home</span>
+        </a>
+        <a href="mi_cartera.php" class="bn-item<?php echo $bn('mi_cartera.php'); ?>">
+            <span class="bn-icon"><?= icon('cartera', ['size' => 24]) ?></span>
+            <span>Cartera</span>
+        </a>
+        <a href="perfil.php" class="bn-item<?php echo $bn('perfil.php'); ?>">
+            <span class="bn-icon"><?= icon('perfil', ['size' => 24]) ?></span>
+            <span>Yo</span>
+        </a>
+    </nav>
+    <?php endif; ?>
 
 <script src="/intep/sesion.js"></script>
 

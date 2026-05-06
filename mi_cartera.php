@@ -481,5 +481,6 @@ var al = document.querySelector('.alerta');
 if (al) setTimeout(function() { al.style.transition='opacity 0.5s'; al.style.opacity='0'; setTimeout(function(){ al.remove(); }, 500); }, 5000);
 </script>
 <script src="/intep/sesion.js"></script>
+<?php include __DIR__ . '/partials/student_bottom_nav.php'; ?>
 </body>
 </html>
