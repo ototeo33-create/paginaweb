@@ -334,19 +334,6 @@ $q_doc = "SELECT u.*, p.nombre as programa_nombre
 $res_doc = mysqli_query($conexion, $q_doc);
 while ($d = mysqli_fetch_assoc($res_doc)) $docentes[] = $d;
 
-// Estadísticas por programa
-$stats_programa = [];
-$q_stats = "SELECT p.nombre, p.id,
-                   COUNT(CASE WHEN e.estado = 'activo' THEN 1 END) as activos,
-                   COUNT(e.id) as total
-            FROM programas p
-            LEFT JOIN estudiantes e ON p.id = e.programa_id
-            GROUP BY p.id, p.nombre
-            HAVING total > 0
-            ORDER BY activos DESC";
-$res_stats = mysqli_query($conexion, $q_stats);
-while ($s = mysqli_fetch_assoc($res_stats)) $stats_programa[] = $s;
-
 // Estadísticas de uso de plataforma
 $uso = [];
 $r = mysqli_query($conexion, "SELECT COUNT(*) as n FROM usuarios WHERE rol='estudiante' AND ultimo_login IS NOT NULL AND DATE(ultimo_login) = CURDATE()");
@@ -1124,6 +1111,355 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
             .docente-grid {
                 grid-template-columns: 1fr;
             }
+
+            .uso-stats-row {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .uso-bottom {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* ===== MÓDULO USO DE PLATAFORMA (rediseñado) ===== */
+        .uso-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 8px 30px rgba(5,150,105,0.10), 0 2px 10px rgba(0,0,0,0.04);
+            border: 1px solid rgba(16,185,129,0.12);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .uso-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.4rem 1.6rem 1.2rem;
+            background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(59,130,246,0.05));
+            border-bottom: 1px solid rgba(16,185,129,0.10);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .uso-header h3 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #022C22;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            padding: 0;
+        }
+        .uso-subtitle {
+            margin: 4px 0 0;
+            font-size: 0.78rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .uso-online-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            padding: 0.5rem 0.9rem;
+            border-radius: 99px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.35);
+        }
+        .uso-online-badge .dot-pulse {
+            width: 8px; height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: pulso-uso 1.5s infinite;
+        }
+        .uso-online-badge .ts {
+            font-size: 0.7rem;
+            opacity: 0.85;
+            font-weight: 500;
+            margin-left: 4px;
+        }
+        @keyframes pulso-uso {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.6); }
+            50% { box-shadow: 0 0 0 6px rgba(255,255,255,0); }
+        }
+
+        .uso-stats-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            padding: 0;
+            background: rgba(248,250,252,0.4);
+            border-bottom: 1px solid rgba(16,185,129,0.08);
+        }
+        .uso-stat {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1.1rem 1rem;
+            border-right: 1px solid rgba(16,185,129,0.08);
+            transition: background 0.2s;
+        }
+        .uso-stat:last-child { border-right: none; }
+        .uso-stat:hover { background: rgba(255,255,255,0.7); }
+        .uso-stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .uso-stat-num {
+            font-size: 1.6rem;
+            font-weight: 800;
+            line-height: 1;
+            color: #0f172a;
+        }
+        .uso-stat-lbl {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        .uso-stat.hoy .uso-stat-icon { background: rgba(16,185,129,0.12); color: #059669; }
+        .uso-stat.hoy .uso-stat-num { color: #059669; }
+        .uso-stat.semana .uso-stat-icon { background: rgba(59,130,246,0.12); color: #3B82F6; }
+        .uso-stat.semana .uso-stat-num { color: #3B82F6; }
+        .uso-stat.mes .uso-stat-icon { background: rgba(245,158,11,0.12); color: #D97706; }
+        .uso-stat.mes .uso-stat-num { color: #D97706; }
+        .uso-stat.ingr .uso-stat-icon { background: rgba(100,116,139,0.12); color: #475569; }
+        .uso-stat.ingr .uso-stat-num { color: #334155; font-size: 1.3rem; }
+        .uso-stat.nunca .uso-stat-icon { background: rgba(230,57,70,0.12); color: #e63946; }
+        .uso-stat.nunca .uso-stat-num { color: #e63946; }
+
+        .uso-bottom {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 0;
+        }
+        .uso-col {
+            padding: 1.3rem 1.5rem;
+        }
+        .uso-col + .uso-col {
+            border-left: 1px solid rgba(16,185,129,0.08);
+        }
+        .uso-col h4 {
+            margin: 0 0 0.9rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .online-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+            border: 1px solid #bbf7d0;
+        }
+        .online-row .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        .online-row .dot {
+            width: 8px; height: 8px;
+            background: #10B981;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.18);
+        }
+        .online-row .nombre { font-weight: 700; font-size: 0.88rem; color: #022C22; }
+        .online-row .user { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
+        .online-row .hace { font-size: 0.78rem; color: #059669; font-weight: 700; white-space: nowrap; }
+        .online-empty {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.82rem;
+            padding: 1.2rem;
+            font-style: italic;
+        }
+
+        .reciente-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.55rem 0;
+            border-bottom: 1px dashed rgba(16,185,129,0.12);
+            gap: 8px;
+        }
+        .reciente-row:last-child { border-bottom: none; }
+        .reciente-row .nombre {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .reciente-row .user {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            margin-left: 4px;
+        }
+        .reciente-row .hace {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: #059669;
+            white-space: nowrap;
+        }
+        .reciente-row .hace.viejo { color: #94a3b8; }
+        .uso-empty {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            padding: 1.5rem;
+            font-style: italic;
+        }
+
+        /* ===== SERVIDOR ===== */
+        .srv-section {
+            border-top: 1px solid rgba(16,185,129,0.10);
+            background: linear-gradient(180deg, rgba(15,23,42,0.025), rgba(15,23,42,0.005));
+            padding: 1.2rem 1.5rem 1.4rem;
+        }
+        .srv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .srv-header h4 {
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #1e293b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .srv-host {
+            background: rgba(15,23,42,0.06);
+            color: #475569;
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: 0;
+            font-family: 'SF Mono', Menlo, Consolas, monospace;
+        }
+        .srv-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.72rem;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .srv-dot {
+            width: 4px; height: 4px;
+            background: #cbd5e1;
+            border-radius: 50%;
+        }
+        .srv-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+        }
+        .srv-metric {
+            background: rgba(255,255,255,0.7);
+            border: 1px solid rgba(15,23,42,0.06);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            transition: all 0.25s;
+        }
+        .srv-metric:hover {
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 4px 14px rgba(15,23,42,0.06);
+            transform: translateY(-1px);
+        }
+        .srv-metric-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+        .srv-metric-head span {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+        .srv-metric-head strong {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #0f172a;
+            font-variant-numeric: tabular-nums;
+        }
+        .srv-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(15,23,42,0.06);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        .srv-bar-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg,#10b981,#059669);
+            border-radius: 99px;
+            transition: width 0.6s ease, background 0.4s;
+        }
+        .srv-metric-foot {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+        }
+        .srv-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            padding: 3px 0;
+            color: #475569;
+        }
+        .srv-info-row span:last-child {
+            font-weight: 700;
+            color: #0f172a;
+            font-variant-numeric: tabular-nums;
+        }
+        .srv-metric.srv-ok .srv-metric-head strong { color: #10b981; }
+        .srv-metric.srv-fail .srv-metric-head strong { color: #ef4444; }
+
+        @media (max-width: 768px) {
+            .srv-grid { grid-template-columns: repeat(2, 1fr); }
+            .srv-section { padding: 1rem; }
+        }
+        @media (max-width: 480px) {
+            .srv-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1170,6 +1506,285 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
         </div>
     </div>
 
+    <!-- ============================================ -->
+    <!-- USO DE PLATAFORMA (MÓDULO DEL DASHBOARD) -->
+    <!-- ============================================ -->
+    <div class="uso-card">
+        <div class="uso-header">
+            <div>
+                <h3>📊 Uso de la plataforma</h3>
+                <p class="uso-subtitle">Actividad de estudiantes en tiempo real</p>
+            </div>
+            <div class="uso-online-badge" title="Estudiantes activos en este momento">
+                <span class="dot-pulse"></span>
+                <span><strong id="online-count">0</strong> en línea</span>
+                <span class="ts" id="online-ts"></span>
+            </div>
+        </div>
+
+        <div class="uso-stats-row">
+            <div class="uso-stat hoy">
+                <div class="uso-stat-icon">📅</div>
+                <div>
+                    <div class="uso-stat-num"><?php echo $uso['hoy']; ?></div>
+                    <div class="uso-stat-lbl">Hoy</div>
+                </div>
+            </div>
+            <div class="uso-stat semana">
+                <div class="uso-stat-icon">📈</div>
+                <div>
+                    <div class="uso-stat-num"><?php echo $uso['semana']; ?></div>
+                    <div class="uso-stat-lbl">Últimos 7 días</div>
+                </div>
+            </div>
+            <div class="uso-stat mes">
+                <div class="uso-stat-icon">🗓️</div>
+                <div>
+                    <div class="uso-stat-num"><?php echo $uso['mes']; ?></div>
+                    <div class="uso-stat-lbl">Últimos 30 días</div>
+                </div>
+            </div>
+            <div class="uso-stat ingr">
+                <div class="uso-stat-icon">✅</div>
+                <div>
+                    <div class="uso-stat-num"><?php echo $uso['alguna_vez']; ?>/<?php echo $uso['total_estudiantes']; ?></div>
+                    <div class="uso-stat-lbl">Han ingresado</div>
+                </div>
+            </div>
+            <div class="uso-stat nunca">
+                <div class="uso-stat-icon">⛔</div>
+                <div>
+                    <div class="uso-stat-num"><?php echo $uso['nunca']; ?></div>
+                    <div class="uso-stat-lbl">Nunca han entrado</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uso-bottom">
+            <div class="uso-col">
+                <h4>🟢 En línea ahora</h4>
+                <div id="online-lista">
+                    <div class="online-empty">Cargando...</div>
+                </div>
+            </div>
+            <div class="uso-col">
+                <h4>🕐 Últimos accesos</h4>
+                <?php if (!empty($uso['recientes'])): ?>
+                    <?php foreach ($uso['recientes'] as $ur): ?>
+                        <?php
+                        $diff = time() - strtotime($ur['ultimo_login']);
+                        if ($diff < 3600) { $hace = round($diff/60) . ' min'; $clase = ''; }
+                        elseif ($diff < 86400) { $hace = round($diff/3600) . ' h'; $clase = ''; }
+                        elseif ($diff < 86400*7) { $hace = round($diff/86400) . ' d'; $clase = ''; }
+                        else { $hace = date('d/m/Y', strtotime($ur['ultimo_login'])); $clase = 'viejo'; }
+                        ?>
+                        <div class="reciente-row">
+                            <div style="min-width:0;flex:1;">
+                                <span class="nombre"><?php echo htmlspecialchars($ur['nombre']); ?></span>
+                                <span class="user"><?php echo htmlspecialchars($ur['username']); ?></span>
+                            </div>
+                            <span class="hace <?php echo $clase; ?>"><?php echo $hace; ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="uso-empty">Aún no hay registros de acceso.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- SERVIDOR -->
+        <div class="srv-section">
+            <div class="srv-header">
+                <h4>
+                    🖥️ Estado del servidor
+                    <span class="srv-host" id="srv-host">—</span>
+                </h4>
+                <div class="srv-meta">
+                    <span id="srv-uptime">uptime —</span>
+                    <span class="srv-dot"></span>
+                    <span id="srv-ts">—</span>
+                </div>
+            </div>
+
+            <div class="srv-grid">
+                <div class="srv-metric" id="srv-cpu-card">
+                    <div class="srv-metric-head">
+                        <span>⚙️ CPU</span>
+                        <strong id="srv-cpu-val">—</strong>
+                    </div>
+                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-cpu-bar"></div></div>
+                    <div class="srv-metric-foot" id="srv-cpu-foot">— cores</div>
+                </div>
+
+                <div class="srv-metric" id="srv-ram-card">
+                    <div class="srv-metric-head">
+                        <span>🧠 RAM</span>
+                        <strong id="srv-ram-val">—</strong>
+                    </div>
+                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-ram-bar"></div></div>
+                    <div class="srv-metric-foot" id="srv-ram-foot">— / —</div>
+                </div>
+
+                <div class="srv-metric" id="srv-disk-card">
+                    <div class="srv-metric-head">
+                        <span>💾 Disco</span>
+                        <strong id="srv-disk-val">—</strong>
+                    </div>
+                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-disk-bar"></div></div>
+                    <div class="srv-metric-foot" id="srv-disk-foot">— / —</div>
+                </div>
+
+                <div class="srv-metric" id="srv-temp-card">
+                    <div class="srv-metric-head">
+                        <span>🌡️ Temperatura</span>
+                        <strong id="srv-temp-val">—</strong>
+                    </div>
+                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-temp-bar"></div></div>
+                    <div class="srv-metric-foot" id="srv-temp-foot">—</div>
+                </div>
+
+                <div class="srv-metric" id="srv-load-card">
+                    <div class="srv-metric-head">
+                        <span>📈 Carga</span>
+                        <strong id="srv-load-val">—</strong>
+                    </div>
+                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-load-bar"></div></div>
+                    <div class="srv-metric-foot" id="srv-load-foot">1m · 5m · 15m</div>
+                </div>
+
+                <div class="srv-metric" id="srv-db-card">
+                    <div class="srv-metric-head">
+                        <span>🗄️ MariaDB</span>
+                        <strong id="srv-db-val">—</strong>
+                    </div>
+                    <div class="srv-info-row"><span>Conexiones</span><span id="srv-db-conn">—</span></div>
+                    <div class="srv-info-row"><span>Queries</span><span id="srv-db-q">—</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function srvBarColor(p){
+        if (p >= 85) return 'linear-gradient(90deg,#ef4444,#dc2626)';
+        if (p >= 65) return 'linear-gradient(90deg,#f59e0b,#d97706)';
+        return 'linear-gradient(90deg,#10b981,#059669)';
+    }
+    function srvTempColor(t){
+        if (t >= 75) return 'linear-gradient(90deg,#ef4444,#dc2626)';
+        if (t >= 60) return 'linear-gradient(90deg,#f59e0b,#d97706)';
+        if (t >= 45) return 'linear-gradient(90deg,#3b82f6,#2563eb)';
+        return 'linear-gradient(90deg,#10b981,#059669)';
+    }
+    function setBar(id, percent, color){
+        const b = document.getElementById(id);
+        if (!b) return;
+        b.style.width = Math.min(100, Math.max(0, percent)) + '%';
+        if (color) b.style.background = color;
+    }
+    function cargarServidor(){
+        fetch('api_server_status.php').then(r=>r.json()).then(d=>{
+            document.getElementById('srv-host').textContent = d.host || '';
+            document.getElementById('srv-ts').textContent = 'Act. ' + d.ts;
+            document.getElementById('srv-uptime').textContent = d.uptime ? ('uptime ' + d.uptime.human) : 'uptime —';
+
+            // CPU
+            if (d.cpu !== null && d.cpu !== undefined) {
+                document.getElementById('srv-cpu-val').textContent = d.cpu + '%';
+                setBar('srv-cpu-bar', d.cpu, srvBarColor(d.cpu));
+                document.getElementById('srv-cpu-foot').textContent = (d.cores || '?') + ' núcleos';
+            } else {
+                document.getElementById('srv-cpu-val').textContent = 'N/D';
+            }
+
+            // RAM
+            if (d.mem) {
+                document.getElementById('srv-ram-val').textContent = d.mem.percent + '%';
+                setBar('srv-ram-bar', d.mem.percent, srvBarColor(d.mem.percent));
+                document.getElementById('srv-ram-foot').textContent = d.mem.used_h + ' / ' + d.mem.total_h;
+            } else {
+                document.getElementById('srv-ram-val').textContent = 'N/D';
+            }
+
+            // Disco
+            if (d.disk) {
+                document.getElementById('srv-disk-val').textContent = d.disk.percent + '%';
+                setBar('srv-disk-bar', d.disk.percent, srvBarColor(d.disk.percent));
+                document.getElementById('srv-disk-foot').textContent = d.disk.used_h + ' / ' + d.disk.total_h;
+            } else {
+                document.getElementById('srv-disk-val').textContent = 'N/D';
+            }
+
+            // Temp
+            if (d.temp && d.temp.main) {
+                const t = d.temp.main;
+                document.getElementById('srv-temp-val').textContent = t.toFixed(1) + '°C';
+                setBar('srv-temp-bar', Math.min(100, t / 90 * 100), srvTempColor(t));
+                const zonas = (d.temp.zones || []).slice(0,3).map(z => `${z.type}: ${z.value}°`).join(' · ');
+                document.getElementById('srv-temp-foot').textContent = zonas || 'sensores —';
+            } else {
+                document.getElementById('srv-temp-val').textContent = 'N/D';
+                document.getElementById('srv-temp-foot').textContent = 'Sin sensor disponible';
+            }
+
+            // Carga
+            if (d.load) {
+                document.getElementById('srv-load-val').textContent = d.load['1m'].toFixed(2);
+                const cores = d.cores || 1;
+                const pct = Math.min(100, d.load['1m'] / cores * 100);
+                setBar('srv-load-bar', pct, srvBarColor(pct));
+                document.getElementById('srv-load-foot').textContent =
+                    `${d.load['1m'].toFixed(2)} · ${d.load['5m'].toFixed(2)} · ${d.load['15m'].toFixed(2)}`;
+            } else {
+                document.getElementById('srv-load-val').textContent = 'N/D';
+            }
+
+            // DB
+            if (d.db) {
+                document.getElementById('srv-db-val').textContent = '✓';
+                document.getElementById('srv-db-card').classList.add('srv-ok');
+                document.getElementById('srv-db-conn').textContent = d.db.Threads_connected || '—';
+                document.getElementById('srv-db-q').textContent = d.db.Queries
+                    ? Number(d.db.Queries).toLocaleString() : '—';
+            } else {
+                document.getElementById('srv-db-val').textContent = '✗';
+                document.getElementById('srv-db-card').classList.add('srv-fail');
+            }
+        }).catch(()=>{
+            document.getElementById('srv-ts').textContent = 'error';
+        });
+    }
+    cargarServidor();
+    setInterval(cargarServidor, 15000);
+
+    function cargarOnlineDash(){
+        fetch('api_online.php').then(r=>r.json()).then(d=>{
+            document.getElementById('online-count').textContent = d.total;
+            document.getElementById('online-ts').textContent = '· ' + d.ts;
+            const lista = document.getElementById('online-lista');
+            if (!d.usuarios || d.usuarios.length === 0) {
+                lista.innerHTML = '<p class="online-empty">Ningún estudiante conectado en este momento.</p>';
+            } else {
+                lista.innerHTML = d.usuarios.map(u => `
+                    <div class="online-row">
+                        <div class="left">
+                            <span class="dot"></span>
+                            <div style="min-width:0;">
+                                <div class="nombre">${u.nombre}</div>
+                                <div class="user">${u.username}</div>
+                            </div>
+                        </div>
+                        <span class="hace">${u.hace}</span>
+                    </div>`).join('');
+            }
+        }).catch(()=>{
+            document.getElementById('online-lista').innerHTML = '<p class="online-empty">No se pudo cargar.</p>';
+        });
+    }
+    cargarOnlineDash();
+    setInterval(cargarOnlineDash, 30000);
+    </script>
+
     <!-- TABS -->
     <div class="tabs-admin">
         <button class="tab-admin activo" onclick="mostrarPanel('crear', this)">➕ Crear Estudiante</button>
@@ -1181,9 +1796,6 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
         </button>
         <button class="tab-admin" onclick="mostrarPanel('docentes', this)">
             👨‍🏫 Docentes <span class="contador"><?php echo count($docentes); ?></span>
-        </button>
-        <button class="tab-admin" onclick="mostrarPanel('estadisticas', this)">
-            📊 Estadísticas
         </button>
     </div>
 
@@ -1494,172 +2106,6 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- PANEL: ESTADÍSTICAS -->
-    <!-- ============================================ -->
-    <div class="panel-admin" id="panel-estadisticas">
-
-        <!-- EN LÍNEA AHORA -->
-        <div class="card" style="margin-bottom:1.5rem;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-                <h3 style="display:flex;align-items:center;gap:8px;margin:0;">
-                    <span style="width:10px;height:10px;background:#22c55e;border-radius:50%;display:inline-block;animation:pulso 1.5s infinite;"></span>
-                    En línea ahora
-                    <span id="online-count" style="background:#22c55e;color:white;font-size:0.8rem;padding:2px 10px;border-radius:20px;font-weight:700;">0</span>
-                </h3>
-                <span id="online-ts" style="font-size:0.75rem;color:#aaa;"></span>
-            </div>
-            <div id="online-lista"><p style="color:#aaa;text-align:center;padding:1rem;font-size:0.9rem;">Cargando...</p></div>
-        </div>
-        <style>@keyframes pulso{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}</style>
-        <script>
-        function cargarOnline(){
-            fetch('api_online.php').then(r=>r.json()).then(d=>{
-                document.getElementById('online-count').textContent=d.total;
-                document.getElementById('online-ts').textContent='Actualizado: '+d.ts;
-                const lista=document.getElementById('online-lista');
-                if(d.usuarios.length===0){
-                    lista.innerHTML='<p style="color:#aaa;text-align:center;padding:1rem;font-size:0.9rem;">Ningún estudiante conectado en este momento.</p>';
-                }else{
-                    lista.innerHTML=d.usuarios.map(u=>`
-                        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:8px;margin-bottom:6px;background:#f0fdf4;border:1px solid #bbf7d0;">
-                            <div style="display:flex;align-items:center;gap:10px;">
-                                <span style="width:8px;height:8px;background:#22c55e;border-radius:50%;flex-shrink:0;"></span>
-                                <div><div style="font-weight:600;font-size:0.9rem;">${u.nombre}</div><div style="font-size:0.75rem;color:#666;">${u.username}</div></div>
-                            </div>
-                            <span style="font-size:0.8rem;color:#059669;font-weight:600;">${u.hace}</span>
-                        </div>`).join('');
-                }
-            }).catch(()=>{});
-        }
-        cargarOnline();
-        setInterval(cargarOnline,30000);
-        </script>
-
-        <!-- USO DE PLATAFORMA -->
-        <div class="card" style="margin-bottom:1.5rem;">
-            <h3 style="margin-bottom:1.2rem;">📱 Uso de Plataforma</h3>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin-bottom:1.5rem;">
-                <div style="background:#F0FDF4; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #BBF7D0;">
-                    <div style="font-size:2rem; font-weight:800; color:#059669;"><?php echo $uso['hoy']; ?></div>
-                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Hoy</div>
-                </div>
-                <div style="background:#EFF6FF; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #BFDBFE;">
-                    <div style="font-size:2rem; font-weight:800; color:#3B82F6;"><?php echo $uso['semana']; ?></div>
-                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Últimos 7 días</div>
-                </div>
-                <div style="background:#FFFBEB; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #FDE68A;">
-                    <div style="font-size:2rem; font-weight:800; color:#D97706;"><?php echo $uso['mes']; ?></div>
-                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Últimos 30 días</div>
-                </div>
-                <div style="background:#F3F4F6; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #E5E7EB;">
-                    <div style="font-size:2rem; font-weight:800; color:#374151;"><?php echo $uso['alguna_vez']; ?>/<?php echo $uso['total_estudiantes']; ?></div>
-                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Han ingresado</div>
-                </div>
-                <div style="background:#FFF1F2; border-radius:12px; padding:1.2rem; text-align:center; border:2px solid #FECDD3;">
-                    <div style="font-size:2rem; font-weight:800; color:#e63946;"><?php echo $uso['nunca']; ?></div>
-                    <div style="font-size:0.8rem; color:#666; margin-top:4px;">Nunca han entrado</div>
-                </div>
-            </div>
-            <?php if (!empty($uso['recientes'])): ?>
-            <h4 style="margin-bottom:0.8rem; color:#444; font-size:0.95rem;">🕐 Últimos 10 accesos</h4>
-            <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
-                    <thead>
-                        <tr style="background:#f9fafb;">
-                            <th style="padding:8px 12px; text-align:left; color:#666; font-weight:600; border-bottom:2px solid #eee;">Estudiante</th>
-                            <th style="padding:8px 12px; text-align:left; color:#666; font-weight:600; border-bottom:2px solid #eee;">Usuario</th>
-                            <th style="padding:8px 12px; text-align:left; color:#666; font-weight:600; border-bottom:2px solid #eee;">Último ingreso</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($uso['recientes'] as $ur): ?>
-                        <tr style="border-bottom:1px solid #f0f0f0;">
-                            <td style="padding:8px 12px; font-weight:500;"><?php echo htmlspecialchars($ur['nombre']); ?></td>
-                            <td style="padding:8px 12px; color:#666;"><?php echo htmlspecialchars($ur['username']); ?></td>
-                            <td style="padding:8px 12px; color:#059669; font-weight:600;">
-                                <?php
-                                $diff = time() - strtotime($ur['ultimo_login']);
-                                if ($diff < 3600) echo round($diff/60) . ' min atrás';
-                                elseif ($diff < 86400) echo round($diff/3600) . ' h atrás';
-                                else echo date('d/m/Y H:i', strtotime($ur['ultimo_login']));
-                                ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <?php else: ?>
-            <p style="color:#aaa; text-align:center; padding:1rem;">Aún no hay registros de acceso. Se registran cuando los estudiantes inicien sesión.</p>
-            <?php endif; ?>
-        </div>
-
-        <div class="card">
-            <h3>📊 Estudiantes por Programa</h3>
-            <?php if (empty($stats_programa)): ?>
-                <p style="color:#aaa; text-align:center; padding:2rem;">No hay datos estadísticos aún.</p>
-            <?php else: ?>
-                <?php 
-                $max_activos = max(array_column($stats_programa, 'activos'));
-                $max_activos = $max_activos > 0 ? $max_activos : 1;
-                ?>
-                <div class="programa-stats-list">
-                    <?php foreach ($stats_programa as $sp): ?>
-                    <div class="programa-stat-item">
-                        <span class="prog-name"><?php echo htmlspecialchars($sp['nombre']); ?></span>
-                        <div class="barra-progreso">
-                            <div class="barra-progreso-fill" style="width:<?php echo ($sp['activos'] / $max_activos) * 100; ?>%"></div>
-                        </div>
-                        <span class="prog-count"><?php echo $sp['activos']; ?></span>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <div class="admin-grid" style="margin-top:1.5rem;">
-            <div class="card">
-                <h3>📈 Resumen General</h3>
-                <div style="display:flex; flex-direction:column; gap:0.8rem;">
-                    <div style="display:flex; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid #f0f0f0;">
-                        <span style="color:#666;">Total estudiantes registrados</span>
-                        <strong><?php echo count($estudiantes_activos) + count($estudiantes_inactivos); ?></strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid #f0f0f0;">
-                        <span style="color:#666;">Estudiantes activos</span>
-                        <strong style="color:#059669;"><?php echo count($estudiantes_activos); ?></strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid #f0f0f0;">
-                        <span style="color:#666;">Estudiantes inactivos</span>
-                        <strong style="color:#e63946;"><?php echo count($estudiantes_inactivos); ?></strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; padding:0.6rem 0; border-bottom:1px solid #f0f0f0;">
-                        <span style="color:#666;">Docentes registrados</span>
-                        <strong style="color:#3B82F6;"><?php echo count($docentes); ?></strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; padding:0.6rem 0;">
-                        <span style="color:#666;">Programas disponibles</span>
-                        <strong style="color:#F59E0B;"><?php echo count($programas); ?></strong>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <h3>💡 Acciones Rápidas</h3>
-                <div style="display:flex; flex-direction:column; gap:0.8rem;">
-                    <a href="gestionar_modulos.php" style="display:block; padding:0.8rem 1rem; background:#F0FDF4; border-radius:8px; text-decoration:none; color:#333; font-weight:600; transition:background 0.2s;">
-                        📦 Gestionar Módulos →
-                    </a>
-                    <a href="ingresar_notas.php" style="display:block; padding:0.8rem 1rem; background:#F0FDF4; border-radius:8px; text-decoration:none; color:#333; font-weight:600; transition:background 0.2s;">
-                        📝 Ingresar Notas →
-                    </a>
-                    <a href="gestionar_horarios.php" style="display:block; padding:0.8rem 1rem; background:#F0FDF4; border-radius:8px; text-decoration:none; color:#333; font-weight:600; transition:background 0.2s;">
-                        📅 Gestionar Horarios →
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
 
 </div>
 
