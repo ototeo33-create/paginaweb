@@ -1350,7 +1350,13 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                 <a href="admin/index.php" class="menu-card-v2">
                     <div class="card-icon rojo">⚙️</div>
                     <h3>Panel Admin</h3>
-                    <p>Gestiona estudiantes, docentes y cuentas del sistema</p>
+                    <p>Monitorea uso de la plataforma y estado del servidor</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="admin/estudiantes.php" class="menu-card-v2">
+                    <div class="card-icon verde">👥</div>
+                    <h3>Creación de Estudiantes</h3>
+                    <p>Gestiona estudiantes, docentes, contraseñas e historial</p>
                     <span class="card-arrow">→</span>
                 </a>
                 <a href="admin/gestionar_modulos.php" class="menu-card-v2">
