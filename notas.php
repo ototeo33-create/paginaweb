@@ -49,7 +49,7 @@ if ($stmt) {
     $resultado = mysqli_stmt_get_result($stmt);
 
     while ($fila = mysqli_fetch_assoc($resultado)) {
-        $bimestre = $fila['bimestre'];
+        $bimestre = $fila['bimestre'] ?? 0;
         if (!isset($notas_por_bimestre[$bimestre])) {
             $notas_por_bimestre[$bimestre] = [];
         }
