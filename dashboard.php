@@ -976,7 +976,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
 
             /* Bottom-nav solo en móvil */
             body[data-rol="estudiante"] .bottom-nav { display: flex; }
-            body[data-rol="estudiante"] .dashboard-container { padding-bottom: 90px; }
+            body[data-rol="estudiante"] .dashboard-container { padding-bottom: 100px; }
         }
 
         @keyframes card-pop {
@@ -991,16 +991,17 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
         .bottom-nav {
             display: none;
             position: fixed;
-            bottom: 0; left: 0; right: 0;
-            height: 64px;
-            background: rgba(255,255,255,0.96);
-            backdrop-filter: saturate(180%) blur(14px);
-            -webkit-backdrop-filter: saturate(180%) blur(14px);
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            left: 12px; right: 12px;
+            height: 68px;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
             justify-content: space-around;
-            align-items: stretch;
-            padding: 0 8px calc(env(safe-area-inset-bottom, 0px)) 8px;
-            border-top: 1px solid rgba(0,0,0,0.06);
-            box-shadow: 0 -6px 24px rgba(0,0,0,0.06);
+            align-items: center;
+            padding: 0 6px;
+            border-radius: 999px;
+            box-shadow: 0 10px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
             z-index: 100;
         }
         .bn-item {
@@ -1009,14 +1010,14 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 2px;
+            gap: 3px;
             text-decoration: none;
-            color: #9CA3AF;
-            font-size: 0.7rem;
+            color: #374151;
+            font-size: 0.72rem;
             font-weight: 600;
             transition: color .2s ease, transform .15s ease;
-            position: relative;
-            padding-top: 6px;
+            padding: 6px 4px;
+            border-radius: 18px;
         }
         .bn-item .bn-icon {
             width: 26px; height: 26px;
@@ -1024,45 +1025,16 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             align-items: center; justify-content: center;
             transition: transform .2s ease;
         }
-        .bn-item .bn-icon svg { width: 24px; height: 24px; display: block; }
-        .bn-item.active { color: #059669; }
-        .bn-item.active .bn-icon { transform: translateY(-2px) scale(1.08); }
+        .bn-item .bn-icon svg { width: 24px; height: 24px; display: block; stroke-width: 2; }
+        .bn-item.active {
+            color: #059669;
+            font-weight: 700;
+        }
+        .bn-item.active .bn-icon { transform: scale(1.1); }
         .bn-item:active { transform: scale(.92); }
-        .bn-item.active::before {
-            content: '';
-            position: absolute;
-            top: 4px;
-            width: 4px; height: 4px;
-            border-radius: 50%;
-            background: #059669;
-            animation: bn-dot .35s cubic-bezier(.34,1.56,.64,1);
-        }
-        @keyframes bn-dot {
-            from { opacity: 0; transform: scale(0); }
-            to   { opacity: 1; transform: scale(1); }
-        }
-
-        .bn-item.bn-home { transform: translateY(-22px); }
-        .bn-item.bn-home .bn-icon {
-            width: 56px; height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
-            box-shadow: 0 6px 18px rgba(5,150,105,0.45), 0 0 0 4px rgba(255,255,255,0.95);
-            transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease;
-        }
-        .bn-item.bn-home .bn-icon svg { width: 28px; height: 28px; color: white; }
-        .bn-item.bn-home.active .bn-icon {
-            transform: rotate(-4deg) scale(1.06);
-            box-shadow: 0 10px 24px rgba(5,150,105,0.55), 0 0 0 4px rgba(255,255,255,0.95);
-        }
-        .bn-item.bn-home.active::before { display: none; }
-        .bn-item.bn-home span:last-child { margin-top: 4px; font-size: 0.68rem; }
-        .bn-item.bn-home:active { transform: translateY(-22px) scale(.92); }
 
         @media (prefers-reduced-motion: reduce) {
             .menu-card-v2 { animation: none !important; opacity: 1 !important; }
-            .bn-item.active::before { animation: none; }
         }
     </style>
 </head>
@@ -1454,8 +1426,8 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             <span class="bn-icon"><?= icon('horario', ['size' => 24]) ?></span>
             <span>Horario</span>
         </a>
-        <a href="dashboard.php" class="bn-item bn-home<?php echo $bn('dashboard.php'); ?>">
-            <span class="bn-icon"><?= icon('home', ['size' => 28]) ?></span>
+        <a href="dashboard.php" class="bn-item<?php echo $bn('dashboard.php'); ?>">
+            <span class="bn-icon"><?= icon('home', ['size' => 24]) ?></span>
             <span>Home</span>
         </a>
         <a href="mi_cartera.php" class="bn-item<?php echo $bn('mi_cartera.php'); ?>">
