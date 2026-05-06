@@ -1335,59 +1335,92 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
             font-style: italic;
         }
 
-        /* ===== SERVIDOR ===== */
-        .srv-section {
-            border-top: 1px solid rgba(16,185,129,0.10);
-            background: linear-gradient(180deg, rgba(15,23,42,0.025), rgba(15,23,42,0.005));
-            padding: 1.2rem 1.5rem 1.4rem;
+        /* ===== SERVIDOR (módulo independiente) ===== */
+        .srv-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 8px 30px rgba(15,23,42,0.08), 0 2px 10px rgba(0,0,0,0.04);
+            border: 1px solid rgba(15,23,42,0.08);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
         }
-        .srv-header {
+        .srv-card .srv-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            padding: 1.4rem 1.6rem 1.2rem;
+            background: linear-gradient(135deg, rgba(15,23,42,0.04), rgba(59,130,246,0.05));
+            border-bottom: 1px solid rgba(15,23,42,0.06);
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 1rem;
         }
-        .srv-header h4 {
+        .srv-card .srv-header h3 {
             margin: 0;
-            font-size: 0.85rem;
+            font-size: 1.05rem;
             font-weight: 800;
-            color: #1e293b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #0f172a;
+            border: none;
+            padding: 0;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .srv-host {
+        .srv-subtitle {
+            margin: 4px 0 0;
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .srv-subtitle #srv-host {
+            font-family: 'SF Mono', Menlo, Consolas, monospace;
             background: rgba(15,23,42,0.06);
-            color: #475569;
             padding: 2px 10px;
             border-radius: 99px;
-            font-size: 0.7rem;
+            color: #334155;
             font-weight: 600;
-            text-transform: none;
-            letter-spacing: 0;
-            font-family: 'SF Mono', Menlo, Consolas, monospace;
         }
-        .srv-meta {
-            display: flex;
+        .srv-status-badge {
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.72rem;
-            color: #94a3b8;
-            font-weight: 600;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #d1fae5;
+            padding: 0.5rem 0.9rem;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(15,23,42,0.25);
+        }
+        .srv-pulse {
+            width: 8px; height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(16,185,129,0.7);
+            animation: srv-pulse-anim 1.6s infinite;
+        }
+        @keyframes srv-pulse-anim {
+            0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+            70%  { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+            100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
         }
         .srv-dot {
             width: 4px; height: 4px;
             background: #cbd5e1;
             border-radius: 50%;
+            display: inline-block;
         }
         .srv-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.8rem;
+            gap: 0.9rem;
+            padding: 1.3rem 1.5rem 1.5rem;
         }
         .srv-metric {
             background: rgba(255,255,255,0.7);
@@ -1455,8 +1488,8 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
         .srv-metric.srv-fail .srv-metric-head strong { color: #ef4444; }
 
         @media (max-width: 768px) {
-            .srv-grid { grid-template-columns: repeat(2, 1fr); }
-            .srv-section { padding: 1rem; }
+            .srv-grid { grid-template-columns: repeat(2, 1fr); padding: 1rem; }
+            .srv-card .srv-header { padding: 1.1rem 1rem; }
         }
         @media (max-width: 480px) {
             .srv-grid { grid-template-columns: 1fr; }
@@ -1591,75 +1624,82 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
                 <?php endif; ?>
             </div>
         </div>
+    </div>
 
-        <!-- SERVIDOR -->
-        <div class="srv-section">
-            <div class="srv-header">
-                <h4>
-                    🖥️ Estado del servidor
-                    <span class="srv-host" id="srv-host">—</span>
-                </h4>
-                <div class="srv-meta">
+    <!-- ============================================ -->
+    <!-- ESTADÍSTICAS DEL SERVIDOR (módulo aparte) -->
+    <!-- ============================================ -->
+    <div class="srv-card">
+        <div class="srv-header">
+            <div>
+                <h3>📊 Estadísticas del servidor</h3>
+                <p class="srv-subtitle">
+                    <span id="srv-host">—</span>
+                    <span class="srv-dot"></span>
                     <span id="srv-uptime">uptime —</span>
                     <span class="srv-dot"></span>
                     <span id="srv-ts">—</span>
+                </p>
+            </div>
+            <div class="srv-status-badge" id="srv-status-badge">
+                <span class="srv-pulse"></span>
+                <span>Monitoreo activo</span>
+            </div>
+        </div>
+
+        <div class="srv-grid">
+            <div class="srv-metric" id="srv-cpu-card">
+                <div class="srv-metric-head">
+                    <span>⚙️ CPU</span>
+                    <strong id="srv-cpu-val">—</strong>
                 </div>
+                <div class="srv-bar"><div class="srv-bar-fill" id="srv-cpu-bar"></div></div>
+                <div class="srv-metric-foot" id="srv-cpu-foot">— cores</div>
             </div>
 
-            <div class="srv-grid">
-                <div class="srv-metric" id="srv-cpu-card">
-                    <div class="srv-metric-head">
-                        <span>⚙️ CPU</span>
-                        <strong id="srv-cpu-val">—</strong>
-                    </div>
-                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-cpu-bar"></div></div>
-                    <div class="srv-metric-foot" id="srv-cpu-foot">— cores</div>
+            <div class="srv-metric" id="srv-ram-card">
+                <div class="srv-metric-head">
+                    <span>🧠 RAM</span>
+                    <strong id="srv-ram-val">—</strong>
                 </div>
+                <div class="srv-bar"><div class="srv-bar-fill" id="srv-ram-bar"></div></div>
+                <div class="srv-metric-foot" id="srv-ram-foot">— / —</div>
+            </div>
 
-                <div class="srv-metric" id="srv-ram-card">
-                    <div class="srv-metric-head">
-                        <span>🧠 RAM</span>
-                        <strong id="srv-ram-val">—</strong>
-                    </div>
-                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-ram-bar"></div></div>
-                    <div class="srv-metric-foot" id="srv-ram-foot">— / —</div>
+            <div class="srv-metric" id="srv-disk-card">
+                <div class="srv-metric-head">
+                    <span>💾 Disco</span>
+                    <strong id="srv-disk-val">—</strong>
                 </div>
+                <div class="srv-bar"><div class="srv-bar-fill" id="srv-disk-bar"></div></div>
+                <div class="srv-metric-foot" id="srv-disk-foot">— / —</div>
+            </div>
 
-                <div class="srv-metric" id="srv-disk-card">
-                    <div class="srv-metric-head">
-                        <span>💾 Disco</span>
-                        <strong id="srv-disk-val">—</strong>
-                    </div>
-                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-disk-bar"></div></div>
-                    <div class="srv-metric-foot" id="srv-disk-foot">— / —</div>
+            <div class="srv-metric" id="srv-temp-card">
+                <div class="srv-metric-head">
+                    <span>🌡️ Temperatura</span>
+                    <strong id="srv-temp-val">—</strong>
                 </div>
+                <div class="srv-bar"><div class="srv-bar-fill" id="srv-temp-bar"></div></div>
+                <div class="srv-metric-foot" id="srv-temp-foot">—</div>
+            </div>
 
-                <div class="srv-metric" id="srv-temp-card">
-                    <div class="srv-metric-head">
-                        <span>🌡️ Temperatura</span>
-                        <strong id="srv-temp-val">—</strong>
-                    </div>
-                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-temp-bar"></div></div>
-                    <div class="srv-metric-foot" id="srv-temp-foot">—</div>
+            <div class="srv-metric" id="srv-load-card">
+                <div class="srv-metric-head">
+                    <span>📈 Carga</span>
+                    <strong id="srv-load-val">—</strong>
                 </div>
+                <div class="srv-bar"><div class="srv-bar-fill" id="srv-load-bar"></div></div>
+                <div class="srv-metric-foot" id="srv-load-foot">1m · 5m · 15m</div>
+            </div>
 
-                <div class="srv-metric" id="srv-load-card">
-                    <div class="srv-metric-head">
-                        <span>📈 Carga</span>
-                        <strong id="srv-load-val">—</strong>
-                    </div>
-                    <div class="srv-bar"><div class="srv-bar-fill" id="srv-load-bar"></div></div>
-                    <div class="srv-metric-foot" id="srv-load-foot">1m · 5m · 15m</div>
+            <div class="srv-metric" id="srv-db-card">
+                <div class="srv-metric-head">
+                    <span>🗄️ MariaDB</span>
+                    <strong id="srv-db-val">—</strong>
                 </div>
-
-                <div class="srv-metric" id="srv-db-card">
-                    <div class="srv-metric-head">
-                        <span>🗄️ MariaDB</span>
-                        <strong id="srv-db-val">—</strong>
-                    </div>
-                    <div class="srv-info-row"><span>Conexiones</span><span id="srv-db-conn">—</span></div>
-                    <div class="srv-info-row"><span>Queries</span><span id="srv-db-q">—</span></div>
-                </div>
+                <div class="srv-info-row"><span>Conexiones</span><span id="srv-db-conn">—</span></div>
+                <div class="srv-info-row"><span>Queries</span><span id="srv-db-q">—</span></div>
             </div>
         </div>
     </div>
