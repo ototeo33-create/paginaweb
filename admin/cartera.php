@@ -13,6 +13,7 @@ if ($_SESSION['usuario_rol'] !== 'admin') {
 $mensaje = '';
 $tipo_msg = '';
 $vista = $_GET['vista'] ?? 'dashboard';
+$csrf_alertas = csrf_token();
 
 // ============================================
 // ACCIONES POST
@@ -575,8 +576,13 @@ $pct_recaudo = $stats['total_facturado'] > 0
                                     <span class="badge-estado badge-anulado">— Sin cobros</span>
                                 <?php endif; ?>
                             </td>
-                            <td>
+                            <td style="display:flex;gap:0.3rem;flex-wrap:wrap;">
                                 <a href="?vista=estado_cuenta&est_id=<?php echo $e['id']; ?>" class="btn-sm btn-ver">Ver cuenta</a>
+                                <button type="button" class="btn-sm" title="Hacer titilar Cartera para este estudiante"
+                                        style="background:#F59E0B;color:white;border:none;cursor:pointer;padding:0.35rem 0.7rem;border-radius:8px;font-weight:600;"
+                                        onclick='dispararAlertaCartera([<?= (int)$e['id'] ?>], this)'>
+                                    🔔
+                                </button>
                             </td>
                         </tr>
                         <?php endwhile; ?>
@@ -584,6 +590,44 @@ $pct_recaudo = $stats['total_facturado'] > 0
                 </table>
             </div>
         </div>
+
+        <script>
+        // CSRF + helpers de alerta también disponibles en la pestaña estudiantes
+        if (!window.__csrfAlertas) {
+            window.__csrfAlertas = '<?= htmlspecialchars($csrf_alertas, ENT_QUOTES, 'UTF-8') ?>';
+        }
+        if (typeof dispararAlertaCartera !== 'function') {
+            window.dispararAlertaCartera = async function (ids, btn) {
+                if (!Array.isArray(ids) || ids.length === 0) return;
+                const original = btn.textContent;
+                btn.disabled = true; btn.textContent = '...';
+                try {
+                    const r = await fetch('api_alertas_admin.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            modulo: 'cartera', accion: 'disparar',
+                            estudiante_ids: ids, csrf_token: window.__csrfAlertas
+                        })
+                    });
+                    const d = await r.json();
+                    if (d.csrf_token) window.__csrfAlertas = d.csrf_token;
+                    if (d.ok) {
+                        btn.textContent = '✓';
+                        btn.style.background = '#10B981';
+                    } else {
+                        alert('Error: ' + (d.error || 'no se pudo'));
+                        btn.textContent = original;
+                    }
+                } catch (e) {
+                    alert('Error de red.');
+                    btn.textContent = original;
+                } finally {
+                    setTimeout(() => { btn.disabled = false; }, 1500);
+                }
+            };
+        }
+        </script>
 
     <!-- ============================================ -->
     <!-- VISTA: ESTADO DE CUENTA INDIVIDUAL -->
@@ -836,7 +880,7 @@ $pct_recaudo = $stats['total_facturado'] > 0
         <div class="card">
             <div class="card-title">🚨 Estudiantes con Cobros Vencidos</div>
             <?php
-            $morosos = mysqli_query($conexion, 
+            $morosos = mysqli_query($conexion,
                 "SELECT e.id, e.nombre, e.documento, p.nombre as programa,
                         COUNT(c.id) as cobros_vencidos,
                         SUM(c.saldo) as deuda_vencida,
@@ -847,14 +891,39 @@ $pct_recaudo = $stats['total_facturado'] > 0
                  WHERE c.estado = 'vencido'
                  GROUP BY e.id
                  ORDER BY deuda_vencida DESC");
+            $morosos_ids = [];
+            $morosos_rows = [];
+            while ($m = mysqli_fetch_assoc($morosos)) {
+                $morosos_ids[] = (int)$m['id'];
+                $morosos_rows[] = $m;
+            }
             ?>
+
+            <?php if (!empty($morosos_ids)): ?>
+            <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:0.9rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;">
+                <div style="font-size:0.92rem;color:#78350F;">
+                    🔔 Notifica a los <strong><?= count($morosos_ids) ?></strong> estudiantes en mora: hará titilar la tarjeta <strong>Mi Cartera</strong> en su dashboard hasta que entren al módulo.
+                </div>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <button type="button" class="btn-sm btn-ver" style="background:#F59E0B;color:white;border:none;cursor:pointer;"
+                            onclick='dispararAlertaCartera(<?= json_encode($morosos_ids) ?>, this)'>
+                        🔔 Hacer titilar a todos
+                    </button>
+                    <button type="button" class="btn-sm" style="background:#E5E7EB;color:#374151;border:none;cursor:pointer;padding:0.45rem 0.9rem;border-radius:8px;font-weight:600;"
+                            onclick='limpiarAlertaCartera(<?= json_encode($morosos_ids) ?>, this)'>
+                        Apagar titileo
+                    </button>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <div class="tabla-wrap">
                 <table>
                     <thead><tr><th>Estudiante</th><th>Documento</th><th>Programa</th><th>Cobros Vencidos</th><th>Deuda Vencida</th><th>En mora desde</th><th>Acción</th></tr></thead>
                     <tbody>
-                        <?php if (mysqli_num_rows($morosos) === 0): ?>
+                        <?php if (empty($morosos_rows)): ?>
                             <tr><td colspan="7" style="text-align:center;color:#10B981;padding:2rem;">🎉 ¡No hay estudiantes en mora!</td></tr>
-                        <?php else: while ($m = mysqli_fetch_assoc($morosos)): ?>
+                        <?php else: foreach ($morosos_rows as $m): ?>
                         <tr>
                             <td><strong><?php echo htmlspecialchars($m['nombre']); ?></strong></td>
                             <td><?php echo $m['documento']; ?></td>
@@ -862,13 +931,93 @@ $pct_recaudo = $stats['total_facturado'] > 0
                             <td><span class="badge-estado badge-vencido"><?php echo $m['cobros_vencidos']; ?> cobro(s)</span></td>
                             <td style="font-weight:800;color:#EF4444;font-size:1rem;">$<?php echo number_format($m['deuda_vencida'], 0, ',', '.'); ?></td>
                             <td style="color:#991B1B;font-size:0.85rem;"><?php echo date('d/m/Y', strtotime($m['desde'])); ?></td>
-                            <td><a href="?vista=estado_cuenta&est_id=<?php echo $m['id']; ?>" class="btn-sm btn-ver">Ver cuenta</a></td>
+                            <td style="display:flex;gap:0.3rem;flex-wrap:wrap;">
+                                <a href="?vista=estado_cuenta&est_id=<?php echo $m['id']; ?>" class="btn-sm btn-ver">Ver cuenta</a>
+                                <button type="button" class="btn-sm" title="Hacer titilar Cartera para este estudiante"
+                                        style="background:#F59E0B;color:white;border:none;cursor:pointer;padding:0.35rem 0.7rem;border-radius:8px;font-weight:600;"
+                                        onclick='dispararAlertaCartera([<?= (int)$m['id'] ?>], this)'>
+                                    🔔
+                                </button>
+                            </td>
                         </tr>
-                        <?php endwhile; endif; ?>
+                        <?php endforeach; endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <script>
+        (function () {
+            window.__csrfAlertas = '<?= htmlspecialchars($csrf_alertas, ENT_QUOTES, 'UTF-8') ?>';
+        })();
+
+        async function dispararAlertaCartera(ids, btn) {
+            if (!Array.isArray(ids) || ids.length === 0) return;
+            const original = btn.textContent;
+            btn.disabled = true; btn.textContent = '...';
+            try {
+                const r = await fetch('api_alertas_admin.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        modulo: 'cartera',
+                        accion: 'disparar',
+                        estudiante_ids: ids,
+                        csrf_token: window.__csrfAlertas
+                    })
+                });
+                const d = await r.json();
+                if (d.csrf_token) window.__csrfAlertas = d.csrf_token;
+                if (d.ok) {
+                    btn.textContent = '✓ ' + (d.creadas || 0);
+                    btn.style.background = '#10B981';
+                    if (ids.length > 1) {
+                        alert('Listo: ' + d.creadas + ' alertas creadas (' + d.ya_activas + ' ya estaban activas).');
+                    }
+                } else {
+                    alert('Error: ' + (d.error || 'no se pudo'));
+                    btn.textContent = original;
+                }
+            } catch (e) {
+                alert('Error de red. Recarga la página e intenta de nuevo.');
+                btn.textContent = original;
+            } finally {
+                setTimeout(() => { btn.disabled = false; }, 1500);
+            }
+        }
+
+        async function limpiarAlertaCartera(ids, btn) {
+            if (!Array.isArray(ids) || ids.length === 0) return;
+            const original = btn.textContent;
+            btn.disabled = true; btn.textContent = '...';
+            try {
+                const r = await fetch('api_alertas_admin.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        modulo: 'cartera',
+                        accion: 'limpiar',
+                        estudiante_ids: ids,
+                        csrf_token: window.__csrfAlertas
+                    })
+                });
+                const d = await r.json();
+                if (d.csrf_token) window.__csrfAlertas = d.csrf_token;
+                if (d.ok) {
+                    btn.textContent = '✓';
+                    alert('Apagado: ' + (d.limpiadas || 0) + ' titileos.');
+                } else {
+                    alert('Error: ' + (d.error || 'no se pudo'));
+                }
+                btn.textContent = original;
+            } catch (e) {
+                alert('Error de red.');
+                btn.textContent = original;
+            } finally {
+                setTimeout(() => { btn.disabled = false; }, 1500);
+            }
+        }
+        </script>
 
     <!-- ============================================ -->
     <!-- VISTA: CONCEPTOS DE COBRO -->

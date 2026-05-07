@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once __DIR__ . '/includes/alertas_helper.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
@@ -12,6 +13,9 @@ if ($_SESSION['usuario_rol'] !== 'estudiante') {
 }
 
 $estudiante_id = $_SESSION['estudiante_id'];
+
+// Apagar alerta titilante (si existe) ahora que el estudiante entró al módulo
+marcarAlertaVista($conexion, (int)$estudiante_id, 'cartera');
 $mensaje = '';
 $tipo_msg = '';
 $vista = $_GET['vista'] ?? 'estado';
