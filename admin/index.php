@@ -91,6 +91,28 @@ $r = mysqli_query($conexion, "SELECT u.username, COALESCE(e.nombre, u.username) 
 $uso['recientes'] = [];
 while ($row = mysqli_fetch_assoc($r)) $uso['recientes'][] = $row;
 
+// Estadísticas del curso de inglés
+$ingles = ['total' => 0, 'iniciaron' => 0, 'aprobaron' => 0];
+$ids_ingles = [];
+$rp = mysqli_query($conexion, "SELECT id FROM programas WHERE LOWER(nombre) LIKE '%ingl%'");
+while ($p = mysqli_fetch_assoc($rp)) $ids_ingles[] = (int)$p['id'];
+if (!empty($ids_ingles)) {
+    $in_list = implode(',', $ids_ingles);
+    $r = mysqli_query($conexion, "SELECT COUNT(*) as n FROM estudiantes WHERE estado='activo' AND programa_id IN ($in_list)");
+    $ingles['total'] = (int)(mysqli_fetch_assoc($r)['n'] ?? 0);
+
+    $tabla_idiomas = mysqli_query($conexion, "SHOW TABLES LIKE 'idiomas_nivel'");
+    if ($tabla_idiomas && mysqli_num_rows($tabla_idiomas) > 0) {
+        $r = mysqli_query($conexion, "SELECT COUNT(DISTINCT i.estudiante_id) as n FROM idiomas_nivel i JOIN estudiantes e ON e.id = i.estudiante_id WHERE e.estado='activo' AND e.programa_id IN ($in_list) AND (i.xp_total > 0 OR i.quiz_completado = 1)");
+        $ingles['iniciaron'] = (int)(mysqli_fetch_assoc($r)['n'] ?? 0);
+    }
+    $tabla_prog = mysqli_query($conexion, "SHOW TABLES LIKE 'ingles_cursos_progreso'");
+    if ($tabla_prog && mysqli_num_rows($tabla_prog) > 0) {
+        $r = mysqli_query($conexion, "SELECT COUNT(DISTINCT cp.estudiante_id) as n FROM ingles_cursos_progreso cp JOIN estudiantes e ON e.id = cp.estudiante_id WHERE e.estado='activo' AND e.programa_id IN ($in_list) AND cp.examen_aprobado = 1");
+        $ingles['aprobaron'] = (int)(mysqli_fetch_assoc($r)['n'] ?? 0);
+    }
+}
+
 $msg_parts = $mensaje ? explode('|', $mensaje) : null;
 ?>
 
@@ -1420,6 +1442,58 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
             </div>
         </div>
     </div>
+
+    <!-- ============================================ -->
+    <!-- AVANCE DEL CURSO DE INGLÉS                  -->
+    <!-- ============================================ -->
+    <a href="avance_ingles.php" style="text-decoration:none; color:inherit; display:block;">
+        <div class="ingles-card">
+            <div class="ingles-header">
+                <div>
+                    <h3>📚 Avance del curso de Inglés</h3>
+                    <p class="ingles-subtitle">Seguimiento del progreso de las estudiantes inscritas en programas de inglés</p>
+                </div>
+                <span class="ingles-cta">Ver detalle →</span>
+            </div>
+            <div class="ingles-stats">
+                <div class="ingles-stat">
+                    <div class="ingles-stat-num"><?php echo $ingles['total']; ?></div>
+                    <div class="ingles-stat-lbl">Estudiantes de inglés</div>
+                </div>
+                <div class="ingles-stat verde">
+                    <div class="ingles-stat-num"><?php echo $ingles['iniciaron']; ?></div>
+                    <div class="ingles-stat-lbl">Iniciaron el curso</div>
+                </div>
+                <div class="ingles-stat dorado">
+                    <div class="ingles-stat-num"><?php echo $ingles['aprobaron']; ?></div>
+                    <div class="ingles-stat-lbl">Examen final aprobado</div>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <style>
+        .ingles-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0f9ff 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(16,185,129,0.18);
+            box-shadow: 0 4px 20px rgba(5,150,105,0.08);
+            margin-bottom: 1.5rem;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .ingles-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(5,150,105,0.16); }
+        .ingles-header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; }
+        .ingles-header h3 { margin:0; font-size:1.05rem; font-weight:800; color:#022C22; }
+        .ingles-subtitle { margin:.2rem 0 0; font-size:.82rem; color:#475569; }
+        .ingles-cta { background:#10b981; color:#fff; padding:.4rem .8rem; border-radius:99px; font-size:.78rem; font-weight:700; white-space:nowrap; }
+        .ingles-stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:.8rem; }
+        .ingles-stat { background:rgba(255,255,255,0.7); padding:.8rem 1rem; border-radius:12px; border:1px solid rgba(16,185,129,0.12); }
+        .ingles-stat-num { font-size:1.6rem; font-weight:800; color:#3b82f6; line-height:1; }
+        .ingles-stat.verde .ingles-stat-num { color:#10b981; }
+        .ingles-stat.dorado .ingles-stat-num { color:#f59e0b; }
+        .ingles-stat-lbl { font-size:.72rem; color:#64748b; text-transform:uppercase; letter-spacing:.3px; margin-top:.3rem; }
+    </style>
 
     <script>
     function srvBarColor(p){

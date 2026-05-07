@@ -80,6 +80,17 @@ if ($rol === 'docente') {
     mysqli_stmt_bind_param($stmt2, 'i', $doc_id);
     mysqli_stmt_execute($stmt2);
     $est_doc = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt2));
+
+    // ¿Es docente de inglés? (tiene programa_id apuntando a un programa de inglés)
+    $doc_es_ingles = false;
+    $q_di = mysqli_prepare($conexion,
+        "SELECT p.id FROM usuarios u JOIN programas p ON p.id = u.programa_id
+         WHERE u.id = ? AND LOWER(p.nombre) LIKE '%ingl%' LIMIT 1");
+    if ($q_di) {
+        mysqli_stmt_bind_param($q_di, 'i', $doc_id);
+        mysqli_stmt_execute($q_di);
+        $doc_es_ingles = (bool)mysqli_fetch_assoc(mysqli_stmt_get_result($q_di));
+    }
 }
 
 if ($rol === 'admin') {
@@ -1311,6 +1322,14 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     </p>
                     <span class="card-arrow">→</span>
                 </a>
+                <?php if (!empty($doc_es_ingles)): ?>
+                <a href="admin/avance_ingles.php" class="menu-card-v2">
+                    <div class="card-icon azul">📚</div>
+                    <h3>Avance del curso de Inglés</h3>
+                    <p>Sigue el progreso, XP, racha y módulos completados de tus estudiantes de inglés</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <?php endif; ?>
                 <a href="#" class="menu-card-v2 btn-instalar-app" onclick="instalarApp(event)" style="display:none;">
                     <div class="card-icon verde">📲</div>
                     <h3>Descargar App</h3>
