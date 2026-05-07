@@ -489,6 +489,87 @@ $tipo_estilo   = [
                         </span>
                     <?php endforeach; ?>
                 </div>
+
+                <?php $est_ids_mod = array_map(fn($x) => (int)$x['id'], $estudiantes_modulo); ?>
+                <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:0.8rem 0.9rem;margin:0.8rem 0 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+                    <div style="font-size:0.85rem;color:#78350F;">
+                        🔔 Avisa a estos estudiantes que hay nuevo horario: hará titilar la tarjeta <strong>Mi Horario</strong> en su dashboard.
+                    </div>
+                    <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                        <button type="button" id="btn-titilar-horario"
+                                style="background:#F59E0B;color:white;border:none;cursor:pointer;padding:0.45rem 0.9rem;border-radius:8px;font-weight:700;font-size:0.85rem;"
+                                onclick='dispararAlertaHorarios(<?= json_encode($est_ids_mod) ?>, this)'>
+                            🔔 Hacer titilar Horarios
+                        </button>
+                        <button type="button"
+                                style="background:#E5E7EB;color:#374151;border:none;cursor:pointer;padding:0.45rem 0.9rem;border-radius:8px;font-weight:600;font-size:0.85rem;"
+                                onclick='limpiarAlertaHorarios(<?= json_encode($est_ids_mod) ?>, this)'>
+                            Apagar titileo
+                        </button>
+                    </div>
+                </div>
+                <script>
+                if (!window.__csrfAlertasH) {
+                    window.__csrfAlertasH = '<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>';
+                }
+                async function dispararAlertaHorarios(ids, btn) {
+                    if (!Array.isArray(ids) || ids.length === 0) { alert('Sin estudiantes'); return; }
+                    const original = btn.textContent;
+                    btn.disabled = true; btn.textContent = '...';
+                    try {
+                        const r = await fetch('api_alertas_admin.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                modulo: 'horarios', accion: 'disparar',
+                                estudiante_ids: ids, csrf_token: window.__csrfAlertasH
+                            })
+                        });
+                        const d = await r.json();
+                        if (d.csrf_token) window.__csrfAlertasH = d.csrf_token;
+                        if (d.ok) {
+                            btn.textContent = '✓ ' + (d.creadas || 0) + ' notificadas';
+                            btn.style.background = '#10B981';
+                        } else {
+                            alert('Error: ' + (d.error || 'no se pudo'));
+                            btn.textContent = original;
+                        }
+                    } catch (e) {
+                        alert('Error de red.');
+                        btn.textContent = original;
+                    } finally {
+                        setTimeout(() => { btn.disabled = false; }, 1500);
+                    }
+                }
+                async function limpiarAlertaHorarios(ids, btn) {
+                    if (!Array.isArray(ids) || ids.length === 0) return;
+                    const original = btn.textContent;
+                    btn.disabled = true; btn.textContent = '...';
+                    try {
+                        const r = await fetch('api_alertas_admin.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                modulo: 'horarios', accion: 'limpiar',
+                                estudiante_ids: ids, csrf_token: window.__csrfAlertasH
+                            })
+                        });
+                        const d = await r.json();
+                        if (d.csrf_token) window.__csrfAlertasH = d.csrf_token;
+                        if (d.ok) {
+                            alert('Apagado: ' + (d.limpiadas || 0) + ' titileos.');
+                        } else {
+                            alert('Error: ' + (d.error || 'no se pudo'));
+                        }
+                        btn.textContent = original;
+                    } catch (e) {
+                        alert('Error de red.');
+                        btn.textContent = original;
+                    } finally {
+                        setTimeout(() => { btn.disabled = false; }, 1500);
+                    }
+                }
+                </script>
             <?php endif; ?>
 
             <form method="POST"

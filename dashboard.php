@@ -1,6 +1,7 @@
 <?php
 require_once 'config.php';
 require_once __DIR__ . '/partials/icons.php';
+require_once __DIR__ . '/includes/alertas_helper.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
@@ -9,6 +10,10 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $nombre = $_SESSION['usuario_nombre'];
 $rol    = $_SESSION['usuario_rol'];
+
+// Alertas titilantes para el estudiante (se llenan más abajo si rol = estudiante)
+$alertas = ['cartera' => false, 'horarios' => false, 'evaluacion' => false];
+$csrf_dashboard = csrf_token();
 
 // ============================================
 // DATOS SEGÚN ROL
@@ -61,6 +66,9 @@ if ($rol === 'estudiante') {
                          || stripos($programa_nombre_est, 'recibo') !== false
                          || stripos($programa_nombre_est, 'despacho') !== false
                          || stripos($programa_nombre_est, 'bodega') !== false;
+
+    // Cargar alertas titilantes (cartera/horarios/evaluacion) para este estudiante
+    $alertas = obtenerAlertasEstudiante($conexion, (int)$est_id);
 }
 
 if ($rol === 'docente') {
@@ -505,6 +513,26 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
         .eval-badge.completa  { background: #059669; }
         .eval-badge.inactiva  { background: #9CA3AF; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+        /* Alerta titilante en tarjeta (disparada por admin) */
+        .menu-card-v2.card-pulsing {
+            animation: cardPulse 1.6s ease-in-out infinite;
+            border-color: #F59E0B;
+        }
+        .menu-card-v2.card-pulsing::after {
+            background: linear-gradient(90deg, #F59E0B, #F97316, #F59E0B);
+            opacity: 1;
+        }
+        @keyframes cardPulse {
+            0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+            50%      { box-shadow: 0 0 0 4px rgba(245,158,11,0.35), 0 8px 22px rgba(245,158,11,0.28); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .menu-card-v2.card-pulsing {
+                animation: none;
+                box-shadow: 0 0 0 3px rgba(245,158,11,0.5);
+            }
+        }
 
         .menu-card-v2 .card-arrow {
             position: absolute;
@@ -1171,13 +1199,13 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Consulta tus calificaciones por bimestre y módulo con detalle de los 3 cortes</p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
-                <a href="horarios.php" class="menu-card-v2">
+                <a href="horarios.php" class="menu-card-v2<?= $alertas['horarios'] ? ' card-pulsing' : '' ?>" data-alerta-modulo="horarios">
                     <div class="card-icon azul"><?= icon('horario') ?></div>
                     <h3>Mi Horario</h3>
                     <p>Consulta tu horario semanal y mensual de clases</p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
-                <a href="mi_cartera.php" class="menu-card-v2">
+                <a href="mi_cartera.php" class="menu-card-v2<?= $alertas['cartera'] ? ' card-pulsing' : '' ?>" data-alerta-modulo="cartera">
                     <div class="card-icon naranja"><?= icon('cartera') ?></div>
                     <h3>Mi Cartera</h3>
                     <p>Consulta tus pagos, cuotas pendientes y estado de cuenta</p>
@@ -1201,7 +1229,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Descarga guías, talleres y recursos compartidos por tus profesores</p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
-                <a href="evaluar_docente.php" class="menu-card-v2 <?php echo $eval_activa ? 'eval-activa' : 'eval-deshabilitada'; ?>">
+                <a href="evaluar_docente.php" class="menu-card-v2 <?php echo $eval_activa ? 'eval-activa' : 'eval-deshabilitada'; ?><?= $alertas['evaluacion'] ? ' card-pulsing' : '' ?>" data-alerta-modulo="evaluacion">
                     <div class="card-icon morado"><?= icon('evaluar') ?></div>
                     <?php if ($eval_activa): ?>
                         <?php if ($eval_pendientes > 0): ?>
@@ -1630,5 +1658,29 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/intep/sw.js');
 }
 </script>
+<?php if ($rol === 'estudiante'): ?>
+<script>
+// Marcar alerta como vista al hacer click en una tarjeta titilante.
+// keepalive permite que el fetch se envíe aunque la página esté navegando.
+(function () {
+    var CSRF = '<?= htmlspecialchars($csrf_dashboard, ENT_QUOTES, 'UTF-8') ?>';
+    document.querySelectorAll('.menu-card-v2.card-pulsing[data-alerta-modulo]').forEach(function (a) {
+        a.addEventListener('click', function () {
+            var modulo = a.getAttribute('data-alerta-modulo');
+            if (!modulo) return;
+            try {
+                fetch('api/alertas_estudiante.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    keepalive: true,
+                    body: JSON.stringify({ accion: 'marcar_vista', modulo: modulo, csrf_token: CSRF })
+                });
+            } catch (e) { /* silencioso */ }
+            a.classList.remove('card-pulsing');
+        }, { once: true });
+    });
+})();
+</script>
+<?php endif; ?>
 </body>
 </html>

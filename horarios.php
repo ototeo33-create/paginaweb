@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once __DIR__ . '/includes/alertas_helper.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
@@ -8,6 +9,11 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $rol = $_SESSION['usuario_rol'];
 $estudiante_id = $_SESSION['estudiante_id'] ?? 0;
+
+// Apagar alerta titilante (si existe) ahora que el estudiante entró al módulo
+if ($rol === 'estudiante' && $estudiante_id > 0) {
+    marcarAlertaVista($conexion, (int)$estudiante_id, 'horarios');
+}
 
 // ============================================================
 // FLUJO ADMIN: Asignación de horarios (docente → módulo → form)

@@ -3,8 +3,17 @@
 // Solo se muestra en móvil (max-width: 768px).
 if (($_SESSION['usuario_rol'] ?? '') !== 'estudiante') return;
 require_once __DIR__ . '/icons.php';
+require_once __DIR__ . '/../includes/alertas_helper.php';
 $bn_page   = basename($_SERVER['PHP_SELF']);
 $bn_active = function($file) use ($bn_page) { return $bn_page === $file ? ' active' : ''; };
+
+// Reutilizar $alertas si ya fue calculado (dashboard.php), si no, calcularlo aquí.
+if (!isset($alertas) || !is_array($alertas)) {
+    $alertas = obtenerAlertasEstudiante($GLOBALS['conexion'], (int)($_SESSION['estudiante_id'] ?? 0));
+}
+$bn_pulse = function($mod) use ($alertas) {
+    return !empty($alertas[$mod]) ? ' nav-pulsing' : '';
+};
 ?>
 <style>
 @media (max-width: 768px) {
@@ -47,11 +56,28 @@ $bn_active = function($file) use ($bn_page) { return $bn_page === $file ? ' acti
 .bn-item.active { color: #059669; font-weight: 700; }
 .bn-item.active .bn-icon { transform: scale(1.1); }
 .bn-item:active { transform: scale(.92); }
+
+/* Alerta titilante en bottom-nav (sutil, basada en escala del ícono) */
+.bn-item.nav-pulsing .bn-icon {
+    animation: bnPulse 1.6s ease-in-out infinite;
+    color: #F59E0B;
+}
+.bn-item.nav-pulsing { color: #F59E0B; }
+@keyframes bnPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(245,158,11,0)); }
+    50%      { transform: scale(1.18); filter: drop-shadow(0 0 6px rgba(245,158,11,0.7)); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .bn-item.nav-pulsing .bn-icon {
+        animation: none;
+        filter: drop-shadow(0 0 4px rgba(245,158,11,0.7));
+    }
+}
 </style>
 <nav class="bottom-nav" aria-label="Navegación principal">
     <a href="notas.php"      class="bn-item<?= $bn_active('notas.php') ?>"><span class="bn-icon"><?= icon('notas', ['size' => 24]) ?></span><span>Notas</span></a>
-    <a href="horarios.php"   class="bn-item<?= $bn_active('horarios.php') ?>"><span class="bn-icon"><?= icon('horario', ['size' => 24]) ?></span><span>Horario</span></a>
+    <a href="horarios.php"   class="bn-item<?= $bn_active('horarios.php') . $bn_pulse('horarios') ?>"><span class="bn-icon"><?= icon('horario', ['size' => 24]) ?></span><span>Horario</span></a>
     <a href="dashboard.php"  class="bn-item<?= $bn_active('dashboard.php') ?>"><span class="bn-icon"><?= icon('home', ['size' => 24]) ?></span><span>Home</span></a>
-    <a href="mi_cartera.php" class="bn-item<?= $bn_active('mi_cartera.php') ?>"><span class="bn-icon"><?= icon('cartera', ['size' => 24]) ?></span><span>Cartera</span></a>
+    <a href="mi_cartera.php" class="bn-item<?= $bn_active('mi_cartera.php') . $bn_pulse('cartera') ?>"><span class="bn-icon"><?= icon('cartera', ['size' => 24]) ?></span><span>Cartera</span></a>
     <a href="perfil.php"     class="bn-item<?= $bn_active('perfil.php') ?>"><span class="bn-icon"><?= icon('perfil', ['size' => 24]) ?></span><span>Yo</span></a>
 </nav>

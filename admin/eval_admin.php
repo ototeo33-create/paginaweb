@@ -320,6 +320,89 @@ function badgeTexto($pct) {
                 </div>
             </form>
 
+            <?php if ($eval_activa): ?>
+            <div style="margin-top:14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:0.85rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;">
+                <div style="font-size:0.9rem;color:#78350F;">
+                    🔔 Avisa a <strong>todos los estudiantes</strong>: hará titilar la tarjeta <strong>Evaluar Docentes</strong> en su dashboard.
+                </div>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <button type="button" id="btnTitilarEval"
+                            style="background:#F59E0B;color:white;border:none;cursor:pointer;padding:0.55rem 1rem;border-radius:8px;font-weight:700;font-size:0.9rem;"
+                            onclick="dispararAlertaEval(this)">
+                        🔔 Hacer titilar a todos
+                    </button>
+                    <button type="button"
+                            style="background:#E5E7EB;color:#374151;border:none;cursor:pointer;padding:0.55rem 1rem;border-radius:8px;font-weight:600;font-size:0.9rem;"
+                            onclick="limpiarAlertaEval(this)">
+                        Apagar titileo
+                    </button>
+                </div>
+            </div>
+            <script>
+            (function () {
+                window.__csrfAlertasE = '<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>';
+            })();
+            async function dispararAlertaEval(btn) {
+                if (!confirm('Esto hará titilar la tarjeta de Evaluación Docente para TODOS los estudiantes activos. ¿Continuar?')) return;
+                const original = btn.textContent;
+                btn.disabled = true; btn.textContent = '...';
+                try {
+                    const r = await fetch('api_alertas_admin.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            modulo: 'evaluacion', accion: 'disparar', todos: true,
+                            csrf_token: window.__csrfAlertasE
+                        })
+                    });
+                    const d = await r.json();
+                    if (d.csrf_token) window.__csrfAlertasE = d.csrf_token;
+                    if (d.ok) {
+                        btn.textContent = '✓ ' + (d.creadas || 0) + ' notificadas';
+                        btn.style.background = '#10B981';
+                        alert('Listo: ' + d.creadas + ' alertas creadas (' + d.ya_activas + ' ya estaban activas).');
+                    } else {
+                        alert('Error: ' + (d.error || 'no se pudo'));
+                        btn.textContent = original;
+                    }
+                } catch (e) {
+                    alert('Error de red.');
+                    btn.textContent = original;
+                } finally {
+                    setTimeout(() => { btn.disabled = false; }, 1500);
+                }
+            }
+            async function limpiarAlertaEval(btn) {
+                if (!confirm('¿Apagar el titileo de Evaluación Docente para todos los estudiantes?')) return;
+                const original = btn.textContent;
+                btn.disabled = true; btn.textContent = '...';
+                try {
+                    const r = await fetch('api_alertas_admin.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            modulo: 'evaluacion', accion: 'limpiar', todos: true,
+                            csrf_token: window.__csrfAlertasE
+                        })
+                    });
+                    const d = await r.json();
+                    if (d.csrf_token) window.__csrfAlertasE = d.csrf_token;
+                    if (d.ok) {
+                        alert('Apagados: ' + (d.limpiadas || 0) + ' titileos.');
+                    } else {
+                        alert('Error: ' + (d.error || 'no se pudo'));
+                    }
+                    btn.textContent = original;
+                } catch (e) {
+                    alert('Error de red.');
+                    btn.textContent = original;
+                } finally {
+                    setTimeout(() => { btn.disabled = false; }, 1500);
+                }
+            }
+            </script>
+            <?php endif; ?>
+
             <?php if ($ctrl && $ctrl['fecha_inicio']): ?>
             <p style="margin-top:14px;font-size:0.82em;color:var(--text-light);">
                 <i class="fas fa-clock"></i>

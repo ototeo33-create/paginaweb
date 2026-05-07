@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once __DIR__ . '/includes/alertas_helper.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
@@ -12,6 +13,12 @@ if ($_SESSION['usuario_rol'] !== 'estudiante') {
 
 $nombre = sanitizeInput($_SESSION['usuario_nombre']);
 $csrf = csrf_token();
+
+// Apagar alerta titilante (si existe) ahora que el estudiante entró al módulo
+$_eid_alerta = (int)($_SESSION['estudiante_id'] ?? 0);
+if ($_eid_alerta > 0) {
+    marcarAlertaVista($conexion, $_eid_alerta, 'evaluacion');
+}
 
 // Verificar si hay evaluacion activa
 $res_ctrl = mysqli_query($conexion, "SELECT * FROM eval_control WHERE activa = 1 ORDER BY id DESC LIMIT 1");
