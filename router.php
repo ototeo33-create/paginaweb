@@ -17,6 +17,7 @@ $file = __DIR__ . $path;
 if (is_dir($file)) {
     if (file_exists($file . '/index.php')) {
         $_SERVER['SCRIPT_FILENAME'] = $file . '/index.php';
+        chdir(dirname($file . '/index.php'));
         require $file . '/index.php';
         return true;
     }
@@ -27,6 +28,7 @@ if (file_exists($file)) {
     $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
     if ($ext === 'php') {
         $_SERVER['SCRIPT_FILENAME'] = $file;
+        chdir(dirname($file));
         require $file;
         return true;
     }

@@ -43,94 +43,194 @@ if (!empty($_SESSION['usuario_id']) && !empty($_SESSION['estudiante_id'])) {
     <link rel="icon" href="/intep/favicon/favicon.svg" type="image/svg+xml">
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
-        <div class="logo">
-            <img src="https://institutointep.edu.co/logointep.png" alt="INTEP"
-                 style="height:45px;vertical-align:middle;filter:drop-shadow(0 0 10px rgba(255,255,255,0.3));">
-        </div>
+        <a href="#home" class="brand">
+            <img src="https://institutointep.edu.co/logointep.png" alt="INTEP">
+            <span class="brand-text">
+                <span class="brand-name">INTEP English</span>
+                <span class="brand-subtitle">Aprender con calma, claridad y constancia</span>
+            </span>
+        </a>
+
         <ul class="nav-links">
             <li><a href="#home">Inicio</a></li>
             <li><a href="#features">Metodología</a></li>
-            <li><a href="#courses">Cursos</a></li>
+            <li><a href="#levels">Niveles</a></li>
         </ul>
-        <a href="/intep/login.php" class="btn-primary" style="text-decoration:none;">Iniciar Sesión</a>
+
+        <div class="nav-actions">
+            <a href="#levels" class="btn-secondary">Explorar</a>
+            <a href="/intep/login.php" class="btn-primary">Iniciar sesión</a>
+        </div>
     </nav>
 
-    <!-- Hero -->
-    <header id="home" class="hero">
-        <div class="hero-content">
-            <div class="badge">🚀 Nuevo Curso 2026</div>
-            <h1>Domina el Inglés y <span class="text-gradient">Conquista el Mundo</span></h1>
-            <p>Atraviesa la barrera del idioma con una metodología inmersiva, flashcards, juegos y misiones reales. Tu futuro bilingüe empieza hoy.</p>
-            <div class="hero-buttons">
-                <a href="/intep/login.php" class="btn-primary pulse-animation" style="text-decoration:none;">Ingresar al Portal</a>
-                <a href="#courses" class="btn-secondary" style="text-decoration:none;">Ver Cursos</a>
-            </div>
-        </div>
-        <div class="hero-graphic">
-            <div class="glass-card floating-card-1">
-                <div class="icon">🗣️</div>
-                <div><h4>Conversación</h4><p>Práctica 100% real</p></div>
-            </div>
-            <div class="glass-card floating-card-2">
-                <div class="icon">📈</div>
-                <div><h4>Fluidez</h4><p>Sube de nivel rápido</p></div>
-            </div>
-            <div class="hero-circle"></div>
-        </div>
-    </header>
+    <main>
+        <section class="section-shell hero" id="home">
+            <div class="hero-content">
+                <div class="badge">Nuevo ciclo 2026 · Curso de inglés INTEP</div>
+                <h1>Un curso de inglés más <span class="text-gradient">claro, humano y constante</span>.</h1>
+                <p>
+                    Avanza por módulos breves, ejercicios guiados, juegos suaves y evaluaciones que te muestran exactamente cómo vas.
+                    Menos ruido visual, más enfoque en aprender de verdad.
+                </p>
 
-    <!-- Features -->
-    <section id="features" class="features">
-        <h2>¿Por qué elegir <span class="text-gradient">INTEP</span>?</h2>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🧠</div>
-                <h3>Aprendizaje con IA</h3>
-                <p>Ejercicios generados por inteligencia artificial adaptados a tu nivel y progreso.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎮</div>
-                <h3>Juegos Interactivos</h3>
-                <p>Constructor de oraciones, parejas, vocabulario visual y más. Aprender nunca fue tan divertido.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🏆</div>
-                <h3>Seguimiento Real</h3>
-                <p>Tu progreso queda guardado. Retoma donde lo dejaste desde cualquier dispositivo.</p>
-            </div>
-        </div>
-    </section>
+                <div class="hero-buttons">
+                    <a href="/intep/login.php" class="btn-primary">Entrar al portal</a>
+                    <a href="#levels" class="btn-secondary">Ver niveles</a>
+                </div>
 
-    <!-- Cursos -->
-    <section id="courses" class="cta">
-        <div class="cta-content">
-            <h2>3 Niveles, 24 Módulos</h2>
-            <p>Desde saludos básicos hasta conversaciones complejas. Cada módulo con flashcards, gramática y una misión de rol.</p>
-            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem;">
-                <span style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.4);padding:8px 20px;border-radius:20px;font-weight:600;">A1 Beginner · 8 módulos</span>
-                <span style="background:rgba(236,72,153,0.2);border:1px solid rgba(236,72,153,0.4);padding:8px 20px;border-radius:20px;font-weight:600;">A2 Elementary · 8 módulos</span>
-                <span style="background:rgba(234,179,8,0.2);border:1px solid rgba(234,179,8,0.4);padding:8px 20px;border-radius:20px;font-weight:600;">B1 Intermediate · 8 módulos</span>
+                <div class="hero-meta">
+                    <span class="meta-pill">24 módulos</span>
+                    <span class="meta-pill">3 niveles</span>
+                    <span class="meta-pill">Progreso guardado</span>
+                    <span class="meta-pill">Práctica diaria de 15 min</span>
+                </div>
             </div>
-            <a href="/intep/login.php" class="btn-primary large-btn" style="text-decoration:none;display:inline-block;">
-                Acceder con mi cuenta INTEP
-            </a>
-        </div>
-    </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="logo">
-                <img src="https://institutointep.edu.co/logointep.png" alt="INTEP"
-                     style="height:45px;vertical-align:middle;filter:drop-shadow(0 0 10px rgba(255,255,255,0.3));">
+            <div class="hero-panel">
+                <div class="preview-window">
+                    <div class="preview-top">
+                        <span class="preview-badge">Ruta del estudiante</span>
+                        <span class="preview-status">Interfaz calmada</span>
+                    </div>
+
+                    <h2>Tu avance se siente ligero y entendible.</h2>
+                    <p>Todo está organizado para que sepas qué estudiar, qué ya completaste y qué sigue después.</p>
+
+                    <div class="preview-progress">
+                        <div class="preview-progress-bar"></div>
+                    </div>
+
+                    <div class="preview-steps">
+                        <div class="preview-step done">
+                            <span>1</span>
+                            <div>
+                                <strong>Repasa vocabulario</strong>
+                                <small>Tarjetas visuales y ejemplos claros</small>
+                            </div>
+                        </div>
+                        <div class="preview-step current">
+                            <span>2</span>
+                            <div>
+                                <strong>Practica una estructura</strong>
+                                <small>Ejercicios simples con retroalimentación inmediata</small>
+                            </div>
+                        </div>
+                        <div class="preview-step">
+                            <span>3</span>
+                            <div>
+                                <strong>Haz el quiz del módulo</strong>
+                                <small>Comprueba tu progreso antes de avanzar</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <p>© 2026 INTEP. Todos los derechos reservados.</p>
-        </div>
+        </section>
+
+        <section class="section-shell features" id="features">
+            <div class="section-heading">
+                <span class="section-kicker">Metodología</span>
+                <h2>Una mezcla armónica entre <span class="text-gradient">didáctica, orden y suavidad visual</span>.</h2>
+                <p>
+                    Conserva el lado amigable del aprendizaje gamificado, pero con una presentación más limpia,
+                    más tranquila y más enfocada en el contenido.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">🌿</div>
+                    <h3>Ritmo sereno</h3>
+                    <p>Colores suaves, espacios amplios y menos distracciones para que estudiar no canse la vista.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">🧩</div>
+                    <h3>Aprendizaje guiado</h3>
+                    <p>Vocabulario, gramática, práctica y quiz en un flujo fácil de seguir.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Progreso visible</h3>
+                    <p>Módulos, avance y exámenes organizados de forma clara para que siempre sepas dónde estás.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-shell levels" id="levels">
+            <div class="section-heading">
+                <span class="section-kicker">Niveles</span>
+                <h2>Tres rutas con la misma lógica visual, cada una con <span class="text-gradient">su tono suave</span>.</h2>
+                <p>
+                    Cada nivel tiene una identidad sutil para orientarte sin cambiar por completo de estilo cada vez.
+                </p>
+            </div>
+
+            <div class="level-grid">
+                <article class="level-card level-a1">
+                    <span class="level-pill">A1 Beginner</span>
+                    <h3>Fundamentos para empezar sin miedo</h3>
+                    <p>Saludos, rutinas, familia, ciudad, compras y primeras conversaciones reales.</p>
+                    <ul class="level-list">
+                        <li><span class="level-dot"></span> 8 módulos guiados</li>
+                        <li><span class="level-dot"></span> Vocabulario y estructuras base</li>
+                        <li><span class="level-dot"></span> Quiz por módulo y prueba final</li>
+                    </ul>
+                </article>
+
+                <article class="level-card level-a2">
+                    <span class="level-pill">A2 Elementary</span>
+                    <h3>Más soltura para hablar del pasado y del futuro</h3>
+                    <p>Comparaciones, planes, historias cortas, indicaciones y contexto laboral básico.</p>
+                    <ul class="level-list">
+                        <li><span class="level-dot"></span> 8 módulos intermedios</li>
+                        <li><span class="level-dot"></span> Más contexto práctico</li>
+                        <li><span class="level-dot"></span> Flujo de aprendizaje más sólido</li>
+                    </ul>
+                </article>
+
+                <article class="level-card level-b1">
+                    <span class="level-pill">B1 Intermediate</span>
+                    <h3>Comunicación más madura y segura</h3>
+                    <p>Writing, ideas complejas, reported speech, passive voice y consolidación de tiempos.</p>
+                    <ul class="level-list">
+                        <li><span class="level-dot"></span> 8 módulos avanzados</li>
+                        <li><span class="level-dot"></span> Inglés académico y funcional</li>
+                        <li><span class="level-dot"></span> Evaluación final por nivel</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-shell cta" id="courses">
+            <div class="cta-card">
+                <div>
+                    <h2>Todo el curso con una experiencia visual más amable.</h2>
+                    <p>
+                        Entra con tu cuenta INTEP y continúa desde tu nivel actual. El curso guarda tu avance y te lleva paso a paso.
+                    </p>
+                </div>
+
+                <div class="cta-actions">
+                    <a href="/intep/login.php" class="btn-primary">Acceder con mi cuenta INTEP</a>
+                    <a href="#features" class="btn-secondary">Ver cómo funciona</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="section-shell footer">
+        <a href="#home" class="brand">
+            <img src="https://institutointep.edu.co/logointep.png" alt="INTEP">
+            <span class="brand-text">
+                <span class="brand-name">INTEP English</span>
+                <span class="brand-subtitle">Curso institucional de inglés</span>
+            </span>
+        </a>
+
+        <p>© 2026 INTEP. Plataforma de aprendizaje de inglés.</p>
     </footer>
-
-    <script src="/intep/cursoingles/ufo.js"></script>
-    <script src="/intep/cursoingles/universe_bg.js"></script>
 </body>
 </html>

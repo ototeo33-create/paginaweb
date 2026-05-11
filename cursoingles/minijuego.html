@@ -7,10 +7,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
     <style>
-        body { background: transparent;  margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background: transparent; margin: 0; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; }
         .game-header { padding: 20px 5%; display: flex; align-items: center; gap: 20px; }
         .close-btn { color: #94a3b8; font-size: 2.5rem; text-decoration: none; font-weight: bold; transition: color 0.3s; }
         .close-btn:hover { color: white; }
+        .game-shell { flex: 1; display: flex; flex-direction: column; min-height: 0; }
         .game-progress-container { flex: 1; background: rgba(255,255,255,0.1); height: 15px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
         .game-progress-bar { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); width: 0%; border-radius: 20px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .lives { font-size: 1.5rem; color: #ef4444; font-weight: bold; }
@@ -39,63 +40,96 @@
         .shake-anim { animation: shake 0.4s; }
         @keyframes popInAnswer { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         .overlay-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .overlay-actions { display: flex; gap: 20px; }
+
+        @media (max-width: 768px) {
+            .game-shell { padding-bottom: 110px; }
+            .game-header { align-items: flex-start; flex-wrap: wrap; }
+            .game-progress-container { order: 4; flex-basis: 100%; }
+            .lives { margin-left: auto; }
+            .level-badge { position: static; transform: none; margin: 0 auto; }
+            .mascot-dialog { flex-direction: column; align-items: stretch; margin-bottom: 24px; }
+            .mascot-container { align-self: center; }
+            .chat-bubble { font-size: 1.2rem; }
+            .answer-zone { margin-bottom: 24px; }
+            .overlay-actions { width: min(100%, 320px); flex-direction: column; }
+        }
     </style>
     <script>
+    window.__CURSO = {
+        nivel: (window.__INTEP && window.__INTEP.nivel) || 'A1',
+        num: 0,
+        trackActivity: false,
+        activityType: 'practice'
+    };
+
     (function(){
         fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .then(function(d){
+            if(!d.ok)window.location.replace('/intep/login.php');
+            window.__INTEP=d;
+            window.__CURSO.nivel = d.nivel || 'A1';
+            if (window.INTEP_refreshCourseLayer) {
+                window.INTEP_refreshCourseLayer();
+            }
+            if (window.__INTEP_syncDashboardLinks) {
+                window.__INTEP_syncDashboardLinks();
+            }
+        })
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script></head>
 <body>
 
-    <div class="game-header">
-        <a href="dashboard.php" class="close-btn">×</a>
-        <div class="game-progress-container"><div class="game-progress-bar" id="progressBar"></div></div>
-        <div class="lives" id="livesDisplay">❤️ 3</div>
-    </div>
-    
-    <div class="level-badge" id="levelDisplay">Cargando Dificultad...</div>
+    <div class="game-shell">
+        <div class="game-header">
+            <a href="dashboard.php" class="close-btn">×</a>
+            <div class="game-progress-container"><div class="game-progress-bar" id="progressBar"></div></div>
+            <div class="lives" id="livesDisplay">❤️ 3</div>
+        </div>
 
-    <div class="game-area">
-        <div class="mascot-dialog">
-            <div class="mascot-container" style="margin:0; width: 100px; height: 100px;">
-                <svg width="100" height="100" viewBox="0 0 200 200" overflow="visible">
-                    <g class="mascot-body-wrapper">
-                        <path d="M 50 120 Q 20 120 20 70" stroke="#ec4899" stroke-width="15" stroke-linecap="round" fill="transparent" />
-                        <path d="M 150 120 Q 180 120 180 70" stroke="#f59e0b" stroke-width="15" stroke-linecap="round" fill="transparent" />
-                        <rect x="40" y="60" width="120" height="110" rx="50" fill="#6366f1" />
-                        <rect x="60" y="110" width="80" height="40" rx="20" fill="rgba(255,255,255,0.15)" />
-                        <circle cx="75" cy="95" r="10" fill="white" />
-                        <circle cx="75" cy="95" r="4" fill="#0f172a" />
-                        <circle cx="125" cy="95" r="10" fill="white" />
-                        <circle cx="125" cy="95" r="4" fill="#0f172a" />
-                        <path d="M 85 130 Q 100 155 115 130" stroke="white" stroke-width="7" stroke-linecap="round" fill="transparent" />
-                    </g>
-                </svg>
+        <div class="level-badge" id="levelDisplay">Cargando Dificultad...</div>
+
+        <div class="game-area">
+            <div class="mascot-dialog">
+                <div class="mascot-container" style="margin:0; width: 100px; height: 100px;">
+                    <svg width="100" height="100" viewBox="0 0 200 200" overflow="visible">
+                        <g class="mascot-body-wrapper">
+                            <path d="M 50 120 Q 20 120 20 70" stroke="#ec4899" stroke-width="15" stroke-linecap="round" fill="transparent" />
+                            <path d="M 150 120 Q 180 120 180 70" stroke="#f59e0b" stroke-width="15" stroke-linecap="round" fill="transparent" />
+                            <rect x="40" y="60" width="120" height="110" rx="50" fill="#6366f1" />
+                            <rect x="60" y="110" width="80" height="40" rx="20" fill="rgba(255,255,255,0.15)" />
+                            <circle cx="75" cy="95" r="10" fill="white" />
+                            <circle cx="75" cy="95" r="4" fill="#0f172a" />
+                            <circle cx="125" cy="95" r="10" fill="white" />
+                            <circle cx="125" cy="95" r="4" fill="#0f172a" />
+                            <path d="M 85 130 Q 100 155 115 130" stroke="white" stroke-width="7" stroke-linecap="round" fill="transparent" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="chat-bubble" id="questionText">Cargando...</div>
             </div>
-            <div class="chat-bubble" id="questionText">Cargando...</div>
+
+            <div class="answer-zone" id="answerZone"></div>
+            <div class="word-bank" id="wordBank"></div>
         </div>
 
-        <div class="answer-zone" id="answerZone"></div>
-        <div class="word-bank" id="wordBank"></div>
-    </div>
-
-    <div class="footer-bar" id="footerBar">
-        <div class="footer-msg" id="footerMsg">
-            <h2 id="msgTitle">¡Excelente!</h2>
-            <p id="msgSub" style="font-size:1.1rem; opacity:0.9; margin: 5px 0 0 0;">Significado: Correcto</p>
+        <div class="footer-bar" id="footerBar">
+            <div class="footer-msg" id="footerMsg">
+                <h2 id="msgTitle">¡Excelente!</h2>
+                <p id="msgSub" style="font-size:1.1rem; opacity:0.9; margin: 5px 0 0 0;">Significado: Correcto</p>
+            </div>
+            <div></div>
+            <button class="check-btn" id="actionBtn" disabled>COMPROBAR</button>
         </div>
-        <div></div>
-        <button class="check-btn" id="actionBtn" disabled>COMPROBAR</button>
     </div>
 
     <div class="overlay-screen" id="winScreen">
         <h1 style="font-size: 6rem; margin-bottom: 20px;">🎉🏆🎉</h1>
         <h2 style="color: white; font-size: 4rem;">¡Sesión Completada!</h2>
         <p style="color: #94a3b8; font-size: 1.5rem; margin-bottom: 40px;">Eres increíble. Ganaste <strong style="color: #f59e0b;">+50 XP</strong></p>
-        <div style="display: flex; gap: 20px;">
+        <div class="overlay-actions">
             <button onclick="location.reload()" class="word-btn" style="background:#6366f1; color:white; border-color:#4f46e5; border-bottom: 8px solid #4338ca; padding: 20px 40px; font-size: 1.2rem;">SIGUIENTE NIVEL</button>
             <a href="dashboard.php" class="word-btn" style="display:inline-block; text-decoration:none; background:#10b981; color:white; border-color:#059669; border-bottom: 8px solid #047857; padding: 20px 40px; font-size: 1.2rem;">VOLVER</a>
         </div>
@@ -109,7 +143,25 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="practice_hub.js"></script>
+    <script src="cursos_api.js"></script>
     <script>
+        function getDashboardHref() {
+            const nivel = (window.__CURSO && window.__CURSO.nivel) || 'A1';
+            if (nivel === 'A2') return 'dashboard_a2.php';
+            if (nivel === 'B1' || nivel === 'B2') return 'dashboard_b1.php';
+            return 'dashboard.php';
+        }
+
+        function syncDashboardLinks() {
+            const href = getDashboardHref();
+            document.querySelectorAll('.close-btn, a[href="dashboard.php"]').forEach((link) => {
+                link.setAttribute('href', href);
+            });
+        }
+
+        window.__INTEP_syncDashboardLinks = syncDashboardLinks;
+        syncDashboardLinks();
         const sentencePool = {
             1: [ // Easy A1 Basic sentences
                 { es: "Yo soy un estudiante.", en: "I am a student", words: ["student", "a", "I", "teacher", "am", "is"] },
@@ -164,23 +216,19 @@
             ]
         };
 
-        // Progression System
-        let totalWins = parseInt(localStorage.getItem('lingua_builder_wins')) || 0;
-        let pChallenge = 1;
-        let cName = "Fácil";
+        const practiceLevel = window.INTEPPractice ? window.INTEPPractice.getCurrentLevel() : ((window.__CURSO && window.__CURSO.nivel) || 'A1');
+        const practiceConfig = window.INTEPPractice ? window.INTEPPractice.getLevelConfig(practiceLevel) : { challenge: 1, sessionCount: { builder: 5 }, lives: { builder: 3 }, label: 'A1 Base activa' };
+        const builderMeta = window.INTEPPractice ? window.INTEPPractice.getModeMeta('builder', practiceLevel) : { short: 'Frases base', focus: 'Ordena ideas simples' };
+        const builderStats = window.INTEPPractice ? window.INTEPPractice.notePlay('builder', practiceLevel) : { wins: 0 };
+        const pChallenge = practiceConfig.challenge;
+        const totalWins = builderStats.wins || 0;
 
-        if (totalWins >= 3 && totalWins < 8) {
-            pChallenge = 2; cName = "Intermedio";
-        } else if (totalWins >= 8) {
-            pChallenge = 3; cName = "Avanzado 👽";
-        }
-        
-        document.getElementById('levelDisplay').innerText = `Sesiones: ${totalWins} | Categoría: ${cName}`;
+        document.getElementById('levelDisplay').innerText = `${practiceLevel} · ${builderMeta.short} · Victorias: ${totalWins}`;
 
-        // Get 5 random sentences of that difficulty per session
-        const levels = [...sentencePool[pChallenge]].sort(() => Math.random() - 0.5).slice(0, 5);
+        // Get random sentences of that level per session
+        const levels = [...sentencePool[pChallenge]].sort(() => Math.random() - 0.5).slice(0, practiceConfig.sessionCount.builder);
 
-        let currentLevel = 0; let lives = 3; let gameState = 'playing';
+        let currentLevel = 0; let lives = practiceConfig.lives.builder; let gameState = 'playing';
         const questionText = document.getElementById('questionText'); const wordBank = document.getElementById('wordBank');
         const answerZone = document.getElementById('answerZone'); const actionBtn = document.getElementById('actionBtn');
         const footerBar = document.getElementById('footerBar'); const footerMsg = document.getElementById('footerMsg');
@@ -261,7 +309,14 @@
                 progressBar.style.width = '100%'; playCorrect(); setTimeout(()=>playCorrect(), 300);
                 
                 // SAVE PROGRESSION
-                localStorage.setItem('lingua_builder_wins', totalWins + 1);
+                if (window.INTEPPractice) {
+                    window.INTEPPractice.noteWin('builder', {
+                        bestRun: levels.length,
+                        levelLabel: practiceConfig.label
+                    }, practiceLevel);
+                } else {
+                    localStorage.setItem('lingua_builder_wins', totalWins + 1);
+                }
                 
                 document.getElementById('winScreen').style.display = 'flex';
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });

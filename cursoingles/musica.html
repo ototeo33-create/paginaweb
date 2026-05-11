@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
     <style>
-        body { background: transparent;  margin: 0; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; font-family: 'Inter', sans-serif;}
+        body { background: transparent; margin: 0; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; font-family: 'Inter', sans-serif;}
         
         .header { padding: 20px 5%; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10;}
         .close-btn { color: #94a3b8; font-size: 2.5rem; text-decoration: none; font-weight: bold; transition: color 0.3s; }
@@ -29,6 +29,14 @@
             width: 95%;
             position: relative;
             z-index: 10;
+        }
+
+        .page-shell {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            padding-bottom: 40px;
         }
 
         .player-visual { 
@@ -72,6 +80,34 @@
         .song-info { margin-top: 35px; text-align: center; width: 100%;}
         .song-title { color: white; font-size: 2rem; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 800;}
         .song-artist { color: #a5b4fc; margin: 8px 0 0 0; font-weight: 500; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px;}
+        .song-focus { color: #cbd5e1; margin: 10px 0 0 0; font-size: 0.95rem; line-height: 1.5; }
+
+        .track-switcher {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+            justify-content: center;
+        }
+
+        .track-chip {
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.06);
+            color: white;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .track-chip:hover,
+        .track-chip.active {
+            background: rgba(99, 102, 241, 0.18);
+            border-color: rgba(165, 180, 252, 0.5);
+            color: #ffffff;
+        }
 
         .player-lyrics { 
             width: 55%;  
@@ -149,12 +185,77 @@
         .orb-1 { width: 400px; height: 400px; background: #6366f1; top: -100px; left: -100px; animation: float 10s infinite alternate; }
         .orb-2 { width: 350px; height: 350px; background: #ec4899; bottom: -50px; right: -50px; animation: float 8s infinite alternate-reverse; }
         @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+
+        @media (max-width: 900px) {
+            .page-shell { padding-bottom: 110px; }
+            .header { flex-wrap: wrap; gap: 12px; }
+            .player-container {
+                height: auto;
+                min-height: 0;
+                flex-direction: column;
+                margin: 16px auto;
+            }
+            .player-visual,
+            .player-lyrics {
+                width: 100%;
+            }
+            .player-visual {
+                padding: 28px 20px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            .album-cover {
+                width: min(72vw, 250px);
+                height: min(72vw, 250px);
+            }
+            .lyrics-viewport {
+                max-height: 46vh;
+                padding: 16px 20px;
+            }
+            .audio-controls-container {
+                padding: 16px 20px 20px;
+            }
+            .song-title,
+            .page-title {
+                font-size: 1.8rem;
+            }
+            .lyric-line {
+                font-size: 1.25rem;
+                padding: 14px 16px;
+            }
+            .translation {
+                font-size: 1rem;
+            }
+            .track-switcher {
+                justify-content: stretch;
+            }
+            .track-chip {
+                width: 100%;
+            }
+        }
     </style>
     <script>
+    window.__CURSO = {
+        nivel: (window.__INTEP && window.__INTEP.nivel) || 'A1',
+        num: 0,
+        trackActivity: false,
+        activityType: 'practice'
+    };
+
     (function(){
         fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .then(function(d){
+            if(!d.ok)window.location.replace('/intep/login.php');
+            window.__INTEP=d;
+            window.__CURSO.nivel = d.nivel || 'A1';
+            if (window.INTEP_refreshCourseLayer) {
+                window.INTEP_refreshCourseLayer();
+            }
+            if (window.__INTEP_syncDashboardLinks) {
+                window.__INTEP_syncDashboardLinks();
+            }
+        })
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script></head>
@@ -163,67 +264,179 @@
     <div class="glowing-orb orb-1"></div>
     <div class="glowing-orb orb-2"></div>
 
-    <div class="header">
-        <a href="dashboard.php" class="close-btn">×</a>
-    </div>
-
-    <h1 class="page-title">🎙️ Letras Libres</h1>
-
-    <div class="player-container">
-        
-        <div class="player-visual">
-            <div class="album-cover" id="albumCover"></div>
-            
-            <div class="song-info">
-                <h2 class="song-title" id="songTitle">Título...</h2>
-                <p class="song-artist" id="songLevel">Nivel...</p>
-            </div>
-            <p style="color:#94a3b8; font-size: 0.9rem; margin-top: 15px; text-align:center;">Desliza libremente las letras y disfruta la canción a tu ritmo. No hay presiones de automatización.</p>
+    <div class="page-shell">
+        <div class="header">
+            <a href="dashboard.php" class="close-btn">×</a>
         </div>
 
-        <div class="player-lyrics">
-            <div class="lyrics-viewport" id="lyricsViewport">
-                <div class="lyrics-track" id="lyricsTrack">
-                    <!-- Generado por JS -->
+        <h1 class="page-title">🎙️ Letras Libres</h1>
+
+        <div class="player-container">
+            
+            <div class="player-visual">
+                <div class="album-cover" id="albumCover"></div>
+                
+                <div class="song-info">
+                    <h2 class="song-title" id="songTitle">Título...</h2>
+                    <p class="song-artist" id="songLevel">Nivel...</p>
+                    <p class="song-focus" id="songFocus">Enfoque...</p>
+                </div>
+                <p style="color:#94a3b8; font-size: 0.9rem; margin-top: 15px; text-align:center;">Desliza libremente las letras y disfruta la canción a tu ritmo. No hay presiones de automatización.</p>
+                <div class="track-switcher" id="trackSwitcher"></div>
+            </div>
+
+            <div class="player-lyrics">
+                <div class="lyrics-viewport" id="lyricsViewport">
+                    <div class="lyrics-track" id="lyricsTrack">
+                        <!-- Generado por JS -->
+                    </div>
+                </div>
+                
+                <div class="audio-controls-container">
+                    <audio id="audioPlayer" controls preload="auto"></audio>
                 </div>
             </div>
-            
-            <div class="audio-controls-container">
-                <audio id="audioPlayer" controls preload="auto"></audio>
-            </div>
-        </div>
 
+        </div>
     </div>
 
+    <script src="cursos_api.js"></script>
     <script>
-        /**
-         * ==========================================
-         * MODO LECTURA LIBRE DE CANCIONES (SIN SYNC)
-         * ==========================================
-         */
-        const DB_CANCIONES = [
-            {
-                id: "1",
-                title: "Twinkle Twinkle Little Star",
-                level: "Canción Infantil (A1)",
-                cover: "twinkle_cover.png", 
-                audioSrc: "tu_cancion_twinkle.mp3", 
-                lyrics: [
-                    { en: "Twinkle, twinkle, little star", es: "Brilla, brilla, estrellita" },
-                    { en: "How I wonder what you are", es: "Cómo me pregunto qué eres" },
-                    { en: "Up above the world so high", es: "Allá arriba en el mundo tan alto" },
-                    { en: "Like a diamond in the sky", es: "Como un diamante en el cielo" },
-                    { en: "Twinkle, twinkle, little star", es: "Brilla, brilla, estrellita" },
-                    { en: "How I wonder what you are", es: "Cómo me pregunto qué eres" },
-                    { en: "When the blazing sun is gone", es: "Cuando el sol ardiente se ha ido" },
-                    { en: "When he nothing shines upon", es: "Cuando él ya nada ilumina" },
-                    { en: "Then you show your little light", es: "Entonces muestras tu lucecita" },
-                    { en: "Twinkle, twinkle, all the night", es: "Brilla, brilla, toda la noche" }
-                ]
-            }
-        ];
+        function getDashboardHref() {
+            const nivel = (window.__CURSO && window.__CURSO.nivel) || 'A1';
+            if (nivel === 'A2') return 'dashboard_a2.php';
+            if (nivel === 'B1' || nivel === 'B2') return 'dashboard_b1.php';
+            return 'dashboard.php';
+        }
 
-        const currentSong = DB_CANCIONES[0]; 
+        function syncDashboardLinks() {
+            const href = getDashboardHref();
+            document.querySelectorAll('.close-btn').forEach((link) => {
+                link.setAttribute('href', href);
+            });
+        }
+
+        window.__INTEP_syncDashboardLinks = syncDashboardLinks;
+        syncDashboardLinks();
+        const practiceLevel = window.INTEPPractice ? window.INTEPPractice.getCurrentLevel() : ((window.__CURSO && window.__CURSO.nivel) || 'A1');
+        const listeningMeta = window.INTEPPractice ? window.INTEPPractice.getModeMeta('listening', practiceLevel) : { short: 'Dialogos base', focus: 'Escucha simple' };
+        if (window.INTEPPractice) {
+            window.INTEPPractice.notePlay('listening', practiceLevel);
+        }
+
+        const DB_CANCIONES = {
+            A1: [
+                {
+                    id: 'a1-greetings',
+                    title: 'Nice to meet you',
+                    level: 'A1 · Saludos y presentacion',
+                    focus: 'Comprende un saludo corto, origen y nombre.',
+                    cover: 'linear-gradient(135deg, rgba(99,102,241,0.7), rgba(16,185,129,0.45))',
+                    audioSrc: '',
+                    lyrics: [
+                        { en: 'Hello, I am Laura.', es: 'Hola, soy Laura.' },
+                        { en: 'Nice to meet you.', es: 'Mucho gusto.' },
+                        { en: 'I am from Pereira.', es: 'Soy de Pereira.' },
+                        { en: 'I study at INTEP.', es: 'Estudio en INTEP.' },
+                        { en: 'See you in class.', es: 'Nos vemos en clase.' }
+                    ]
+                },
+                {
+                    id: 'a1-routine',
+                    title: 'My morning routine',
+                    level: 'A1 · Rutina diaria',
+                    focus: 'Identifica acciones basicas del dia a dia.',
+                    cover: 'linear-gradient(135deg, rgba(16,185,129,0.65), rgba(14,165,233,0.45))',
+                    audioSrc: '',
+                    lyrics: [
+                        { en: 'I wake up at six.', es: 'Me despierto a las seis.' },
+                        { en: 'I take a shower.', es: 'Me baño.' },
+                        { en: 'I eat breakfast with my family.', es: 'Desayuno con mi familia.' },
+                        { en: 'Then I go to class.', es: 'Luego voy a clase.' },
+                        { en: 'At night, I study English.', es: 'En la noche estudio ingles.' }
+                    ]
+                }
+            ],
+            A2: [
+                {
+                    id: 'a2-office',
+                    title: 'At the office',
+                    level: 'A2 · Trabajo y comunicacion',
+                    focus: 'Sigue un dialogo breve de oficina y tareas.',
+                    cover: 'linear-gradient(135deg, rgba(236,72,153,0.65), rgba(99,102,241,0.45))',
+                    audioSrc: '',
+                    lyrics: [
+                        { en: 'Did you send the email this morning?', es: '¿Enviaste el correo esta manana?' },
+                        { en: 'Yes, I sent it before the meeting.', es: 'Si, lo envie antes de la reunion.' },
+                        { en: 'Great. We are going to call the client at noon.', es: 'Genial. Vamos a llamar al cliente al mediodia.' },
+                        { en: 'I already prepared the notes.', es: 'Ya prepare las notas.' },
+                        { en: 'Perfect, let us review them together.', es: 'Perfecto, revisemoslas juntos.' }
+                    ]
+                },
+                {
+                    id: 'a2-directions',
+                    title: 'Getting around town',
+                    level: 'A2 · Direcciones y movimiento',
+                    focus: 'Comprende indicaciones y referencias urbanas.',
+                    cover: 'linear-gradient(135deg, rgba(245,158,11,0.65), rgba(34,197,94,0.4))',
+                    audioSrc: '',
+                    lyrics: [
+                        { en: 'Excuse me, where is the museum?', es: 'Disculpe, ¿donde queda el museo?' },
+                        { en: 'Go straight for two blocks.', es: 'Siga derecho dos cuadras.' },
+                        { en: 'Then turn left at the bank.', es: 'Luego gire a la izquierda en el banco.' },
+                        { en: 'It is next to the library.', es: 'Queda al lado de la biblioteca.' },
+                        { en: 'Thank you, that is very helpful.', es: 'Gracias, eso ayuda mucho.' }
+                    ]
+                }
+            ],
+            B1: [
+                {
+                    id: 'b1-opinion',
+                    title: 'Sharing an opinion',
+                    level: 'B1 · Opinion y matiz',
+                    focus: 'Identifica postura, acuerdo y justificacion breve.',
+                    cover: 'linear-gradient(135deg, rgba(234,179,8,0.7), rgba(249,115,22,0.45))',
+                    audioSrc: '',
+                    lyrics: [
+                        { en: 'In my opinion, online classes can be useful, but they require discipline.', es: 'En mi opinion, las clases virtuales pueden ser utiles, pero requieren disciplina.' },
+                        { en: 'I agree to some extent because they save time.', es: 'Estoy de acuerdo hasta cierto punto porque ahorran tiempo.' },
+                        { en: 'However, face-to-face interaction is still important.', es: 'Sin embargo, la interaccion presencial sigue siendo importante.' },
+                        { en: 'That is why a balanced model may work better.', es: 'Por eso un modelo equilibrado puede funcionar mejor.' }
+                    ]
+                },
+                {
+                    id: 'b1-work',
+                    title: 'Solving a problem at work',
+                    level: 'B1 · Resolucion y analisis',
+                    focus: 'Sigue una conversacion breve con problema y propuesta.',
+                    cover: 'linear-gradient(135deg, rgba(59,130,246,0.7), rgba(139,92,246,0.45))',
+                    audioSrc: '',
+                    lyrics: [
+                        { en: 'The report was delayed because the data was incomplete.', es: 'El informe se retraso porque los datos estaban incompletos.' },
+                        { en: 'We could divide the task and finish it by tomorrow.', es: 'Podriamos dividir la tarea y terminarla manana.' },
+                        { en: 'That sounds reasonable, as long as we check the final version together.', es: 'Eso suena razonable, siempre que revisemos la version final juntos.' },
+                        { en: 'If we stay focused, we should meet the deadline.', es: 'Si nos mantenemos enfocados, deberiamos cumplir la fecha limite.' }
+                    ]
+                },
+                {
+                    id: 'b1-summary',
+                    title: 'News summary',
+                    level: 'B1 · Comprension global',
+                    focus: 'Escucha ideas principales y relaciones causa-efecto.',
+                    cover: 'linear-gradient(135deg, rgba(14,165,233,0.7), rgba(16,185,129,0.45))',
+                    audioSrc: '',
+                    lyrics: [
+                        { en: 'Local authorities announced a new transport plan this week.', es: 'Las autoridades locales anunciaron un nuevo plan de transporte esta semana.' },
+                        { en: 'The main goal is to reduce traffic and improve air quality.', es: 'El objetivo principal es reducir el trafico y mejorar la calidad del aire.' },
+                        { en: 'Although the project may take time, many residents support the idea.', es: 'Aunque el proyecto puede tomar tiempo, muchos residentes apoyan la idea.' },
+                        { en: 'Experts say the results will depend on consistent implementation.', es: 'Los expertos dicen que los resultados dependeran de una implementacion constante.' }
+                    ]
+                }
+            ]
+        };
+
+        const playlist = DB_CANCIONES[practiceLevel] || DB_CANCIONES.A1;
+        let currentIndex = 0;
 
         // ==========================================
         // MOTOR REPRODUCTOR & UI
@@ -231,12 +444,15 @@
         const audio = document.getElementById('audioPlayer');
         const albumCover = document.getElementById('albumCover');
         const trackUI = document.getElementById('lyricsTrack');
+        const trackSwitcher = document.getElementById('trackSwitcher');
 
         function loadSong(song) {
             // Actualizar Interfaz
             document.getElementById('songTitle').innerText = song.title;
             document.getElementById('songLevel').innerText = song.level;
-            albumCover.style.backgroundImage = `url('${song.cover}')`;
+            document.getElementById('songFocus').innerText = song.focus || listeningMeta.focus;
+            albumCover.style.background = song.cover;
+            albumCover.style.backgroundImage = 'none';
             
             // Cargar Audio
             audio.src = song.audioSrc;
@@ -253,6 +469,26 @@
                 `;
                 trackUI.appendChild(div);
             });
+
+            renderTrackSwitcher();
+        }
+
+        function renderTrackSwitcher() {
+            trackSwitcher.innerHTML = '';
+            playlist.forEach((song, index) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'track-chip' + (index === currentIndex ? ' active' : '');
+                button.textContent = song.title;
+                button.addEventListener('click', () => {
+                    currentIndex = index;
+                    loadSong(playlist[currentIndex]);
+                    if (window.INTEPPractice) {
+                        window.INTEPPractice.noteListeningComplete(song.id, song.lyrics.length, practiceLevel);
+                    }
+                });
+                trackSwitcher.appendChild(button);
+            });
         }
 
         // Eventos del Audio para girar el vinilo y animar
@@ -261,7 +497,8 @@
         audio.addEventListener('ended', () => { albumCover.classList.remove('playing'); });
 
         // Iniciar
-        loadSong(currentSong);
+        document.getElementById('songLevel').innerText = `${practiceLevel} · ${listeningMeta.short}`;
+        loadSong(playlist[currentIndex]);
     </script>
 <script src="universe_bg.js"></script>
 </body>

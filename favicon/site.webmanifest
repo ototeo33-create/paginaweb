@@ -1,8 +1,8 @@
 {
-  "name": "INTEP - Portal Estudiantil",
-  "short_name": "INTEP",
-  "description": "Portal Estudiantil del Instituto de Educación Técnica Profesional",
-  "start_url": "/intep/login.php",
+  "name": "INTEP English",
+  "short_name": "INTEP English",
+  "description": "Curso de ingles de INTEP para continuar desde PC o celular.",
+  "start_url": "/intep/cursoingles/index.php",
   "scope": "/intep/",
   "icons": [
     {"src": "/intep/favicon/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
@@ -11,8 +11,8 @@
     {"src": "/intep/favicon/maskable-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
     {"src": "/intep/favicon/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
   ],
-  "theme_color": "#009B48",
-  "background_color": "#022C22",
+  "theme_color": "#78C98B",
+  "background_color": "#F7FBF6",
   "display": "standalone",
   "orientation": "portrait"
 }

@@ -45,7 +45,7 @@ $best = mysqli_fetch_assoc(mysqli_stmt_get_result($st3)) ?? ['best'=>0,'aprobado
 <link rel="stylesheet" href="/intep/cursoingles/lesson.css">
 <style>
 *{box-sizing:border-box;}
-body{margin:0;min-height:100vh;}
+body{margin:0;min-height:100vh;min-height:100svh;overflow-x:hidden;}
 .quiz-wrap{max-width:780px;margin:0 auto;padding:30px 20px 80px;}
 .quiz-back{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);text-decoration:none;font-weight:600;margin-bottom:25px;transition:color 0.3s;}
 .quiz-back:hover{color:var(--primary);}
@@ -86,7 +86,7 @@ body{margin:0;min-height:100vh;}
 .btn-finish:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,0.4);}
 
 /* Result overlay */
-.result-overlay{display:none;position:fixed;inset:0;background:rgba(10,15,30,0.92);backdrop-filter:blur(10px);z-index:100;justify-content:center;align-items:center;padding:20px;}
+.result-overlay{display:none;position:fixed;inset:0;background:rgba(10,15,30,0.92);backdrop-filter:blur(10px);z-index:400;justify-content:center;align-items:center;padding:20px;}
 .result-box{background:#0f172a;border-radius:28px;padding:50px 40px;max-width:480px;width:100%;text-align:center;border:1px solid rgba(255,255,255,0.1);animation:popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);}
 @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
 .result-emoji{font-size:5rem;margin-bottom:15px;display:block;}
@@ -107,6 +107,12 @@ body{margin:0;min-height:100vh;}
 </head>
 <body>
 <script>
+window.__CURSO = {
+  nivel: <?= json_encode($nivel) ?>,
+  num: <?= (int)$modulo ?>,
+  activityType: 'quiz'
+};
+
 (function(){
   fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
     .then(function(r){return r.json();})
@@ -555,5 +561,6 @@ window.addEventListener('load', () => {
   buildQuestion(0);
 });
 </script>
+<script src="/intep/cursoingles/cursos_api.js"></script>
 </body>
 </html>

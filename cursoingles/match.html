@@ -9,12 +9,13 @@
     <style>
         body { 
             background: transparent; 
-             
             margin: 0; 
-            height: 100vh;
+            min-height: 100vh;
+            min-height: 100svh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             font-family: 'Inter', sans-serif;
         }
         
@@ -27,6 +28,13 @@
 
         .close-btn { color: #94a3b8; font-size: 2.5rem; text-decoration: none; font-weight: bold; transition: color 0.3s;}
         .close-btn:hover { color: white; }
+
+        .game-shell {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
 
         .game-area {
             flex: 1;
@@ -121,28 +129,95 @@
             align-items: center;
             text-align: center;
         }
+
+        .overlay-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .game-shell {
+                padding-bottom: 110px;
+            }
+
+            .game-header {
+                align-items: flex-start;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .close-btn {
+                order: 1;
+            }
+
+            #timerDisplay {
+                order: 2;
+                margin-left: auto;
+            }
+
+            .game-area {
+                padding: 8px 14px 14px;
+            }
+
+            .match-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .match-column {
+                gap: 12px;
+            }
+
+            .game-title {
+                font-size: 1.7rem;
+            }
+
+            .overlay-actions {
+                width: min(100%, 320px);
+                flex-direction: column;
+            }
+        }
     </style>
     <script>
+    window.__CURSO = {
+        nivel: (window.__INTEP && window.__INTEP.nivel) || 'A1',
+        num: 0,
+        trackActivity: false,
+        activityType: 'practice'
+    };
+
     (function(){
         fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .then(function(d){
+            if(!d.ok)window.location.replace('/intep/login.php');
+            window.__INTEP=d;
+            window.__CURSO.nivel = d.nivel || 'A1';
+            if (window.INTEP_refreshCourseLayer) {
+                window.INTEP_refreshCourseLayer();
+            }
+            if (window.__INTEP_syncDashboardLinks) {
+                window.__INTEP_syncDashboardLinks();
+            }
+        })
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script></head>
 <body>
-    <div class="game-header">
-        <a href="dashboard.php" class="close-btn">×</a>
-        <div style="color: white; font-size: 1.5rem; font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px;" id="timerDisplay">⏳ 00:00</div>
-    </div>
+    <div class="game-shell">
+        <div class="game-header">
+            <a href="dashboard.php" class="close-btn">×</a>
+            <div style="color: white; font-size: 1.5rem; font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px;" id="timerDisplay">⏳ 00:00</div>
+        </div>
 
-    <div class="game-area">
-        <h1 class="game-title">Empareja las palabras</h1>
-        <div class="level-badge" id="levelDisplay">Nivel: Calculando...</div>
-        
-        <div class="match-grid">
-            <div class="match-column" id="colLeft"></div>
-            <div class="match-column" id="colRight"></div>
+        <div class="game-area">
+            <h1 class="game-title">Empareja las palabras</h1>
+            <div class="level-badge" id="levelDisplay">Nivel: Calculando...</div>
+            
+            <div class="match-grid">
+                <div class="match-column" id="colLeft"></div>
+                <div class="match-column" id="colRight"></div>
+            </div>
         </div>
     </div>
 
@@ -152,14 +227,33 @@
         <p style="color: #94a3b8; font-size: 1.5rem; margin-bottom: 20px;">Nivel Superado. Tiempo: <span id="finalTime" style="color: #10b981; font-weight:bold;">0s</span></p>
         <p style="color: #facc15; font-size: 1.2rem; margin-bottom: 40px; font-style: italic;">¡La próxima vez será más difícil!</p>
         
-        <div style="display: flex; gap: 20px;">
+        <div class="overlay-actions">
             <button onclick="location.reload()" class="match-btn" style="background:#6366f1; color:white; border-color:#4f46e5; border-bottom: 8px solid #4338ca; padding: 20px 40px; font-size: 1.2rem;">JUGAR DE NUEVO</button>
             <a href="dashboard.php" class="match-btn" style="display:inline-block; text-decoration:none; background:#10b981; color:white; border-color:#059669; border-bottom: 8px solid #047857; padding: 20px 40px; font-size: 1.2rem;">VOLVER</a>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="practice_hub.js"></script>
+    <script src="cursos_api.js"></script>
     <script>
+        function getDashboardHref() {
+            const nivel = (window.__CURSO && window.__CURSO.nivel) || 'A1';
+            if (nivel === 'A2') return 'dashboard_a2.php';
+            if (nivel === 'B1' || nivel === 'B2') return 'dashboard_b1.php';
+            return 'dashboard.php';
+        }
+
+        function syncDashboardLinks() {
+            const href = getDashboardHref();
+            document.querySelectorAll('.close-btn, a[href="dashboard.php"]').forEach((link) => {
+                link.setAttribute('href', href);
+            });
+        }
+
+        window.__INTEP_syncDashboardLinks = syncDashboardLinks;
+        syncDashboardLinks();
+
         // Massive dynamic dictionary based on wins
         const dictionary = {
             1: [ // Easy
@@ -181,20 +275,15 @@
             ]
         };
 
-        // Get Wins for difficulty progression
-        let totalWins = parseInt(localStorage.getItem('lingua_match_wins')) || 0;
-        
-        let difficulty = 1;
-        let numPairs = 5; // Start with 5 pairs
-        let levelName = "Básico";
+        const practiceLevel = window.INTEPPractice ? window.INTEPPractice.getCurrentLevel() : ((window.__CURSO && window.__CURSO.nivel) || 'A1');
+        const practiceConfig = window.INTEPPractice ? window.INTEPPractice.getLevelConfig(practiceLevel) : { challenge: 1, pairCount: 5, label: 'A1 Base activa' };
+        const matchMeta = window.INTEPPractice ? window.INTEPPractice.getModeMeta('match', practiceLevel) : { short: 'Vocabulario base', focus: 'Relaciona palabras' };
+        const matchStats = window.INTEPPractice ? window.INTEPPractice.notePlay('match', practiceLevel) : { wins: 0 };
+        const difficulty = practiceConfig.challenge;
+        const numPairs = practiceConfig.pairCount;
+        const totalWins = matchStats.wins || 0;
 
-        if (totalWins >= 3 && totalWins < 7) {
-            difficulty = 2; numPairs = 6; levelName = "Intermedio";
-        } else if (totalWins >= 7) {
-            difficulty = 3; numPairs = 7; levelName = "Avanzado 💀";
-        }
-        
-        document.getElementById('levelDisplay').innerText = `Sesiones Ganadas: ${totalWins} | Dificultad: ${levelName}`;
+        document.getElementById('levelDisplay').innerText = `${practiceLevel} · ${matchMeta.short} · Victorias: ${totalWins}`;
 
         let gameVocab = [...dictionary[difficulty]].sort(() => Math.random() - 0.5).slice(0, numPairs);
 
@@ -282,7 +371,15 @@
                 if (pairsMatched === gameVocab.length) {
                     clearInterval(timerInterval);
                     // Add win to localStorage for progression
-                    localStorage.setItem('lingua_match_wins', totalWins + 1);
+                    if (window.INTEPPractice) {
+                        window.INTEPPractice.noteWin('match', {
+                            bestRun: gameVocab.length,
+                            bestTimeSeconds: Math.floor((Date.now() - startTime) / 1000),
+                            levelLabel: practiceConfig.label
+                        }, practiceLevel);
+                    } else {
+                        localStorage.setItem('lingua_match_wins', totalWins + 1);
+                    }
                     
                     setTimeout(() => {
                         const totalTime = Math.floor((Date.now() - startTime) / 1000);

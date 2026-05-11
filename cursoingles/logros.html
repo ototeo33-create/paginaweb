@@ -7,8 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lesson.css">
     <style>
-        body { margin: 0; }
-        .dashboard-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; background: transparent;
+        body { margin: 0; min-height: 100vh; min-height: 100svh; }
+        .dashboard-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; min-height: 100svh; background: transparent;
             background-size: cover;  color: white; }
         .sidebar { background: rgba(15, 23, 42, 0.6);
             color: white; backdrop-filter: blur(15px); border-right: 1px solid rgba(255,255,255,0.1); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; }
@@ -79,12 +79,35 @@
         .xp-bar-container { background: #e2e8f0; height: 12px; border-radius: 10px; margin-top: 10px; overflow: hidden; }
         .xp-bar { background: linear-gradient(90deg, #f59e0b, #fbbf24); height: 100%; border-radius: 10px; width: 65%; }
 
+        @media (max-width: 900px) {
+            .dashboard-layout { grid-template-columns: 1fr; }
+            .sidebar { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1.25rem; gap: 1rem; }
+            .main-content { padding: 1.25rem; }
+        }
+
     </style>
     <script>
+    window.__CURSO = {
+        nivel: (window.__INTEP && window.__INTEP.nivel) || 'A1',
+        num: 0,
+        trackActivity: false,
+        activityType: 'practice'
+    };
+
     (function(){
         fetch('/intep/cursoingles/api/sesion.php',{credentials:'include'})
         .then(function(r){return r.json();})
-        .then(function(d){if(!d.ok)window.location.replace('/intep/login.php'); window.__INTEP=d;})
+        .then(function(d){
+            if(!d.ok)window.location.replace('/intep/login.php');
+            window.__INTEP=d;
+            window.__CURSO.nivel = d.nivel || 'A1';
+            if (window.INTEP_refreshCourseLayer) {
+                window.INTEP_refreshCourseLayer();
+            }
+            if (window.__INTEP_syncDashboardLinks) {
+                window.__INTEP_syncDashboardLinks();
+            }
+        })
         .catch(function(){window.location.replace('/intep/login.php');});
     })();
     </script></head>
@@ -95,7 +118,7 @@
         <aside class="sidebar">
             <div class="sidebar-logo"><img src="https://institutointep.edu.co/logointep.png" alt="INTEP" style="height: 45px; vertical-align: middle; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));"></div>
             <nav style="display: flex; flex-direction: column; gap: 10px;">
-                <a href="dashboard.php" style="color: #cbd5e1; text-decoration: none; padding: 12px;">📚 Mis Cursos</a>
+                <a href="dashboard.php" id="misCursosLink" style="color: #cbd5e1; text-decoration: none; padding: 12px;">📚 Mis Cursos</a>
                 <a href="logros.html" style="color: white; text-decoration: none; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; font-weight: bold;">🏆 Logros</a>
                 <a href="#" style="color: #cbd5e1; text-decoration: none; padding: 12px;">⚙️ Ajustes</a>
             </nav>
@@ -103,14 +126,14 @@
 
         <main class="main-content">
             <h1>Panel de <span class="text-gradient">Recompensas</span></h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Gana experiencia por cada módulo que completas y desbloquea medallas reales.</p>
+            <p id="logrosLead" style="color: var(--text-muted); font-size: 1.1rem;">Gana experiencia por cada módulo que completas y desbloquea medallas reales.</p>
 
             <!-- Stats -->
             <div class="stats-header">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1);">⚡</div>
                     <div class="stat-info">
-                        <h3 style="color: #f59e0b;">5 Días</h3>
+                        <h3 style="color: #f59e0b;" id="rachaValue">0 Días</h3>
                         <p>Racha de Estudio</p>
                     </div>
                 </div>
@@ -118,16 +141,24 @@
                 <div class="stat-card">
                     <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1);">🏆</div>
                     <div class="stat-info">
-                        <h3 style="color: #10b981;">650 <span style="font-size:0.9rem;">PTS</span></h3>
+                        <h3 style="color: #10b981;" id="xpValue">0 <span style="font-size:0.9rem;">PTS</span></h3>
                         <p>Experiencia Total</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(99, 102, 241, 0.1);">🎯</div>
+                    <div class="stat-info">
+                        <h3 style="color: #818cf8;" id="masteryValue">0%</h3>
+                        <p>Dominio de práctica</p>
                     </div>
                 </div>
 
                 <div class="stat-card" style="grid-column: 1 / -1;">
                     <div style="width: 100%;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                            <span style="font-weight:bold;">Nivel Viajero (A1)</span>
-                            <span style="color:var(--text-muted);">Faltan 350 PTS para A2</span>
+                            <span style="font-weight:bold;" id="nivelMetaTitle">Nivel actual</span>
+                            <span style="color:var(--text-muted);" id="nivelMetaText">Practica activa del nivel</span>
                         </div>
                         <div class="xp-bar-container"><div class="xp-bar"></div></div>
                     </div>
@@ -135,32 +166,91 @@
             </div>
 
             <!-- Badges -->
-            <h2 class="section-title" style="margin-top: 40px;">Medallas Desbloqueadas</h2>
-            <div class="badges-grid">
-                <div class="badge-item">
-                    <span class="badge-icon">🧊</span>
-                    <h3 style="font-size: 1.1rem;">El Rompehielos</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">Completaste el módulo de saludos y presentaciones.</p>
-                </div>
-                <div class="badge-item">
-                    <span class="badge-icon">🕰️</span>
-                    <h3 style="font-size: 1.1rem;">Maestro del Tiempo</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">Dominaste las rutinas diarias a la perfección.</p>
-                </div>
-                <div class="badge-item badge-locked">
-                    <span class="badge-icon">🕵️</span>
-                    <h3 style="font-size: 1.1rem;">Buen Testigo</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">Se desbloquea al aprobar módulo A2 de accidentes.</p>
-                </div>
-                <div class="badge-item badge-locked">
-                    <span class="badge-icon">📰</span>
-                    <h3 style="font-size: 1.1rem;">El Chismoso</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">Se desbloquea al dominar Reported Speech en B1.</p>
-                </div>
-            </div>
+            <h2 class="section-title" style="margin-top: 40px;">Medallas del nivel actual</h2>
+            <div class="badges-grid" id="badgesGrid"></div>
         </main>
     </div>
 
+<script src="practice_hub.js"></script>
+<script src="cursos_api.js"></script>
+<script>
+function getDashboardHref() {
+    const nivel = (window.__CURSO && window.__CURSO.nivel) || 'A1';
+    if (nivel === 'A2') return 'dashboard_a2.php';
+    if (nivel === 'B1' || nivel === 'B2') return 'dashboard_b1.php';
+    return 'dashboard.php';
+}
+
+function syncDashboardLinks() {
+    const link = document.getElementById('misCursosLink');
+    if (link) {
+        link.setAttribute('href', getDashboardHref());
+    }
+}
+
+window.__INTEP_syncDashboardLinks = syncDashboardLinks;
+syncDashboardLinks();
+
+function renderBadges() {
+    if (!window.INTEPPractice) {
+        return;
+    }
+
+    const nivel = window.INTEPPractice.getCurrentLevel();
+    const summary = window.INTEPPractice.getPracticeSummary(nivel);
+    const badges = window.INTEPPractice.getBadges(nivel);
+    const xp = (window.__INTEP && window.__INTEP.xp) || 0;
+    const racha = (window.__INTEP && window.__INTEP.racha) || 0;
+
+    const lead = document.getElementById('logrosLead');
+    const rachaValue = document.getElementById('rachaValue');
+    const xpValue = document.getElementById('xpValue');
+    const masteryValue = document.getElementById('masteryValue');
+    const nivelMetaTitle = document.getElementById('nivelMetaTitle');
+    const nivelMetaText = document.getElementById('nivelMetaText');
+    const xpBar = document.querySelector('.xp-bar');
+    const badgesGrid = document.getElementById('badgesGrid');
+
+    if (lead) {
+        lead.textContent = `Estas viendo tus logros de practica ${nivel}. Cada modo suma dominio real sobre tu nivel actual.`;
+    }
+    if (rachaValue) {
+        rachaValue.textContent = `${racha} Días`;
+    }
+    if (xpValue) {
+        xpValue.innerHTML = `${xp} <span style="font-size:0.9rem;">PTS</span>`;
+    }
+    if (masteryValue) {
+        masteryValue.textContent = `${summary.mastery}%`;
+    }
+    if (nivelMetaTitle) {
+        nivelMetaTitle.textContent = `Ruta ${nivel} en practica`;
+    }
+    if (nivelMetaText) {
+        nivelMetaText.textContent = `${summary.unlockedBadges} de ${summary.totalBadges} medallas desbloqueadas · ${summary.totalPlays} sesiones acumuladas`;
+    }
+    if (xpBar) {
+        xpBar.style.width = `${Math.max(8, summary.mastery)}%`;
+    }
+
+    if (badgesGrid) {
+        badgesGrid.innerHTML = '';
+        badges.forEach((badge) => {
+            const card = document.createElement('div');
+            card.className = 'badge-item' + (badge.unlocked ? '' : ' badge-locked');
+            card.innerHTML = `
+                <span class="badge-icon">${badge.icon}</span>
+                <h3 style="font-size: 1.1rem;">${badge.title}</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">${badge.description}</p>
+                <p style="font-size: 0.78rem; margin-top: 12px; color: ${badge.unlocked ? '#10b981' : '#94a3b8'}; font-weight: 700;">${badge.unlocked ? 'Desbloqueada' : `Te faltan ${badge.remaining}`}</p>
+            `;
+            badgesGrid.appendChild(card);
+        });
+    }
+}
+
+renderBadges();
+</script>
 <script src="ufo.js"></script><script src="universe_bg.js"></script>
 </body>
 </html>

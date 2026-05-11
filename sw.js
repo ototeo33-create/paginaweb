@@ -1,8 +1,13 @@
-const CACHE_NAME = 'intep-v1';
+const CACHE_NAME = 'intep-v2-course';
 const OFFLINE_URL = '/intep/login.php';
 
 const PRECACHE = [
     '/intep/login.php',
+    '/intep/cursoingles/index.php',
+    '/intep/cursoingles/index.css',
+    '/intep/cursoingles/lesson.css',
+    '/intep/cursoingles/cursos_api.js',
+    '/intep/cursoingles/course_system.js',
     '/intep/favicon/android-chrome-192x192.png',
     '/intep/favicon/android-chrome-512x512.png',
     '/intep/favicon/site.webmanifest'
