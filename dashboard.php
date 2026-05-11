@@ -1701,5 +1701,6 @@ if ('serviceWorker' in navigator) {
 })();
 </script>
 <?php endif; ?>
+<?php include __DIR__ . '/partials/asistente_admin.php'; ?>
 </body>
 </html>
