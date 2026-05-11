@@ -302,5 +302,6 @@ $_SESSION['admin_preview'] = true;
 
 </div>
 
+<?php include __DIR__ . '/../partials/asistente_admin.php'; ?>
 </body>
 </html>

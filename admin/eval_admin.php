@@ -515,5 +515,6 @@ function confirmarToggle(activar) {
     document.getElementById('formControl').submit();
 }
 </script>
+<?php include __DIR__ . '/../partials/asistente_admin.php'; ?>
 </body>
 </html>
