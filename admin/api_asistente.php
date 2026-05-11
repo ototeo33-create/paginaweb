@@ -42,9 +42,9 @@ if ($mensaje === '') {
 }
 
 $admin_id = (int)$_SESSION['usuario_id'];
-$api_key  = $_ENV['DEEPSEEK_API_KEY'] ?? getenv('DEEPSEEK_API_KEY') ?: Config::get('DEEPSEEK_API_KEY', '');
+$api_key  = $_ENV['GROQ_API_KEY'] ?? getenv('GROQ_API_KEY') ?: Config::get('GROQ_API_KEY', '');
 if (!$api_key) {
-    echo json_encode(['error' => 'Falta DEEPSEEK_API_KEY en .env del servidor']); exit;
+    echo json_encode(['error' => 'Falta GROQ_API_KEY en .env del servidor']); exit;
 }
 
 // ============================================================
@@ -365,12 +365,12 @@ function ejecutar_tool(string $name, array $args, mysqli $conexion, int $admin_i
 }
 
 // ============================================================
-// LLAMADA A DEEPSEEK (API compatible OpenAI)
+// LLAMADA A GROQ (API compatible OpenAI)
 // ============================================================
 function llamar_modelo(array $messages, array $tools, string $key): array {
-    $url  = 'https://api.deepseek.com/chat/completions';
+    $url  = 'https://api.groq.com/openai/v1/chat/completions';
     $body = json_encode([
-        'model'       => 'deepseek-chat',
+        'model'       => 'llama-3.3-70b-versatile',
         'messages'    => $messages,
         'tools'       => $tools,
         'tool_choice' => 'auto',
