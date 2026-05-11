@@ -1683,5 +1683,6 @@ if (alerta) {
 </script>
 
 <script src="/intep/sesion.js"></script>
+<?php include __DIR__ . '/../partials/asistente_admin.php'; ?>
 </body>
 </html>

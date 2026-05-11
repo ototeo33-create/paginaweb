@@ -701,5 +701,6 @@ document.getElementById('form-subir').addEventListener('submit', function() {
 });
 </script>
 
+<?php include __DIR__ . '/../partials/asistente_admin.php'; ?>
 </body>
 </html>

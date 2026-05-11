@@ -534,5 +534,6 @@ function fmt_fecha($f) {
     <?php endif; ?>
 
 </div>
+<?php include __DIR__ . '/../partials/asistente_admin.php'; ?>
 </body>
 </html>
