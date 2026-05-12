@@ -28,7 +28,7 @@ if ($rol === 'estudiante') {
         mysqli_query($conexion, "ALTER TABLE estudiantes ADD COLUMN foto VARCHAR(255) DEFAULT NULL AFTER email");
     }
 
-    $q = "SELECT e.nombre, e.documento, e.foto, p.nombre as programa
+    $q = "SELECT e.nombre, e.documento, e.foto, p.nombre as programa, e.programa_id
           FROM estudiantes e
           JOIN programas p ON e.programa_id = p.id
           WHERE e.id = ?";
@@ -57,9 +57,16 @@ if ($rol === 'estudiante') {
     $es_primera_infancia  = stripos($programa_nombre_est, 'primera infancia') !== false
                          || stripos($programa_nombre_est, 'preescolar') !== false;
 
-    // Detectar si es estudiante de un programa de inglés (por nombre del programa)
-    $tiene_ingles = stripos($programa_nombre_est, 'inglés') !== false
-                 || stripos($programa_nombre_est, 'ingles') !== false;
+    // Detectar si es estudiante de un programa de inglés (por columna es_programa_idiomas)
+    $tiene_ingles = false;
+    $q_idiomas = mysqli_prepare($conexion, "SELECT es_programa_idiomas FROM programas WHERE id = ?");
+    if ($q_idiomas) {
+        $programa_id = (int)($info_est['programa_id'] ?? 0);
+        mysqli_stmt_bind_param($q_idiomas, 'i', $programa_id);
+        mysqli_stmt_execute($q_idiomas);
+        $row_idiomas = mysqli_fetch_assoc(mysqli_stmt_get_result($q_idiomas));
+        $tiene_ingles = (bool)($row_idiomas['es_programa_idiomas'] ?? 0);
+    }
 
     // Detectar si es estudiante de Almacenamiento
     $tiene_almacenamiento = stripos($programa_nombre_est, 'almacen') !== false
