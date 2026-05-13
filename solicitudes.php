@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once __DIR__ . '/includes/modulos_visibilidad.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
@@ -10,6 +11,8 @@ if ($_SESSION['usuario_rol'] !== 'estudiante') {
     header('Location: dashboard.php');
     exit;
 }
+
+requerir_modulo($conexion, 'solicitudes');
 
 $estudiante_id = $_SESSION['estudiante_id'];
 $nombre = $_SESSION['usuario_nombre'];

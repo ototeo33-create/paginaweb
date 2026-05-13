@@ -4,11 +4,14 @@
  * Inyecta datos del estudiante en localStorage y redirige a curso.html
  */
 require_once '../config.php';
+require_once __DIR__ . '/../includes/modulos_visibilidad.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: ../login.php');
     exit;
 }
+
+requerir_modulo($conexion, 'almacenamiento');
 
 $nombre = $_SESSION['usuario_nombre'] ?? 'Estudiante';
 $foto   = '';

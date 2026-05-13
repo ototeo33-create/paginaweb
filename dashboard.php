@@ -2,6 +2,8 @@
 require_once 'config.php';
 require_once __DIR__ . '/partials/icons.php';
 require_once __DIR__ . '/includes/alertas_helper.php';
+require_once __DIR__ . '/includes/modulos_visibilidad.php';
+modulos_visibilidad_init($conexion);
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
@@ -73,6 +75,27 @@ if ($rol === 'estudiante') {
                          || stripos($programa_nombre_est, 'recibo') !== false
                          || stripos($programa_nombre_est, 'despacho') !== false
                          || stripos($programa_nombre_est, 'bodega') !== false;
+
+    // Detectar si el estudiante tiene práctica registrada (activa o pendiente)
+    $tiene_practica_registrada = false;
+    $practica_estado_dash = null;
+    $chk_prac = mysqli_query($conexion,
+        "SHOW TABLES LIKE 'prac_practicas'"
+    );
+    if (mysqli_num_rows($chk_prac) > 0) {
+        $qprac = mysqli_prepare($conexion,
+            "SELECT estado FROM prac_practicas WHERE estudiante_id = ? AND estado IN ('activa','pendiente') LIMIT 1"
+        );
+        if ($qprac) {
+            mysqli_stmt_bind_param($qprac, 'i', $est_id);
+            mysqli_stmt_execute($qprac);
+            $rprac = mysqli_fetch_assoc(mysqli_stmt_get_result($qprac));
+            if ($rprac) {
+                $tiene_practica_registrada = true;
+                $practica_estado_dash = $rprac['estado'];
+            }
+        }
+    }
 
     // Cargar alertas titilantes (cartera/horarios/evaluacion) para este estudiante
     $alertas = obtenerAlertasEstudiante($conexion, (int)$est_id);
@@ -1164,6 +1187,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
             <div class="seccion-label">Acceso rápido</div>
 
             <!-- ── INTEP INGLÉS ── -->
+            <?php if (modulo_habilitado($conexion, 'idiomas')): ?>
             <a href="idiomas.php" class="ingles-card">
                 <div class="ingles-card-top">
                     <div class="ingles-badge">🌐 IA · Nuevo</div>
@@ -1209,6 +1233,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     </div>
                 </div>
             </a>
+            <?php endif; ?>
 
             <div class="menu-grid">
                 <a href="notas.php" class="menu-card-v2">
@@ -1223,30 +1248,36 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Consulta tu horario semanal y mensual de clases</p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
+                <?php if (modulo_habilitado($conexion, 'cartera')): ?>
                 <a href="mi_cartera.php" class="menu-card-v2<?= $alertas['cartera'] ? ' card-pulsing' : '' ?>" data-alerta-modulo="cartera">
                     <div class="card-icon naranja"><?= icon('cartera') ?></div>
                     <h3>Mi Cartera</h3>
                     <p>Consulta tus pagos, cuotas pendientes y estado de cuenta</p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
+                <?php endif; ?>
                 <a href="asistencia.php" class="menu-card-v2">
                     <div class="card-icon verde"><?= icon('asistencia') ?></div>
                     <h3>Mi Asistencia</h3>
                     <p>Consulta tu registro de asistencia por módulo y bimestre</p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
+                <?php if (modulo_habilitado($conexion, 'solicitudes')): ?>
                 <a href="solicitudes.php" class="menu-card-v2">
                     <div class="card-icon morado"><?= icon('solicitudes') ?></div>
                     <h3>Solicitudes</h3>
                     <p>Certificados, paz y salvo, reparación de equipos y más trámites</p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
+                <?php endif; ?>
+                <?php if (modulo_habilitado($conexion, 'materiales')): ?>
                 <a href="materiales.php" class="menu-card-v2">
                     <div class="card-icon naranja"><?= icon('materiales') ?></div>
                     <h3>Material de Clase</h3>
                     <p>Descarga guías, talleres y recursos compartidos por tus profesores</p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
+                <?php endif; ?>
                 <a href="evaluar_docente.php" class="menu-card-v2 <?php echo $eval_activa ? 'eval-activa' : 'eval-deshabilitada'; ?><?= $alertas['evaluacion'] ? ' card-pulsing' : '' ?>" data-alerta-modulo="evaluacion">
                     <div class="card-icon morado"><?= icon('evaluar') ?></div>
                     <?php if ($eval_activa): ?>
@@ -1265,7 +1296,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     </p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
-                <?php if (!empty($tiene_ingles)): ?>
+                <?php if (!empty($tiene_ingles) && modulo_habilitado($conexion, 'cursoingles')): ?>
                 <a href="/intep/cursoingles/index.php" class="menu-card-v2">
                     <div class="card-icon morado"><?= icon('ingles') ?></div>
                     <h3>Módulos de Inglés</h3>
@@ -1273,7 +1304,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <?php endif; ?>
-                <?php if (!empty($es_primera_infancia)): ?>
+                <?php if (!empty($es_primera_infancia) && modulo_habilitado($conexion, 'intep_kids')): ?>
                 <a href="/intep/cursoingles/cursoinglespreescolar/index.php" class="menu-card-v2">
                     <div class="card-icon amarillo"><?= icon('kids') ?></div>
                     <h3>INTEP Kids</h3>
@@ -1281,11 +1312,26 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <?php endif; ?>
-                <?php if (!empty($tiene_almacenamiento)): ?>
+                <?php if (!empty($tiene_almacenamiento) && modulo_habilitado($conexion, 'almacenamiento')): ?>
                 <a href="/intep/cursodealmacenamiento/entrada_curso.php" class="menu-card-v2">
                     <div class="card-icon naranja"><?= icon('almacen') ?></div>
                     <h3>Curso de Almacenamiento</h3>
                     <p>Técnicas de almacenamiento, recibo y despacho de mercancías · 6 módulos</p>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
+                </a>
+                <?php endif; ?>
+                <!-- ── PRÁCTICAS PROFESIONALES (no aplica a programas de idiomas) ── -->
+                <?php if (empty($tiene_ingles) && modulo_habilitado($conexion, 'practicas')): ?>
+                <a href="/intep/practicas.php" class="menu-card-v2">
+                    <div class="card-icon verde">📋</div>
+                    <h3>Prácticas Profesionales</h3>
+                    <?php if ($tiene_practica_registrada && $practica_estado_dash === 'activa'): ?>
+                    <p>Práctica activa · Registra tus avances mensuales y consulta tu seguimiento</p>
+                    <?php elseif ($tiene_practica_registrada && $practica_estado_dash === 'pendiente'): ?>
+                    <p>Solicitud en revisión · El coordinador confirmará tu tipo de práctica pronto</p>
+                    <?php else: ?>
+                    <p>Identifica tu tipo de práctica según el Decreto 0223 y regístrala aquí</p>
+                    <?php endif; ?>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
                 <?php endif; ?>
@@ -1459,6 +1505,18 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <div class="card-icon azul">🎓</div>
                     <h3>Cursos Admin</h3>
                     <p>Accede a todos los cursos de la plataforma para verificar su funcionamiento</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="admin/practicas.php" class="menu-card-v2">
+                    <div class="card-icon verde">📋</div>
+                    <h3>Prácticas</h3>
+                    <p>Gestiona y haz seguimiento a las prácticas profesionales de los estudiantes</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="admin/visibilidad_modulos.php" class="menu-card-v2">
+                    <div class="card-icon morado">🎛️</div>
+                    <h3>Visibilidad de Módulos</h3>
+                    <p>Activa o desactiva módulos para los estudiantes (cartera, prácticas, materiales…)</p>
                     <span class="card-arrow">→</span>
                 </a>
                 <a href="admin/limpiar_datos.php" class="menu-card-v2 danger">

@@ -3,10 +3,13 @@
 // INTEP INGLÉS — Módulo principal
 // ============================================================
 require_once 'config.php';
+require_once __DIR__ . '/includes/modulos_visibilidad.php';
 
 if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_rol'] !== 'estudiante') {
     header('Location: login.php'); exit;
 }
+
+requerir_modulo($conexion, 'idiomas');
 
 $est_id = (int)$_SESSION['estudiante_id'];
 

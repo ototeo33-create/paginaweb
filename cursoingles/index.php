@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/modulos_visibilidad.php';
+requerir_modulo($conexion, 'cursoingles');
 
 if (!empty($_SESSION['usuario_id']) && !empty($_SESSION['estudiante_id'])) {
     $est_id = (int)$_SESSION['estudiante_id'];

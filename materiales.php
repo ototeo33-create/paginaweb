@@ -1,10 +1,13 @@
 <?php
 require_once 'config.php';
+require_once __DIR__ . '/includes/modulos_visibilidad.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
     exit;
 }
+
+requerir_modulo($conexion, 'materiales');
 
 $rol        = $_SESSION['usuario_rol'];
 $usuario_id = (int)$_SESSION['usuario_id'];
