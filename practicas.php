@@ -30,6 +30,43 @@ $msg_ok  = $_SESSION['prac_ok']  ?? null;
 $msg_err = $_SESSION['prac_err'] ?? null;
 unset($_SESSION['prac_ok'], $_SESSION['prac_err']);
 
+// ── Verificar que las tablas existen ───────────────────────
+$tablas_ok = false;
+$r_tbl = mysqli_query($conexion, "SHOW TABLES LIKE 'prac_practicas'");
+if ($r_tbl && mysqli_num_rows($r_tbl) > 0) {
+    $tablas_ok = true;
+}
+
+if (!$tablas_ok) {
+    // Mostrar pantalla de espera amigable
+    ?><!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Prácticas - INTEP</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body{margin:0;background:#0f172a;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#fff;}
+  .box{text-align:center;padding:2rem;background:#1e293b;border-radius:1rem;max-width:420px;}
+  .icon{font-size:3rem;margin-bottom:1rem;}
+  h2{color:#f59e0b;margin:0 0 .5rem;}
+  p{color:#94a3b8;font-size:.95rem;}
+  a{display:inline-block;margin-top:1.5rem;padding:.7rem 1.5rem;background:#334155;color:#fff;text-decoration:none;border-radius:.5rem;}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="icon">🔧</div>
+  <h2>Módulo en preparación</h2>
+  <p>El módulo de prácticas está siendo configurado por el administrador. Vuelve en unos minutos.</p>
+  <a href="/intep/dashboard.php">← Volver al portal</a>
+</div>
+</body>
+</html>
+<?php
+    exit;
+}
+
 // ── Obtener práctica activa del estudiante ──────────────────
 $practica = null;
 if ($estudiante_id) {
