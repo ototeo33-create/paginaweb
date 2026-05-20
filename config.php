@@ -20,10 +20,11 @@ define('DB_NAME', Config::get('DB_NAME', 'intep_portal'));
 
 // --- Tiempos de inactividad (en segundos) ---
 // Admin: sin límite (0 = desactivado)
-// Docente/Estudiante: 30 minutos = 1800 segundos
+// Docente: sin límite (0 = desactivado) — pueden estar mucho tiempo ingresando notas
+// Estudiante: 30 minutos = 1800 segundos
 define('TIMEOUT_ADMIN', (int)Config::get('TIMEOUT_ADMIN', 0));
-define('TIMEOUT_DOCENTE', (int)Config::get('TIMEOUT_DOCENTE', 120));
-define('TIMEOUT_ESTUDIANTE', (int)Config::get('TIMEOUT_ESTUDIANTE', 120));
+define('TIMEOUT_DOCENTE', (int)Config::get('TIMEOUT_DOCENTE', 0));
+define('TIMEOUT_ESTUDIANTE', (int)Config::get('TIMEOUT_ESTUDIANTE', 1800));
 
 // --- Configuración de seguridad ---
 define('SESSION_LIFETIME', (int)Config::get('SESSION_LIFETIME', 7200));
