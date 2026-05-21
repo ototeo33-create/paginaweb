@@ -157,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($accion === 'eliminar_estudiante') {
         $id = (int)$_POST['estudiante_id'];
         // Eliminar registros dependientes
-        $tablas = ['notas', 'asistencia', 'observaciones', 'horarios', 'pagos'];
+        $tablas = ['solicitudes', 'notas', 'asistencia', 'observaciones', 'horarios', 'pagos'];
         foreach ($tablas as $tabla) {
             $stmt = mysqli_prepare($conexion, "DELETE FROM $tabla WHERE estudiante_id = ?");
             if ($stmt) {
