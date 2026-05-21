@@ -156,24 +156,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // --- ELIMINAR ESTUDIANTE PERMANENTEMENTE ---
     } elseif ($accion === 'eliminar_estudiante') {
         $id = (int)$_POST['estudiante_id'];
-        // Eliminar registros dependientes
-        $tablas = ['solicitudes', 'notas', 'asistencia', 'observaciones', 'horarios', 'pagos'];
-        foreach ($tablas as $tabla) {
-            $stmt = mysqli_prepare($conexion, "DELETE FROM $tabla WHERE estudiante_id = ?");
-            if ($stmt) {
-                mysqli_stmt_bind_param($stmt, 'i', $id);
-                mysqli_stmt_execute($stmt);
+
+        // Detectar dinámicamente TODAS las tablas con FK -> estudiantes.id
+        $fk_sql = "SELECT TABLE_NAME, COLUMN_NAME
+                   FROM information_schema.KEY_COLUMN_USAGE
+                   WHERE REFERENCED_TABLE_SCHEMA = DATABASE()
+                     AND REFERENCED_TABLE_NAME = 'estudiantes'
+                     AND REFERENCED_COLUMN_NAME = 'id'";
+        $fk_result = mysqli_query($conexion, $fk_sql);
+        if ($fk_result) {
+            while ($row = mysqli_fetch_assoc($fk_result)) {
+                $tabla = $row['TABLE_NAME'];
+                $columna = $row['COLUMN_NAME'];
+                $stmt = mysqli_prepare($conexion, "DELETE FROM `$tabla` WHERE `$columna` = ?");
+                if ($stmt) {
+                    mysqli_stmt_bind_param($stmt, 'i', $id);
+                    mysqli_stmt_execute($stmt);
+                    mysqli_stmt_close($stmt);
+                }
             }
         }
+
+        // Fallback por si alguna tabla no tiene FK declarada pero sí columna estudiante_id
+        $tablas_fallback = ['solicitudes', 'notas', 'asistencia', 'observaciones', 'horarios', 'pagos'];
+        foreach ($tablas_fallback as $tabla) {
+            $stmt = @mysqli_prepare($conexion, "DELETE FROM `$tabla` WHERE estudiante_id = ?");
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, 'i', $id);
+                @mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
+            }
+        }
+
         // Eliminar usuario asociado
         $stmt = mysqli_prepare($conexion, "DELETE FROM usuarios WHERE estudiante_id = ?");
         mysqli_stmt_bind_param($stmt, 'i', $id);
         mysqli_stmt_execute($stmt);
+
         // Eliminar estudiante
         $stmt = mysqli_prepare($conexion, "DELETE FROM estudiantes WHERE id = ?");
         mysqli_stmt_bind_param($stmt, 'i', $id);
-        mysqli_stmt_execute($stmt);
-        $mensaje = 'success|🗑 Estudiante eliminado permanentemente.';
+        if (mysqli_stmt_execute($stmt)) {
+            $mensaje = 'success|🗑 Estudiante eliminado permanentemente.';
+        } else {
+            $mensaje = 'error|No se pudo eliminar el estudiante: ' . mysqli_error($conexion);
+        }
 
     // --- CREAR DOCENTE ---
     } elseif ($accion === 'crear_docente') {
