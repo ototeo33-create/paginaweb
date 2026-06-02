@@ -113,6 +113,32 @@ if (!empty($ids_ingles)) {
     }
 }
 
+// ── KPIs Módulo de Matrículas ─────────────────────────────
+$mat = ['total'=>0,'pendientes'=>0,'en_revision'=>0,'matriculadas'=>0,'presencial'=>0,'virtual'=>0];
+$mat_pins = ['presencial'=>0,'virtual'=>0];
+$mat_activo = false;
+$_chk = mysqli_query($conexion, "SHOW TABLES LIKE 'matriculas_inscripciones'");
+if ($_chk && mysqli_num_rows($_chk) > 0) {
+    $mat_activo = true;
+    $_r = mysqli_query($conexion,
+        "SELECT tipo_matricula, total, pendientes, en_revision, matriculadas FROM v_matriculas_kpis");
+    if ($_r) {
+        while ($_rm = mysqli_fetch_assoc($_r)) {
+            $mat['total']        += (int)$_rm['total'];
+            $mat['pendientes']   += (int)$_rm['pendientes'];
+            $mat['en_revision']  += (int)$_rm['en_revision'];
+            $mat['matriculadas'] += (int)$_rm['matriculadas'];
+            $mat[$_rm['tipo_matricula']] = (int)$_rm['total'];
+        }
+    }
+    $_r2 = mysqli_query($conexion, "SELECT tipo, disponibles FROM v_pins_disponibles");
+    if ($_r2) {
+        while ($_rp = mysqli_fetch_assoc($_r2)) {
+            $mat_pins[$_rp['tipo']] = (int)$_rp['disponibles'];
+        }
+    }
+}
+
 $msg_parts = $mensaje ? explode('|', $mensaje) : null;
 ?>
 
@@ -1446,31 +1472,8 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
     <!-- ============================================ -->
     <!-- AVANCE DEL CURSO DE INGLÉS                  -->
     <!-- ============================================ -->
-    <a href="avance_ingles.php" style="text-decoration:none; color:inherit; display:block;">
-        <div class="ingles-card">
-            <div class="ingles-header">
-                <div>
-                    <h3>📚 Avance del curso de Inglés</h3>
-                    <p class="ingles-subtitle">Seguimiento del progreso de las estudiantes inscritas en programas de inglés</p>
-                </div>
-                <span class="ingles-cta">Ver detalle →</span>
-            </div>
-            <div class="ingles-stats">
-                <div class="ingles-stat">
-                    <div class="ingles-stat-num"><?php echo $ingles['total']; ?></div>
-                    <div class="ingles-stat-lbl">Estudiantes de inglés</div>
-                </div>
-                <div class="ingles-stat verde">
-                    <div class="ingles-stat-num"><?php echo $ingles['iniciaron']; ?></div>
-                    <div class="ingles-stat-lbl">Iniciaron el curso</div>
-                </div>
-                <div class="ingles-stat dorado">
-                    <div class="ingles-stat-num"><?php echo $ingles['aprobaron']; ?></div>
-                    <div class="ingles-stat-lbl">Examen final aprobado</div>
-                </div>
-            </div>
-        </div>
-    </a>
+    <!-- Avance del curso de Inglés: ahora es una tarjeta en el dashboard principal -->
+    <?php /* Bloque movido a dashboard.php (grilla "Gestión del sistema"). Panel = solo monitoreo. */ ?>
 
     <style>
         .ingles-card {
@@ -1493,6 +1496,115 @@ $msg_parts = $mensaje ? explode('|', $mensaje) : null;
         .ingles-stat.verde .ingles-stat-num { color:#10b981; }
         .ingles-stat.dorado .ingles-stat-num { color:#f59e0b; }
         .ingles-stat-lbl { font-size:.72rem; color:#64748b; text-transform:uppercase; letter-spacing:.3px; margin-top:.3rem; }
+    </style>
+
+    <!-- ============================================ -->
+    <!-- MÓDULO DE MATRÍCULAS                        -->
+    <!-- ============================================ -->
+    <!-- Módulo de Matrículas: ahora se gestiona desde la tarjeta del dashboard principal -->
+    <?php /* Bloque movido a dashboard.php (grilla "Gestión del sistema"). Panel = solo monitoreo. */ ?>
+
+    <style>
+        /* ── Módulo matrículas card ── */
+        .mat-card-wrap {
+            margin-bottom: 1.5rem;
+        }
+        .mat-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .mat-card {
+            background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+            border-radius: 16px 16px 0 0;
+            padding: 1.5rem 1.5rem 1.2rem;
+            border: 1px solid rgba(5,150,105,0.18);
+            border-bottom: none;
+            box-shadow: 0 4px 20px rgba(5,150,105,0.08);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .mat-card-link:hover .mat-card {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(5,150,105,0.15);
+        }
+        .mat-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .mat-title  { margin:0; font-size:1.05rem; font-weight:800; color:#022C22; }
+        .mat-subtitle { margin:.2rem 0 0; font-size:.82rem; color:#475569; }
+        .mat-badges { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+        .mat-cta    { background:#059669; color:#fff; padding:.35rem .9rem; border-radius:99px; font-size:.78rem; font-weight:700; white-space:nowrap; }
+        .mat-badge-pend { background:#FEF3C7; color:#92400E; padding:.3rem .8rem; border-radius:99px; font-size:.78rem; font-weight:700; border:1px solid #FCD34D; white-space:nowrap; }
+        .mat-badge-rev  { background:#DBEAFE; color:#1E40AF; padding:.3rem .8rem; border-radius:99px; font-size:.78rem; font-weight:700; border:1px solid #BFDBFE; white-space:nowrap; }
+
+        .mat-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: .7rem;
+        }
+        .mat-stat {
+            background: rgba(255,255,255,0.75);
+            padding: .75rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(16,185,129,0.12);
+        }
+        .mat-stat-num { font-size: 1.55rem; font-weight: 800; color: #334155; line-height: 1; }
+        .mat-stat-lbl { font-size: .7rem; color: #64748b; text-transform: uppercase; letter-spacing: .3px; margin-top: .25rem; }
+        .mat-stat.verde     .mat-stat-num { color: #10b981; }
+        .mat-stat.naranja   .mat-stat-num { color: #F59E0B; }
+        .mat-stat.azul      .mat-stat-num { color: #2563EB; }
+        .mat-stat.azul-claro .mat-stat-num { color: #38BDF8; }
+        .mat-stat.gris      .mat-stat-num { color: #6B7280; }
+
+        /* Barra de acciones rápidas debajo de la card */
+        .mat-acciones {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(5,150,105,0.18);
+            border-top: 1px solid rgba(5,150,105,0.1);
+            border-radius: 0 0 16px 16px;
+            padding: .8rem 1.5rem;
+            backdrop-filter: blur(6px);
+        }
+        .mat-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(5,150,105,0.2);
+            color: #059669;
+            padding: .4rem .95rem;
+            border-radius: 8px;
+            font-size: .8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all .2s;
+            white-space: nowrap;
+        }
+        .mat-btn:hover { background: #059669; color: #fff; border-color: #059669; }
+        .mat-btn-urgente { border-color: #FCD34D; color: #92400E; background: #FEF3C7; }
+        .mat-btn-urgente:hover { background: #F59E0B; color: #fff; border-color: #F59E0B; }
+        .mat-pin-counts {
+            background: rgba(5,150,105,0.1);
+            color: #047857;
+            padding: .1rem .5rem;
+            border-radius: 99px;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+        .mat-btn:hover .mat-pin-counts { background: rgba(255,255,255,0.2); color: #fff; }
+
+        @media (max-width: 500px) {
+            .mat-stats { grid-template-columns: repeat(3, 1fr); }
+            .mat-acciones { padding: .7rem 1rem; }
+        }
     </style>
 
     <script>

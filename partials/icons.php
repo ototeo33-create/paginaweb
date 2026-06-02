@@ -33,6 +33,7 @@ if (!function_exists('icon')) {
             'flame'       => '<path d="M12 3.5c2 3.5 5 5.5 5 9.5a5 5 0 0 1-10 0c0-2 .8-3 2-4 .5 1 1.5 1.5 2.5 1.5 0-3 .5-5 .5-7z"/>',
             'check'       => '<path d="m5 12.5 4.5 4.5L19 7"/>',
             'bell'        => '<path d="M6 16.5V11a6 6 0 1 1 12 0v5.5l1.5 2H4.5z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+            'mensajes'    => '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
         ];
         $body = $paths[$name] ?? '<circle cx="12" cy="12" r="9"/>';
         return '<svg '.$base.'>'.$body.'</svg>';

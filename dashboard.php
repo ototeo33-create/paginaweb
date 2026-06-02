@@ -24,6 +24,23 @@ $csrf_dashboard = csrf_token();
 if ($rol === 'estudiante') {
     $est_id = $_SESSION['estudiante_id'];
 
+    // Mensajes no leídos (para la tarjeta de inicio y el badge del bottom-nav).
+    // Resiliente: si las tablas aún no existen, queda en 0 sin romper la página.
+    $msg_no_leidos = 0;
+    try {
+        $stmt_msg = mysqli_prepare($conexion,
+            "SELECT COUNT(*) AS n FROM mensajes_admin m
+             LEFT JOIN mensajes_vistos v ON v.mensaje_id = m.id AND v.estudiante_id = ?
+             WHERE v.visto_en IS NULL");
+        if ($stmt_msg) {
+            mysqli_stmt_bind_param($stmt_msg, 'i', $est_id);
+            mysqli_stmt_execute($stmt_msg);
+            $msg_no_leidos = (int)(mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_msg))['n'] ?? 0);
+        }
+    } catch (\Throwable $e) {
+        $msg_no_leidos = 0;
+    }
+
     // Auto-crear columna foto si no existe
     $col_check = mysqli_query($conexion, "SHOW COLUMNS FROM estudiantes LIKE 'foto'");
     if (mysqli_num_rows($col_check) === 0) {
@@ -145,6 +162,23 @@ if ($rol === 'admin') {
 
     $r = mysqli_query($conexion, "SELECT COUNT(*) as total FROM programa_modulo");
     $stats_admin['modulos'] = mysqli_fetch_assoc($r)['total'];
+
+    // ── Matrículas (KPIs para card) ────────────────────────
+    $stats_admin['mat_pendientes']  = 0;
+    $stats_admin['mat_total']       = 0;
+    $stats_admin['mat_activo']      = false;
+    $_chk_mat = mysqli_query($conexion, "SHOW TABLES LIKE 'matriculas_inscripciones'");
+    if ($_chk_mat && mysqli_num_rows($_chk_mat) > 0) {
+        $stats_admin['mat_activo'] = true;
+        $_r = mysqli_query($conexion,
+            "SELECT COUNT(*) AS total,
+                    SUM(estado='pendiente_revision') AS pendientes
+             FROM matriculas_inscripciones");
+        if ($_r && ($_row = mysqli_fetch_assoc($_r))) {
+            $stats_admin['mat_total']      = (int)$_row['total'];
+            $stats_admin['mat_pendientes'] = (int)$_row['pendientes'];
+        }
+    }
 }
 
 // Estado de evaluacion docente
@@ -512,6 +546,44 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
         .menu-card-v2 .card-icon.morado   { background: #F5F3FF; color: #7C3AED; }
         .menu-card-v2 .card-icon.naranja  { background: #FFF7ED; color: #EA580C; }
         .menu-card-v2 .card-icon.gris     { background: #F1F5F9; color: #64748B; }
+
+        /* ── Badge de alerta (pendientes en matrículas, etc.) ── */
+        .menu-card-v2 .card-badge-alerta {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 800;
+            min-width: 24px;
+            height: 24px;
+            padding: 0 8px;
+            border-radius: 99px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+            border: 2px solid white;
+            animation: badgePulse 2s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4); }
+            50% { transform: scale(1.08); box-shadow: 0 2px 14px rgba(245, 158, 11, 0.6); }
+        }
+
+        /* ── Tarjeta de matrículas con highlight especial ── */
+        .menu-card-v2.menu-card-matriculas {
+            background: linear-gradient(135deg, #ffffff 60%, #ECFDF5 100%);
+            border: 1px solid rgba(5,150,105,0.25);
+        }
+        .menu-card-v2.menu-card-matriculas::after {
+            background: linear-gradient(90deg, #10B981, #059669);
+            opacity: 0.5;
+        }
+        .menu-card-v2.menu-card-matriculas:hover::after { opacity: 1; }
 
         .menu-card-v2 h3 {
             font-size: 1.05rem;
@@ -1242,6 +1314,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Consulta tus calificaciones por bimestre y módulo con detalle de los 3 cortes</p>
                     <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
                 </a>
+                <a href="mensajes.php" class="menu-card-v2<?= ($msg_no_leidos ?? 0) > 0 ? ' card-pulsing' : '' ?>">
+                    <div class="card-icon azul"><?= icon('mensajes') ?></div>
+                    <h3>Mensajes<?php if (($msg_no_leidos ?? 0) > 0): ?> <span style="background:#dc2626;color:#fff;border-radius:999px;font-size:0.72rem;font-weight:700;padding:0.05rem 0.5rem;vertical-align:middle;"><?= $msg_no_leidos ?></span><?php endif; ?></h3>
+                    <p>Comunicados, circulares y avisos enviados por la institución</p>
+                    <span class="card-arrow"><?= icon('arrow', ['size' => 18]) ?></span>
+                </a>
                 <a href="horarios.php" class="menu-card-v2<?= $alertas['horarios'] ? ' card-pulsing' : '' ?>" data-alerta-modulo="horarios">
                     <div class="card-icon azul"><?= icon('horario') ?></div>
                     <h3>Mi Horario</h3>
@@ -1453,6 +1531,21 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Monitorea uso de la plataforma y estado del servidor</p>
                     <span class="card-arrow">→</span>
                 </a>
+                <a href="admin/mensajes.php" class="menu-card-v2">
+                    <div class="card-icon azul">💬</div>
+                    <h3>Mensajes a Estudiantes</h3>
+                    <p>Envía circulares y avisos a todos los estudiantes y revisa quién los ha visto</p>
+                    <span class="card-arrow">→</span>
+                </a>
+                <a href="admin/matriculas.php" class="menu-card-v2 menu-card-matriculas">
+                    <?php if (!empty($stats_admin['mat_pendientes'])): ?>
+                    <span class="card-badge-alerta"><?php echo $stats_admin['mat_pendientes']; ?></span>
+                    <?php endif; ?>
+                    <div class="card-icon verde">🎓</div>
+                    <h3>Administración de Matrículas</h3>
+                    <p>Ve y gestiona inscripciones, PINs, documentos y datos de aspirantes</p>
+                    <span class="card-arrow">→</span>
+                </a>
                 <a href="admin/estudiantes.php" class="menu-card-v2">
                     <div class="card-icon verde">👥</div>
                     <h3>Creación de Estudiantes</h3>
@@ -1507,6 +1600,12 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
                     <p>Accede a todos los cursos de la plataforma para verificar su funcionamiento</p>
                     <span class="card-arrow">→</span>
                 </a>
+                <a href="admin/avance_ingles.php" class="menu-card-v2">
+                    <div class="card-icon azul">📚</div>
+                    <h3>Avance del curso de Inglés</h3>
+                    <p>Seguimiento del progreso de las estudiantes inscritas en programas de inglés</p>
+                    <span class="card-arrow">→</span>
+                </a>
                 <a href="admin/practicas.php" class="menu-card-v2">
                     <div class="card-icon verde">📋</div>
                     <h3>Prácticas</h3>
@@ -1531,33 +1630,7 @@ $fecha_hoy = $dias[(int)date('w')] . ', ' . date('j') . ' de ' . $meses[(int)dat
 
     </div>
 
-    <?php if ($rol === 'estudiante'):
-        $bn_page = basename($_SERVER['PHP_SELF']);
-        $bn = function($file) use ($bn_page) { return $bn_page === $file ? ' active' : ''; };
-    ?>
-    <nav class="bottom-nav" aria-label="Navegación principal">
-        <a href="notas.php" class="bn-item<?php echo $bn('notas.php'); ?>">
-            <span class="bn-icon"><?= icon('notas', ['size' => 24]) ?></span>
-            <span>Notas</span>
-        </a>
-        <a href="horarios.php" class="bn-item<?php echo $bn('horarios.php'); ?>">
-            <span class="bn-icon"><?= icon('horario', ['size' => 24]) ?></span>
-            <span>Horario</span>
-        </a>
-        <a href="dashboard.php" class="bn-item<?php echo $bn('dashboard.php'); ?>">
-            <span class="bn-icon"><?= icon('home', ['size' => 24]) ?></span>
-            <span>Home</span>
-        </a>
-        <a href="mi_cartera.php" class="bn-item<?php echo $bn('mi_cartera.php'); ?>">
-            <span class="bn-icon"><?= icon('cartera', ['size' => 24]) ?></span>
-            <span>Cartera</span>
-        </a>
-        <a href="perfil.php" class="bn-item<?php echo $bn('perfil.php'); ?>">
-            <span class="bn-icon"><?= icon('perfil', ['size' => 24]) ?></span>
-            <span>Yo</span>
-        </a>
-    </nav>
-    <?php endif; ?>
+    <?php require_once __DIR__ . '/partials/student_bottom_nav.php'; ?>
 
 <script src="/intep/sesion.js"></script>
 
