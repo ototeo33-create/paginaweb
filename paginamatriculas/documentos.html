@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#059669">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <title>Documentos - Matrícula INTEP</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1687597795721435');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1687597795721435&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  <script src="/fb-pixel-events.js" defer></script>
+</head>
+<body class="doc-page">
+
+  <header class="form-header">
+    <img src="../logointep.png" alt="INTEP" class="logo-sm" onerror="this.style.display='none'">
+    <div class="header-info">
+      <h2>Subir Documentos</h2>
+      <span>Toma una foto o sube el archivo de cada documento</span>
+    </div>
+    <div class="pin-badge" id="headerPin">PIN: ----</div>
+  </header>
+
+  <div class="doc-container">
+    <div class="doc-intro">
+      <h2><i class="fas fa-cloud-upload-alt"></i> Adjunta tus documentos</h2>
+      <p>Toca cada tarjeta para subir un archivo o usa el botón de cámara. Formatos: JPG, PNG, WEBP. Máx. 10MB.</p>
+    </div>
+
+    <div class="doc-grid">
+
+      <!-- CC Frontal -->
+      <div class="doc-card" data-doc="cc_frontal">
+        <div class="doc-placeholder">
+          <div class="doc-icon-big"><i class="fas fa-id-card"></i></div>
+          <div class="doc-label">Documento de identidad <span style="color:var(--danger);">*</span></div>
+          <div class="doc-hint">Cara frontal (CC, TI, CE)</div>
+        </div>
+        <img class="doc-preview" src="" alt="Vista previa">
+        <div class="doc-actions">
+          <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+        </div>
+        <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Tomar foto</button>
+        <input type="file" accept="image/*" capture="environment" hidden>
+      </div>
+
+      <!-- CC Posterior -->
+      <div class="doc-card" data-doc="cc_posterior">
+        <div class="doc-placeholder">
+          <div class="doc-icon-big"><i class="fas fa-id-card"></i></div>
+          <div class="doc-label">Documento de identidad (Reverso)</div>
+          <div class="doc-hint">Cara posterior</div>
+        </div>
+        <img class="doc-preview" src="" alt="Vista previa">
+        <div class="doc-actions">
+          <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+        </div>
+        <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Tomar foto</button>
+        <input type="file" accept="image/*" capture="environment" hidden>
+      </div>
+
+      <!-- Acta de Grado -->
+      <div class="doc-card" data-doc="acta_grado">
+        <div class="doc-placeholder">
+          <div class="doc-icon-big"><i class="fas fa-file-alt"></i></div>
+          <div class="doc-label">Acta de grado <span style="color:var(--danger);">*</span></div>
+          <div class="doc-hint">o certificado de bachiller</div>
+        </div>
+        <img class="doc-preview" src="" alt="Vista previa">
+        <div class="doc-actions">
+          <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+        </div>
+        <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Tomar foto</button>
+        <input type="file" accept="image/*" capture="environment" hidden>
+      </div>
+
+      <!-- Diploma Bachiller -->
+      <div class="doc-card" data-doc="diploma_bachiller">
+        <div class="doc-placeholder">
+          <div class="doc-icon-big"><i class="fas fa-scroll"></i></div>
+          <div class="doc-label">Diploma de bachiller <span style="color:var(--danger);">*</span></div>
+          <div class="doc-hint">o certificado de 9no grado</div>
+        </div>
+        <img class="doc-preview" src="" alt="Vista previa">
+        <div class="doc-actions">
+          <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+        </div>
+        <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Tomar foto</button>
+        <input type="file" accept="image/*" capture="environment" hidden>
+      </div>
+
+      <!-- Salud -->
+      <div class="doc-card" data-doc="certificado_salud">
+        <div class="doc-placeholder">
+          <div class="doc-icon-big"><i class="fas fa-notes-medical"></i></div>
+          <div class="doc-label">Certificado de afiliación a salud</div>
+          <div class="doc-hint">EPS, Sisbén o régimen especial</div>
+        </div>
+        <img class="doc-preview" src="" alt="Vista previa">
+        <div class="doc-actions">
+          <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+        </div>
+        <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Tomar foto</button>
+        <input type="file" accept="image/*" capture="environment" hidden>
+      </div>
+
+      <!-- Foto -->
+      <div class="doc-card" data-doc="foto_estudiante">
+        <div class="doc-placeholder">
+          <div class="doc-icon-big"><i class="fas fa-portrait"></i></div>
+          <div class="doc-label">Foto tipo documento</div>
+          <div class="doc-hint">Fondo blanco o azul</div>
+        </div>
+        <img class="doc-preview" src="" alt="Vista previa">
+        <div class="doc-actions">
+          <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+        </div>
+        <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Tomar foto</button>
+        <input type="file" accept="image/*" capture="user" hidden>
+      </div>
+
+    </div>
+
+    <!-- BOTÓN GUARDAR -->
+    <div class="doc-submit-area">
+      <button type="button" class="btn-guardar" id="btnGuardar">
+        <i class="fas fa-save"></i> Guardar y finalizar matrícula
+      </button>
+    </div>
+  </div>
+
+  <!-- CAMERA MODAL -->
+  <div class="camera-modal" id="cameraModal">
+    <video id="camVideo" autoplay playsinline></video>
+    <canvas id="camCanvas"></canvas>
+    <div class="cam-controls">
+      <button type="button" class="btn-cam btn-cancel" id="btnCancel">
+        <i class="fas fa-times"></i> Cancelar
+      </button>
+      <button type="button" class="btn-cam btn-capture" id="btnCapture">
+        <i class="fas fa-camera"></i> Capturar
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Enviando matrícula...</p>
+  </div>
+
+  <script src="js/pins.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

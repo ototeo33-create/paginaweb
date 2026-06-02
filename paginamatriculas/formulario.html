@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#059669">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <title>Formulario de Matrícula - INTEP</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1687597795721435');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1687597795721435&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  <script src="/fb-pixel-events.js" defer></script>
+</head>
+<body class="form-page">
+
+  <header class="form-header">
+    <img src="../logointep.png" alt="INTEP" class="logo-sm" onerror="this.style.display='none'">
+    <div class="header-info" style="text-align:center;flex:1;">
+      <h2 id="headerPrograma">Formulario de Inscripción</h2>
+      <span>INTEP - Instituto Técnico Pedagógico</span>
+    </div>
+    <div class="pin-badge" id="headerPin">PIN: ----</div>
+  </header>
+
+  <!-- Barra de progreso -->
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="form-container">
+    <form id="formMatricula" novalidate>
+
+      <!-- ══════════════════════════════════════════════════════════
+           SECCIÓN 1: DATOS PERSONALES
+           ══════════════════════════════════════════════════════════ -->
+      <div class="form-section" data-section="1">
+        <div class="section-number">1</div>
+        <h3><i class="fas fa-user-circle"></i> Información Personal</h3>
+        <p class="section-desc">Todos los campos con <span class="req">*</span> son obligatorios.</p>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Primer Apellido <span class="req">*</span></label>
+            <input type="text" name="primerApellido" id="primerApellido" placeholder="Ej: Rodríguez" required>
+          </div>
+          <div class="form-group">
+            <label>Segundo Apellido</label>
+            <input type="text" name="segundoApellido" id="segundoApellido" placeholder="Ej: Martínez">
+          </div>
+          <div class="form-group">
+            <label>Nombres Completos <span class="req">*</span></label>
+            <input type="text" name="nombres" id="nombres" placeholder="Ej: Carlos Andrés" required>
+          </div>
+          <div class="form-group">
+            <label>Nacionalidad <span class="req">*</span></label>
+            <input type="text" name="nacionalidad" id="nacionalidad" placeholder="Ej: Colombiano(a)" value="Colombiano(a)" required>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Documento <span class="req">*</span></label>
+            <select name="tipoDocumento" id="tipoDocumento" required>
+              <option value="">Seleccionar...</option>
+              <option value="CC">Cédula de Ciudadanía (CC)</option>
+              <option value="TI">Tarjeta de Identidad (TI)</option>
+              <option value="CE">Cédula de Extranjería (CE)</option>
+              <option value="PA">Pasaporte (PA)</option>
+              <option value="PPT">Permiso de Protección Temporal (PPT)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Número de Documento <span class="req">*</span></label>
+            <input type="text" name="numDocumento" id="numDocumento" placeholder="Sin puntos ni guiones" required inputmode="numeric">
+          </div>
+          <div class="form-group">
+            <label>Lugar de Expedición <span class="req">*</span></label>
+            <input type="text" name="lugarExpedicion" id="lugarExpedicion" placeholder="Ej: Madrid, Cundinamarca" required>
+          </div>
+          <div class="form-group">
+            <label>Fecha de Nacimiento <span class="req">*</span></label>
+            <input type="date" name="fechaNacimiento" id="fechaNacimiento" required>
+          </div>
+          <div class="form-group">
+            <label>Lugar de Nacimiento <span class="req">*</span></label>
+            <input type="text" name="lugarNacimiento" id="lugarNacimiento" placeholder="Ej: Bogotá D.C." required>
+          </div>
+          <div class="form-group">
+            <label>Edad</label>
+            <input type="number" name="edad" id="edad" placeholder="Se calcula automáticamente" min="14" max="99" readonly style="background:var(--primary-pale);cursor:default;">
+          </div>
+          <div class="form-group">
+            <label>Género <span class="req">*</span></label>
+            <select name="genero" id="genero" required>
+              <option value="">Seleccionar...</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Otro">Otro</option>
+              <option value="No informa">Prefiero no decirlo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Estado Civil</label>
+            <select name="estadoCivil" id="estadoCivil">
+              <option value="">Seleccionar...</option>
+              <option value="Soltero">Soltero(a)</option>
+              <option value="Casado">Casado(a)</option>
+              <option value="Unión libre">Unión libre</option>
+              <option value="Divorciado">Divorciado(a)</option>
+              <option value="Viudo">Viudo(a)</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Dirección de Residencia <span class="req">*</span></label>
+            <input type="text" name="direccion" id="direccion" placeholder="Ej: Calle 10 #4-25, Barrio Centro" required>
+          </div>
+          <div class="form-group">
+            <label>Barrio / Vereda</label>
+            <input type="text" name="barrio" id="barrio" placeholder="Ej: Centro">
+          </div>
+          <div class="form-group">
+            <label>Municipio / Ciudad <span class="req">*</span></label>
+            <input type="text" name="municipio" id="municipio" placeholder="Ej: Madrid" required>
+          </div>
+          <div class="form-group">
+            <label>Teléfono Fijo</label>
+            <input type="tel" name="telefono" id="telefono" placeholder="Ej: 601 825 3887">
+          </div>
+          <div class="form-group">
+            <label>Celular / WhatsApp <span class="req">*</span></label>
+            <input type="tel" name="celular" id="celular" placeholder="Ej: 322 276 9962" required>
+          </div>
+          <div class="form-group full">
+            <label>Correo Electrónico <span class="req">*</span></label>
+            <input type="email" name="email" id="email" placeholder="Ej: carlos@email.com" required>
+          </div>
+          <!-- Acudiente -->
+          <div class="form-group full" style="border-top:2px solid var(--border-light);padding-top:1.25rem;margin-top:0.5rem;">
+            <h4 style="color:var(--primary-dark);margin-bottom:0.5rem;font-size:0.9rem;">
+              <i class="fas fa-users"></i> Acudiente / Contacto de Emergencia
+            </h4>
+          </div>
+          <div class="form-group">
+            <label>Nombre del Acudiente <span class="req">*</span></label>
+            <input type="text" name="nombreAcudiente" id="nombreAcudiente" placeholder="Nombre completo" required>
+          </div>
+          <div class="form-group">
+            <label>Parentesco <span class="req">*</span></label>
+            <select name="parentesco" id="parentesco" required>
+              <option value="">Seleccionar...</option>
+              <option value="Madre">Madre</option>
+              <option value="Padre">Padre</option>
+              <option value="Hermano(a)">Hermano(a)</option>
+              <option value="Abuelo(a)">Abuelo(a)</option>
+              <option value="Tío(a)">Tío(a)</option>
+              <option value="Cónyuge">Cónyuge</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Teléfono del Acudiente <span class="req">*</span></label>
+            <input type="tel" name="telAcudiente" id="telAcudiente" placeholder="Número de contacto" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════
+           SECCIÓN 2: DATOS ACADÉMICOS
+           ══════════════════════════════════════════════════════════ -->
+      <div class="form-section" data-section="2">
+        <div class="section-number">2</div>
+        <h3><i class="fas fa-graduation-cap"></i> Información Académica</h3>
+        <p class="section-desc">Información sobre tu formación académica.</p>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Último Grado / Título <span class="req">*</span></label>
+            <select name="ultimoGrado" id="ultimoGrado" required>
+              <option value="">Seleccionar...</option>
+              <option value="Bachiller Académico">Bachiller Académico</option>
+              <option value="Bachiller Técnico">Bachiller Técnico</option>
+              <option value="Bachiller Comercial">Bachiller Comercial</option>
+              <option value="Noveno Grado">Noveno Grado (Cursando)</option>
+              <option value="Técnico Laboral">Técnico Laboral</option>
+              <option value="Tecnólogo">Tecnólogo</option>
+              <option value="Profesional">Profesional Universitario</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Institución Educativa <span class="req">*</span></label>
+            <input type="text" name="institucion" id="institucion" placeholder="Ej: Colegio Departamental Madrid" required>
+          </div>
+          <div class="form-group">
+            <label>Ciudad de la Institución <span class="req">*</span></label>
+            <input type="text" name="ciudadInstitucion" id="ciudadInstitucion" placeholder="Ej: Madrid" required>
+          </div>
+          <div class="form-group">
+            <label>Año de Graduación <span class="req">*</span></label>
+            <input type="number" name="anoGrado" id="anoGrado" placeholder="Ej: 2024" min="1970" max="2030" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════
+           SECCIÓN 3: DATOS LABORALES
+           ══════════════════════════════════════════════════════════ -->
+      <div class="form-section" data-section="3">
+        <div class="section-number">3</div>
+        <h3><i class="fas fa-briefcase"></i> Información Laboral</h3>
+        <p class="section-desc">Cuéntanos sobre tu situación laboral actual.</p>
+
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>¿Trabaja actualmente? <span class="req">*</span></label>
+            <div class="radio-group">
+              <label><input type="radio" name="trabaja" value="Sí" required> Sí</label>
+              <label><input type="radio" name="trabaja" value="No"> No</label>
+              <label><input type="radio" name="trabaja" value="Independiente"> Independiente</label>
+            </div>
+          </div>
+          <div id="camposLaborales" class="form-grid full" style="display:none;">
+            <div class="form-group">
+              <label>Empresa donde labora</label>
+              <input type="text" name="empresa" id="empresa" placeholder="Nombre de la empresa">
+            </div>
+            <div class="form-group">
+              <label>Cargo</label>
+              <input type="text" name="cargo" id="cargo" placeholder="Cargo que desempeña">
+            </div>
+            <div class="form-group">
+              <label>Horario Laboral</label>
+              <input type="text" name="horarioLaboral" id="horarioLaboral" placeholder="Ej: 8:00 AM - 5:00 PM">
+            </div>
+            <div class="form-group">
+              <label>¿Tiene turnos rotativos?</label>
+              <div class="radio-group">
+                <label><input type="radio" name="turnosRotativos" value="Sí"> Sí</label>
+                <label><input type="radio" name="turnosRotativos" value="No"> No</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════
+           SECCIÓN 4: SALUD
+           ══════════════════════════════════════════════════════════ -->
+      <div class="form-section" data-section="4">
+        <div class="section-number">4</div>
+        <h3><i class="fas fa-heart"></i> Información de Salud</h3>
+        <p class="section-desc">Información para tu seguridad y bienestar.</p>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>EPS / Régimen de Salud <span class="req">*</span></label>
+            <select name="eps" id="eps" required>
+              <option value="">Seleccionar...</option>
+              <option value="Sanitas EPS">Sanitas EPS</option>
+              <option value="Compensar EPS">Compensar EPS</option>
+              <option value="Famisanar EPS">Famisanar EPS</option>
+              <option value="Salud Total EPS">Salud Total EPS</option>
+              <option value="Nueva EPS">Nueva EPS</option>
+              <option value="Sura EPS">Sura EPS</option>
+              <option value="Capital Salud">Capital Salud</option>
+              <option value="Sisbén">Sisbén</option>
+              <option value="No afiliado">No afiliado</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Afiliación <span class="req">*</span></label>
+            <select name="tipoAfiliacion" id="tipoAfiliacion" required>
+              <option value="">Seleccionar...</option>
+              <option value="Cotizante">Cotizante</option>
+              <option value="Beneficiario">Beneficiario</option>
+              <option value="Subsidiado">Subsidiado</option>
+              <option value="No afiliado">No afiliado</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>¿Tiene alguna condición médica, alergia o discapacidad?</label>
+            <textarea name="condicionMedica" id="condicionMedica" rows="2" placeholder="Describa aquí si aplica. Ejemplo: alergia al polen, asma, etc."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════
+           SECCIÓN 5: PROGRAMA Y MATRÍCULA
+           ══════════════════════════════════════════════════════════ -->
+      <div class="form-section" data-section="5">
+        <div class="section-number">5</div>
+        <h3><i class="fas fa-book-open"></i> Programa y Matrícula</h3>
+        <p class="section-desc" id="seccionProgramaDesc">Selecciona el programa de tu interés.</p>
+
+        <!-- Badge de tipo de matrícula -->
+        <div id="modalidadBadge" style="display:inline-flex;align-items:center;gap:0.4rem;background:var(--primary-pale);border:1px solid var(--primary-soft);border-radius:50px;padding:0.35rem 0.9rem;margin-bottom:1rem;font-size:0.78rem;font-weight:700;color:var(--primary-dark);">
+          <i class="fas fa-circle" style="font-size:0.5rem;color:var(--primary);"></i>
+          <span id="modalidadBadgeText">Cargando...</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Programa <span class="req">*</span></label>
+            <select name="programa" id="programa" required>
+              <option value="">Seleccionar programa...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Sede <span class="req">*</span></label>
+            <input type="text" name="sede" id="sede" readonly required
+                   style="background:var(--primary-pale);font-weight:600;color:var(--primary-dark);cursor:default;border-color:var(--primary-soft);">
+          </div>
+          <div class="form-group">
+            <label>Modalidad <span class="req">*</span></label>
+            <input type="text" name="modalidad" id="modalidad" readonly required
+                   style="background:var(--primary-pale);font-weight:600;color:var(--primary-dark);cursor:default;border-color:var(--primary-soft);">
+          </div>
+          <div class="form-group">
+            <label>Jornada <span class="req">*</span></label>
+            <input type="text" name="jornada" id="jornada" readonly required
+                   style="background:var(--primary-pale);font-weight:600;color:var(--primary-dark);cursor:default;border-color:var(--primary-soft);">
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════
+           SECCIÓN 6: INFORMACIÓN ADICIONAL / GRUPO COLPEIN
+           ══════════════════════════════════════════════════════════ -->
+      <div class="form-section" data-section="6">
+        <div class="section-number">6</div>
+        <h3><i class="fas fa-clipboard-list"></i> Información Adicional</h3>
+        <p class="section-desc">Ayúdanos a conocerte mejor.</p>
+
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>¿Cómo se enteró de INTEP?</label>
+            <select name="comoSeEntero" id="comoSeEntero">
+              <option value="">Seleccionar...</option>
+              <option value="WhatsApp">WhatsApp</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Instagram">Instagram</option>
+              <option value="Google">Búsqueda en Google</option>
+              <option value="Recomendación">Recomendación / Voz a voz</option>
+              <option value="Volante">Volante / Publicidad impresa</option>
+              <option value="Cuña Radial">Cuña radial</option>
+              <option value="Aviso Periódico">Aviso en periódico</option>
+              <option value="Aviso Fachada">Aviso en fachada</option>
+              <option value="Evento">Feria / Evento</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <!-- Relación con Colpein -->
+          <div class="form-group full colpein-section">
+            <h4 style="color:var(--primary-dark);margin-bottom:0.5rem;font-size:0.85rem;">
+              <i class="fas fa-school"></i> Relación con el Colegio Pedagógico Inglés / Grupo Colpein
+            </h4>
+          </div>
+          <div class="form-group">
+            <label>¿Es estudiante del Colegio Pedagógico Inglés?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="esEstudianteColpein" value="Sí"> Sí</label>
+              <label><input type="radio" name="esEstudianteColpein" value="No"> No</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>¿Es egresado del Colegio Pedagógico Inglés?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="esEgresadoColpein" value="Sí"> Sí</label>
+              <label><input type="radio" name="esEgresadoColpein" value="No"> No</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>¿Tiene familiar matriculado en Colpein?</label>
+            <div class="radio-group">
+              <label><input type="radio" name="familiarColpein" value="Sí"> Sí</label>
+              <label><input type="radio" name="familiarColpein" value="No"> No</label>
+            </div>
+          </div>
+          <div class="form-group" id="campoFamiliarColpein" style="display:none;">
+            <label>Nombre del familiar y parentesco</label>
+            <input type="text" name="familiarColpeinDetalle" placeholder="Ej: Juan Rodríguez - Hermano - 8vo grado">
+          </div>
+
+          <div class="form-group full">
+            <label>Actividades deportivas, artísticas o sociales que le gustaría practicar</label>
+            <textarea name="actividades" id="actividades" rows="2" placeholder="Ej: Fútbol, danzas, teatro, música..."></textarea>
+          </div>
+          <div class="form-group full">
+            <label>Comentarios o expectativas adicionales</label>
+            <textarea name="comentarios" id="comentarios" rows="2" placeholder="Opcional..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════
+           SECCIÓN 7: DOCUMENTOS
+           ══════════════════════════════════════════════════════════ -->
+      <div class="form-section" data-section="7">
+        <div class="section-number">7</div>
+        <h3><i class="fas fa-cloud-upload-alt"></i> Documentos Requeridos</h3>
+        <p class="section-desc">
+          Sube una <strong>foto</strong> o un <strong>archivo PDF</strong> de cada documento.
+          Toca la tarjeta para subir un archivo o usa el botón de cámara.
+        </p>
+
+        <div class="doc-grid">
+
+          <!-- Cédula Frontal -->
+          <div class="doc-card" data-doc="cc_frontal">
+            <div class="doc-placeholder">
+              <div class="doc-icon-big"><i class="fas fa-id-card"></i></div>
+              <div class="doc-label">Documento de Identidad <span style="color:var(--danger);">*</span></div>
+              <div class="doc-hint">Cara frontal (CC, TI, CE)</div>
+            </div>
+            <img class="doc-preview doc-preview-img" src="" alt="Vista previa">
+            <div class="doc-preview doc-preview-pdf">
+              <i class="fas fa-file-pdf"></i>
+              <span class="pdf-name"></span>
+            </div>
+            <div class="doc-actions">
+              <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="doc-buttons">
+              <button type="button" class="btn-upload-file"><i class="fas fa-file-upload"></i> Subir archivo</button>
+              <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Foto</button>
+            </div>
+            <input type="file" accept="image/*,.pdf" hidden>
+            <input type="file" accept="image/*" capture="environment" hidden class="cam-input">
+          </div>
+
+          <!-- Cédula Posterior -->
+          <div class="doc-card" data-doc="cc_posterior">
+            <div class="doc-placeholder">
+              <div class="doc-icon-big"><i class="fas fa-id-card"></i></div>
+              <div class="doc-label">Documento (Reverso)</div>
+              <div class="doc-hint">Cara posterior</div>
+            </div>
+            <img class="doc-preview doc-preview-img" src="" alt="Vista previa">
+            <div class="doc-preview doc-preview-pdf">
+              <i class="fas fa-file-pdf"></i>
+              <span class="pdf-name"></span>
+            </div>
+            <div class="doc-actions">
+              <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="doc-buttons">
+              <button type="button" class="btn-upload-file"><i class="fas fa-file-upload"></i> Subir archivo</button>
+              <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Foto</button>
+            </div>
+            <input type="file" accept="image/*,.pdf" hidden>
+            <input type="file" accept="image/*" capture="environment" hidden class="cam-input">
+          </div>
+
+          <!-- Acta de Grado -->
+          <div class="doc-card" data-doc="acta_grado">
+            <div class="doc-placeholder">
+              <div class="doc-icon-big"><i class="fas fa-file-alt"></i></div>
+              <div class="doc-label">Acta de Grado <span style="color:var(--danger);">*</span></div>
+              <div class="doc-hint">o certificado de bachiller</div>
+            </div>
+            <img class="doc-preview doc-preview-img" src="" alt="Vista previa">
+            <div class="doc-preview doc-preview-pdf">
+              <i class="fas fa-file-pdf"></i>
+              <span class="pdf-name"></span>
+            </div>
+            <div class="doc-actions">
+              <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="doc-buttons">
+              <button type="button" class="btn-upload-file"><i class="fas fa-file-upload"></i> Subir archivo</button>
+              <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Foto</button>
+            </div>
+            <input type="file" accept="image/*,.pdf" hidden>
+            <input type="file" accept="image/*" capture="environment" hidden class="cam-input">
+          </div>
+
+          <!-- Diploma Bachiller -->
+          <div class="doc-card" data-doc="diploma_bachiller">
+            <div class="doc-placeholder">
+              <div class="doc-icon-big"><i class="fas fa-scroll"></i></div>
+              <div class="doc-label">Diploma de Bachiller <span style="color:var(--danger);">*</span></div>
+              <div class="doc-hint">o certificado de 9no grado</div>
+            </div>
+            <img class="doc-preview doc-preview-img" src="" alt="Vista previa">
+            <div class="doc-preview doc-preview-pdf">
+              <i class="fas fa-file-pdf"></i>
+              <span class="pdf-name"></span>
+            </div>
+            <div class="doc-actions">
+              <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="doc-buttons">
+              <button type="button" class="btn-upload-file"><i class="fas fa-file-upload"></i> Subir archivo</button>
+              <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Foto</button>
+            </div>
+            <input type="file" accept="image/*,.pdf" hidden>
+            <input type="file" accept="image/*" capture="environment" hidden class="cam-input">
+          </div>
+
+          <!-- Certificado Salud -->
+          <div class="doc-card" data-doc="certificado_salud">
+            <div class="doc-placeholder">
+              <div class="doc-icon-big"><i class="fas fa-notes-medical"></i></div>
+              <div class="doc-label">Certificado de Salud</div>
+              <div class="doc-hint">EPS, Sisbén o régimen especial</div>
+            </div>
+            <img class="doc-preview doc-preview-img" src="" alt="Vista previa">
+            <div class="doc-preview doc-preview-pdf">
+              <i class="fas fa-file-pdf"></i>
+              <span class="pdf-name"></span>
+            </div>
+            <div class="doc-actions">
+              <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="doc-buttons">
+              <button type="button" class="btn-upload-file"><i class="fas fa-file-upload"></i> Subir archivo</button>
+              <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Foto</button>
+            </div>
+            <input type="file" accept="image/*,.pdf" hidden>
+            <input type="file" accept="image/*" capture="environment" hidden class="cam-input">
+          </div>
+
+          <!-- Foto Estudiante -->
+          <div class="doc-card" data-doc="foto_estudiante">
+            <div class="doc-placeholder">
+              <div class="doc-icon-big"><i class="fas fa-portrait"></i></div>
+              <div class="doc-label">Foto Tipo Documento</div>
+              <div class="doc-hint">3x4 fondo blanco o azul</div>
+            </div>
+            <img class="doc-preview doc-preview-img" src="" alt="Vista previa">
+            <div class="doc-preview doc-preview-pdf">
+              <i class="fas fa-file-pdf"></i>
+              <span class="pdf-name"></span>
+            </div>
+            <div class="doc-actions">
+              <button type="button" class="btn-doc-del" title="Eliminar"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="doc-buttons">
+              <button type="button" class="btn-upload-file"><i class="fas fa-file-upload"></i> Subir archivo</button>
+              <button type="button" class="btn-cam"><i class="fas fa-camera"></i> Foto</button>
+            </div>
+            <input type="file" accept="image/*" hidden>
+            <input type="file" accept="image/*" capture="user" hidden class="cam-input">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════
+           ACEPTACIÓN Y ENVÍO
+           ══════════════════════════════════════════════════════════ -->
+      <div class="form-section acceptance-section" data-section="8">
+        <div class="acceptance-box">
+          <label class="checkbox-custom">
+            <input type="checkbox" id="aceptaTerminos" required>
+            <span class="checkmark"></span>
+            <span class="checkbox-text">
+              Certifico que la información suministrada es verídica. Con el pago de la primera cuota,
+              el diligenciamiento de este formulario y el aporte de la documentación requerida,
+              se entenderá al aspirante como matriculado para el programa respectivo,
+              adquiriendo los derechos y deberes del estudiante INTEP.
+            </span>
+          </label>
+        </div>
+
+        <div class="form-submit-area">
+          <button type="button" class="btn-guardar" id="btnGuardar" disabled>
+            <i class="fas fa-paper-plane"></i> Enviar Matrícula
+          </button>
+          <p class="submit-hint">
+            <i class="fas fa-lock"></i> Tus datos están protegidos y solo serán utilizados para el proceso de matrícula.
+          </p>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- CAMERA MODAL -->
+  <div class="camera-modal" id="cameraModal">
+    <div class="cam-header">
+      <span><i class="fas fa-camera"></i> Capturar Documento</span>
+      <button type="button" class="btn-cam-close" id="btnCamClose"><i class="fas fa-times"></i></button>
+    </div>
+    <video id="camVideo" autoplay playsinline></video>
+    <canvas id="camCanvas"></canvas>
+    <div class="cam-controls">
+      <button type="button" class="btn-cam-action btn-cancel" id="btnCancel">
+        <i class="fas fa-times"></i> Cancelar
+      </button>
+      <button type="button" class="btn-cam-action btn-capture" id="btnCapture">
+        <i class="fas fa-camera"></i> Capturar
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Enviando matrícula...</p>
+  </div>
+
+  <script src="js/pins.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

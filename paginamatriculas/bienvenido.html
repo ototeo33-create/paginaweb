@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#059669">
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <title>¡Bienvenido a INTEP!</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1687597795721435');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1687597795721435&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  <script src="/fb-pixel-events.js" defer></script>
+</head>
+<body class="welcome-page" id="welcomePage">
+
+  <!-- Confetti -->
+  <div class="confetti">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="welcome-card">
+    <div class="success-ring">
+      <i class="fas fa-check"></i>
+    </div>
+
+    <h1>¡Bienvenido a INTEP!</h1>
+    <p class="welcome-name" id="welcomeName">Tu matrícula está en proceso</p>
+    <p class="welcome-msg">
+      Hemos recibido tu formulario y documentos exitosamente.<br>
+      A continuación los detalles de tu entrevista.
+    </p>
+
+    <div class="welcome-details">
+      <div class="detail-row">
+        <span class="detail-label">PIN</span>
+        <span class="detail-value" id="detailPin">----</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Programa</span>
+        <span class="detail-value" id="detailPrograma">----</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Entrevista</span>
+        <span class="detail-value big" id="detailFecha">----</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Tipo</span>
+        <span class="detail-value big" id="detailTipo">----</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Lugar</span>
+        <span class="detail-value" id="detailLugar">----</span>
+      </div>
+    </div>
+
+    <p style="font-size:0.78rem;color:var(--text-mid);margin-bottom:1.25rem;">
+      <i class="fas fa-info-circle" style="color:var(--primary);"></i>
+      Recibirás un mensaje de WhatsApp confirmando los detalles.<br>
+      Presenta tus documentos originales el día de la entrevista.
+    </p>
+
+    <div class="welcome-actions">
+      <a href="https://wa.me/573222769962?text=Hola%2C%20complet%C3%A9%20mi%20matr%C3%ADcula%20en%20INTEP%2C%20necesito%20informaci%C3%B3n" target="_blank" class="btn-welcome wa">
+        <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+      </a>
+      <button class="btn-welcome primary" id="btnInicio">
+        <i class="fas fa-home"></i> Volver al inicio
+      </button>
+    </div>
+  </div>
+
+  <script src="js/pins.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
