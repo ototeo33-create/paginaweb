@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta name="google-site-verificatiohn" content="q5cfYvTNtgBshN-9JlXYYB2f6ki6nQNqJPQ9wqI9YcA" />
+    <meta name="facebook-domain-verification" content="p5yn6iea47v2k3qedr1ucb4mcw4ync" />
 <meta charset="UTF-8">
         <link rel="canonical" href="https://institutointep.edu.co/" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1276,6 +1277,7 @@ body::before{
   .pm-actions .btn{min-width:unset}
   .pm-banner{height:160px}
 }
+
 </style>
 </head>
 <body>
@@ -1309,6 +1311,13 @@ body::before{
         <a href="calintep.html">CALINTEP</a>
       </div>
     </li>
+    <li class="nav-dropdown">
+      <a><i class="fas fa-play-circle"></i> Cursos</a>
+      <div class="nav-dropdown-menu">
+        <a href="cursos-asincronicos/catalogo.html#asincronicos"><i class="fas fa-graduation-cap"></i> Cursos Asíncronos</a>
+        <a href="cursos-asincronicos/catalogo-cortos.html"><i class="fas fa-bolt"></i> Cursos Cortos</a>
+      </div>
+    </li>
     <li><a href="https://portal.institutointep.edu.co/intep/login.php" class="nav-cta" target="_blank"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a></li>
   </ul>
   <div class="burger" onclick="toggleMob()"><span></span><span></span><span></span></div>
@@ -1324,6 +1333,8 @@ body::before{
   <a href="egresados.html" onclick="toggleMob()">Egresados</a>
   <a href="empresas.html" onclick="toggleMob()">Empresas</a>
   <a href="calintep.html" onclick="toggleMob()">CALINTEP</a>
+  <a href="cursos-asincronicos/catalogo.html#asincronicos" onclick="toggleMob()"><i class="fas fa-graduation-cap"></i> Cursos Asíncronos</a>
+  <a href="cursos-asincronicos/catalogo-cortos.html" onclick="toggleMob()"><i class="fas fa-bolt"></i> Cursos Cortos</a>
   <a href="https://portal.institutointep.edu.co/intep/login.php" class="btn btn-fill" target="_blank"><i class="fas fa-graduation-cap"></i> Portal Estudiantil</a>
 </div>
 
@@ -1844,6 +1855,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeVidModal()});
 // Close modal clicking backdrop
 document.getElementById('vidModal')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeVidModal()});
 
+
 // Mostrar confirmación si viene de FormSubmit
 if(new URLSearchParams(window.location.search).get('enviado')==='1'){
   const cf=document.querySelector('.contact-form');
@@ -1856,5 +1868,6 @@ if(new URLSearchParams(window.location.search).get('enviado')==='1'){
   }
 }
 </script>
+
 </body>
 </html>
