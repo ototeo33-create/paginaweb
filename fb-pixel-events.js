@@ -54,7 +54,7 @@
   // 2. ViewContent — páginas de programas técnicos
   // ─────────────────────────────────────────────────────────────
   var path = window.location.pathname.toLowerCase();
-  var programaMatch = path.match(/\/(cursos|cursos-asincronicos|programas-tecnicos)\/([^/]+)/);
+  var programaMatch = path.match(/\/(intepgrate|programas-tecnicos)\/([^/]+)/);
 
   if (programaMatch) {
     trackWhenReady('ViewContent', {
